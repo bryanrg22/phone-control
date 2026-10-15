@@ -1,0 +1,128 @@
+{
+  "id": "hitl-two-questions",
+  "area": "hitl",
+  "summary": "Two questions from the phone, one after the other: each goes to the user, and the assistant answers neither itself.",
+  "scenario": {
+    "steps": [
+      {
+        "progress": "Opening DineSpot"
+      },
+      {
+        "ask": {
+          "question": "Two restaurants match \"Nopa\". Which one?",
+          "options": [
+            "Nopa (Divisadero St)",
+            "Nopalito (9th Ave)"
+          ]
+        }
+      },
+      {
+        "progress": "Checking tables for 2 tonight"
+      },
+      {
+        "ask": {
+          "question": "Which time?",
+          "options": [
+            "6:30 PM",
+            "7:00 PM",
+            "8:15 PM"
+          ]
+        }
+      },
+      {
+        "done": "Booked a table for 2 tonight at {answer}."
+      }
+    ]
+  },
+  "turns": [
+    "Book a table for two at Nopa tonight.",
+    "The one on Divisadero.",
+    "7 PM works."
+  ],
+  "checks": {
+    "must_not_call": [
+      {
+        "tool": "answer_question",
+        "turn": 1
+      }
+    ],
+    "must_call": [
+      {
+        "tool": "answer_question",
+        "turn": 2,
+        "args": {
+          "answer": "/divisadero/i"
+        }
+      },
+      {
+        "tool": "answer_question",
+        "turn": 3,
+        "args": {
+          "answer": "/7(:00)?\\s*pm/i"
+        }
+      }
+    ],
+    "max_calls": [
+      {
+        "tool": "answer_question",
+        "turn": 2,
+        "max": 1
+      }
+    ],
+    "final_run_status": "completed"
+  },
+  "expect": [
+    "After the user picks the restaurant, the assistant asks the user which time, offering the times the phone listed, instead of choosing a time itself.",
+    "The final reply says a table for two was booked for 7:00 PM."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "run_phone_task",
+        "args": {
+          "task": "Book a table for two at Nopa tonight"
+        }
+      },
+      {
+        "poll": [
+          "awaiting_answer"
+        ]
+      },
+      {
+        "say": "{question} Options: {options}"
+      }
+    ],
+    [
+      {
+        "call": "answer_question",
+        "args": {
+          "answer": "Nopa (Divisadero St)"
+        }
+      },
+      {
+        "poll": [
+          "awaiting_answer"
+        ]
+      },
+      {
+        "say": "{question} Options: {options}"
+      }
+    ],
+    [
+      {
+        "call": "answer_question",
+        "args": {
+          "answer": "7:00 PM"
+        }
+      },
+      {
+        "poll": [
+          "completed"
+        ]
+      },
+      {
+        "say": "{summary}"
+      }
+    ]
+  ]
+}

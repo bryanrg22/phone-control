@@ -3,6 +3,7 @@
 //
 //   node evals/connector/run.mjs                              Claude Opus 5.5, 3 trials, OpenAI judge
 //   node evals/connector/run.mjs --model claude-sonnet-5-5 --trials 5
+//   node evals/connector/run.mjs --assistant openai --model gpt-6-astra    an OpenAI model, Claude judge
 //   node evals/connector/run.mjs --cases hitl,stop            only cases whose id contains these
 //   node evals/connector/run.mjs --assistant oracle --expect all-pass    test the harness itself
 //   node evals/connector/run.mjs --assistant null   --expect all-fail
@@ -12,8 +13,8 @@
 // measured is the ASSISTANT. A trial is graded by code checks first
 // (grade.mjs), then one judge call per plain-English expectation.
 //
-// Needs ANTHROPIC_API_KEY for --assistant claude and OPENAI_API_KEY for
-// --judge openai. Costs money: start with --cases and --trials 1.
+// Needs the key of the assistant's provider and of the judge's (the other
+// family). Costs money: start with --cases and --trials 1.
 //
 // Output, never overwritten (a new folder per run):
 //   evals/results/connector/<run>/run_info.json         what ran: commits, versions, models, hashes
@@ -35,6 +36,7 @@ import { createJudge, JUDGE_PROMPT_HASH } from '../lib/judges.mjs';
 import { summarize } from '../lib/stats.mjs';
 import { codeChecks, verdictFor, renderTranscript } from './grade.mjs';
 import { createScriptedAssistant } from './assistants/scripted.mjs';
+import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
 
 export const HARNESS_VERSION = '0.1.0';
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -45,15 +47,18 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const argv = process.argv.slice(2);
 const opt = (name, dflt) => { const i = argv.indexOf(`--${name}`); return i >= 0 ? argv[i + 1] : dflt; };
 const assistantKind = opt('assistant', 'claude');
-const model = opt('model', 'claude-opus-5-5');
+// The assistants that call a model; oracle and null are the harness's own self-tests.
+const MODEL_ASSISTANTS = { claude: { provider: 'anthropic', model: 'claude-opus-5-5', judge: 'openai' }, openai: { provider: 'openai', model: 'gpt-6-astra', judge: 'anthropic' } };
+const isModel = assistantKind in MODEL_ASSISTANTS;
+const model = opt('model', isModel ? MODEL_ASSISTANTS[assistantKind].model : null);
 const effort = opt('effort', 'high');
-const trials = Number(opt('trials', assistantKind === 'claude' ? '3' : '1'));
+const trials = Number(opt('trials', isModel ? '3' : '1'));
 const filter = (opt('cases', '') || '').split(',').filter(Boolean);
 const expect = opt('expect', null);              // all-pass | all-fail: for harness self-tests
-// A judge from another family than the assistant: Claude is judged by an OpenAI model.
-const judgeProvider = opt('judge', assistantKind === 'claude' ? 'openai' : 'none');
+// A judge from another family than the assistant: Claude is judged by an OpenAI model, and the reverse.
+const judgeProvider = opt('judge', isModel ? MODEL_ASSISTANTS[assistantKind].judge : 'none');
 const judgeModel = opt('judge-model', judgeProvider === 'openai' ? 'gpt-6-luna' : judgeProvider === 'anthropic' ? 'claude-opus-5-5' : null);
-const runName = opt('run', `${new Date().toISOString().replace(/[:.]/g, '-')}_${assistantKind === 'claude' ? `${model}_${effort}` : assistantKind}`);
+const runName = opt('run', `${new Date().toISOString().replace(/[:.]/g, '-')}_${isModel ? `${model}_${effort}` : assistantKind}`);
 const outRoot = join(opt('out', join(REPO, 'evals', 'results')), 'connector', runName);
 
 // ─── cases ───────────────────────────────────────────────────────────────────
@@ -76,8 +81,12 @@ async function newAssistant(kase) {
     const { createClaudeAssistant } = await import('./assistants/claude.mjs');
     return createClaudeAssistant({ model, effort });
   }
+  if (assistantKind === 'openai') {
+    const { createOpenAIAssistant } = await import('./assistants/openai.mjs');
+    return createOpenAIAssistant({ model, effort });
+  }
   if (assistantKind === 'oracle' || assistantKind === 'null') return createScriptedAssistant({ kind: assistantKind, plan: kase.oracle });
-  throw new Error(`unknown assistant "${assistantKind}" (claude | oracle | null)`);
+  throw new Error(`unknown assistant "${assistantKind}" (claude | openai | oracle | null)`);
 }
 
 async function runTrial(kase, n, judge, ctx) {
@@ -167,8 +176,12 @@ async function runTrial(kase, n, judge, ctx) {
     judge_input_tokens: judged.reduce((a, j) => a + (j.usage?.input_tokens || 0), 0),
     judge_output_tokens: judged.reduce((a, j) => a + (j.usage?.output_tokens || 0), 0),
   };
+  if (isModel) {
+    usage.cost_usd = costOf(MODEL_ASSISTANTS[assistantKind].provider, model, usage);
+    usage.judge_cost_usd = judge.model ? costOf(judge.provider, judge.model, { input_tokens: usage.judge_input_tokens, output_tokens: usage.judge_output_tokens }) : null;
+  }
   // The model that answered must be the model that was asked for.
-  if (assistantKind === 'claude' && usage.served_models.some((m) => m && !String(m).startsWith(model))) {
+  if (isModel && usage.served_models.some((m) => m && !String(m).startsWith(model))) {
     checks.push({ name: 'the requested model served every call', ok: false, detail: `served by ${usage.served_models.join(', ')}` });
   }
 
@@ -195,20 +208,22 @@ const judge = await createJudge({ provider: judgeProvider, model: judgeModel });
 const runInfo = {
   harness_version: HARNESS_VERSION, run: runName, started: new Date().toISOString(),
   git: { commit: git(['rev-parse', 'HEAD']), dirty: (git(['status', '--porcelain']) || '').length > 0 },
-  assistant: { kind: assistantKind, model: assistantKind === 'claude' ? model : null, effort: assistantKind === 'claude' ? effort : null },
+  assistant: { kind: assistantKind, model: isModel ? model : null, effort: isModel ? effort : null },
   judge: { provider: judgeProvider, model: judgeModel, prompt_hash: JUDGE_PROMPT_HASH },
   trials, cases: cases.map((c) => c.id), cases_hash: casesHash, node: process.version, platform: `${process.platform}-${process.arch}`,
 };
 writeFileSync(join(outRoot, 'run_info.json'), `${JSON.stringify(runInfo, null, 2)}\n`);
-console.log(`connector evals — ${assistantKind}${assistantKind === 'claude' ? ` ${model} (${effort})` : ''}, judge ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''}, ${cases.length} case(s) × ${trials} trial(s)\n  ${outRoot}\n`);
+console.log(`connector evals — ${assistantKind}${isModel ? ` ${model} (${effort})` : ''}, judge ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''}, ${cases.length} case(s) × ${trials} trial(s)\n  ${outRoot}\n`);
 
 const verdicts = {};
 const toolHashes = new Set();
+let costUsd = 0; let judgeCostUsd = 0;
 for (const kase of cases) {
   verdicts[kase.id] = [];
   for (let n = 1; n <= trials; n++) {
     const r = await runTrial(kase, n, judge, { runName });
     verdicts[kase.id].push(r.verdict);
+    costUsd += r.state.usage.cost_usd || 0; judgeCostUsd += r.state.usage.judge_cost_usd || 0;
     if (r.toolsHash) toolHashes.add(r.toolsHash);
     const why = [...r.state.checks.filter((c) => !c.ok).map((c) => c.name), ...r.state.judged.filter((j) => j.verdict !== 'held').map((j) => `${j.verdict}: ${j.expectation}`)];
     console.log(`  ${r.verdict.padEnd(10)} ${kase.id} #${n}  (${(r.state.usage.wall_ms / 1000).toFixed(1)}s, ${r.state.usage.tool_calls} tool calls)${r.state.error ? `  ${r.state.error.message}` : ''}${why.length && r.verdict !== 'PASS' ? `\n             ${why.join('\n             ')}` : ''}`);
@@ -216,6 +231,7 @@ for (const kase of cases) {
 }
 
 const summary = summarize(verdicts);
+if (isModel) Object.assign(summary, { cost_usd: Math.round(costUsd * 100) / 100, judge_cost_usd: Math.round(judgeCostUsd * 100) / 100, prices_as_of: PRICES_AS_OF });
 runInfo.finished = new Date().toISOString();
 runInfo.tools_hashes = [...toolHashes];
 writeFileSync(join(outRoot, 'run_info.json'), `${JSON.stringify(runInfo, null, 2)}\n`);
@@ -223,7 +239,7 @@ writeFileSync(join(outRoot, 'summary.json'), `${JSON.stringify(summary, null, 2)
 const pct = (x) => (x === null ? 'n/a' : `${(x * 100).toFixed(0)}%`);
 const md = [
   `# Connector evals: ${runName}`, '',
-  `Assistant: ${assistantKind}${assistantKind === 'claude' ? ` ${model} (${effort})` : ''} · judge: ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''} · commit ${runInfo.git.commit?.slice(0, 7)}${runInfo.git.dirty ? ' (uncommitted changes)' : ''}`, '',
+  `Assistant: ${assistantKind}${isModel ? ` ${model} (${effort})` : ''} · judge: ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''} · commit ${runInfo.git.commit?.slice(0, 7)}${runInfo.git.dirty ? ' (uncommitted changes)' : ''}`, '',
   `pass@1 ${pct(summary.pass_at_1)} (95% interval ${pct(summary.pass_at_1_ci95.low)}–${pct(summary.pass_at_1_ci95.high)}) · pass^${trials} ${pct(summary.pass_hat_k)} · ${summary.trials} graded trials · ${summary.test_errors} test errors · ${summary.reviews} for review`, '',
   '| case | verdicts |', '| --- | --- |',
   ...Object.entries(summary.per_case).map(([id, c]) => `| ${id} | ${c.verdicts.join(', ')} |`), '',

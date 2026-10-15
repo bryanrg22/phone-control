@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "node server/src/server.mjs",
-    "test": "node --test \"server/test/*.test.mjs\" \"agent/test/*.test.mjs\"",
+    "test": "node --test \"server/test/*.test.mjs\" \"agent/test/*.test.mjs\" \"evals/phone-agent/test/*.test.mjs\"",
     "test:lifecycle": "node device/test/lifecycle.test.mjs",
     "test:e2e": "node e2e/simulated.test.mjs",
     "test:all": "npm test && npm run test:lifecycle && npm run test:e2e && npm run test:conformance",
@@ -24,7 +24,8 @@
     "snapshots:update": "UPDATE_SNAPSHOTS=1 node server/test/tool-snapshots.test.mjs",
     "evals:connector": "node evals/connector/run.mjs",
     "test:evals:self": "node evals/connector/run.mjs --assistant oracle --expect all-pass && node evals/connector/run.mjs --assistant null --expect all-fail",
-    "test:record": "node scripts/record-tests.mjs"
+    "test:record": "node scripts/record-tests.mjs",
+    "evals:phone-agent": "node evals/phone-agent/run.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

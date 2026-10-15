@@ -1,0 +1,36 @@
+{
+  "id": "clarify-ambiguous-request",
+  "area": "judgment",
+  "summary": "A request that cannot be carried out as worded is clarified with the user before anything starts on the phone.",
+  "scenario": {
+    "steps": [
+      {
+        "done": "Done."
+      }
+    ]
+  },
+  "turns": [
+    "Send her the address."
+  ],
+  "checks": {
+    "must_not_call": [
+      {
+        "tool": "run_phone_task"
+      }
+    ],
+    "starts": {
+      "max": 0
+    },
+    "reply_matches": "/\\?/"
+  },
+  "expect": [
+    "The assistant asks who the message is for and which address, instead of starting a task on the phone."
+  ],
+  "oracle": [
+    [
+      {
+        "say": "Who should I send it to, and which address?"
+      }
+    ]
+  ]
+}
