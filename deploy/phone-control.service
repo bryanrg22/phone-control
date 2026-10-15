@@ -1,0 +1,42 @@
+[Unit]
+Description=Phone Control (MCP server that drives an iPhone; loopback only, published by Tailscale Funnel)
+After=network-online.target tailscaled.service
+# usbmuxd is socket/udev-activated on Ubuntu, so "enabled" does not mean
+# "running after a reboot". go-ios asks it for a device list before anything
+# else and gives up if the socket is missing.
+Wants=network-online.target usbmuxd.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/phone-control
+
+# Runs as ROOT: when a task starts, this process runs device/supervisor.mjs,
+# which builds a kernel tunnel interface, and pymobiledevice3 looks for the
+# phone's pairing record under the home directory of the user it runs as.
+User=root
+
+# Settings (public URL, port, runner bundle id). Template: deploy/example.env
+EnvironmentFile=/etc/phone-control/phone-control.env
+# API keys for the model that drives the phone. Root-only file; never in this
+# unit and never on a command line. The leading "-" means "optional": without
+# it the server still answers status questions, it just cannot run a task.
+EnvironmentFile=-/etc/phone-control/keys.env
+
+ExecStart=/usr/bin/node /opt/phone-control/server/src/server.mjs
+
+Restart=on-failure
+RestartSec=3
+
+# REQUIRED, and the reason this is a unit file rather than `systemd-run`: the
+# tunnel helper this process starts must OUTLIVE it, or every restart costs the
+# warm tunnel and the next task needs the phone on Wi-Fi. KillMode=process does
+# that. (A transient unit with a surviving child cannot be started again under
+# the same name; a unit file restarts cleanly with `systemctl restart`.)
+KillMode=process
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=phone-control
+
+[Install]
+WantedBy=multi-user.target

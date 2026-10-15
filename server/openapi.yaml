@@ -1,0 +1,278 @@
+# openapi.yaml — the REST framing of the connector tools.
+#
+# SECONDARY SURFACE, on purpose. Assistants use the MCP endpoint at /mcp
+# (docs/connect-claude.md). This spec exists because the same operations are
+# what a Siri Shortcut, the iPhone Action Button or a shell script needs.
+openapi: 3.1.0
+info:
+  title: Phone Control
+  version: "1.0.0"
+  description: >-
+    Run tasks on the signed-in user's own iPhone. Tasks are asynchronous: start
+    one, then poll its status. If a task asks a question, put that question to
+    the user and send their reply back.
+  contact:
+    name: Support
+    url: https://example.com/support
+  license:
+    name: MIT
+servers:
+  - url: https://agent.example.com
+    description: Replace with your CONNECTOR_PUBLIC_URL
+
+security:
+  - oauth2: [phone.control]
+
+paths:
+  /v1/phone:
+    get:
+      operationId: getPhoneStatus
+      summary: Check whether the user's iPhone is connected
+      description: >-
+        Reports whether a phone is linked to this account and reachable right
+        now, and if not, what the user has to do about it.
+      responses:
+        "200":
+          description: Phone status
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PhoneStatus" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/tasks:
+    post:
+      operationId: runPhoneTask
+      summary: Start a task on the user's iPhone
+      description: >-
+        Starts the task and returns immediately with a run_id. It does NOT wait
+        for completion — poll GET /v1/runs/{runId} until the status is
+        completed, failed or stopped. Only one task runs at a time.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [task]
+              properties:
+                task:
+                  type: string
+                  maxLength: 500
+                  description: What to do, in one plain-language sentence.
+                  example: open LinkedIn and finish today's puzzle
+                max_steps:
+                  type: integer
+                  minimum: 1
+                  maximum: 40
+                  default: 25
+      responses:
+        "200":
+          description: Task started
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StartedRun" }
+        "400":
+          description: >-
+            The task was rejected (missing_task, task_too_long), the phone is
+            not reachable (needs_wake, not_enrolled, pending, revoked), or a run
+            is already in progress (busy).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ToolError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/runs:
+    get:
+      operationId: listRuns
+      summary: List this user's recent runs
+      responses:
+        "200":
+          description: Recent runs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  runs:
+                    type: array
+                    items: { $ref: "#/components/schemas/RunStatus" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/runs/{runId}:
+    get:
+      operationId: getRunStatus
+      summary: Check how a task is going
+      description: >-
+        If status is awaiting_answer, the response carries `question` (and
+        `options` when the answer is a fixed choice). Ask the user that question
+        and POST their reply to /v1/runs/{runId}/answer.
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      responses:
+        "200":
+          description: Run status
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RunStatus" }
+        "400":
+          description: No such run for this user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ToolError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/runs/{runId}/answer:
+    post:
+      operationId: answerQuestion
+      summary: Send the user's answer to a waiting task
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answer]
+              properties:
+                answer:
+                  type: string
+                  description: The user's answer, as they gave it. If options were offered, pass one of them.
+      responses:
+        "200":
+          description: Answer delivered; the task resumed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AnswerResult" }
+        "400":
+          description: The run is not waiting, or the answer was not one of the offered options
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ToolError" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/runs/{runId}/stop:
+    post:
+      operationId: stopRun
+      summary: Stop the running task
+      parameters:
+        - $ref: "#/components/parameters/RunId"
+      responses:
+        "200":
+          description: Stopped (or already finished)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RunStatus" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+components:
+  parameters:
+    RunId:
+      name: runId
+      in: path
+      required: true
+      schema: { type: string }
+
+  responses:
+    Unauthorized:
+      description: >-
+        No connector credential, or a credential that is not valid for this API.
+        The WWW-Authenticate header points at the protected-resource metadata.
+      headers:
+        WWW-Authenticate:
+          schema: { type: string }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ToolError" }
+
+  schemas:
+    PhoneStatus:
+      type: object
+      properties:
+        ok: { type: boolean }
+        linked: { type: boolean }
+        ready: { type: boolean }
+        state:
+          type: string
+          enum: [ready, needs_wake, not_enrolled, pending, revoked, no_address]
+        message:
+          type: string
+          description: A sentence that can be said to the user as-is.
+
+    StartedRun:
+      type: object
+      properties:
+        ok: { type: boolean }
+        run_id: { type: string }
+        status: { type: string, enum: [starting] }
+        message: { type: string }
+
+    RunStatus:
+      type: object
+      properties:
+        ok: { type: boolean }
+        run_id: { type: string }
+        status:
+          type: string
+          enum: [starting, running, awaiting_answer, completed, failed, stopped]
+        task: { type: string }
+        step: { type: integer }
+        max_steps: { type: integer }
+        last_action: { type: [string, "null"] }
+        started_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        question:
+          type: string
+          description: Present only when status is awaiting_answer.
+        options:
+          type: array
+          items: { type: string }
+          description: Present when the answer must be one of a fixed set.
+        answer_kind:
+          type: string
+          enum: [options, text]
+        hint: { type: string }
+        success:
+          type: boolean
+          description: Present once the run is in a final state.
+        summary:
+          type: string
+          description: The result to report to the user. Present once final.
+        message: { type: string }
+        next_step:
+          type: string
+          description: What the assistant should do next.
+
+    AnswerResult:
+      type: object
+      properties:
+        ok: { type: boolean }
+        run_id: { type: string }
+        answer: { type: string }
+        status: { type: string }
+        message: { type: string }
+
+    ToolError:
+      type: object
+      properties:
+        ok: { type: boolean, enum: [false] }
+        error: { type: string }
+        message: { type: string }
+        options:
+          type: array
+          items: { type: string }
+
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: >-
+        OAuth 2.1 authorization code with PKCE (S256). Dynamic client
+        registration is available at /oauth/register. During consent the user
+        enters a single-use connect code issued by the server's operator.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://agent.example.com/oauth/authorize
+          tokenUrl: https://agent.example.com/oauth/token
+          scopes:
+            phone.control: Start, monitor, answer and stop tasks on your own iPhone

@@ -1,0 +1,33 @@
+{
+  "name": "phone-control",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ask Claude to do something on your iPhone. A self-hosted MCP connector that drives a real, un-tethered iPhone from a small Linux server.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "phonectl": "server/bin/phonectl.mjs"
+  },
+  "scripts": {
+    "start": "node server/src/server.mjs",
+    "test": "node --test \"server/test/*.test.mjs\" \"agent/test/*.test.mjs\"",
+    "test:lifecycle": "node device/test/lifecycle.test.mjs",
+    "test:e2e": "node e2e/simulated.test.mjs",
+    "test:all": "npm test && npm run test:lifecycle && npm run test:e2e",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "check:deployed": "node scripts/check-deployed.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^14.0.0"
+  }
+}

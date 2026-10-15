@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Run-time state: task logs, the agent's memory, tunnel and session logs
+var/
+
+# Settings and secrets. deploy/example.env is the template; the real files live
+# on the server, outside the checkout.
+.env
+.env.*
+*.env
+!deploy/example.env
+!deploy/example.keys.env
+
+# Binaries built or fetched by the install steps
+device/bin/
+runner/build/
+*.xctestrun
+*.ipa
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log

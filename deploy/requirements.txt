@@ -1,0 +1,7 @@
+# Python packages for device/tunnel.py and the supervisor's pymobiledevice3 calls.
+# Pinned to the tested versions. pymobiledevice3 10.x changed the
+# tunnel interface this code uses; construct-typing 0.8 breaks 9.7.2's app
+# installer at import.
+pymobiledevice3==9.7.2
+pytun_pmd3==3.0.3
+construct-typing==0.7.0

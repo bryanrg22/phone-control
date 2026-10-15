@@ -1,0 +1,43 @@
+# Everything here runs without a phone, a model key or a network.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: lint and unit tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  simulated-phone:
+    # The real supervisor and the real server against a simulated phone. Linux
+    # on purpose: two phones need two loopback addresses and an unreachable
+    # phone needs connects that time out, and only Linux offers both.
+    name: lifecycle and whole-path tests (simulated phone)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run test:lifecycle
+      - run: npm run test:e2e

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 0 960 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>The four layers between the server and the iPhone</title>
+  <rect x="0.5" y="0.5" width="959" height="469" rx="16" fill="#FBFAF7" stroke="#E5E1D8"/>
+  <text x="32" y="44" font-size="17" font-weight="600" fill="#1F2328">Four layers, each resting on the one below</text>
+  <text x="32" y="68" font-size="13" fill="#57606A">Starting automation means building them bottom-up. Ending a task removes only the top two.</text>
+
+  <!-- column headers -->
+  <text x="132" y="104" font-size="11.5" font-weight="600" fill="#57606A" letter-spacing="0.4">LAYER</text>
+  <text x="372" y="104" font-size="11.5" font-weight="600" fill="#57606A" letter-spacing="0.4">WHAT IT GIVES YOU</text>
+  <text x="712" y="104" font-size="11.5" font-weight="600" fill="#57606A" letter-spacing="0.4">LIFETIME</text>
+
+  <!-- 4 runner -->
+  <rect x="32" y="116" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
+  <rect x="32" y="116" width="8" height="74" rx="4" fill="#8250DF"/>
+  <text x="60" y="146" font-size="22" font-weight="700" fill="#8250DF">4</text>
+  <text x="132" y="146" font-size="15" font-weight="600" fill="#1F2328">Runner</text>
+  <text x="132" y="167" font-size="12" fill="#57606A">runner/ · port 22087 on the phone</text>
+  <text x="372" y="146" font-size="13" fill="#1F2328">Tap here, type this, swipe, send a</text>
+  <text x="372" y="166" font-size="13" fill="#1F2328">screenshot, list what is on screen</text>
+  <text x="712" y="146" font-size="13" fill="#1F2328">One task.</text>
+  <text x="712" y="166" font-size="13" fill="#57606A">Banner shows while it runs</text>
+
+  <!-- 3 session -->
+  <rect x="32" y="200" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
+  <rect x="32" y="200" width="8" height="74" rx="4" fill="#BF3989"/>
+  <text x="60" y="230" font-size="22" font-weight="700" fill="#BF3989">3</text>
+  <text x="132" y="230" font-size="15" font-weight="600" fill="#1F2328">XCTest session</text>
+  <text x="132" y="251" font-size="12" fill="#57606A">go-ios runtest, patched</text>
+  <text x="372" y="230" font-size="13" fill="#1F2328">Apple's UI-testing session that launches</text>
+  <text x="372" y="250" font-size="13" fill="#1F2328">the runner and keeps it alive</text>
+  <text x="712" y="230" font-size="13" fill="#1F2328">One task.</text>
+  <text x="712" y="250" font-size="13" fill="#57606A">Needs the phone unlocked to start</text>
+
+  <!-- divider: what a task end removes -->
+  <line x1="32" y1="287" x2="928" y2="287" stroke="#CF222E" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <rect x="640" y="277" width="288" height="20" rx="10" fill="#FBFAF7"/>
+  <text x="926" y="292" text-anchor="end" font-size="12" font-weight="600" fill="#CF222E">a task ends here · everything below stays</text>
+
+  <!-- 2 tunnel -->
+  <rect x="32" y="302" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
+  <rect x="32" y="302" width="8" height="74" rx="4" fill="#0969DA"/>
+  <text x="60" y="332" font-size="22" font-weight="700" fill="#0969DA">2</text>
+  <text x="132" y="332" font-size="15" font-weight="600" fill="#1F2328">CoreDevice tunnel</text>
+  <text x="132" y="353" font-size="12" fill="#57606A">device/tunnel.py · pymobiledevice3</text>
+  <text x="372" y="332" font-size="13" fill="#1F2328">The encrypted channel iOS offers its</text>
+  <text x="372" y="352" font-size="13" fill="#1F2328">developer services on</text>
+  <text x="712" y="332" font-size="13" fill="#1F2328">Born on Wi-Fi only.</text>
+  <text x="712" y="352" font-size="13" fill="#57606A">Then survives cellular ("warm")</text>
+
+  <!-- 1 reachability -->
+  <rect x="32" y="386" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
+  <rect x="32" y="386" width="8" height="74" rx="4" fill="#1A7F37"/>
+  <text x="60" y="416" font-size="22" font-weight="700" fill="#1A7F37">1</text>
+  <text x="132" y="416" font-size="15" font-weight="600" fill="#1F2328">Reachability</text>
+  <text x="132" y="437" font-size="12" fill="#57606A">Tailscale on phone and server</text>
+  <text x="372" y="416" font-size="13" fill="#1F2328">The server can reach the phone at a fixed</text>
+  <text x="372" y="436" font-size="13" fill="#1F2328">address, on Wi-Fi or cellular, anywhere</text>
+  <text x="712" y="416" font-size="13" fill="#1F2328">Always on.</text>
+  <text x="712" y="436" font-size="13" fill="#57606A">Stays up with every app closed</text>
+</svg>

@@ -1,0 +1,118 @@
+diff --git a/ios/installationproxy/installationproxy.go b/ios/installationproxy/installationproxy.go
+index 9feac66..eb698ca 100644
+--- a/ios/installationproxy/installationproxy.go
++++ b/ios/installationproxy/installationproxy.go
+@@ -47,7 +47,20 @@ func (c *Connection) Close() {
+ }
+ 
+ func New(device ios.DeviceEntry) (*Connection, error) {
+-	deviceConn, err := ios.ConnectToService(device, serviceName)
++	// Cable-out fix: when the device is reachable over an RSD tunnel (USB out),
++	// connect through the tunnel instead of lockdown/usbmux. Installation proxy
++	// speaks plist over a raw connection, so use the raw tunnel variant (not the
++	// XPC one). Cable-in devices without a tunnel are unaffected.
++	var deviceConn ios.DeviceConnectionInterface
++	var err error
++	if device.SupportsRsd() {
++		// The tunnel exposes installation_proxy as a *.shim.remote service
++		// (rsd_test.go), and shim services require the RSDCheckin handshake —
++		// ConnectToShimService performs it; ConnectToServiceTunnelIface does not.
++		deviceConn, err = ios.ConnectToShimService(device, serviceName)
++	} else {
++		deviceConn, err = ios.ConnectToService(device, serviceName)
++	}
+ 	if err != nil {
+ 		return &Connection{}, err
+ 	}
+diff --git a/ios/rsd.go b/ios/rsd.go
+index 82f83ff..4fb1696 100644
+--- a/ios/rsd.go
++++ b/ios/rsd.go
+@@ -153,6 +153,14 @@ func (r RsdHandshakeResponse) GetPort(service string) int {
+ 	if s, ok := r.Services[service]; ok {
+ 		return int(s.Port)
+ 	}
++	// Cable-out fix: many lockdown services are exposed over the tunnel only as
++	// "<name>.shim.remote" (e.g. com.apple.mobile.installation_proxy). The JSON
++	// provider (RsdPortProviderJson.GetPort) already falls back to the shim name;
++	// the live-handshake provider must too, or every shim-only service resolves
++	// to port 0 and the dial fails with "can't assign requested address".
++	if s, ok := r.Services[service+".shim.remote"]; ok {
++		return int(s.Port)
++	}
+ 	return 0
+ }
+ 
+diff --git a/ios/testmanagerd/xcuitestrunner.go b/ios/testmanagerd/xcuitestrunner.go
+index 3556f1b..769d0ca 100644
+--- a/ios/testmanagerd/xcuitestrunner.go
++++ b/ios/testmanagerd/xcuitestrunner.go
+@@ -287,7 +287,17 @@ func RunTestWithConfig(ctx context.Context, testConfig TestConfig) ([]TestSuite,
+ 	}
+ 	version, err := ios.GetProductVersion(testConfig.Device)
+ 	if err != nil {
+-		return make([]TestSuite, 0), fmt.Errorf("RunXCUIWithBundleIdsCtx: cannot determine iOS version: %w", err)
++		// Cable-out fix: GetProductVersion reads via lockdown (USB/usbmux). When
++		// the device is reachable only over an RSD tunnel (cable out), lockdown
++		// is unavailable — but the RSD/tunnel mechanism only exists on iOS 17+,
++		// so the presence of a tunnel provider is itself proof of iOS >= 17.
++		// Default to the iOS17 path rather than failing.
++		if testConfig.Device.Rsd != nil {
++			log.WithField("err", err).Info("cannot read iOS version via lockdown (cable out); RSD tunnel implies iOS >= 17, using ios17 path")
++			version = ios.IOS17()
++		} else {
++			return make([]TestSuite, 0), fmt.Errorf("RunXCUIWithBundleIdsCtx: cannot determine iOS version: %w", err)
++		}
+ 	}
+ 
+ 	if version.LessThan(ios.IOS14()) {
+diff --git a/ios/utils.go b/ios/utils.go
+index 6655f94..f71815f 100755
+--- a/ios/utils.go
++++ b/ios/utils.go
+@@ -131,6 +131,21 @@ func GetDeviceWithAddress(udid string, address string, provider RsdPortProvider)
+ 			return device, nil
+ 		}
+ 	}
++	// Cable-out fix: the device is not in the usbmux (USB) list, but we have an
++	// RSD provider, which means we are on an already-established tunnel. The RSD
++	// handshake has already proven device identity, and the tunnel path only
++	// needs Address + Rsd + the UDID (SerialNumber) for the appservice launch.
++	// Build the entry directly instead of requiring usbmux visibility.
++	if provider != nil {
++		log.WithField("udid", udid).Info("device not in usbmux list; building DeviceEntry from RSD tunnel (cable out)")
++		return DeviceEntry{
++			Address: address,
++			Rsd:     provider,
++			Properties: DeviceProperties{
++				SerialNumber: udid,
++			},
++		}, nil
++	}
+ 	return DeviceEntry{}, fmt.Errorf("Device '%s' not found. Is it attached to the machine?", udid)
+ }
+ 
+diff --git a/main.go b/main.go
+index e065f5c..6bd6008 100644
+--- a/main.go
++++ b/main.go
+@@ -507,7 +507,18 @@ The commands work as following:
+ 	device, err := ios.GetDevice(udid)
+ 	// device address and rsd port are only available after the tunnel started
+ 	if !tunnelCommand {
+-		exitIfError("Device not found: "+udid, err)
++		// Cable-out fix: when --address + --rsd-port are given, the device is
++		// reachable over an existing RSD tunnel and usbmux (USB) enumeration is
++		// not required. deviceWithRsdProvider proves identity via the RSD
++		// handshake and only carries the UserspaceTUN* fields over from the seed
++		// entry, so a zero-value seed is sufficient. Only fall back to this when
++		// usbmux GetDevice failed (cable out); cable-in behavior is unchanged.
++		if err != nil && addressErr == nil && rsdErr == nil {
++			log.WithField("udid", udid).Info("device not in usbmux (cable out); using RSD tunnel endpoint directly")
++			device = ios.DeviceEntry{}
++		} else {
++			exitIfError("Device not found: "+udid, err)
++		}
+ 		if addressErr == nil && rsdErr == nil {
+ 			if userspaceTunnelErr == nil {
+ 				device.UserspaceTUN = true
