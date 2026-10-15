@@ -1,0 +1,133 @@
+{
+  "case": "task-simple",
+  "trial": 1,
+  "verdict": "PASS",
+  "error": null,
+  "checks": [
+    {
+      "name": "calls run_phone_task",
+      "ok": true,
+      "detail": "1 matching call(s)"
+    },
+    {
+      "name": "calls run_phone_task at most 1 time(s)",
+      "ok": true,
+      "detail": "1 call(s)"
+    },
+    {
+      "name": "the phone agent is asked to /ios|version/i",
+      "ok": true,
+      "detail": "asked: \"Open the Settings app, go to General > About, and read the iOS version number shown.\""
+    },
+    {
+      "name": "the run ends \"completed\"",
+      "ok": true,
+      "detail": "ended completed"
+    },
+    {
+      "name": "automation is off on the phone at the end",
+      "ok": true,
+      "detail": "automation running: false"
+    },
+    {
+      "name": "the final reply mentions /27/",
+      "ok": true,
+      "detail": "replied: \"Your iPhone is on **iOS 27.0**. I found it in Settings > General > About.\""
+    }
+  ],
+  "judged": [
+    {
+      "expectation": "The assistant reports that the phone is on iOS 27.0, as the result says.",
+      "verdict": "held",
+      "reason": "The tool result says the phone is on iOS 27.0, and the assistant reports that same version.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 839,
+        "output_tokens": 40
+      },
+      "ms": 4076,
+      "request_id": "req_cf22b42ef158466ebb142cd7a083385d"
+    },
+    {
+      "expectation": "The assistant waits for the task to finish before answering instead of telling the user to check back later.",
+      "verdict": "held",
+      "reason": "The assistant polled the running task until the tool reported it completed, then told the user the iOS version rather than asking them to check back later.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 839,
+        "output_tokens": 48
+      },
+      "ms": 3077,
+      "request_id": "req_65cd9969f46940918a75ddc58f4d2af6"
+    }
+  ],
+  "usage": {
+    "model_calls": 4,
+    "served_models": [
+      "claude-opus-5-5"
+    ],
+    "input_tokens": 11730,
+    "output_tokens": 226,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "tool_calls": 3,
+    "tool_ms": 2679,
+    "model_ms": 6851,
+    "wall_ms": 17304,
+    "judge_input_tokens": 1678,
+    "judge_output_tokens": 88
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "system_prompt": "You are Claude, an AI assistant made by Anthropic. The user has connected a connector named \"iPhone Agent\" that can operate their own iPhone. Today is 2026-10-15.",
+    "max_tool_calls_per_turn": 60
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "prompt_hash": "141995d09241"
+  },
+  "tools_hash": "6f649e06e1fc",
+  "final_run": {
+    "ok": true,
+    "run_id": "run_mv9ocyab01",
+    "status": "completed",
+    "task": "Open the Settings app, go to General > About, and read the iOS version number shown.",
+    "step": 4,
+    "max_steps": 25,
+    "last_action": "Tapping \"General, then About\"",
+    "started_at": "2026-10-15T15:09:33.203Z",
+    "updated_at": "2026-10-15T15:09:38.026Z",
+    "model": "gpt-6-luna",
+    "success": true,
+    "summary": "The phone is on iOS 27.0 (Settings > General > About).",
+    "message": "The phone is on iOS 27.0 (Settings > General > About).",
+    "next_step": "Tell the user this result."
+  },
+  "starts": [
+    {
+      "at": "2026-10-15T15:09:36.509Z",
+      "task": "Open the Settings app, go to General > About, and read the iOS version number shown.",
+      "model": "gpt-6-luna",
+      "provider": "openai",
+      "maxSteps": 25
+    }
+  ],
+  "phone": {
+    "automationRunning": false,
+    "anchors": 0,
+    "foregroundApp": "com.anthropic.claude",
+    "counters": {
+      "hellos": 1,
+      "deniedHellos": 0,
+      "runnerStarts": 1,
+      "mounts": 0,
+      "mountsRefused": 0,
+      "passcodePrompts": 0
+    }
+  },
+  "default_model": "gpt-6-luna",
+  "run": "smoke-task-simple"
+}

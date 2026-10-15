@@ -120,7 +120,7 @@ npm run test:e2e         # the real server and device code, simulated phone, sta
 npm run lint
 ```
 
-None of them need a phone, a model key or a network. The simulated phone reproduces behaviour measured on a real iPhone: Wi-Fi and cellular, lock and unlock, restart, power-off, the passcode prompt, a phone that was never paired. [docs/development.md](docs/development.md) says what it covers and what it does not.
+None of them need a phone, a model key or a network. `npm run test:record` runs them all and files the results under the version tested, in [test-results/](test-results/); the [connector evals](evals/) measure how Claude itself uses the tools. The simulated phone reproduces behaviour measured on a real iPhone: Wi-Fi and cellular, lock and unlock, restart, power-off, the passcode prompt, a phone that was never paired. [docs/development.md](docs/development.md) says what it covers and what it does not.
 
 ## Contributing
 

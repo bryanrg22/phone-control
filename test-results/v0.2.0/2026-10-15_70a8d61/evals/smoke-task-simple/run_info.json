@@ -1,0 +1,30 @@
+{
+  "harness_version": "0.1.0",
+  "run": "smoke-task-simple",
+  "started": "2026-10-15T15:09:30.843Z",
+  "git": {
+    "commit": "2648bc9057c4682594a3937c209c2c825847c0cc",
+    "dirty": false
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-opus-5-5",
+    "effort": "high"
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "prompt_hash": "141995d09241"
+  },
+  "trials": 1,
+  "cases": [
+    "task-simple"
+  ],
+  "cases_hash": "73e86c4c4727",
+  "node": "v23.9.0",
+  "platform": "darwin-arm64",
+  "finished": "2026-10-15T15:09:48.173Z",
+  "tools_hashes": [
+    "6f649e06e1fc"
+  ]
+}

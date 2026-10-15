@@ -1,0 +1,22 @@
+{
+  "cases": 1,
+  "trials": 1,
+  "test_errors": 0,
+  "reviews": 0,
+  "pass_at_1": 1,
+  "pass_at_1_ci95": {
+    "low": 0.20654329147389294,
+    "high": 1
+  },
+  "pass_hat_k": 1,
+  "per_case": {
+    "task-simple": {
+      "trials": 1,
+      "passes": 1,
+      "errors": 0,
+      "verdicts": [
+        "PASS"
+      ]
+    }
+  }
+}

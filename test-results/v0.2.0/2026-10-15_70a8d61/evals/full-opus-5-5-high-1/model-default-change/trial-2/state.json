@@ -1,0 +1,83 @@
+{
+  "case": "model-default-change",
+  "trial": 2,
+  "verdict": "PASS",
+  "error": null,
+  "checks": [
+    {
+      "name": "calls set_default_model with {\"model\":\"/sol/i\"}",
+      "ok": true,
+      "detail": "1 matching call(s)"
+    },
+    {
+      "name": "starts the phone agent {\"max\":0} time(s)",
+      "ok": true,
+      "detail": "0 start(s)"
+    },
+    {
+      "name": "the default model becomes gpt-6-sol",
+      "ok": true,
+      "detail": "default is gpt-6-sol"
+    }
+  ],
+  "judged": [
+    {
+      "expectation": "The assistant confirms that future phone tasks will use Sol.",
+      "verdict": "held",
+      "reason": "The assistant explicitly confirmed that GPT-6 Sol will drive the phone for all future tasks, and the tool result confirms it was set as the default model.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 420,
+        "output_tokens": 48
+      },
+      "ms": 1457,
+      "request_id": "req_1be0d0f65f51471ca1e3fde7f8c7555f"
+    }
+  ],
+  "usage": {
+    "model_calls": 2,
+    "served_models": [
+      "claude-opus-5-5"
+    ],
+    "input_tokens": 5411,
+    "output_tokens": 309,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "tool_calls": 1,
+    "tool_ms": 10,
+    "model_ms": 4554,
+    "wall_ms": 6822,
+    "judge_input_tokens": 420,
+    "judge_output_tokens": 48
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "system_prompt": "You are Claude, an AI assistant made by Anthropic. The user has connected a connector named \"iPhone Agent\" that can operate their own iPhone. Today is 2026-10-15.",
+    "max_tool_calls_per_turn": 60
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "prompt_hash": "141995d09241"
+  },
+  "tools_hash": "6f649e06e1fc",
+  "final_run": null,
+  "starts": [],
+  "phone": {
+    "automationRunning": false,
+    "anchors": 0,
+    "foregroundApp": "com.apple.springboard",
+    "counters": {
+      "hellos": 0,
+      "deniedHellos": 0,
+      "runnerStarts": 0,
+      "mounts": 0,
+      "mountsRefused": 0,
+      "passcodePrompts": 0
+    }
+  },
+  "default_model": "gpt-6-sol",
+  "run": "full-opus-5-5-high-1"
+}

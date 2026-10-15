@@ -1,0 +1,139 @@
+{
+  "release": "0.2.0",
+  "commit": "70a8d61baeee5efbdc0834acb100c48f448b5705",
+  "dirty": false,
+  "recorded_at": "2026-10-15T16:06:48.845Z",
+  "note": "First record. Release 0.2.0 as deployed. The eval runs were made earlier the same day, on the commits shown, before versioning existed.",
+  "tools_fingerprint": "6f649e06e1fc",
+  "environment": {
+    "node": "v23.9.0",
+    "platform": "darwin 25.6.0 arm64",
+    "xcode": "Xcode 26.4"
+  },
+  "suites": [
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 1,
+      "counts": null,
+      "not_verified": []
+    },
+    {
+      "name": "unit",
+      "command": "npm test",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 1,
+      "counts": {
+        "passed": 17,
+        "failed": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "lifecycle",
+      "command": "npm run test:lifecycle",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 228,
+      "counts": {
+        "passed": 26,
+        "failed": 0,
+        "skipped": 2
+      },
+      "not_verified": [
+        "suspend on one phone leaves another phone's session alone",
+        "network label: Wi-Fi, cellular and UNREACHABLE are three different answers"
+      ]
+    },
+    {
+      "name": "e2e",
+      "command": "npm run test:e2e",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 36,
+      "counts": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "conformance",
+      "command": "npm run test:conformance",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 1,
+      "counts": {
+        "passed": 5,
+        "failed": 0,
+        "expected_failures": 25
+      },
+      "not_verified": []
+    },
+    {
+      "name": "eval-harness-self-test",
+      "command": "npm run test:evals:self",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 151,
+      "counts": {
+        "oracle assistant": "100% of 14 trials passed",
+        "null assistant": "0% of 14 trials passed"
+      },
+      "not_verified": []
+    }
+  ],
+  "evals": [
+    {
+      "run": "full-opus-5-5-high-1",
+      "assistant": "claude-opus-5-5 (high)",
+      "judge": "openai gpt-6-luna",
+      "pass_at_1": "100% (92%–100%)",
+      "pass_hat_k": "100%",
+      "trials": "42 graded, 0 test errors",
+      "commit": "2648bc9",
+      "differs_from_record": true,
+      "changed_since_eval": "13 files changed, 347 insertions(+), 19 deletions(-)"
+    },
+    {
+      "run": "locked-after-fix",
+      "assistant": "claude-opus-5-5 (high)",
+      "judge": "openai gpt-6-luna",
+      "pass_at_1": "100% (44%–100%)",
+      "pass_hat_k": "100%",
+      "trials": "3 graded, 0 test errors",
+      "commit": "2c96319+dirty",
+      "differs_from_record": true,
+      "changed_since_eval": "9 files changed, 117 insertions(+), 20 deletions(-)"
+    },
+    {
+      "run": "smoke-task-simple",
+      "assistant": "claude-opus-5-5 (high)",
+      "judge": "openai gpt-6-luna",
+      "pass_at_1": "100% (21%–100%)",
+      "pass_hat_k": "100%",
+      "trials": "1 graded, 0 test errors",
+      "commit": "2648bc9",
+      "differs_from_record": true,
+      "changed_since_eval": "13 files changed, 347 insertions(+), 19 deletions(-)"
+    }
+  ],
+  "changes": {
+    "previous": null,
+    "commits": [
+      "70a8d61 Version 0.2.0: report release, commit and tool fingerprint; add test records",
+      "04bac3a Keep a failed start on record through the clean-up suspend",
+      "2c96319 Record the first connector-eval baseline: Claude Opus 5.5 passes 42 of 42",
+      "2648bc9 Add connector evals: real Claude against the real server, simulated phone",
+      "96964aa Add MCP conformance and tool-snapshot checks; refuse foreign Host headers",
+      "b8a0ea1 Phone Control: ask Claude to do something on your iPhone"
+    ],
+    "tools_changed": null
+  },
+  "complete": true,
+  "all_passed": true
+}

@@ -1,0 +1,24 @@
+{
+  "cases": 1,
+  "trials": 3,
+  "test_errors": 0,
+  "reviews": 0,
+  "pass_at_1": 1,
+  "pass_at_1_ci95": {
+    "low": 0.43849391955098227,
+    "high": 1
+  },
+  "pass_hat_k": 1,
+  "per_case": {
+    "state-locked": {
+      "trials": 3,
+      "passes": 3,
+      "errors": 0,
+      "verdicts": [
+        "PASS",
+        "PASS",
+        "PASS"
+      ]
+    }
+  }
+}

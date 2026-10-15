@@ -1,0 +1,154 @@
+[
+  {
+    "name": "get_phone_status",
+    "title": "Check whether the user's iPhone is connected",
+    "description": "Reports whether this user has a linked iPhone and whether it is reachable right now. Call this first if a phone task fails to start, or when the user asks \"is my phone connected?\". Tell the user what its message says, in your own words — it names the actual reason and what they need to do. It only LOOKS: it never starts automation on the phone. state \"standby\" means a task can start right away and nothing is running on the phone, which is the normal resting state. If state is waking or waiting_on_phone, call it again after a few seconds until it changes.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "annotations": {
+      "title": "Check phone status",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "run_phone_task",
+    "title": "Do something on the user's iPhone",
+    "description": "Performs a task on the user's own iPhone by actually driving the screen — opening apps, tapping, typing, scrolling. Use it when the user asks for something to be DONE on their phone (\"open LinkedIn and finish that game\", \"reply to Sam in Messages\").\nThis starts the task and returns immediately with a run_id; it does NOT wait for the task to finish. After calling it you MUST follow up with get_run_status until the run reaches a final state. Call get_run_status again right away — it waits for progress by itself, so do not pause or sleep in between.\nIf the run comes back with a question, ask the user that question in the chat, in your own words, and send their reply with answer_question.\nOnly one task can run at a time. Describe the whole goal in one clear sentence rather than issuing steps one at a time.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "string",
+          "description": "What to do, in plain language, as the user would say it. For example: \"open LinkedIn and finish today's puzzle\"."
+        },
+        "max_steps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 40,
+          "description": "Optional cap on agent steps (default 25)."
+        },
+        "when_done": {
+          "type": "string",
+          "enum": [
+            "return",
+            "stay"
+          ],
+          "description": "Optional. Where to leave the phone when the task ends. \"return\" (default) brings the Claude app back to the front so the user sees your reply. Use \"stay\" only when the point of the task is to leave the user somewhere — \"open Maps and start directions\", \"open the camera\"."
+        },
+        "model": {
+          "type": "string",
+          "description": "Optional. Which AI model drives the phone for THIS task only. Pass it only when the user names one (\"use Luna\", \"do it with Sonnet\"); otherwise omit it and the user's default is used. Choices: GPT-6 Luna = gpt-6-luna; GPT-6 Sol = gpt-6-sol; GPT-6 Astra = gpt-6-astra; GPT-5.6 Luna = gpt-5.6-luna; GPT-5.6 Terra = gpt-5.6-terra; GPT-5.6 Sol = gpt-5.6-sol; Claude Sonnet 5 = claude-sonnet-5; Claude Opus 5 = claude-opus-5; Claude Fable 5 = claude-fable-5; Gemini 3.6 Flash = gemini-3.6-flash; Gemini 3.1 Pro = gemini-3.1-pro-preview."
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "title": "Run a task on the iPhone",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "get_run_status",
+    "title": "Check how the phone task is going",
+    "description": "Returns the progress of a run: what it is doing, whether it finished, and — importantly — whether it is waiting on the user. It waits up to about 10 seconds for something to change before answering, so keep calling it back-to-back with no pause in between; if you stop calling it, the task on the phone is stopped.\nstatus values: starting / running / awaiting_answer / completed / failed / stopped.\nIf status is awaiting_answer, the response carries a question (and options, if the answer is a fixed choice). Put that question to the user in the chat and then call answer_question. Do not answer it yourself and do not guess.\nIf status is starting or running, report the progress briefly and keep going. Call get_run_status again right away — it waits for progress by itself, so do not pause or sleep in between.\nWhen status is completed or failed, tell the user the summary — that is the answer they asked for.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "description": "Omit to check the most recent run."
+        }
+      },
+      "additionalProperties": false
+    },
+    "annotations": {
+      "title": "Check task progress",
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "answer_question",
+    "title": "Send the user's answer back to the running task",
+    "description": "Delivers the user's reply to a question the phone task asked, and the task resumes. Only call this with something the USER actually said in this conversation. If the question offered a fixed set of options, pass one of them.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string",
+          "description": "The user's answer, as they gave it."
+        },
+        "run_id": {
+          "type": "string",
+          "description": "Omit to answer the most recent run."
+        }
+      },
+      "required": [
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "title": "Answer the task's question",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "stop_run",
+    "title": "Stop the running phone task",
+    "description": "Stops the task on the phone. Call this the moment the user says stop, cancel, or anything equivalent — before answering anything else.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "description": "Omit to stop the most recent run."
+        }
+      },
+      "additionalProperties": false
+    },
+    "annotations": {
+      "title": "Stop the task",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "set_default_model",
+    "title": "Change which AI model drives the phone by default",
+    "description": "Changes the model that drives the user's phone for all FUTURE tasks. Call it when the user says \"from now on use …\" or \"switch to …\". For a one-off (\"use Sol for this one\") pass model to run_phone_task instead and leave the default alone. Choices: GPT-6 Luna = gpt-6-luna; GPT-6 Sol = gpt-6-sol; GPT-6 Astra = gpt-6-astra; GPT-5.6 Luna = gpt-5.6-luna; GPT-5.6 Terra = gpt-5.6-terra; GPT-5.6 Sol = gpt-5.6-sol; Claude Sonnet 5 = claude-sonnet-5; Claude Opus 5 = claude-opus-5; Claude Fable 5 = claude-fable-5; Gemini 3.6 Flash = gemini-3.6-flash; Gemini 3.1 Pro = gemini-3.1-pro-preview.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "The model to use from now on."
+        }
+      },
+      "required": [
+        "model"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "title": "Change the default model",
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "openWorldHint": false
+    }
+  }
+]

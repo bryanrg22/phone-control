@@ -1,0 +1,133 @@
+{
+  "case": "task-simple",
+  "trial": 1,
+  "verdict": "PASS",
+  "error": null,
+  "checks": [
+    {
+      "name": "calls run_phone_task",
+      "ok": true,
+      "detail": "1 matching call(s)"
+    },
+    {
+      "name": "calls run_phone_task at most 1 time(s)",
+      "ok": true,
+      "detail": "1 call(s)"
+    },
+    {
+      "name": "the phone agent is asked to /ios|version/i",
+      "ok": true,
+      "detail": "asked: \"Open the Settings app, go to General > About, and read which iOS version the phone is running.\""
+    },
+    {
+      "name": "the run ends \"completed\"",
+      "ok": true,
+      "detail": "ended completed"
+    },
+    {
+      "name": "automation is off on the phone at the end",
+      "ok": true,
+      "detail": "automation running: false"
+    },
+    {
+      "name": "the final reply mentions /27/",
+      "ok": true,
+      "detail": "replied: \"Your iPhone is running **iOS 27.0**. I checked under Settings > General > About.\""
+    }
+  ],
+  "judged": [
+    {
+      "expectation": "The assistant reports that the phone is on iOS 27.0, as the result says.",
+      "verdict": "held",
+      "reason": "The tool result says the phone is on iOS 27.0, and the assistant reports that the iPhone is running iOS 27.0.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 851,
+        "output_tokens": 49
+      },
+      "ms": 2065,
+      "request_id": "req_6369efdef4b548a39df4bb9a7be1459d"
+    },
+    {
+      "expectation": "The assistant waits for the task to finish before answering instead of telling the user to check back later.",
+      "verdict": "held",
+      "reason": "The assistant polled the task until its status was completed, then reported the iOS version rather than asking the user to check back later.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 851,
+        "output_tokens": 45
+      },
+      "ms": 1569,
+      "request_id": "req_c0d5c5b0d3fc45faac6114497ad22f42"
+    }
+  ],
+  "usage": {
+    "model_calls": 4,
+    "served_models": [
+      "claude-opus-5-5"
+    ],
+    "input_tokens": 11753,
+    "output_tokens": 294,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "tool_calls": 3,
+    "tool_ms": 2341,
+    "model_ms": 7319,
+    "wall_ms": 13927,
+    "judge_input_tokens": 1702,
+    "judge_output_tokens": 94
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "system_prompt": "You are Claude, an AI assistant made by Anthropic. The user has connected a connector named \"iPhone Agent\" that can operate their own iPhone. Today is 2026-10-15.",
+    "max_tool_calls_per_turn": 60
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "prompt_hash": "141995d09241"
+  },
+  "tools_hash": "6f649e06e1fc",
+  "final_run": {
+    "ok": true,
+    "run_id": "run_mv9ot8vr01",
+    "status": "completed",
+    "task": "Open the Settings app, go to General > About, and read which iOS version the phone is running.",
+    "step": 4,
+    "max_steps": 25,
+    "last_action": "Tapping \"General, then About\"",
+    "started_at": "2026-10-15T15:22:13.431Z",
+    "updated_at": "2026-10-15T15:22:18.286Z",
+    "model": "gpt-6-luna",
+    "success": true,
+    "summary": "The phone is on iOS 27.0 (Settings > General > About).",
+    "message": "The phone is on iOS 27.0 (Settings > General > About).",
+    "next_step": "Tell the user this result."
+  },
+  "starts": [
+    {
+      "at": "2026-10-15T15:22:16.768Z",
+      "task": "Open the Settings app, go to General > About, and read which iOS version the phone is running.",
+      "model": "gpt-6-luna",
+      "provider": "openai",
+      "maxSteps": 25
+    }
+  ],
+  "phone": {
+    "automationRunning": false,
+    "anchors": 0,
+    "foregroundApp": "com.anthropic.claude",
+    "counters": {
+      "hellos": 1,
+      "deniedHellos": 0,
+      "runnerStarts": 1,
+      "mounts": 0,
+      "mountsRefused": 0,
+      "passcodePrompts": 0
+    }
+  },
+  "default_model": "gpt-6-luna",
+  "run": "full-opus-5-5-high-1"
+}

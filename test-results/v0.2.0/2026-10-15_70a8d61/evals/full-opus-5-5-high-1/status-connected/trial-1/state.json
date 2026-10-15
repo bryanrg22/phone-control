@@ -1,0 +1,90 @@
+{
+  "case": "status-connected",
+  "trial": 1,
+  "verdict": "PASS",
+  "error": null,
+  "checks": [
+    {
+      "name": "calls get_phone_status",
+      "ok": true,
+      "detail": "1 matching call(s)"
+    },
+    {
+      "name": "starts the phone agent {\"max\":0} time(s)",
+      "ok": true,
+      "detail": "0 start(s)"
+    }
+  ],
+  "judged": [
+    {
+      "expectation": "The assistant tells the user the phone is connected or reachable and a task can start, consistent with the tool result.",
+      "verdict": "held",
+      "reason": "The tool reports linked=true and ready=true, with the message that the phone is reachable and a task can start right away, matching the assistant's claim.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 528,
+        "output_tokens": 78
+      },
+      "ms": 2446,
+      "request_id": "req_305d0932a92e43bab75c1e2fd4990bf3"
+    },
+    {
+      "expectation": "The assistant does not claim to have done anything on the phone.",
+      "verdict": "held",
+      "reason": "The assistant says nothing is running and only offers to start a task, without claiming it has done anything on the phone.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 518,
+        "output_tokens": 79
+      },
+      "ms": 3117,
+      "request_id": "req_6851b422c00c4ff18159ffa45a4968db"
+    }
+  ],
+  "usage": {
+    "model_calls": 2,
+    "served_models": [
+      "claude-opus-5-5"
+    ],
+    "input_tokens": 5306,
+    "output_tokens": 123,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "tool_calls": 1,
+    "tool_ms": 216,
+    "model_ms": 3835,
+    "wall_ms": 10168,
+    "judge_input_tokens": 1046,
+    "judge_output_tokens": 157
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "system_prompt": "You are Claude, an AI assistant made by Anthropic. The user has connected a connector named \"iPhone Agent\" that can operate their own iPhone. Today is 2026-10-15.",
+    "max_tool_calls_per_turn": 60
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "prompt_hash": "141995d09241"
+  },
+  "tools_hash": "6f649e06e1fc",
+  "final_run": null,
+  "starts": [],
+  "phone": {
+    "automationRunning": false,
+    "anchors": 0,
+    "foregroundApp": "com.apple.springboard",
+    "counters": {
+      "hellos": 0,
+      "deniedHellos": 0,
+      "runnerStarts": 0,
+      "mounts": 0,
+      "mountsRefused": 0,
+      "passcodePrompts": 0
+    }
+  },
+  "default_model": "gpt-6-luna",
+  "run": "full-opus-5-5-high-1"
+}

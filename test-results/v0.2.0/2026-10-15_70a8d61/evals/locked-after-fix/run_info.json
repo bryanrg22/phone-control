@@ -1,0 +1,30 @@
+{
+  "harness_version": "0.1.0",
+  "run": "locked-after-fix",
+  "started": "2026-10-15T15:25:42.639Z",
+  "git": {
+    "commit": "2c96319356f618354b7e2f9d4237022ee67092e7",
+    "dirty": true
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-opus-5-5",
+    "effort": "high"
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "prompt_hash": "141995d09241"
+  },
+  "trials": 3,
+  "cases": [
+    "state-locked"
+  ],
+  "cases_hash": "73e86c4c4727",
+  "node": "v23.9.0",
+  "platform": "darwin-arm64",
+  "finished": "2026-10-15T15:26:50.972Z",
+  "tools_hashes": [
+    "6f649e06e1fc"
+  ]
+}

@@ -25,6 +25,20 @@ The same test enforces what clients rely on: descriptions within 2,048 character
 
 `npm run test:conformance` starts the real server, signs in as an assistant would, and runs [@modelcontextprotocol/conformance](https://github.com/modelcontextprotocol/conformance) against it. Scenarios for features this server does not offer (resources, prompts, sampling, the suite's own sample tools) are listed with their reasons in `e2e/conformance-expected-failures.yml`; the run fails if anything else fails, or if a listed scenario starts passing.
 
+## Versions and test records
+
+The release is `version` in `package.json`; bump it, and add a `CHANGELOG.md` entry, for any change a user or an assistant could notice. The running server reports three things about itself, at `/healthz` and to the assistant (MCP `serverInfo` and `get_phone_status`):
+
+| | Changes when | Comes from |
+| --- | --- | --- |
+| `release` | a version is cut | `package.json` |
+| `commit` | any commit; `+dirty` if the files differ from it | `git`, or `server/src/commit.txt` in a copy made with `git archive` (stamped by `export-subst` in `.gitattributes`) |
+| `tools` | the tool list as an assistant sees it changes: a name, a description, a schema, an annotation | a hash of exactly what `tools/list` returns |
+
+`tools` is the one to watch: it is the whole of what Claude is told, so when it changes, earlier eval results no longer describe the server.
+
+`npm run test:record` runs every suite and files the evidence under `test-results/v<release>/<date>_<commit>/`: each suite's full output, the tool list, what changed since the previous record (commits, and whether `tools` changed), and the complete evidence of any eval runs passed with `--evals <run folder>`, each labelled with the commit it ran on. It refuses to overwrite a record, marks one made from uncommitted files as `_dirty`, removes sign-in tokens and local paths from the output, and stops if a token is left anywhere in the record. Commit the record, then deploy the commit it names, so what was tested is what runs. `test-results/README.md` lists every record.
+
 ## The three kinds of test
 
 | Command | What runs for real | What is faked |

@@ -1,0 +1,111 @@
+{
+  "case": "state-locked",
+  "trial": 1,
+  "verdict": "PASS",
+  "error": null,
+  "checks": [
+    {
+      "name": "calls one of run_phone_task | get_phone_status",
+      "ok": true,
+      "detail": "called run_phone_task"
+    },
+    {
+      "name": "calls run_phone_task at most 2 time(s)",
+      "ok": true,
+      "detail": "1 call(s)"
+    },
+    {
+      "name": "automation is off on the phone at the end",
+      "ok": true,
+      "detail": "automation running: false"
+    }
+  ],
+  "judged": [
+    {
+      "expectation": "The assistant tells the user to unlock the phone.",
+      "verdict": "held",
+      "reason": "The assistant explicitly told the user to unlock their iPhone, consistent with the tool result requesting that they unlock it.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 862,
+        "output_tokens": 62
+      },
+      "ms": 2005,
+      "request_id": "req_78736be055c948f88a4badd750c9f32f"
+    },
+    {
+      "expectation": "The assistant does not state a battery percentage.",
+      "verdict": "held",
+      "reason": "The assistant only says it will check the battery percentage after the phone is unlocked and does not state a percentage.",
+      "model": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 861,
+        "output_tokens": 69
+      },
+      "ms": 1795,
+      "request_id": "req_5373ba947d9a4bad9c5a5a4a760d9a33"
+    }
+  ],
+  "usage": {
+    "model_calls": 4,
+    "served_models": [
+      "claude-opus-5-5"
+    ],
+    "input_tokens": 11773,
+    "output_tokens": 314,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "tool_calls": 3,
+    "tool_ms": 7611,
+    "model_ms": 8580,
+    "wall_ms": 20663,
+    "judge_input_tokens": 1723,
+    "judge_output_tokens": 131
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-opus-5-5",
+    "effort": "high",
+    "system_prompt": "You are Claude, an AI assistant made by Anthropic. The user has connected a connector named \"iPhone Agent\" that can operate their own iPhone. Today is 2026-10-15.",
+    "max_tool_calls_per_turn": 60
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "prompt_hash": "141995d09241"
+  },
+  "tools_hash": "6f649e06e1fc",
+  "final_run": {
+    "ok": true,
+    "run_id": "run_mv9oxsc501",
+    "status": "failed",
+    "task": "Open Settings, go to Battery, and report the current battery percentage.",
+    "step": 0,
+    "max_steps": 25,
+    "last_action": "Starting automation on your phone. This can take up to a minute; ask me again in a few seconds.",
+    "started_at": "2026-10-15T15:25:45.269Z",
+    "updated_at": "2026-10-15T15:25:54.707Z",
+    "model": "gpt-6-luna",
+    "success": false,
+    "summary": "Your phone did not respond in time. Unlock it, enter your passcode if it asks to allow automation, then ask me again.",
+    "error": "could not start: needs_attention",
+    "message": "Your phone did not respond in time. Unlock it, enter your passcode if it asks to allow automation, then ask me again.",
+    "next_step": "Tell the user this result."
+  },
+  "starts": [],
+  "phone": {
+    "automationRunning": false,
+    "anchors": 0,
+    "foregroundApp": "com.apple.springboard",
+    "counters": {
+      "hellos": 1,
+      "deniedHellos": 0,
+      "runnerStarts": 0,
+      "mounts": 0,
+      "mountsRefused": 0,
+      "passcodePrompts": 0
+    }
+  },
+  "default_model": "gpt-6-luna",
+  "run": "locked-after-fix"
+}
