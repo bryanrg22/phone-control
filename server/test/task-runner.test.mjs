@@ -485,7 +485,7 @@ await ok('the default is GPT-6 Luna, and a task on a standby phone is accepted w
 await ok('"use Sonnet for this one" changes that task only', async () => {
   const { a, started, store, caller } = api();
   const r = await a.call('run_phone_task', { task: 'open Maps', model: 'Sonnet' }, caller);
-  assert.equal(r.model, 'claude-sonnet-5');
+  assert.equal(r.model, 'claude-sonnet-5-5', 'a bare family name is its newest member');
   assert.equal(started[0].model.provider, 'anthropic');
   store.finish(r.run_id, { success: true, summary: 'x' });
   const next = await a.call('run_phone_task', { task: 'open Maps again' }, caller);
@@ -495,10 +495,17 @@ await ok('"use Sonnet for this one" changes that task only', async () => {
 await ok('"from now on use Sol" changes the default, per user, and shows up in the status answer', async () => {
   const { a, caller } = api();
   const set = await a.call('set_default_model', { model: 'Sol' }, caller);
-  assert.deepEqual([set.ok, set.default_model], [true, 'gpt-6-sol']);
-  assert.equal((await a.call('run_phone_task', { task: 'open Notes' }, caller)).model, 'gpt-6-sol');
-  assert.equal((await a.call('get_phone_status', {}, caller)).default_model, 'gpt-6-sol');
+  assert.deepEqual([set.ok, set.default_model], [true, 'gpt-6.1-sol']);
+  assert.equal((await a.call('run_phone_task', { task: 'open Notes' }, caller)).model, 'gpt-6.1-sol');
+  assert.equal((await a.call('get_phone_status', {}, caller)).default_model, 'gpt-6.1-sol');
   assert.equal((await a.call('get_phone_status', {}, { uid: 'someone-else' })).default_model, 'gpt-6-luna', 'one user\'s choice leaked to another');
+});
+
+await ok('an older model is still chosen by its version, and a saved older default still works', async () => {
+  const { a, caller } = api();
+  assert.equal((await a.call('run_phone_task', { task: 'x', model: 'Sonnet 5' }, caller)).model, 'claude-sonnet-5');
+  const set = await a.call('set_default_model', { model: 'gpt-6-sol' }, caller);
+  assert.deepEqual([set.ok, set.default_model], [true, 'gpt-6-sol']);
 });
 
 await ok('an unknown model, or one with no key on the server, is refused BEFORE the phone is touched', async () => {

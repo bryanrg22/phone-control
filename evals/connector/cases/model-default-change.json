@@ -17,7 +17,7 @@
     "starts": {
       "max": 0
     },
-    "default_model": "gpt-6-sol"
+    "default_model": "gpt-6.1-sol"
   },
   "expect": [
     "The assistant confirms that future phone tasks will use Sol."

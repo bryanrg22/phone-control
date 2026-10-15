@@ -217,7 +217,7 @@ try {
     const before = A.snapshot();
     const done = await untilFinal((await tool('run_phone_task', { task: 'open Settings', model: 'sonnet', when_done: 'stay' })).run_id);
     assert.equal(done.status, 'completed', JSON.stringify(done));
-    assert.match(done.summary, /model=claude-sonnet-5 provider=anthropic/);
+    assert.match(done.summary, /model=claude-sonnet-5-5 provider=anthropic/);
     assert.equal(A.counters.hellos, before.hellos, 'a new tunnel was built on cellular (impossible on a real phone)');
     assert.deepEqual(await h.tunnelPids(A), [firstTunnel]);
     await waitFor(nothingRunning, 'automation to be put down after the task', 20000);

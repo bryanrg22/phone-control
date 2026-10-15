@@ -19,7 +19,7 @@
     "Use Sonnet for this one: open Maps and search for coffee."
   ],
   "checks": {
-    "task_model": "claude-sonnet-5",
+    "task_model": "claude-sonnet-5-5",
     "must_not_call": [
       {
         "tool": "set_default_model"
