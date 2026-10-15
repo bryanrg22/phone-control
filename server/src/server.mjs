@@ -51,10 +51,10 @@ import {
 import { createRunStore } from './runs.mjs';
 import { createDeviceResolver } from './device-resolver.mjs';
 import { createToolApi } from './tool-api.mjs';
-import { createMcpHandler } from './mcp.mjs';
+import { createMcpHandler, servedTools } from './mcp.mjs';
 import { startAgentProcess } from './agent-runner.mjs';
 import { createSupervisorClient, parseDeviceOverrides } from './preflight.mjs';
-import { createVersionInfo } from './version.mjs';
+import { createVersionInfo, toolsFingerprint } from './version.mjs';
 import { createTaskRunner } from './task-runner.mjs';
 import { createPrefs } from './prefs.mjs';
 import { providerKeyPresent } from './models.mjs';
@@ -562,7 +562,9 @@ export function buildProductionApp(env = process.env) {
     startArm: env.CONNECTOR_ALLOW_ARM === '0' ? null : supervisor.startArm,
   });
   const agentRoot = env.CONNECTOR_AGENT_ROOT || REPO;
-  const versionInfo = createVersionInfo({ repoRoot: REPO, agentRoot });
+  // The tool list is built below; fingerprint it when asked, as served.
+  let api = null;
+  const versionInfo = createVersionInfo({ repoRoot: REPO, agentRoot, tools: () => (api ? toolsFingerprint(servedTools(api.definitions)) : null) });
   const prefs = createPrefs({
     path: env.CONNECTOR_PREFS || join(dirname(storePath), 'prefs.json'),
     defaultModel: env.CONNECTOR_DEFAULT_MODEL,
@@ -584,7 +586,7 @@ export function buildProductionApp(env = process.env) {
       ...(env.CONNECTOR_ABANDON_SECONDS ? { abandonMs: Number(env.CONNECTOR_ABANDON_SECONDS) * 1000 } : {}),
     },
   });
-  const api = createToolApi({
+  api = createToolApi({
     store, devices, log, versionInfo, prefs,
     hasProviderKey: (provider) => providerKeyPresent(provider, env),
     startRun: (ctx) => { taskRunner.start(ctx); },   // returns at once; the run record carries progress

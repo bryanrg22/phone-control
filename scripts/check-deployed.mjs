@@ -10,7 +10,7 @@
 
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fingerprint, serverFiles, deviceFiles, agentFiles } from '../server/src/version.mjs';
+import { fingerprint, serverFiles, deviceFiles, agentFiles, releaseOf, commitOf } from '../server/src/version.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const url = (process.argv[2] || process.env.CONNECTOR_PUBLIC_URL || '').replace(/\/+$/, '');
@@ -38,6 +38,10 @@ if (remote.server === undefined) {
   console.error('the server reports versions in a different shape — it is not running phone-control (an older deployment?)');
   process.exit(1);
 }
+
+const here = commitOf(REPO);
+console.log(`server: ${remote.release ? `phone-control ${remote.release} at ${remote.commit}` : 'release not reported (deployed before 0.2.0)'}${remote.tools ? `, tools ${remote.tools}` : ''}`);
+console.log(`local:  phone-control ${releaseOf(REPO)} at ${here.commit ? `${here.commit.slice(0, 12)}${here.dirty ? '+dirty' : ''}` : 'unknown commit'}\n`);
 
 let bad = 0;
 const row = (name, mine, theirs, note = '') => {

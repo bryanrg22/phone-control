@@ -18,6 +18,19 @@
 //   • resources / prompts — we advertise only `tools`, so a conformant client
 //     never asks.
 
+import { releaseOf } from './version.mjs';
+
+/** The tool list exactly as an assistant receives it from tools/list. */
+export function servedTools(definitions) {
+  return definitions.map((t) => ({
+    name: t.name,
+    title: t.title,
+    description: t.description,
+    inputSchema: t.inputSchema,
+    annotations: t.annotations,
+  }));
+}
+
 /** Newest first. We echo the client's version when we know it, which is what
  *  keeps an older client working against a newer server.
  *
@@ -46,7 +59,7 @@ const rpcError = (id, code, message, data) => ({
  * @param {object} deps.api        createToolApi(...) result
  * @param {object} [deps.serverInfo]
  */
-export function createMcpHandler({ api, serverInfo = { name: 'phone-control', title: 'Phone Control', version: '1.0.0' } }) {
+export function createMcpHandler({ api, serverInfo = { name: 'phone-control', title: 'Phone Control', version: releaseOf() || '0.0.0' } }) {
   /**
    * @param {object} msg     a parsed JSON-RPC message
    * @param {{uid: string, email?: string}} caller
@@ -83,13 +96,7 @@ export function createMcpHandler({ api, serverInfo = { name: 'phone-control', ti
 
       case 'tools/list':
         return rpcResult(msg.id, {
-          tools: api.definitions.map((t) => ({
-            name: t.name,
-            title: t.title,
-            description: t.description,
-            inputSchema: t.inputSchema,
-            annotations: t.annotations,
-          })),
+          tools: servedTools(api.definitions),
         });
 
       case 'tools/call': {

@@ -15,10 +15,34 @@
 
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+/** The release version: package.json is the single source. */
+export function releaseOf(repoRoot = REPO) {
+  try { return JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')).version || null; } catch { return null; }
+}
+
+/**
+ * The exact commit. A deployed copy made with `git archive` carries it in
+ * server/src/commit.txt, which git fills in on export (.gitattributes:
+ * export-subst). A checkout reads it from git instead, and says when the
+ * working tree has changes that are not in that commit.
+ */
+export function commitOf(repoRoot = REPO) {
+  try {
+    const stamped = readFileSync(join(repoRoot, 'server', 'src', 'commit.txt'), 'utf8').trim();
+    if (/^[0-9a-f]{40}$/.test(stamped)) return { commit: stamped, dirty: false, source: 'archive' };
+  } catch { /* not stamped */ }
+  try {
+    const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    const dirty = execFileSync('git', ['status', '--porcelain'], { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().length > 0;
+    return { commit, dirty, source: 'git' };
+  } catch { return { commit: null, dirty: null, source: null }; }
+}
 
 /** 12 hex chars over (basename, bytes) of each file, order-independent. */
 export function fingerprint(paths) {
@@ -42,14 +66,26 @@ export const deviceFiles = (repoRoot = REPO) => listing(join(repoRoot, 'device')
 /** The loop that drives the phone. */
 export const agentFiles = (agentRoot = REPO) => listing(join(agentRoot, 'agent'), (f) => f.endsWith('.mjs'));
 
+/** 12 hex characters over the tool definitions exactly as an assistant receives them. */
+export function toolsFingerprint(definitions) {
+  return createHash('sha256').update(JSON.stringify(definitions)).digest('hex').slice(0, 12);
+}
+
 /**
- * @returns {() => {server: string, startedAt: string, stale: boolean, device: string|null, agent: string|null}}
+ * @param {object} [opts]
+ * @param {string|(() => string)} [opts.tools]  fingerprint of the served tool list (toolsFingerprint), or a function giving it
+ * @returns {() => {release: string|null, commit: string|null, server: string, startedAt: string, stale: boolean, device: string|null, agent: string|null, tools: string|null}}
  */
-export function createVersionInfo({ repoRoot = REPO, agentRoot = repoRoot, now = () => new Date() } = {}) {
+export function createVersionInfo({ repoRoot = REPO, agentRoot = repoRoot, now = () => new Date(), tools = null } = {}) {
   const loaded = fingerprint(serverFiles(repoRoot));
   const startedAt = now().toISOString();
   const orNull = (files) => (files.length ? fingerprint(files) : null);
+  const release = releaseOf(repoRoot);
+  const { commit, dirty } = commitOf(repoRoot);
   return () => ({
+    release,
+    commit: commit ? `${commit.slice(0, 12)}${dirty ? '+dirty' : ''}` : null,
+    tools: typeof tools === 'function' ? tools() : tools,
     server: loaded,
     startedAt,
     stale: fingerprint(serverFiles(repoRoot)) !== loaded,

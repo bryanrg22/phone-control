@@ -14,7 +14,7 @@ import { parseScreenState, collectStrings, findBanner, bannerSwipe } from '../..
 import { describePhoneState, parseDeviceOverrides, createSupervisorClient } from '../src/preflight.mjs';
 import { createDeviceResolver } from '../src/device-resolver.mjs';
 import { createToolApi } from '../src/tool-api.mjs';
-import { fingerprint, serverFiles, createVersionInfo } from '../src/version.mjs';
+import { fingerprint, serverFiles, createVersionInfo, releaseOf, commitOf, toolsFingerprint } from '../src/version.mjs';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -357,6 +357,32 @@ await ok('a missing file changes the fingerprint instead of crashing; a missing 
   const v = createVersionInfo({ repoRoot: empty })();
   assert.deepEqual([v.device, v.agent], [null, null]);
   rmSync(empty, { recursive: true, force: true });
+});
+
+await ok('the version names the release, the exact commit, and the tool list as served', () => {
+  const v = createVersionInfo({ tools: () => 'abc123def456' })();
+  assert.match(v.release, /^\d+\.\d+\.\d+/, 'release comes from package.json');
+  assert.equal(v.release, releaseOf());
+  assert.match(v.commit, /^[0-9a-f]{12}(\+dirty)?$/, 'a checkout reports its commit');
+  assert.equal(v.tools, 'abc123def456', 'the tool fingerprint is read when asked, not frozen at start');
+  assert.equal(createVersionInfo({ tools: 'fixed' })().tools, 'fixed');
+});
+
+await ok('a copy made with git archive reports the commit stamped into it', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'ver-stamp-'));
+  mkdirSync(join(dir, 'server', 'src'), { recursive: true });
+  writeFileSync(join(dir, 'server', 'src', 'commit.txt'), `${'a'.repeat(40)}\n`);
+  assert.deepEqual(commitOf(dir), { commit: 'a'.repeat(40), dirty: false, source: 'archive' });
+  writeFileSync(join(dir, 'server', 'src', 'commit.txt'), '$Format:%H$\n');
+  assert.equal(commitOf(dir).source === 'archive', false, 'an unfilled placeholder is never taken for a commit');
+  rmSync(dir, { recursive: true, force: true });
+});
+
+await ok('the tool fingerprint changes with any change to what an assistant sees', () => {
+  const tools = [{ name: 'a', description: 'x', inputSchema: { type: 'object' } }];
+  const f = toolsFingerprint(tools);
+  assert.match(f, /^[0-9a-f]{12}$/);
+  assert.notEqual(toolsFingerprint([{ ...tools[0], description: 'y' }]), f);
 });
 
 await ok('get_phone_status carries the server version', async () => {

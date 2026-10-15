@@ -1,6 +1,6 @@
 {
   "name": "phone-control",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Ask Claude to do something on your iPhone. A self-hosted MCP connector that drives a real, un-tethered iPhone from a small Linux server.",
   "type": "module",
@@ -23,7 +23,8 @@
     "test:conformance": "node e2e/conformance.mjs",
     "snapshots:update": "UPDATE_SNAPSHOTS=1 node server/test/tool-snapshots.test.mjs",
     "evals:connector": "node evals/connector/run.mjs",
-    "test:evals:self": "node evals/connector/run.mjs --assistant oracle --expect all-pass && node evals/connector/run.mjs --assistant null --expect all-fail"
+    "test:evals:self": "node evals/connector/run.mjs --assistant oracle --expect all-pass && node evals/connector/run.mjs --assistant null --expect all-fail",
+    "test:record": "node scripts/record-tests.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

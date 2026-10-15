@@ -1,0 +1,2 @@
+# Stamp the deployed copy with its commit (git archive fills this in).
+server/src/commit.txt export-subst
