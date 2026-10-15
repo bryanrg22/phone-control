@@ -119,6 +119,22 @@ await (async () => {
     await exec('hideKeyboard', {});
     check('hideKeyboard clears keyboardLikelyUp', state.keyboardLikelyUp === false);
   }
+  // hideKeyboard must report what the screen shows, not what it attempted.
+  for (const [name, visible, spot, expectHidden, expectFlag] of [
+    ['Return closes it', [false], null, true, false],
+    ['a tap on an empty area closes it', [true, false], { x: 10, y: 10 }, true, false],
+    ['nothing closes it (the 2026-10-15 Add Alarm case)', [true, true], { x: 10, y: 10 }, false, true],
+    ['no empty spot to tap', [true], null, false, true],
+  ]) {
+    const { ctx, calls, state } = mockCtx();
+    const seq = [...visible];
+    ctx.maestro.keyboardVisible = async () => seq.shift();
+    ctx.maestro.emptySpotAboveKeyboard = async () => spot;
+    const r = await createToolExecutor(ctx)('hideKeyboard', {});
+    check(`hideKeyboard, ${name}: says ${expectHidden ? 'hidden' : 'still up'}`, r.startsWith(expectHidden ? 'Keyboard hidden' : 'Keyboard is still up'), r);
+    check(`hideKeyboard, ${name}: keyboard flag ${expectFlag}`, state.keyboardLikelyUp === expectFlag);
+    if (spot) check(`hideKeyboard, ${name}: tapped the empty spot`, calls.some((c) => c[0] === 'touchPoint' && c[1] === 10));
+  }
   {
     const { ctx } = mockCtx();
     const exec = createToolExecutor(ctx);

@@ -20,7 +20,7 @@ import { parseAgentArgs, buildHelpText } from './cli-args.mjs';
 import { createStuckDetector } from './stuck-detector.mjs';
 import { LLM_CONFIG, createLLMClient } from './llm-client.mjs';
 import { runShell, MaestroMCP, createDirectHttpDriver, captureRawScreenshot } from './device-backend.mjs';
-import { buildToolDefs, createToolExecutor, capElementList } from './tools.mjs';
+import { buildToolDefs, createToolExecutor, capElementList, formatUIElements, screenSignature } from './tools.mjs';
 import { runAssertSql as runAssertSqlEngine } from './sql-assert.mjs';
 // sharp's native libvips dylib triggers macOS Gatekeeper signature verification
 // on first load per system-session — ~50s the first time, ~28ms after that
@@ -110,6 +110,24 @@ function saveTraceStep(stepNo, buffer, elementsText) {
     if (elementsText) writeFileSync(join(traceDir, `step-${nn}-elements.txt`), elementsText);
   } catch { /* tracing is best-effort */ }
 }
+// Alongside the images: one JSON line per step with everything the model did —
+// every tool call with its full arguments and result, its text, its token use.
+// With step-NN images this is the complete trajectory, enough to judge a run
+// without re-running it (evals/phone-agent converts it to iOSWorld's format).
+function saveStepRecord(record) {
+  if (!traceDir) return;
+  try {
+    if (!_traceDirReady) { mkdirSync(traceDir, { recursive: true }); _traceDirReady = true; }
+    appendFileSync(join(traceDir, 'steps.jsonl'), JSON.stringify(record) + '\n');
+  } catch { /* tracing is best-effort */ }
+}
+const stepUsage = (data) => ({
+  served_model: data.model ?? null,
+  input_tokens: data.usage?.prompt_tokens ?? null,
+  output_tokens: data.usage?.completion_tokens ?? null,
+  cache_read_input_tokens: data.usage?.cache_read_input_tokens ?? null,
+  cache_creation_input_tokens: data.usage?.cache_creation_input_tokens ?? null,
+});
 // ─── Provider config (LLM_CONFIG now lives in llm-client.mjs) ───
 const llmConfig = LLM_CONFIG[provider];
 if (!llmConfig) { console.log(`ERROR: Unknown provider "${provider}". Use: openai, gemini, anthropic, or local`); process.exit(1); }
@@ -266,7 +284,9 @@ const knownBundleIds = {
   SNKRS: 'com.nike.snkrs', Supreme: 'com.supremenewyork.supreme',
 };
 
-if (isPhone) {
+// Which apps exist is a property of the DEVICE, not of the toolset: a simulator
+// driven with the phone profile still lists its apps with simctl.
+if (backend === 'phone-direct') {
   // Two-layer app enumeration on physical iPhone:
   //
   //  Layer 1 (safety net): hardcoded `knownBundleIds` — covers ~50 common
@@ -952,8 +972,9 @@ try {
     const imgMime = buffer[0] === 0xFF && buffer[1] === 0xD8 ? 'image/jpeg' : 'image/png';
     const hText = hierResult?.text || '';
     saveTraceStep(0, buffer, hText ? `initial hierarchy:\n${hText.slice(0, 20000)}` : '');
-    const labels = flattenHierarchy(hText);
-    const elemText = labels.length > 0 ? `\n\nUI elements on screen:\n${capElementList(labels.map(l => `- "${l}"`)).join('\n')}` : '';
+    // The same list every later step carries (tools.mjs formatUIElements).
+    const labels = formatUIElements(hText, useDirectHttp ? phoneScreenWidth : 402, useDirectHttp ? phoneScreenHeight : 874);
+    const elemText = labels.length > 0 ? `\n\nUI elements on screen:\n${capElementList(labels).join('\n')}` : '';
     initialUserContent = [
       { type: 'image_url', image_url: { url: `data:${imgMime};base64,${b64}` } },
       { type: 'text', text: `Task: ${task}\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed.${elemText}` },
@@ -976,7 +997,7 @@ console.log(`  Task:      ${task}`);
 console.log(`  Model:     ${modelName} (${provider})`);
 console.log(`  Max Steps: ${maxSteps}`);
 console.log(`  Apps:      ${Object.keys(appMap).length} detected`);
-console.log(`  Device:    ${isPhone ? 'Physical iPhone' : 'iOS Simulator'}`);
+console.log(`  Device:    ${backend === 'phone-direct' ? 'Physical iPhone' : isPhone ? 'iOS Simulator, iPhone toolset' : 'iOS Simulator'}`);
 console.log(`  Grounding: ${grounding}${useCompression ? ' + compress' : ''}`);
 console.log(`  Temp:      ${effectiveTemperature} · prompt-hash ${promptHash}`);
 console.log(`  Prompt:    ${promptMode} (structured=${pmStructured} iosHints=${pmIosHints} conventions=${pmConventions} safetyTags=${pmSafetyTags})`);
@@ -1146,6 +1167,7 @@ for (let step = 1; step <= maxSteps; step++) {
     let doneMsg = '';
     let errorThisStep = false;
     const stepToolTraces = [];
+    const stepCalls = [];
 
     for (const tc of msg.tool_calls) {
       const toolName = tc.function.name;
@@ -1159,6 +1181,7 @@ for (let step = 1; step <= maxSteps; step++) {
         // and a babbling model is not a dead runner.
         console.log(`[Tool] ${toolName}: malformed JSON arguments (${String(tc.function.arguments).slice(0, 80)}) — telling the model`);
         messages.push({ role: 'tool', tool_call_id: tc.id, content: 'ERROR: your tool arguments were not valid JSON. Re-issue the call with valid JSON arguments.' });
+        stepCalls.push({ name: toolName, args_raw: String(tc.function.arguments).slice(0, 2000), result: 'ERROR: arguments were not valid JSON', ms: 0 });
         continue;
       }
       console.log(`[Tool] ${toolName}(${JSON.stringify(toolArgs)})`);
@@ -1272,6 +1295,7 @@ for (let step = 1; step <= maxSteps; step++) {
       }
 
       messages.push({ role: 'tool', tool_call_id: tc.id, content: result });
+      stepCalls.push({ name: toolName, args: toolArgs, result: String(result ?? '').slice(0, 4000), ms: Date.now() - execStart });
 
       // Record structured trace for procedural memory
       const traceableTools = ['openApp', 'tap', 'tapText', 'inputText', 'pressKey', 'scroll', 'swipe', 'typeAndSubmit', 'hideKeyboard', 'webSearch'];
@@ -1292,6 +1316,8 @@ for (let step = 1; step <= maxSteps; step++) {
         });
       }
     }
+
+    saveStepRecord({ step, model_s: entry.aiTime, ...stepUsage(data), text: typeof msg.content === 'string' ? msg.content : '', tool_calls: stepCalls });
 
     // Collect step trace
     if (stepToolTraces.length > 0) {
@@ -1533,50 +1559,12 @@ for (let step = 1; step <= maxSteps; step++) {
           try {
             const hierResult = await maestro.viewHierarchy();
             const hText = hierResult.text || '';
-            const uiNoise = ['scroll bar', 'battery', 'Cellular', 'Wi-Fi bars', 'PM', 'AM', 'No signal', 'Not charging', 'signal strength', 'battery power', 'location services', 'Location tracking'];
-            const elems = [];
-            const sw = useDirectHttp ? phoneScreenWidth : 402;
-            const sh = useDirectHttp ? phoneScreenHeight : 874;
-            try {
-              const json = JSON.parse(hText);
-              function collectAuto(node) {
-                if (!node) return;
-                if (node.label && node.label.trim()) {
-                  const label = node.label.trim();
-                  if (!uiNoise.some(n => label.includes(n))) {
-                    let e;
-                    if (node.frame) {
-                      const px = Math.round((node.frame.X + node.frame.Width / 2) / sw * 100);
-                      const py = Math.round((node.frame.Y + node.frame.Height / 2) / sh * 100);
-                      e = `- "${label}" at (${px}%, ${py}%)`;
-                    } else {
-                      e = `- "${label}"`;
-                    }
-                    if (!elems.some(f => f.startsWith(`- "${label}"`))) elems.push(e);
-                  }
-                }
-                if (node.children) node.children.forEach(collectAuto);
-              }
-              collectAuto(json?.axElement || json);
-            } catch {
-              const boundsRe = /\[(\d+),(\d+)\]\[(\d+),(\d+)\]/;
-              for (const line of hText.split('\n')) {
-                const lm = line.match(/accessibilityText[="] *:? *"?([^";,\n]+)/);
-                if (!lm) continue;
-                const label = lm[1].trim();
-                if (!label || uiNoise.some(n => label.includes(n))) continue;
-                const bm = line.match(boundsRe);
-                let e;
-                if (bm) {
-                  const px = Math.round(((parseInt(bm[1]) + parseInt(bm[3])) / 2) / sw * 100);
-                  const py = Math.round(((parseInt(bm[2]) + parseInt(bm[4])) / 2) / sh * 100);
-                  e = `- "${label}" at (${px}%, ${py}%)`;
-                } else {
-                  e = `- "${label}"`;
-                }
-                if (!elems.some(f => f.startsWith(`- "${label}"`))) elems.push(e);
-              }
-            }
+            // The same formatter getUIElements uses (tools.mjs): labels AND values
+            // (picker wheels, text fields), every element at its own position, the
+            // status-bar clock dropped by position. This step used to carry an older
+            // inline copy that kept only labels, dropped any label containing "AM"/"PM",
+            // and kept one element per label (2026-10-15 eval, iOSWorld Add Alarm).
+            const elems = formatUIElements(hText, useDirectHttp ? phoneScreenWidth : 402, useDirectHttp ? phoneScreenHeight : 874);
             if (elems.length > 0) {
               console.log(`[Auto-UI] ${elems.length} elements bundled with screenshot${elems.length > 150 ? ' (capped at 150)' : ''}`);
               const occlusionNote = keyboardLikelyUp
@@ -1611,9 +1599,9 @@ for (let step = 1; step <= maxSteps; step++) {
         // keyboard-closed view of the SAME screen must count as two distinct states,
         // so an agent cycling type → hideKeyboard → type registers as oscillating
         // between 2 states (breaker-eligible) instead of "making progress".
-        const screenSig = (keyboardLikelyUp ? 'KB|' : '') + [...uiElementsText.matchAll(/^- "([^"]+)"/gm)].map(m => m[1])
-          .filter(l => !/^\d{1,2}:\d{2}/.test(l))   // drop the status-bar clock so a minute tick isn't "progress"
-          .sort().join('|');
+        // Labels AND values (tools.mjs screenSignature), so a moving picker or a field
+        // being filled is progress; the status-bar clock is already left out of the list.
+        const screenSig = (keyboardLikelyUp ? 'KB|' : '') + screenSignature(uiElementsText.split('\n').filter((l) => l.startsWith('- ')));
         let unchangedWarning = '';
         if (screenSig && screenSig === prevScreenSig) {
           unchangedScreenCount++;
@@ -1687,6 +1675,7 @@ for (let step = 1; step <= maxSteps; step++) {
     // 2026-05-13: Step 13 returned 2 output tokens of whitespace, Steps
     // 14-20 all 400'd identically.)
     const textContent = (typeof msg.content === 'string' ? msg.content : '').trim();
+    saveStepRecord({ step, model_s: entry.aiTime, ...stepUsage(data), text: textContent, tool_calls: [] });
     if (textContent.length > 0) {
       messages.push(msg);
       // The text may already BE the answer (the model reads a value off the

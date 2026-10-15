@@ -72,6 +72,15 @@ console.log('normalizeResponsesResponse:');
   check('function_call → chat-shape tool_calls', msg.tool_calls[0].id === 'call_9' && msg.tool_calls[0].function.name === 'taskComplete');
   check('web_search_call + reasoning items are skipped', msg.tool_calls.length === 1);
   check('usage mapped to prompt/completion tokens', norm.usage.prompt_tokens === 100 && norm.usage.completion_tokens === 20);
+  check('no cached tokens reported → 0 cached', norm.usage.cache_read_input_tokens === 0);
+}
+{
+  const norm = normalizeResponsesResponse({
+    model: 'gpt-6-luna-2026-09-30', output: [],
+    usage: { input_tokens: 1000, output_tokens: 5, input_tokens_details: { cached_tokens: 800 } },
+  });
+  check('the model that answered is kept', norm.model === 'gpt-6-luna-2026-09-30');
+  check('cached input tokens are kept (they are billed at the cached rate)', norm.usage.cache_read_input_tokens === 800 && norm.usage.prompt_tokens === 1000);
 }
 {
   const norm = normalizeResponsesResponse({ output: [] });

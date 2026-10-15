@@ -65,6 +65,17 @@ console.log('parseAgentArgs — flag semantics & defaults:');
   check('--driver-port/--driver-host overrides', r.config?.driverPort === 9999 && r.config?.driverHost === '100.64.0.5');
 }
 {
+  const phone = parseAgentArgs(['t', '--phone']).config;
+  check('the phone backend uses the phone toolset', phone?.deviceProfile === 'phone' && phone?.isPhone === true);
+  const sim = parseAgentArgs(['t', '--backend', 'direct-http-sim']).config;
+  check('a simulator uses the simulator toolset by default', sim?.deviceProfile === 'simulator' && sim?.isPhone === false);
+  const both = parseAgentArgs(['t', '--backend', 'direct-http-sim', '--device-profile', 'phone']).config;
+  check('--device-profile phone runs the phone toolset on a simulator', both?.isPhone === true && both?.backend === 'direct-http-sim' && both?.useDirectHttp === true);
+  check('--device-profile phone needs a direct-HTTP backend', parseAgentArgs(['t', '--device-profile', 'phone']).error?.exitCode === 2);
+  check('--device-profile simulator cannot drive a real iPhone', parseAgentArgs(['t', '--phone', '--device-profile', 'simulator']).error?.exitCode === 2);
+  check('--device-profile rejects unknown values', parseAgentArgs(['t', '--backend', 'direct-http-sim', '--device-profile', 'tablet']).error?.exitCode === 2);
+}
+{
   const r = parseAgentArgs(['t', '--max-steps', '999999']);
   check('--max-steps clamps to 300', r.config?.maxSteps === 300);
 }

@@ -153,7 +153,7 @@ export function normalizeClaudeResponse(data) {
   if (toolUses.length > 0) {
     message.tool_calls = toolUses.map(tu => ({ id: tu.id, type: 'function', function: { name: tu.name, arguments: JSON.stringify(tu.input) } }));
   }
-  return { choices: [{ message }], usage: { prompt_tokens: data.usage?.input_tokens, completion_tokens: data.usage?.output_tokens, cache_creation_input_tokens: data.usage?.cache_creation_input_tokens, cache_read_input_tokens: data.usage?.cache_read_input_tokens } };
+  return { choices: [{ message }], model: data.model ?? null, usage: { prompt_tokens: data.usage?.input_tokens, completion_tokens: data.usage?.output_tokens, cache_creation_input_tokens: data.usage?.cache_creation_input_tokens, cache_read_input_tokens: data.usage?.cache_read_input_tokens } };
 }
 
 // POST the request body; if the provider 400s specifically on the `temperature`

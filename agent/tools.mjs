@@ -109,24 +109,54 @@ const AX_NOISE = ['scroll bar', 'battery', 'Cellular', 'Wi-Fi bars', 'No signal'
 // U+202F NARROW NO-BREAK SPACE is what iOS actually puts before AM/PM. Written
 // as an escape rather than the literal character so it is visible in review
 // (and so eslint's no-irregular-whitespace does not flag it).
-const AX_CLOCK = /^\d{1,2}:\d{2}[\s\u202f]?(AM|PM)$/;
-const isAxNoise = (label) => AX_CLOCK.test(label) || AX_NOISE.some(n => label.includes(n));
+const AX_CLOCK = /^\d{1,2}:\d{2}([\s\u202f]?(AM|PM))?$/;
+// The status-bar clock is noise only IN the status bar. Matched by text alone it
+// also deleted every alarm time ("6:45 AM") from the Clock app (2026-10-15 eval).
+// The status bar sits in the top ~7% of the screen (its items centre at y≈22-26pt
+// on an 874pt-tall iPhone 17 Pro).
+const STATUS_BAR = 0.07;
+const isAxNoise = (label, cy, screenH) =>
+  (AX_CLOCK.test(label) && (cy === null || cy < screenH * STATUS_BAR)) || AX_NOISE.some(n => label.includes(n));
+
+// Controls whose VALUE is what a person reads: the wheels of a time picker
+// carry no label at all, only "6 o'clock"; a text field's contents are its
+// value. Without these the element list showed an Add Alarm sheet with no
+// picker and no text field, and a model setting the time could see no change
+// (2026-10-15 eval). XCUIElement.ElementType raw values, confirmed on a live
+// hierarchy: 39 picker wheel, 49 text field.
+const VALUE_TYPES = {
+  33: 'slider', 37: 'segmented control', 39: 'picker wheel', 40: 'switch', 41: 'toggle',
+  45: 'search field', 49: 'text field', 50: 'secure text field', 51: 'date picker', 52: 'text view', 79: 'stepper',
+};
+const MAX_VALUE = 80;
+const clip = (v) => (v.length > MAX_VALUE ? `${v.slice(0, MAX_VALUE)}…` : v);
+
+/** How one element reads in the list: `"Label"`, `"Label" = "value"`, or `picker wheel = "value"`. */
+export function describeElement(node) {
+  const label = (node.label || '').trim();
+  const value = node.value === null || node.value === undefined ? '' : String(node.value).trim();
+  const type = VALUE_TYPES[node.elementType];
+  if (label && value && type && value !== label) return `"${label}" = "${clip(value)}"`;
+  if (label) return `"${label}"`;
+  if (value && type) return `${type} = "${clip(value)}"`;
+  return null;
+}
 
 export function formatUIElements(text, screenW, screenH) {
   const found = [];
   const seen = new Set();
-  const push = (label, cx, cy, w, h) => {
-    if (isAxNoise(label)) return;
+  const push = (desc, label, cx, cy, w, h) => {
+    if (isAxNoise(label, cy, screenH)) return;
     if (cx === null) {
-      if (!seen.has(label)) { seen.add(label); found.push(`- "${label}"`); }
+      if (!seen.has(desc)) { seen.add(desc); found.push(`- ${desc}`); }
       return;
     }
     const pctX = Math.round(cx / screenW * 100);
     const pctY = Math.round(cy / screenH * 100);
-    const key = `${label}@${pctX},${pctY}`;
+    const key = `${desc}@${pctX},${pctY}`;
     if (seen.has(key)) return;
     seen.add(key);
-    found.push(`- "${label}" at (${pctX}%, ${pctY}%) size ${Math.round(w)}x${Math.round(h)}`);
+    found.push(`- ${desc} at (${pctX}%, ${pctY}%) size ${Math.round(w)}x${Math.round(h)}`);
   };
 
   // The direct-HTTP viewHierarchy returns nested JSON; the MCP path returns CSV.
@@ -134,11 +164,12 @@ export function formatUIElements(text, screenW, screenH) {
     const json = JSON.parse(text);
     (function collect(node) {
       if (!node) return;
-      const label = (node.label || '').trim();
-      if (label) {
-        if (node.frame) push(label, node.frame.X + node.frame.Width / 2,
+      const desc = describeElement(node);
+      if (desc) {
+        const label = (node.label || '').trim() || String(node.value ?? '').trim();
+        if (node.frame) push(desc, label, node.frame.X + node.frame.Width / 2,
           node.frame.Y + node.frame.Height / 2, node.frame.Width, node.frame.Height);
-        else push(label, null);
+        else push(desc, label, null);
       }
       if (node.children) node.children.forEach(collect);
     })(json?.axElement || json);
@@ -152,11 +183,20 @@ export function formatUIElements(text, screenW, screenH) {
       const bm = line.match(boundsRegex);
       if (bm) {
         const x1 = +bm[1], y1 = +bm[2], x2 = +bm[3], y2 = +bm[4];
-        push(label, (x1 + x2) / 2, (y1 + y2) / 2, x2 - x1, y2 - y1);
-      } else push(label, null);
+        push(`"${label}"`, label, (x1 + x2) / 2, (y1 + y2) / 2, x2 - x1, y2 - y1);
+      } else push(`"${label}"`, label, null);
     }
   }
   return found;
+}
+
+/**
+ * What identifies a screen for the no-progress check: every element's
+ * description (label and value), without positions, sorted. A moving picker or
+ * a field being typed into changes it; a tap that did nothing does not.
+ */
+export function screenSignature(elementLines) {
+  return elementLines.map((l) => l.replace(/^- /, '').replace(/ at \(.*$/, '')).filter((l) => !l.startsWith('(… ')).sort().join('|');
 }
 
 
@@ -550,8 +590,16 @@ export function createToolExecutor(ctx) {
         const stillUp = await ctx.maestro.keyboardVisible?.().catch(() => false);
         if (stillUp) {
           const spot = await ctx.maestro.emptySpotAboveKeyboard?.().catch(() => null);
-          if (spot) { await ctx.maestro.touchPoint(spot.x, spot.y); return 'Keyboard hidden (tapped an empty area)'; }
-          return 'Keyboard is still up (Return did not close it, and no empty spot to tap). Type into the field or use its own Done/Search key.';
+          if (spot) {
+            await ctx.maestro.touchPoint(spot.x, spot.y);
+            await new Promise((r) => setTimeout(r, 350));
+            // Check again: many SwiftUI fields ignore both Return and a tap
+            // outside. Reporting "hidden" without looking sent a model round
+            // in circles on iOSWorld's Add Alarm sheet (2026-10-15 eval).
+            if (!(await ctx.maestro.keyboardVisible?.().catch(() => false))) return 'Keyboard hidden (tapped an empty area)';
+          }
+          ctx.keyboardLikelyUp = true;
+          return 'Keyboard is still up: Return and a tap on an empty area did not close it. It does not block controls above it: tap Save, Done or the next field directly, or use the field\'s own Done/Search key.';
         }
         return 'Keyboard hidden';
       }

@@ -99,9 +99,11 @@ export function normalizeResponsesResponse(data) {
   if (toolCalls.length > 0) message.tool_calls = toolCalls;
   return {
     choices: [{ message }],
+    model: data?.model ?? null,      // the model that actually answered
     usage: {
-      prompt_tokens: data?.usage?.input_tokens,
+      prompt_tokens: data?.usage?.input_tokens,                                    // includes the cached part
       completion_tokens: data?.usage?.output_tokens,
+      cache_read_input_tokens: data?.usage?.input_tokens_details?.cached_tokens ?? 0, // billed at the cached rate
     },
   };
 }

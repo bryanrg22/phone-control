@@ -31,7 +31,7 @@ export const PM_VALID = ['baseline', 'ios-conv', 'plain', 'xml-tagged', 'xml+ios
 export const VALUE_FLAGS = new Set([
   '--max-steps', '--no-progress-abort', '--log-run-id', '--trace-dir',
   '--provider', '--model', '--temperature', '--backend', '--device-id',
-  '--driver-port', '--driver-host', '--udid', '--agent-mode', '--vision-every-k',
+  '--driver-port', '--driver-host', '--udid', '--device-profile', '--agent-mode', '--vision-every-k',
   '--grounding', '--prompt-mode', '--askuser-timeout', '--landscape-rotate',
   '--runtime-guard', '--disable-tools',
   '--assert-sql', '--assert-app', '--assert-db', '--assert-expect',
@@ -111,8 +111,22 @@ export function parseAgentArgs(argv, env = process.env) {
   const noToolsMode = (bools.has('--no-tools') || provider === 'local') && !bools.has('--use-tools');
   const hasPhoneFlag = bools.has('--phone');
   const backend = flags['--backend'] || (hasPhoneFlag ? 'phone-direct' : 'maestro-cli');
-  const isPhone = backend === 'phone-direct';
   const useDirectHttp = backend === 'phone-direct' || backend === 'direct-http-sim';
+  // How the agent behaves, separately from which device it drives: 'phone'
+  // means the iPhone's toolset (no simctl shortcuts; apps launched, screens
+  // captured and gestures sent through the runner). A simulator can be driven
+  // with the phone profile, so a simulator test measures what a real phone runs.
+  const deviceProfile = flags['--device-profile'] || (backend === 'phone-direct' ? 'phone' : 'simulator');
+  if (!['phone', 'simulator'].includes(deviceProfile)) {
+    return err(`ERROR: --device-profile must be phone or simulator (got "${deviceProfile}").`);
+  }
+  if (deviceProfile === 'phone' && !useDirectHttp) {
+    return err('ERROR: --device-profile phone needs a direct-HTTP backend (phone-direct or direct-http-sim): the phone toolset works through the runner.');
+  }
+  if (deviceProfile === 'simulator' && backend === 'phone-direct') {
+    return err('ERROR: --device-profile simulator cannot drive a real iPhone: its shortcuts use simctl.');
+  }
+  const isPhone = deviceProfile === 'phone';
   const phoneDeviceId = flags['--device-id'] || env.PHONE_DEVICE_ID || '';
   const driverPort = parseInt(flags['--driver-port'] || (backend === 'direct-http-sim' ? '22087' : '6001'));
   const driverHost = flags['--driver-host'] || 'localhost';
@@ -152,7 +166,7 @@ export function parseAgentArgs(argv, env = process.env) {
       task, maxSteps, noProgressAbortN, logRunId, traceDir,
       provider, defaultModel, modelName,
       temperatureArg, requestedTemperature, effectiveTemperature,
-      noToolsMode, hasPhoneFlag, backend, isPhone, useDirectHttp,
+      noToolsMode, hasPhoneFlag, backend, deviceProfile, isPhone, useDirectHttp,
       phoneDeviceId, driverPort, driverHost, simUdid,
       agentMode, visionEveryK, grounding,
       promptMode, pmStructured, pmIosHints, pmConventions, pmSafetyTags,
@@ -186,6 +200,9 @@ Device & backend:
                                           (fast; launch runner with scripts/start-sim-runner.sh)
                          phone-direct     physical iPhone via maestro-ios-device bridge on localhost:6001
   --phone                shorthand for --backend phone-direct
+  --device-profile P     phone | simulator: the toolset, separate from the device (default: phone on
+                         phone-direct, simulator otherwise). phone on direct-http-sim runs the iPhone's
+                         toolset on a simulator, so a simulator test measures what a phone runs.
   --udid SIM_UDID        pin simctl ops to a specific booted simulator (default: booted)
   --device-id UDID       physical iPhone UDID (default: $PHONE_DEVICE_ID from .env)
   --driver-host HOST     override the XCTest runner host (default: localhost). Use a Tailscale virtual IP
