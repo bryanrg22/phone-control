@@ -1,0 +1,13 @@
+[2026-10-15T15:14:51.299Z] authorize: issued code for owner@example.com to Claude
+[2026-10-15T15:14:51.302Z] token: issued connector credential lnk_bdaa7b93bee324ce for owner@example.com
+[2026-10-15T15:14:51.309Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-15T15:14:53.515Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-15T15:14:53.914Z] run run_mv9ojtqx01 started for owner@example.com: Open the Notes app, open the most recent note, and read out its full contents.
+[2026-10-15T15:14:54.042Z] preflight: bring-up started for 127.0.0.1
+[2026-10-15T15:14:55.583Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:14:57.410Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-15T15:14:59.131Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:14:59.768Z] run run_mv9ojtqx01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-15T15:15:01.997Z] run run_mv9ojtqx01: automation put down
+[2026-10-15T15:15:02.367Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:15:02.370Z] mcp: tools/call get_phone_status from owner@example.com (claude)

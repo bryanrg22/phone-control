@@ -1,0 +1,14 @@
+[2026-10-15T15:10:44.657Z] authorize: issued code for owner@example.com to Claude
+[2026-10-15T15:10:44.658Z] token: issued connector credential lnk_14742f84746f917a for owner@example.com
+[2026-10-15T15:10:44.659Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-15T15:10:46.758Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-15T15:10:46.978Z] run run_mv9oej7l01 started for owner@example.com: Open Messages and text Sam: "I'm running 10 minutes late."
+[2026-10-15T15:10:47.056Z] preflight: bring-up started for 127.0.0.1
+[2026-10-15T15:10:48.429Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:10:50.320Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-15T15:10:54.229Z] mcp: tools/call answer_question from owner@example.com (claude)
+[2026-10-15T15:10:54.232Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:10:56.019Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:10:56.381Z] run run_mv9oej7l01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-15T15:10:58.045Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:10:58.047Z] mcp: tools/call get_phone_status from owner@example.com (claude)

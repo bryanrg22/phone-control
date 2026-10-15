@@ -1,0 +1,19 @@
+[2026-10-15T15:16:35.440Z] authorize: issued code for owner@example.com to Claude
+[2026-10-15T15:16:35.441Z] token: issued connector credential lnk_98044a25ed114c97 for owner@example.com
+[2026-10-15T15:16:35.442Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-15T15:16:37.285Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-15T15:16:37.507Z] run run_mv9om1oi01 started for owner@example.com: Open Settings, go to Battery, and report the current battery percentage.
+[2026-10-15T15:16:37.595Z] preflight: bring-up started for 127.0.0.1
+[2026-10-15T15:16:39.195Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:16:44.878Z] preflight: bring-up for 127.0.0.1 ended (code 43)
+[2026-10-15T15:16:49.118Z] run run_mv9om1oi01: automation put down
+[2026-10-15T15:16:49.147Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-15T15:16:51.221Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-15T15:16:51.386Z] run run_mv9omce102 started for owner@example.com: Open Settings, go to Battery, and report the current battery percentage.
+[2026-10-15T15:16:51.543Z] preflight: bring-up started for 127.0.0.1
+[2026-10-15T15:16:52.940Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:16:56.735Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:16:57.668Z] preflight: bring-up for 127.0.0.1 ended (code 43)
+[2026-10-15T15:17:00.087Z] run run_mv9omce102: automation put down
+[2026-10-15T15:17:01.324Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:17:01.325Z] mcp: tools/call get_phone_status from owner@example.com (claude)

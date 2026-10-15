@@ -31,6 +31,8 @@ __pycache__/
 
 # Logs
 *.log
+# …except the evidence filed in a test record, which is the point of the record
+!test-results/**/*.log
 
 # Local tooling (Claude Code worktrees and settings)
 .claude/

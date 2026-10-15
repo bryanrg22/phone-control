@@ -1,0 +1,12 @@
+[2026-10-15T15:11:39.598Z] authorize: issued code for owner@example.com to Claude
+[2026-10-15T15:11:39.602Z] token: issued connector credential lnk_f6b9b94c7a6ad390 for owner@example.com
+[2026-10-15T15:11:39.605Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-15T15:11:41.613Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-15T15:11:41.988Z] run run_mv9ofpnn01 started for owner@example.com: Open Maps and search for coffee.
+[2026-10-15T15:11:42.129Z] preflight: bring-up started for 127.0.0.1
+[2026-10-15T15:11:43.695Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:11:45.824Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-15T15:11:47.709Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:11:49.079Z] run run_mv9ofpnn01: automation put down
+[2026-10-15T15:11:50.375Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-15T15:11:50.384Z] mcp: tools/call get_phone_status from owner@example.com (claude)

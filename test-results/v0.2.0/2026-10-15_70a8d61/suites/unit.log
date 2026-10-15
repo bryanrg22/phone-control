@@ -1,0 +1,567 @@
+
+> phone-control@0.2.0 test
+> node --test "server/test/*.test.mjs" "agent/test/*.test.mjs"
+
+parseAgentArgs — task position vs boolean flags (the historical bug):
+  ✓ task AFTER --phone is not swallowed
+  ✓ --phone sets phone-direct backend
+  ✓ task BEFORE --phone parses the same
+  ✓ multi-token task between flags joins with spaces
+  ✓ --provider value consumed (not a task token)
+  ✓ --no-compress disables compression
+parseAgentArgs — flag semantics & defaults:
+  ✓ empty argv → empty task (caller prints usage, exit 2)
+  ✓ defaults: provider anthropic / backend maestro-cli / maxSteps 100
+  ✓ defaults: agent-mode single-image / grounding baseline / prompt-mode baseline
+  ✓ defaults: guard auto-conservative / compression on / procedures off
+  ✓ defaults: driverPort 6001 (maestro-cli/phone family) / driverHost localhost / udid booted
+  ✓ defaults: temperature provider-default, nothing sent
+  ✓ direct-http-sim default driverPort 22087
+  ✓ --driver-port/--driver-host overrides
+  ✓ --max-steps clamps to 300
+  ✓ --max-steps abc → parse error exit 2
+  ✓ --no-progress-abort 0 disables the breaker
+  ✓ --no-progress-abort invalid silently defaults to 8 (legacy semantics)
+  ✓ repeated value flag: first occurrence wins (legacy find() semantics)
+  ✓ --disable-tools trims + drops empties
+  ✓ legacy --compress accepted as a no-op (frontend/server.mjs passes it)
+  ✓ --device-id beats $PHONE_DEVICE_ID
+  ✓ $PHONE_DEVICE_ID env fallback
+  ✓ --no-tools forces JSON-action mode
+  ✓ provider local auto-enables no-tools
+  ✓ --use-tools overrides local auto-no-tools
+parseAgentArgs — temperature pin:
+  ✓ --temperature 5 → error exit 2
+  ✓ anthropic --temperature 0 pins + records 0
+  ✓ openai gpt-5.5 --temperature 0 NOT sent, recorded unsupported
+  ✓ …and emits the [Temperature] note line
+  ✓ openai --temperature 1 (explicit default) is sent
+parseAgentArgs — errors, help, ordering:
+  ✓ unknown flag → error exit 2, stage parse
+  ✓ --help wins
+  ✓ bad --prompt-mode → post-udid error (fires AFTER the impure udid check)
+  ✓ …and the rest of the config still parses
+  ✓ no flag is both value and boolean
+spawn `node agent.mjs` — exit-code contract:
+  ✓ --help exits 0
+  ✓ --help lists EVERY supported flag
+  ✓ no task → usage + exit 2
+  ✓ unknown flag → exit 2 with message
+  ✓ --phone "task" does NOT swallow the task (no usage screen)
+  ✓ …and exits 1 on the missing API key (today's behavior)
+  ✓ bad --max-steps → exit 2
+  ✓ bad --temperature → exit 2
+  ✓ unknown provider → exit 1 (legacy contract)
+
+✅ ALL PASS: 45 passed, 0 failed
+✔ agent/test/agent-cli.test.mjs (512.595958ms)
+agent.mjs startup smoke (stub runner, no LLM):
+  ✓ agent.mjs boots to Step 1 against the stub runner
+  ✓ startup produced no ReferenceError/TypeError
+
+2 passed, 0 failed
+✔ agent/test/agent-smoke.test.mjs (1358.418291ms)
+normal mode (tools present) — tool blocks SHOULD appear:
+  ✓ system extracted
+  ✓ tool_use + tool_result blocks present
+  ✓ image converted to an anthropic image block
+noToolsMode — request MUST be free of tool blocks (the #15 regression fix):
+  ✓ system extracted
+  ✓ ZERO tool_use/tool_result blocks (else Anthropic 400s without a tools param)
+  ✓ assistant action text preserved as a text block
+  ✓ tool result flattened to a plain user text turn
+  ✓ image still converted (images need no tools param)
+  ✓ default (no opts) behaves as tools-on
+
+✅ ALL PASS: 9 passed, 0 failed
+✔ agent/test/claude-messages.test.mjs (39.288625ms)
+parseJsonAction — extraction (#14):
+  ✓ plain object
+  ✓ fenced ```json block
+  ✓ prose THEN object
+  ✓ thought-object THEN action-object → returns the ACTION (skips thought)
+  ✓ two objects on separate lines → 2nd action found (greedy regex would have failed→null)
+  ✓ flattened top-level args
+  ✓ braces INSIDE a string value are not miscounted
+  ✓ no JSON → null
+  ✓ empty → null
+
+mapLocalModelAction — DRAG is distinct from swipe (#1/#24):
+  ✓ native drag(from,to) pixels → name is "drag" (NOT swipe)
+  ✓   → startY ≈ 75%, endY ≈ 25% (1248/1664, 416/1664)
+  ✓ drag with %-schema fields → "drag", percentages preserved
+  ✓ drag holdDuration passed through
+  ✓ swipe stays swipe (quick flick, NOT drag)
+  ✓ scroll → swipe
+  ✓ swipe with coordinate+coordinate2 (qwen 3b live shape) → honors endpoints, not default
+
+mapLocalModelAction — pixel→% uses INJECTED width (#2/#10):
+  ✓ center on 768-wide image → 50%
+  ✓ center on 1178-wide (--no-compress) → 50%, NOT 76.8%
+  ✓   (proof the bug is fixed: 589/768*100 = 76.7% would be the OLD wrong value)
+
+mapLocalModelAction — coordinate conventions + verb mapping:
+  ✓ Qwen array coords = pixels even when ≤100 (top-left [38,38]/768 → ~5%)
+  ✓ frontier bare x/y ≤100 = percent (50,50 → 50%)
+  ✓ qwen2.5vl:7b {"x":[149,512]} array-in-x → pixels
+  ✓ type → inputText
+  ✓ open → openApp
+  ✓ key → pressKey (default enter)
+  ✓ terminate → taskComplete
+  ✓ wait → takeScreenshot
+  ✓ already-valid tool name passes through
+  ✓ coords clamp to [0,100] (overshoot pixel)
+
+mapLocalModelAction — drag/swipe ARRAY coords are pixels even near edges (#MED re-review):
+  ✓ drag array endpoint [60,90] treated as PIXELS not % (→ ~7.8%, not 60%)
+  ✓ swipe array endpoint [38,..] treated as PIXELS (→ ~5%)
+  ✓ drag NAMED %-fields still treated as % (startX:60 → 60%, frontier path)
+  ✓ drag synonym "dragAndDrop" → name "drag"
+  ✓ drag synonym "long_press_drag" → name "drag"
+  ✓ large drag array still pixels (regression: [384,1248]/1664 → ~75%)
+
+✅ ALL PASS: 35 passed, 0 failed
+✔ agent/test/local-adapter.test.mjs (40.223042ms)
+PASS  [400 anthropic] Anthropic billing 400 (the real bug)  → got=true expected=true
+PASS  [429 openai] OpenAI 429 insufficient_quota (hard cap)  → got=true expected=true
+PASS  [429 openai] OpenAI 429 "exceeded your current quota"  → got=true expected=true
+PASS  [401 openai] 401 authentication_error (bad key)  → got=true expected=true
+PASS  [403 anthropic] 403 forbidden  → got=true expected=true
+PASS  [402 openai] 402 payment required  → got=true expected=true
+PASS  [429 gemini] Gemini 429 RPM (real body, must RETRY)  → got=false expected=false
+PASS  [429 gemini] Gemini 429 generic quota (must RETRY)  → got=false expected=false
+PASS  [429 anthropic] 429 transient rate-limit (must retry)  → got=false expected=false
+PASS  [529 anthropic] 529 overloaded (must retry)  → got=false expected=false
+PASS  [400 anthropic] generic 400 malformed (empty-turn; continue)  → got=false expected=false
+PASS  [500 openai] 500 internal (transient)  → got=false expected=false
+PASS  [200 openai] 200 ok (sanity)  → got=false expected=false
+PASS  [429 openai] OpenAI 429 quota is NOT made recoverable  → got=true expected=true
+PASS  filterToolDefs restricts native defs
+PASS  filterToolDefs handles OpenAI wrapper shape
+PASS  filterToolDefs passthrough when onlyTools is null
+
+17/17 passed
+✔ agent/test/nonrecoverable.test.mjs (39.11625ms)
+chatToResponsesInput:
+  ✓ system → instructions, not an input item
+  ✓ user string → input_text part
+  ✓ image_url part → input_image with bare data URI
+  ✓ text part → input_text beside the image
+  ✓ assistant text → output_text item
+  ✓ tool_calls → function_call items with call_id
+  ✓ tool result → function_call_output
+  ✓ empty assistant text emits NO empty output_text item
+toolsToResponses:
+  ✓ nested chat tools → flat Responses tools
+  ✓ no web_search unless requested
+  ✓ nativeWebSearch appends { type: "web_search" }
+normalizeResponsesResponse:
+  ✓ output_text items join into content
+  ✓ function_call → chat-shape tool_calls
+  ✓ web_search_call + reasoning items are skipped
+  ✓ usage mapped to prompt/completion tokens
+  ✓ empty output → null content, no tool_calls key
+
+✅ ALL PASS: 16 passed, 0 failed
+✔ agent/test/responses-adapter.test.mjs (41.179375ms)
+PASS  policy:off requiresApproval=false
+PASS  policy:off source
+PASS  policy:never requiresApproval=false
+PASS  policy:never source
+PASS  policy:always requiresApproval=true
+PASS  policy:always source
+PASS  policy:off does not invoke judge
+PASS  scroll requiresApproval=false
+PASS  scroll source tag:never
+PASS  getDirections requiresApproval=false
+PASS  getDirections source tag:never
+PASS  never-tag never invokes judge
+PASS  never-tag has no judgeLatencyMs
+PASS  DEFAULT_TAG constant is 'maybe'
+PASS  unknown tool requiresApproval=true
+PASS  unknown tool took the maybe-no-judge branch
+PASS  judge YES requiresApproval=true
+PASS  judge YES source
+PASS  judge YES records latency
+PASS  judge NO requiresApproval=false
+PASS  judge NO source
+PASS  verdict "  YeS  " → approval=true
+PASS  verdict "y" → approval=true
+PASS  verdict "Yes, this sends money." → approval=true
+PASS  verdict "NO" → approval=false
+PASS  verdict "n" → approval=false
+PASS  verdict "no." → approval=false
+PASS  judge error + no risky signal → NO approval
+PASS  judge error benign source
+PASS  judge error surfaces message
+PASS  judge error + payment signal → approval
+PASS  judge error risky source
+PASS  garbage "" → approval=true
+PASS  garbage "   " → approval=true
+PASS  garbage "maybe" → approval=true
+PASS  garbage "I am not sure" → approval=true
+PASS  garbage "undefined" → approval=true
+PASS  garbage "okay sure" → approval=true
+PASS  garbage "yeah" → approval=true
+PASS  garbage "🤷" → approval=true
+PASS  leading-yes "YESNO" → judge:yes (require approval)
+PASS  leading-yes "Yes no" → judge:yes (require approval)
+PASS  leading-yes "yes definitely not" → judge:yes (require approval)
+PASS  contradictory "No, wait, yes — require approval" → fail-SAFE (judge:invalid, approval)
+PASS  contradictory "no but yes actually" → fail-SAFE (judge:invalid, approval)
+PASS  clean-no "no" → judge:no (no approval)
+PASS  clean-no "nope" → judge:no (no approval)
+PASS  clean-no "no approval needed" → judge:no (no approval)
+PASS  clean-no "no, this is benign navigation" → judge:no (no approval)
+PASS  judge returning null → approval=true
+PASS  judge returning undefined → approval=true
+PASS  no-judge requiresApproval=true
+PASS  no-judge source
+PASS  permissive no-signal requiresApproval=false
+PASS  permissive no-signal source
+PASS  permissive no-signal did NOT call the judge
+PASS  permissive empty-context requiresApproval=false
+PASS  permissive empty-context source
+PASS  permissive WITH signal reaches the judge
+PASS  permissive WITH signal → judge verdict applied (approval=true)
+PASS  permissive signal "€20 fee" → judge consulted
+PASS  permissive signal "Authorize purchase" → judge consulted
+PASS  permissive signal "Transfer funds" → judge consulted
+PASS  permissive signal "Venmo" → judge consulted
+PASS  permissive signal "Apple Cash" → judge consulted
+PASS  permissive signal "¥1000" → judge consulted
+PASS  permissive signal "£5" → judge consulted
+PASS  permissive + never-tag stays tag:never
+PASS  permissive + never-tag skips judge
+PASS  conservative consults judge despite no payment signal
+PASS  conservative applies judge verdict
+PASS  tap with description
+PASS  tapText with text
+PASS  tap coords fallback
+PASS  inputText
+PASS  typeAndSubmit with field
+PASS  typeAndSubmit default field
+PASS  drag
+PASS  pressKey
+PASS  openURL
+PASS  default branch
+PASS  null args → coords undefined string
+PASS  missing inputText text → empty
+PASS  tap is maybe
+PASS  inputText is maybe
+PASS  drag is maybe
+PASS  scroll is never
+PASS  askUser is never
+PASS  taskComplete is never
+
+89/89 passed
+✔ agent/test/runtime-guard.test.mjs (39.286667ms)
+normalizeActionKey:
+  ✓ tap coords snap to 10% grid (49≈51)
+  ✓ distant taps stay distinct
+  ✓ tapText normalizes label case/space
+  ✓ tap description is ignored
+  ✓ argless tools key by name
+  ✓ typeAndSubmit keyed by field+text
+consecutive stuck (original signal preserved):
+  ✓ 2 repeats → not stuck yet
+  ✓ 3 identical consecutive → stuck with the classic warning
+  ✓ 3 consecutive taps clustered within 10% → stuck (semantic match)
+  ✓ 3 consecutive taps far apart → NOT stuck
+windowed repeats (the new signal — alternating thrash):
+  ✓ 3rd non-consecutive repeat → mild nudge
+  ✓ mild nudge is advisory, not stuck
+  ✓ same level does not re-fire next step
+  ✓ 5th repeat → escalated reconsider-approach nudge
+  ✓ 8th repeat → strongest nudge mentions taskFailed/infeasibility
+  ✓ key aged out of window → count resets
+
+✅ ALL PASS: 16 passed, 0 failed
+✔ agent/test/stuck-detector.test.mjs (39.000875ms)
+OpenAI reasoning family (fixed temperature — VERIFIED live on gpt-5.5):
+  ✓ pinned openai model rejects 0
+  ✓ gpt-5.5 rejects 0
+  ✓ gpt-5.5 rejects 0.7
+  ✓ gpt-5.5 accepts the explicit default 1
+  ✓ gpt-5.6-terra rejects 0 (same gpt-5 family rule)
+  ✓ gpt-5.6-terra accepts the explicit default 1
+  ✓ o3-family rejects 0
+  ✓ o1 rejects 0
+  ✓ gpt-4o (non-reasoning) accepts 0
+Other providers (per API docs — SUSPECTED, no live probe):
+  ✓ anthropic pinned model accepts 0
+  ✓ gemini pinned model accepts 0
+  ✓ local (ollama) accepts 0
+
+✅ ALL PASS: 12 passed, 0 failed
+✔ agent/test/temperature-support.test.mjs (37.844625ms)
+buildToolDefs — registry shape per config:
+  ✓ core tools present
+  ✓ no zoomAndTap unless grounding=zoomclick
+  ✓ zoomAndTap present with grounding=zoomclick
+  ✓ copyToClipboard excluded on phone
+  ✓ copyToClipboard included on simulator
+  ✓ openApp description lists app names
+createToolExecutor — behavior against a mock transport:
+  ✓ disabled tool is gated at the executor
+  ✓ unknown tool → readable error
+  ✓ takeScreenshot → sentinel
+  ✓ taskComplete → __DONE__ sentinel
+  ✓ taskFailed → __FAILED__ sentinel
+  ✓ tap rejects pixel-looking coords (>100)
+  ✓ …and does NOT touch the device
+  ✓ tap converts % → pixels against live dims
+  ✓ scroll swipes bottom(0.7)→top(0.3) at center-x
+  ✓ openApp unknown → error listing available apps (no Home press)
+  ✓ openApp known → launch + currentAppId threaded back
+  ✓ inputText sets keyboardLikelyUp via ctx setter
+  ✓ hideKeyboard clears keyboardLikelyUp
+[Memory] Queued: "likes tacos" (will save after task completes)
+  ✓ saveMemory queues to pendingMemories (deferred write)
+  ✓ askUser returns the chosen option + bumps counter
+  ✓ webSearch without key → clear error, no crash
+  ✓ tapText finds element in hierarchy and taps its center
+  ✓ tapText miss → error steering to getUIElements
+  ✓ pressKey valid key → /pressKey
+  ✓ pressKey alias "search" normalizes to enter
+  ✓ pressKey home routes to /pressButton (case-insensitive)
+  ✓ pressKey unknown key → error listing valid keys, device untouched
+
+✅ ALL PASS: 28 passed, 0 failed
+✔ agent/test/tools.test.mjs (392.923791ms)
+  ✓ missing store loads empty; a corrupt store authorizes nobody
+  ✓ store round-trips through disk
+  ✓ minted token is prefixed, round-trips, and a wrong token misses
+  ✓ plaintext token is never stored — only its hash
+  ✓ revoked credentials fail closed
+  ✓ revokeAllForUid disconnects every assistant for one user only
+  ✓ mintClientToken is 32 bytes of entropy, base64url
+  ✓ parseBearer accepts only a Bearer header
+  ✓ link code is unambiguous and normalizes forgiving input
+  ✓ link code redeems exactly once and binds the right uid
+  ✓ link code expires
+  ✓ minting a new code invalidates the previous one
+  ✓ garbage codes are rejected without a lookup
+  ✓ DCR requires at least one redirect URI and rejects non-https
+  ✓ registered client is findable; unknown id is not
+  ✓ authorization code requires a known client, exact redirect, and S256
+  ✓ happy path: code + correct verifier yields a working credential
+  ✓ wrong PKCE verifier is refused
+  ✓ a short verifier is refused before any comparison
+  ✓ code is bound to its client and its redirect URI
+  ✓ expired code is refused
+  ✓ replaying a code revokes the credential it already issued
+  ✓ unknown code is invalid_grant, not a crash
+  ✓ pruneExpired drops stale codes but keeps live credentials
+
+24 connector-auth assertions passed
+✔ server/test/auth.test.mjs (51.804167ms)
+  ✓ DNS rebinding: a request naming another host is refused, before anything else runs
+  ✓ DNS rebinding: our own public name and loopback are served
+  ✓ the host check rejects look-alikes and malformed headers
+  ✓ healthz answers without credentials
+  ✓ protected-resource metadata points at our authorization server
+  ✓ discovery answers at BOTH the root and the RFC 9728 path-inserted form
+  ✓ authorization-server metadata advertises PKCE S256 only
+  ✓ an unauthenticated MCP call is 401 with the metadata pointer clients need
+  ✓ a made-up token is refused
+  ✓ GET /mcp is 405 — this server has no SSE stream to open
+  ✓ the URL-token path stays closed unless it is explicitly enabled
+  ✓ dynamic client registration issues a public client id
+  ✓ registration refuses a non-https redirect
+  ✓ the consent page names the client and asks for the app's code
+  ✓ authorize refuses an unregistered client, a mismatched redirect, and non-S256
+  ✓ the app exchanges a signed-in identity for a link code; a bad token gets nothing
+  ✓ a wrong link code re-renders the form instead of granting anything
+  ✓ the right link code redirects back with a code and the state intact
+  ✓ the token endpoint exchanges code + verifier for a credential
+  ✓ replaying the authorization code fails AND kills the credential it issued
+  ✓ an unsupported grant type is refused
+  ✓ initialize + tools/list work over MCP with a real credential
+  ✓ a notification over HTTP gets 202 with no body
+  ✓ a task started over MCP actually reaches the runner
+  ✓ a question raised mid-run comes back through get_run_status and is answerable
+  ✓ another tenant cannot see or stop that run, by id
+  ✓ REST /v1/phone reports readiness
+  ✓ REST start → status → stop round-trips for a second tenant
+  ✓ REST rejects a bad task with 400 and a reason
+  ✓ an unknown path is 404, not a stack trace
+  ✓ the app can disconnect every assistant, and the credential dies immediately
+
+31 connector-server assertions passed
+✔ server/test/http.test.mjs (114.196125ms)
+  ✓ flags and positionals are separated; a flag without a value is true
+  ✓ device add registers a phone, creating the directory and a private file
+  ✓ adding the same email again updates the phone and keeps the person's identity
+  ✓ bad input is refused with a reason, and nothing is written
+  ✓ the registry is what the server resolves a person's phone from
+  ✓ link-code mints a code that redeems to that person exactly once
+  ✓ link-code refuses someone with no phone registered
+  ✓ revoke and device remove both kill that person's assistant connections
+
+8 phonectl assertions passed
+✔ server/test/phonectl.test.mjs (45.277917ms)
+  ✓ locked screen: locked, with the signals that said so
+  ✓ status bar: Wi-Fi and cellular bars are read separately
+  ✓ no Wi-Fi indicator → wifi is null, cellular still read
+  ✓ an empty or missing tree is "cannot tell", never "unlocked"
+  ✓ "Locked" on its own (an app's label) is not the lock screen
+  ✓ the walker survives cycles and odd shapes
+  ✓ another app's banner over the top is found with the frame to swipe; no match means nothing to touch
+  ✓ the banner swipe starts in the middle of the banner and goes straight up off the top
+  ✓ armed on Wi-Fi → ready, no caveat
+  ✓ armed on cellular → ready, with the "a drop will need Wi-Fi" warning
+  ✓ bring-up in flight → waking; stuck on the owner → waiting_on_phone
+  ✓ powered off / flat / not unlocked since restart → unreachable, and NOT "find Wi-Fi"
+  ✓ cellular with nothing warm → needs_wifi; cellular with a warm tunnel → startable
+  ✓ Wi-Fi with a dead or missing tunnel → startable (a cold build works there)
+  ✓ a fresh failure names its cause; an old one is ignored
+  ✓ a phone that was never paired: says so before anything is tried, and is not startable
+  ✓ the phone refuses the server's connection: reported once as needing attention, not retried forever
+  ✓ a failure does not hide an unreachable phone
+  ✓ stopped on the phone (both volume buttons) is said out loud
+  ✓ no status at all → unknown, not a guess
+  ✓ ready phone: no bring-up is started
+  ✓ ASKING about a startable phone starts nothing: it reports standby
+  ✓ starting a task on a startable phone: one bring-up, with the registry slot, and the answer is "waking"
+  ✓ unreachable / needs_wifi / in flight: nothing is started
+  ✓ arming not allowed: startable is reported as needs_wake with the manual step
+  ✓ a start that died waiting on the owner is reported ONCE, then retried when asked again
+  ✓ an operator override redirects to the phone's real address (by email, any case)
+  ✓ overrides are validated, not trusted
+  ✓ startArm runs the one fixed command and never two at once per phone
+  ✓ a bring-up keeps the supervisor's own narration in a log
+  ✓ inspect returns null instead of throwing when the host cannot be read
+  ✓ a fingerprint depends on names and contents, not on where the files live or their order
+  ✓ files changed after start are reported as stale; device and agent code are always read fresh
+  ✓ a missing file changes the fingerprint instead of crashing; a missing component reports null
+  ✓ the version names the release, the exact commit, and the tool list as served
+  ✓ a copy made with git archive reports the commit stamped into it
+  ✓ the tool fingerprint changes with any change to what an assistant sees
+  ✓ get_phone_status carries the server version
+  ✓ get_phone_status never asks the resolver to start anything, and reports standby as ready-to-start
+
+39 phone-state assertions passed
+✔ server/test/preflight.test.mjs (167.691708ms)
+  ✓ a task starts automation, runs the agent with the chosen model, and puts automation down
+  ✓ phone unreachable: the run fails with the real reason and the agent never starts
+  ✓ waiting on the passcode is narrated, and the task goes ahead once the owner answers
+  ✓ a start that never completes times out, says so, and cleans up
+  ✓ a start the owner must fix (needs attention) ends the run with that instruction
+  ✓ locked phone: refused before the agent starts, automation put straight back down
+  ✓ an unreadable screen is not treated as locked
+  ✓ user says stop while automation is still starting: no agent, phone left clean
+  ✓ user says stop mid-task: the agent is killed and automation is put down
+  ✓ stopped on the phone (both volume buttons) mid-task: said in those words
+  ✓ connection lost mid-task (power-off, no signal): said as a lost connection
+  ✓ one bad reading is a blip, not a verdict
+  ✓ a status check that could not be read at all does not end the task
+  ✓ phone locked mid-task: the agent is stopped and the user is told why
+  ✓ the agent dying without a verdict still ends the run and cleans the phone
+  ✓ if putting automation down fails, the run still ends and nothing throws
+  ✓ the chat stops following a running task: the agent is stopped and automation put down
+  ✓ a status check cut off mid-wait ends the task much sooner than plain silence
+  ✓ a dropped check followed by a fresh one is forgiven
+  ✓ a task waiting for the user's answer is NOT treated as abandoned
+  ✓ the chat goes away while automation is still STARTING: the bring-up is cancelled, nothing is left running
+  ✓ before the agent starts, the top of the screen is cleared — after the lock check, before the agent
+  ✓ a locked phone is never swiped at
+  ✓ when a task ends, the phone is returned to the Claude app, THEN automation is put down
+  ✓ "stay" leaves the phone where the task ended
+  ✓ nothing is brought forward when automation never came up
+  ✓ a status check waits for progress and answers the moment something changes
+  ✓ with nothing new it answers after about ten seconds, and tells the model to call straight back
+  ✓ repeating the same progress note does not wake a waiting status check
+  ✓ a finished run is answered at once, however often it is asked
+  ✓ every check marks the chat as listening; one cut off mid-wait is recorded as dropped
+  ✓ where to leave the phone is recorded with the task
+  ✓ models resolve from ids and from how people say them; a family name means its newest member
+  ✓ a key is "present" only when it is actually set
+  ✓ the default is GPT-6 Luna, and a task on a standby phone is accepted without starting automation itself
+  ✓ "use Sonnet for this one" changes that task only
+  ✓ "from now on use Sol" changes the default, per user, and shows up in the status answer
+  ✓ an unknown model, or one with no key on the server, is refused BEFORE the phone is touched
+  ✓ a phone that cannot start is refused with its own message
+  ✓ the tool list offers set_default_model and a model argument only where they exist
+  ✓ the agent is launched with the chosen model, or with none to use its own default
+
+41 task-runner assertions passed
+✔ server/test/task-runner.test.mjs (59.447417ms)
+tool definitions as served
+  ✓ matches the committed snapshot (UPDATE_SNAPSHOTS=1 to accept an intended change)
+  ✓ every name is short, lowercase and unique
+  ✓ every description, and every parameter description, fits in 2048 characters
+  ✓ every input schema is closed and lists its required fields
+  ✓ every tool states readOnlyHint, destructiveHint and openWorldHint
+  ✓ the tool that acts on the phone is marked destructive, so Claude asks before it by default
+  ✓ the tools that only look are marked read-only
+
+7 tool-definition assertions passed
+✔ server/test/tool-snapshots.test.mjs (35.0145ms)
+  ✓ a created run starts in "starting" and is visible to its owner only
+  ✓ only one run at a time per user; a second user is unaffected
+  ✓ progress moves starting → running and records the action
+  ✓ a question surfaces on the status view and is answerable
+  ✓ a paraphrased answer resolves to an offered option; ambiguity does not
+  ✓ an off-menu answer to a closed question is refused
+  ✓ a free-text question accepts free text
+  ✓ another tenant cannot answer or stop your run
+  ✓ answering a run that is not waiting reports why
+  ✓ stop kills the process, is idempotent, and reports what happened
+  ✓ a terminal run ignores late progress and cannot be re-finished
+  ✓ clearQuestion releases a run whose askUser timed out
+  ✓ the status view never leaks internals or another tenant
+  ✓ finished runs are pruned per user, active ones never
+  ✓ isTerminal covers exactly the final states
+  ✓ parses a step line
+  ✓ parses a tool call into a human sentence
+  ✓ parses __ASK_USER__ with options
+  ✓ parses __ASK_USER_TEXT__ with a hint
+  ✓ the completion summary on the FOLLOWING line is captured
+  ✓ an inline DB-verified completion is captured without eating the next line
+  ✓ failure and max-steps both end the run with a reason
+  ✓ an infra abort is distinguishable from a task failure
+  ✓ an askUser timeout emits ask_timeout so the run does not hang
+  ✓ lines split across chunks are still parsed exactly once
+  ✓ a trailing line without a newline is flushed on end()
+  ✓ describe() degrades to the tool name for unknown tools
+  ✓ applyEvent drives a full run from stdout events alone
+  ✓ an infra event finishes the run as failed with the detail kept
+  ✓ buildAgentArgs targets the phone over the mesh with a finite HITL timeout
+  ✓ buildAgentArgs refuses to guess a phone address or an empty task
+  ✓ device states map to actionable messages
+  ✓ a live runner reads ready; a dead one reads needs_wake, not "broken"
+  ✓ an arm delegate is used when configured, and its failure stays honest
+  ✓ every tool is annotated with a title and a read-only/destructive hint
+  ✓ tool descriptions teach the poll-and-relay protocol
+  ✓ a call without an authenticated caller is impossible
+  ✓ an unknown tool is a clean error, not a throw
+  ✓ run_phone_task refuses when the phone is not ready, and never spawns
+  ✓ run_phone_task validates the task before touching anything
+  ✓ max_steps is clamped, never trusted
+  ✓ a failed spawn finishes the run instead of leaving it hanging
+  ✓ a second task while one is running reports busy, not a silent queue
+  ✓ the full conversational loop: start → poll → question → answer → finish
+  ✓ answer_question rejects an answer nobody offered, with the options to re-ask
+  ✓ answer_question with nothing to answer is a clean refusal
+  ✓ stop_run stops the active run and is honest when there was nothing to stop
+  ✓ one user cannot address another user's run by id
+  ✓ initialize echoes a supported protocol version and advertises tools
+  ✓ an unknown protocol version falls back to our newest
+  ✓ notifications get no response at all
+  ✓ tools/list returns every tool with its schema and annotations
+  ✓ tools/call returns JSON in a text block and flags tool errors
+  ✓ a tool that throws becomes a tool error, not a protocol error
+  ✓ an unknown tool and a malformed message are proper JSON-RPC errors
+  ✓ ping answers empty
+
+56 connector-api assertions passed
+✔ server/test/tools.test.mjs (44.758208ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1365.30575
