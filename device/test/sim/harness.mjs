@@ -8,6 +8,9 @@
 //
 //   • every simulated UDID starts with "SIM", and the supervisor's kill patterns
 //     are UDID-scoped, so nothing here can match a real session;
+//   • each harness gets its own UDIDs and cleans up only those, so harnesses
+//     running at the same time (parallel eval runs) cannot kill each other's
+//     sessions — a fixed UDID did exactly that on 2026-10-15;
 //   • the phone lives on loopback addresses and throwaway ports.
 //
 // The fakes are kept in ./fakes as .cjs and installed, under the names the
@@ -21,7 +24,7 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createServer } from 'node:net';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { mkdtempSync, mkdirSync, copyFileSync, writeFileSync, readFileSync, chmodSync, rmSync, readdirSync } from 'node:fs';
 import { tmpdir, platform } from 'node:os';
 import { join, dirname } from 'node:path';
@@ -104,8 +107,10 @@ export async function createHarness({ graceMs = 3000, keep = false } = {}) {
   });
   const ctrlPort = await world.start();
 
-  const phoneA = await world.addPhone({ name: 'A', ip: isLinux ? '127.0.0.11' : '127.0.0.1', udid: 'SIM0A000-0000000000000A11' });
-  const phoneB = isLinux ? await world.addPhone({ name: 'B', ip: '127.0.0.12', udid: 'SIM0B000-0000000000000B22' }) : null;
+  // UDID shape as a real one (8 + 16 characters); the 10-hex instance tag makes it this harness's own.
+  const instance = randomBytes(5).toString('hex').toUpperCase();
+  const phoneA = await world.addPhone({ name: 'A', ip: isLinux ? '127.0.0.11' : '127.0.0.1', udid: `SIM0A000-${instance}000A11` });
+  const phoneB = isLinux ? await world.addPhone({ name: 'B', ip: '127.0.0.12', udid: `SIM0B000-${instance}000B22` }) : null;
 
   // The host's side of pairing: one record per phone, where pymobiledevice3
   // keeps them. Only its existence matters to the code under test, so the
@@ -175,7 +180,7 @@ export async function createHarness({ graceMs = 3000, keep = false } = {}) {
   }
 
   async function killSimProcesses() {
-    const patterns = ['runtest.*--udid=SIM0', 'tunnel\\.py SIM0'];
+    const patterns = [`runtest.*--udid=SIM0[AB]000-${instance}`, `tunnel\\.py SIM0[AB]000-${instance}`];
     for (const pat of patterns) { try { await execFileP('pkill', ['-f', pat], { timeout: 5000 }); } catch { /* none */ } }
     try {
       await waitFor(async () => (await pgrep(patterns[0])).length + (await pgrep(patterns[1])).length === 0, 'sim processes to exit', 5000);
