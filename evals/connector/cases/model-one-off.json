@@ -1,0 +1,55 @@
+{
+  "id": "model-one-off",
+  "area": "models",
+  "summary": "A model named for one task is used for that task only.",
+  "scenario": {
+    "steps": [
+      {
+        "progress": "Opening Maps"
+      },
+      {
+        "wait": 800
+      },
+      {
+        "done": "Found coffee nearby: Blue Bottle (0.3 mi), Verve (0.6 mi)."
+      }
+    ]
+  },
+  "turns": [
+    "Use Sonnet for this one: open Maps and search for coffee."
+  ],
+  "checks": {
+    "task_model": "claude-sonnet-5",
+    "must_not_call": [
+      {
+        "tool": "set_default_model"
+      }
+    ],
+    "final_run_status": "completed",
+    "default_model": "gpt-6-luna"
+  },
+  "expect": [
+    "The assistant reports the coffee places the task found."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "run_phone_task",
+        "args": {
+          "task": "Open Maps and search for coffee",
+          "model": "sonnet"
+        }
+      },
+      {
+        "poll": [
+          "completed",
+          "failed",
+          "stopped"
+        ]
+      },
+      {
+        "say": "{summary}"
+      }
+    ]
+  ]
+}

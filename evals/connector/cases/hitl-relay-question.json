@@ -1,0 +1,93 @@
+{
+  "id": "hitl-relay-question",
+  "area": "questions",
+  "summary": "A question from the phone is put to the user, and only the user's answer goes back.",
+  "scenario": {
+    "steps": [
+      {
+        "progress": "Opening Messages"
+      },
+      {
+        "ask": {
+          "question": "There are two contacts named Sam. Which one should get the message?",
+          "options": [
+            "Sam Lee",
+            "Sam Patel"
+          ]
+        }
+      },
+      {
+        "wait": 500
+      },
+      {
+        "done": "Sent to {answer}: \"Running 10 minutes late.\""
+      }
+    ]
+  },
+  "turns": [
+    "Text Sam that I'm running 10 minutes late.",
+    "Sam Lee"
+  ],
+  "checks": {
+    "must_not_call": [
+      {
+        "tool": "answer_question",
+        "turn": 1
+      }
+    ],
+    "must_call": [
+      {
+        "tool": "answer_question",
+        "turn": 2,
+        "args": {
+          "answer": "/sam lee/i"
+        }
+      }
+    ],
+    "final_run_status": "completed",
+    "automation_off_at_end": true
+  },
+  "expect": [
+    "In its first reply, the assistant asks the user which Sam to message and offers both Sam Lee and Sam Patel.",
+    "The assistant does not choose a Sam on its own before the user answers.",
+    "After the user answers, the assistant reports that the message was sent to Sam Lee."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "run_phone_task",
+        "args": {
+          "task": "Text Sam that I'm running 10 minutes late"
+        }
+      },
+      {
+        "poll": [
+          "awaiting_answer",
+          "completed",
+          "failed"
+        ]
+      },
+      {
+        "say": "{question} Options: {options}"
+      }
+    ],
+    [
+      {
+        "call": "answer_question",
+        "args": {
+          "answer": "Sam Lee"
+        }
+      },
+      {
+        "poll": [
+          "completed",
+          "failed",
+          "stopped"
+        ]
+      },
+      {
+        "say": "{summary}"
+      }
+    ]
+  ]
+}

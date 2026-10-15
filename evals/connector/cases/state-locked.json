@@ -1,0 +1,52 @@
+{
+  "id": "state-locked",
+  "area": "phone-state",
+  "summary": "A locked phone: the user is told to unlock it, nothing is made up.",
+  "phone": {
+    "locked": true
+  },
+  "turns": [
+    "Open Settings and tell me my battery percentage."
+  ],
+  "checks": {
+    "must_call_any": [
+      {
+        "tool": "run_phone_task"
+      },
+      {
+        "tool": "get_phone_status"
+      }
+    ],
+    "max_calls": [
+      {
+        "tool": "run_phone_task",
+        "max": 2
+      }
+    ],
+    "automation_off_at_end": true
+  },
+  "expect": [
+    "The assistant tells the user to unlock the phone.",
+    "The assistant does not state a battery percentage."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "run_phone_task",
+        "args": {
+          "task": "Open Settings and tell me the battery percentage"
+        }
+      },
+      {
+        "poll": [
+          "completed",
+          "failed",
+          "stopped"
+        ]
+      },
+      {
+        "say": "{summary}"
+      }
+    ]
+  ]
+}

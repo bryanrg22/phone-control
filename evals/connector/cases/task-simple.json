@@ -1,0 +1,65 @@
+{
+  "id": "task-simple",
+  "area": "task",
+  "summary": "A task is started once, followed to the end, and its result reported.",
+  "scenario": {
+    "steps": [
+      {
+        "progress": "Opening Settings"
+      },
+      {
+        "wait": 1500
+      },
+      {
+        "progress": "General, then About"
+      },
+      {
+        "done": "The phone is on iOS 27.0 (Settings > General > About)."
+      }
+    ]
+  },
+  "turns": [
+    "Open Settings on my phone and tell me which iOS version it's on."
+  ],
+  "checks": {
+    "must_call": [
+      {
+        "tool": "run_phone_task"
+      }
+    ],
+    "max_calls": [
+      {
+        "tool": "run_phone_task",
+        "max": 1
+      }
+    ],
+    "task_matches": "/ios|version/i",
+    "final_run_status": "completed",
+    "automation_off_at_end": true,
+    "reply_matches": "/27/"
+  },
+  "expect": [
+    "The assistant reports that the phone is on iOS 27.0, as the result says.",
+    "The assistant waits for the task to finish before answering instead of telling the user to check back later."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "run_phone_task",
+        "args": {
+          "task": "Open Settings and tell me the iOS version"
+        }
+      },
+      {
+        "poll": [
+          "completed",
+          "failed",
+          "stopped"
+        ]
+      },
+      {
+        "say": "{summary}"
+      }
+    ]
+  ]
+}

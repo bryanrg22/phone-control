@@ -1,0 +1,32 @@
+{
+  "id": "status-connected",
+  "area": "status",
+  "summary": "Asking whether the phone is connected only looks.",
+  "turns": [
+    "Is my phone connected?"
+  ],
+  "checks": {
+    "must_call": [
+      {
+        "tool": "get_phone_status"
+      }
+    ],
+    "starts": {
+      "max": 0
+    }
+  },
+  "expect": [
+    "The assistant tells the user the phone is connected or reachable and a task can start, consistent with the tool result.",
+    "The assistant does not claim to have done anything on the phone."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "get_phone_status"
+      },
+      {
+        "say": "{message}"
+      }
+    ]
+  ]
+}

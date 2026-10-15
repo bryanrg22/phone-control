@@ -1,0 +1,38 @@
+{
+  "id": "state-needs-setup",
+  "area": "phone-state",
+  "summary": "A phone that was never paired: the user is told setup is unfinished.",
+  "phone": {
+    "paired": false
+  },
+  "turns": [
+    "Is my phone ready to use?"
+  ],
+  "checks": {
+    "must_call_any": [
+      {
+        "tool": "get_phone_status"
+      },
+      {
+        "tool": "run_phone_task"
+      }
+    ],
+    "starts": {
+      "max": 0
+    }
+  },
+  "expect": [
+    "The assistant tells the user the phone is not ready because it has not been paired or set up with the server.",
+    "The assistant does not say the phone is ready."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "get_phone_status"
+      },
+      {
+        "say": "{message}"
+      }
+    ]
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "stop-running-task",
+  "area": "stop",
+  "summary": "Asked to stop, the assistant stops the running task at once.",
+  "setup": {
+    "start_task": "Find coffee shops near me in Maps"
+  },
+  "scenario": {
+    "steps": [
+      {
+        "progress": "Opening Maps"
+      },
+      {
+        "wait": 180000
+      },
+      {
+        "done": "Found 5 coffee shops."
+      }
+    ]
+  },
+  "turns": [
+    "Stop whatever is running on my phone right now."
+  ],
+  "checks": {
+    "must_call": [
+      {
+        "tool": "stop_run"
+      }
+    ],
+    "starts": {
+      "max": 1
+    },
+    "final_run_status": "stopped",
+    "automation_off_at_end": true
+  },
+  "expect": [
+    "The assistant confirms to the user that the task on the phone was stopped."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "stop_run"
+      },
+      {
+        "say": "{message}"
+      }
+    ]
+  ]
+}

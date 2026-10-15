@@ -1,0 +1,38 @@
+{
+  "id": "model-default-change",
+  "area": "models",
+  "summary": "\"From now on\" changes the default model and starts nothing.",
+  "turns": [
+    "From now on, use Sol to drive my phone."
+  ],
+  "checks": {
+    "must_call": [
+      {
+        "tool": "set_default_model",
+        "args": {
+          "model": "/sol/i"
+        }
+      }
+    ],
+    "starts": {
+      "max": 0
+    },
+    "default_model": "gpt-6-sol"
+  },
+  "expect": [
+    "The assistant confirms that future phone tasks will use Sol."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "set_default_model",
+        "args": {
+          "model": "sol"
+        }
+      },
+      {
+        "say": "{message}"
+      }
+    ]
+  ]
+}

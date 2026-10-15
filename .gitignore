@@ -34,3 +34,6 @@ __pycache__/
 
 # Local tooling (Claude Code worktrees and settings)
 .claude/
+
+# Eval results (evidence stays local; summaries can be committed deliberately)
+evals/results/

@@ -1,0 +1,67 @@
+{
+  "id": "polling-long-task",
+  "area": "task",
+  "summary": "A long task is followed to the end without handing the waiting to the user.",
+  "scenario": {
+    "steps": [
+      {
+        "progress": "Opening Notification Center"
+      },
+      {
+        "wait": 25000
+      },
+      {
+        "progress": "Clearing notifications"
+      },
+      {
+        "wait": 10000
+      },
+      {
+        "done": "Cleared 12 notifications."
+      }
+    ]
+  },
+  "turns": [
+    "Clear all the notifications on my phone."
+  ],
+  "checks": {
+    "must_call": [
+      {
+        "tool": "run_phone_task"
+      }
+    ],
+    "max_calls": [
+      {
+        "tool": "run_phone_task",
+        "max": 1
+      }
+    ],
+    "final_run_status": "completed",
+    "automation_off_at_end": true,
+    "reply_matches": "/12/"
+  },
+  "expect": [
+    "The assistant reports that 12 notifications were cleared.",
+    "The assistant does not ask the user to check back later or to ask again for the result."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "run_phone_task",
+        "args": {
+          "task": "Clear all notifications"
+        }
+      },
+      {
+        "poll": [
+          "completed",
+          "failed",
+          "stopped"
+        ]
+      },
+      {
+        "say": "{summary}"
+      }
+    ]
+  ]
+}

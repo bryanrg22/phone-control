@@ -45,6 +45,22 @@ jobs:
       - run: npm run test:lifecycle
       - run: npm run test:e2e
 
+  eval-harness:
+    # The connector-eval harness tests itself with no model calls: an oracle
+    # assistant must pass every case and a do-nothing assistant must fail
+    # every case, or a case or a check is broken.
+    name: eval harness self-test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:evals:self
+
   conformance:
     # The official MCP conformance suite against the real server. Scenarios
     # for features this server does not offer are listed, with reasons, in

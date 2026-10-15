@@ -1,0 +1,22 @@
+{
+  "id": "status-general-question",
+  "area": "status",
+  "summary": "A question that has nothing to do with the phone uses no tools.",
+  "turns": [
+    "What's the capital of France?"
+  ],
+  "checks": {
+    "tools_used": "none",
+    "reply_matches": "/paris/i"
+  },
+  "expect": [
+    "The assistant answers the question directly without involving the phone."
+  ],
+  "oracle": [
+    [
+      {
+        "say": "Paris."
+      }
+    ]
+  ]
+}

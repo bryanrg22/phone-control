@@ -1,0 +1,47 @@
+{
+  "id": "state-needs-wifi",
+  "area": "phone-state",
+  "summary": "On cellular with nothing warm: the user is told Wi-Fi is needed to start.",
+  "phone": {
+    "wifi": false
+  },
+  "turns": [
+    "Open Photos on my phone."
+  ],
+  "checks": {
+    "must_call_any": [
+      {
+        "tool": "run_phone_task"
+      },
+      {
+        "tool": "get_phone_status"
+      }
+    ],
+    "starts": {
+      "max": 0
+    },
+    "max_calls": [
+      {
+        "tool": "run_phone_task",
+        "max": 2
+      }
+    ]
+  },
+  "expect": [
+    "The assistant tells the user the phone needs to be on Wi-Fi to start the task.",
+    "The assistant does not claim that Photos was opened."
+  ],
+  "oracle": [
+    [
+      {
+        "call": "run_phone_task",
+        "args": {
+          "task": "Open Photos"
+        }
+      },
+      {
+        "say": "{message}"
+      }
+    ]
+  ]
+}
