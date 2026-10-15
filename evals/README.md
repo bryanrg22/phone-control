@@ -38,6 +38,10 @@ Needs `ANTHROPIC_API_KEY` (the assistant) and `OPENAI_API_KEY` (the judge) in th
 
 Still to do before trusting judged scores to steer changes: hand-label a set of transcripts and measure how often the judge agrees, separately for passes and fails.
 
+### Baselines
+
+`evals/baselines/connector/` keeps the summary and provenance of runs worth comparing against. The first, Claude Opus 5.5 at effort high on 2026-10-15, passed every trial (42 of 42). That makes the current cases a **regression** set: anything below 100% means something broke. Measuring which model or wording is *better* needs harder cases.
+
 ### What a run leaves behind
 
 A new folder per run under `evals/results/connector/` (git-ignored), never overwritten:
