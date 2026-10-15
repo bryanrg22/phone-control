@@ -7,7 +7,7 @@
 // showed no time picker and no text field, so setting the time looked like
 // "no change" and the agent stopped itself after 8 steps.
 import { readFileSync } from 'node:fs';
-import { formatElements as formatUIElements, screenSignature, describeElement } from '../elements.mjs';
+import { formatElements as formatUIElements, screenSignature, describeElement, findElement } from '../elements.mjs';
 
 let pass = 0, fail = 0;
 function check(name, cond, detail = '') {
@@ -24,7 +24,7 @@ console.log('the element list on the real Add Alarm sheet:');
   const lines = formatUIElements(ADD_ALARM, W, H);
   const has = (re) => lines.some((l) => re.test(l));
   check('the three picker wheels appear with their values', has(/^- picker wheel = "6 o’clock" at/) && has(/^- picker wheel = "38 minutes" at/) && has(/^- picker wheel = "AM" at/), lines.join('\n'));
-  check('the label field appears with what was typed', has(/^- text field = "Gym" at/));
+  check('the label field appears with what was typed, named by its placeholder', has(/^- text field "Label" = "Gym" at/), lines.join('\n'));
   check('the buttons are still there', has(/^- "Save" at/) && has(/^- "Cancel" at/));
   check('the status-bar clock is left out', !has(/10:30/));
   check('status-bar signal and battery are left out', !has(/Cellular|battery|Wi-Fi bars/));
@@ -47,6 +47,31 @@ console.log('what is noise and what is not:');
     node({ label: 'Delete', elementType: 9, frame: { X: 300, Y: 400, Width: 60, Height: 40 } }),
   ), W, H);
   check('two elements with one label at two places are both listed', lines.length === 2, lines.join('\n'));
+}
+
+console.log('only what is on screen, and every field:');
+{
+  const lines = formatUIElements(tree(
+    node({ label: 'Clock', elementType: 9, frame: { X: 0, Y: 0, Width: 0, Height: 0 } }),
+    node({ label: 'Mail', elementType: 9, frame: { X: 450, Y: 300, Width: 60, Height: 60 } }),
+    node({ label: '', value: null, placeholderValue: 'Label', elementType: 49, frame: { X: 20, Y: 400, Width: 362, Height: 44 } }),
+    node({ label: 'Save', elementType: 9 }),
+  ), W, H);
+  check('an icon with a zero-size frame (another home-screen page) is left out', !lines.some((l) => l.includes('"Clock"')), lines.join('\n'));
+  check('an element whose centre is off the screen is left out', !lines.some((l) => l.includes('"Mail"')));
+  check('an empty unlabelled field is listed by its placeholder', lines.some((l) => l.startsWith('- text field "Label" (empty) at')), lines.join('\n'));
+  check('ordinary elements are still there', lines.some((l) => l.startsWith('- "Save"')));
+}
+{
+  const h = tree(
+    node({ label: 'Label', elementType: 48, frame: { X: 20, Y: 380, Width: 60, Height: 20 } }),
+    node({ label: '', placeholderValue: 'Label', elementType: 49, frame: { X: 20, Y: 404, Width: 362, Height: 44 } }),
+    node({ label: '', placeholderValue: 'Search', elementType: 45, frame: { X: 20, Y: 100, Width: 362, Height: 36 } }),
+  );
+  check('a tool naming a label finds the labelled element first', findElement(h, 'Label').elementType === 48);
+  check('a tool naming a placeholder finds the field', findElement(h, 'Search').elementType === 45);
+  check('nothing matches, nothing is found', findElement(h, 'Nope') === null);
+  check('a tool that types gets the field, not the heading with the same text', findElement(h, 'Label', { editable: true }).elementType === 49);
 }
 
 console.log('how one element reads:');

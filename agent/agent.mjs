@@ -38,13 +38,13 @@ const apiKey = process.env[KEY_ENV[cfg.provider]];
 if (!apiKey) { log(`ERROR: set ${KEY_ENV[cfg.provider]} for --provider ${cfg.provider}`); process.exit(1); }
 
 // ─── the phone ───
-const device = createDevice({ host: cfg.driverHost, port: cfg.driverPort });
+const { apps, source: appsSource } = await installedApps({ simulatorUdid: cfg.simulator });
+const device = createDevice({ host: cfg.driverHost, port: cfg.driverPort, knownApps: Object.values(apps) });
 let screenInfo;
 try { screenInfo = await device.info(); } catch (e) {
   emit('infra', { detail: `the runner on the phone is not answering at ${device.address}: ${e.message}` });
   process.exit(EXIT.device_lost);
 }
-const { apps, source: appsSource } = await installedApps({ simulatorUdid: cfg.simulator });
 log(`[setup] runner ${device.address} · screen ${screenInfo.widthPoints}x${screenInfo.heightPoints} pt · ${Object.keys(apps).length} apps (${appsSource})`);
 
 // ─── the model, the tools, the prompt ───

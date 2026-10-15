@@ -63,8 +63,8 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     return formatElements(await device.hierarchy(), s.widthPoints, s.heightPoints);
   };
 
-  async function tapByLabel(label) {
-    const el = findElement(await device.hierarchy(), label);
+  async function tapByLabel(label, { editable = false } = {}) {
+    const el = findElement(await device.hierarchy(), label, { editable });
     if (!el) return null;
     const cx = Math.round(el.frame.X + el.frame.Width / 2);
     const cy = Math.round(el.frame.Y + el.frame.Height / 2);
@@ -126,7 +126,7 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     },
 
     async replaceText({ field, value }) {
-      const el = findElement(await device.hierarchy(), field);
+      const el = findElement(await device.hierarchy(), field, { editable: true });
       if (!el) return { error: true, text: `ERROR: field "${field}" not found in view hierarchy. Call getUIElements to read the exact field label, then retry replaceText.` };
       const cx = Math.round(el.frame.X + el.frame.Width / 2);
       const cy = Math.round(el.frame.Y + el.frame.Height / 2);
@@ -192,7 +192,7 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     },
 
     async typeAndSubmit({ elementText, text, submitKey = 'enter' }) {
-      const field = await tapByLabel(elementText);
+      const field = await tapByLabel(elementText, { editable: true });
       // Typing into whatever happens to be focused could send the text somewhere else.
       if (!field) return { error: true, text: `ERROR: field "${elementText}" not found, so nothing was typed or sent. Use getUIElements to read the exact field label.` };
       await sleep(500);

@@ -17,10 +17,11 @@ const execFileP = promisify(execFile);
 
 /**
  * @param {object} o
- * @param {string} o.host   the runner's address: the phone over the tunnel, or 127.0.0.1 for a simulator
+ * @param {string} o.host        the runner's address: the phone over the tunnel, or 127.0.0.1 for a simulator
  * @param {number} o.port
+ * @param {string[]} [o.knownApps]  bundle IDs of the installed apps (see keyboardVisible)
  */
-export function createDevice({ host, port }) {
+export function createDevice({ host, port, knownApps = [] }) {
   const base = `http://${host}:${port}`;
 
   async function call(method, path, body = null) {
@@ -30,9 +31,16 @@ export function createDevice({ host, port }) {
     if (!resp.ok) throw new Error(`runner ${path} failed (${resp.status}): ${(await resp.text().catch(() => '')).slice(0, 150)}`);
     return resp;
   }
-  // The runner ignores this list (it reads the foreground app itself) but its
-  // request schema requires one.
+  // Most routes ignore the app list (they read the foreground app themselves)
+  // but their request schema requires one.
   const APP_IDS = ['com.apple.springboard'];
+  // /keyboard does not: it asks the FIRST app of the list that is in the
+  // foreground for its keyboard, and falls back to the home screen. Sent only
+  // the home screen's ID it always answered "no keyboard" (caught by
+  // e2e/tools-on-simulator.mjs, 2026-10-15). So: the app opened last, then
+  // every installed app, then the home screen.
+  let lastLaunched = null;
+  const foregroundCandidates = () => [...new Set([lastLaunched, ...knownApps, 'com.apple.springboard'].filter(Boolean))];
 
   const device = {
     address: `${host}:${port}`,
@@ -42,8 +50,8 @@ export function createDevice({ host, port }) {
     async screenshot() { return Buffer.from(await (await call('GET', '/screenshot')).arrayBuffer()); },
     /** The foreground app's element tree, as the runner's JSON text. */
     async hierarchy() { return (await call('POST', '/viewHierarchy', { appIds: APP_IDS, excludeKeyboardElements: false })).text(); },
-    async keyboardVisible() { return (await (await call('POST', '/keyboard', { appIds: APP_IDS })).json().catch(() => ({}))).isKeyboardVisible === true; },
-    async launchApp(bundleId) { await call('POST', '/launchApp', { bundleId }); },
+    async keyboardVisible() { return (await (await call('POST', '/keyboard', { appIds: foregroundCandidates() })).json().catch(() => ({}))).isKeyboardVisible === true; },
+    async launchApp(bundleId) { await call('POST', '/launchApp', { bundleId }); lastLaunched = bundleId; },
     async tap(x, y, duration = 0.1) { await call('POST', '/touch', { x, y, duration }); },
     async type(text) { await call('POST', '/inputText', { text, appIds: APP_IDS }); },
     async eraseText(chars) { await call('POST', '/eraseText', { charactersToErase: chars, appIds: APP_IDS }); },

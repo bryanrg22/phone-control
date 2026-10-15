@@ -25,7 +25,8 @@
     "evals:connector": "node evals/connector/run.mjs",
     "test:evals:self": "node evals/connector/run.mjs --assistant oracle --expect all-pass && node evals/connector/run.mjs --assistant null --expect all-fail",
     "test:record": "node scripts/record-tests.mjs",
-    "evals:phone-agent": "node evals/phone-agent/run.mjs"
+    "evals:phone-agent": "node evals/phone-agent/run.mjs",
+    "test:tools:sim": "node e2e/tools-on-simulator.mjs"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

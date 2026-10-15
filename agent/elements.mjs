@@ -5,6 +5,7 @@
 //   - "Save" at (87.3%, 10.9%) size 72x44
 //   - "Wi-Fi" = "1" at (…)                 a labelled control with a value
 //   - picker wheel = "6 o'clock" at (…)    a control known only by its value
+//   - text field "Label" (empty) at (…)    an unlabelled field, named by its placeholder
 //
 // Positions are the element's centre in percent of the screen, the same space
 // the tap tool takes, to one decimal (1% is about 9 points down a phone screen,
@@ -19,7 +20,12 @@
 //    deleted every alarm time ("6:45 AM") from the Clock app;
 //  • values are shown for value-bearing controls: time-picker wheels carry no
 //    label, and a text field's contents are its value, so without them an Add
-//    Alarm sheet had no picker and no field (iOSWorld, 2026-10-15).
+//    Alarm sheet had no picker and no field (iOSWorld, 2026-10-15);
+//  • an unlabelled field is named by its placeholder: SwiftUI's empty
+//    TextField("Label", …) has no label and no value, only the placeholder,
+//    and was missing from the list entirely;
+//  • only what is on screen: home-screen icons on another page come back with
+//    a zero-size frame at (0, 0), which a model would tap.
 
 const NOISE = ['scroll bar', 'battery', 'Cellular', 'Wi-Fi bars', 'No signal', 'Not charging',
   'signal strength', 'battery power', 'location services', 'Location tracking'];
@@ -39,16 +45,21 @@ const MAX_VALUE = 80;
 const clip = (v) => (v.length > MAX_VALUE ? `${v.slice(0, MAX_VALUE)}…` : v);
 const pct = (v, total) => Math.round((v / total) * 1000) / 10;
 
-/** How one element reads: `"Label"`, `"Label" = "value"`, `picker wheel = "value"`, or null. */
+/** How one element reads: `"Label"`, `"Label" = "value"`, `picker wheel = "value"`, `text field "Hint" (empty)`, or null. */
 export function describeElement(node) {
   const label = (node.label || '').trim();
   const value = node.value === null || node.value === undefined ? '' : String(node.value).trim();
+  const hint = (node.placeholderValue || '').trim();
   const type = VALUE_TYPES[node.elementType];
   if (label && value && type && value !== label) return `"${label}" = "${clip(value)}"`;
   if (label) return `"${label}"`;
-  if (value && type) return `${type} = "${clip(value)}"`;
-  return null;
+  if (!type || (!value && !hint)) return null;
+  const named = hint ? `${type} "${clip(hint)}"` : type;
+  return value && value !== hint ? `${named} = "${clip(value)}"` : `${named} (empty)`;
 }
+
+/** On screen: a real frame whose centre is inside the screen. */
+const onScreen = (f, W, H) => f.Width > 0 && f.Height > 0 && f.X + f.Width / 2 >= 0 && f.X + f.Width / 2 <= W && f.Y + f.Height / 2 >= 0 && f.Y + f.Height / 2 <= H;
 
 /** @returns {string[]} one line per element, in tree order */
 export function formatElements(hierarchyText, screenW, screenH) {
@@ -59,8 +70,8 @@ export function formatElements(hierarchyText, screenW, screenH) {
   (function walk(node) {
     if (!node) return;
     const desc = describeElement(node);
-    if (desc) {
-      const text = (node.label || '').trim() || String(node.value ?? '').trim();
+    if (desc && (!node.frame || onScreen(node.frame, screenW, screenH))) {
+      const text = (node.label || '').trim() || String(node.value ?? '').trim() || (node.placeholderValue || '').trim();
       const f = node.frame;
       const cx = f ? f.X + f.Width / 2 : null;
       const cy = f ? f.Y + f.Height / 2 : null;
@@ -95,15 +106,30 @@ export function screenSignature(lines) {
   return lines.map((l) => l.replace(/^- /, '').replace(/ at \(.*$/, '')).filter((l) => !l.startsWith('(… ')).sort().join('|');
 }
 
-/** The first element whose label, title or identifier is exactly `text`, or null. */
-export function findElement(hierarchyText, text) {
+const EDITABLE = new Set([45, 49, 50, 52]);   // search field, text field, secure text field, text view
+
+/**
+ * The element a tool names: the first whose label, title or identifier is
+ * exactly `text`; failing that, the first whose placeholder is (an unlabelled
+ * SwiftUI field is known only by its placeholder). With { editable: true }
+ * (tools that type) a matching field wins over any other element: on iOSWorld's
+ * Add Alarm sheet "Label" is both the heading above the field and the field's
+ * placeholder. Only elements with a real frame count. Null when none.
+ */
+export function findElement(hierarchyText, text, { editable = false } = {}) {
   let root;
   try { root = JSON.parse(hierarchyText); } catch { return null; }
-  let hit = null;
+  let byName = null; let byHint = null; let field = null;
   (function walk(n) {
-    if (!n || hit) return;
-    if ((n.label === text || n.title === text || n.identifier === text) && n.frame) { hit = n; return; }
+    if (!n) return;
+    const real = n.frame && n.frame.Width > 0 && n.frame.Height > 0;
+    if (real) {
+      const named = n.label === text || n.title === text || n.identifier === text;
+      if (editable && !field && EDITABLE.has(n.elementType) && (named || n.placeholderValue === text)) field = n;
+      if (!byName && named) byName = n;
+      if (!byHint && n.placeholderValue === text) byHint = n;
+    }
     for (const c of n.children || []) walk(c);
   })(root?.axElement || root);
-  return hit;
+  return (editable && field) || byName || byHint;
 }
