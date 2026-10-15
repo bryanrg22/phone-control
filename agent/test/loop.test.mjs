@@ -1,0 +1,96 @@
+// loop.test.mjs — the agent process end to end, against a fake phone and a fake model.
+//
+// These pin the contract the server depends on (server/src/agent-runner.mjs):
+// the arguments it passes, the events its parser reads from the agent's
+// output, the answer file for questions, and the exit codes. They run the real
+// agent.mjs, so they hold across any rewrite of its insides.
+
+import { startFakeRunner } from './rig/fake-runner.mjs';
+import { startFakeModel, toolUse, text, httpError } from './rig/fake-model.mjs';
+import { runAgent } from './rig/run-agent.mjs';
+
+let pass = 0, fail = 0;
+function check(name, cond, detail = '') {
+  if (cond) { console.log(`  ✓ ${name}`); pass++; } else { console.log(`  ✗ ${name}${detail ? `  — ${detail}` : ''}`); fail++; }
+}
+const types = (events) => events.map((e) => e.type).filter((t) => t !== 'thinking' && t !== 'step');
+
+async function scenario(name, { script, screen, ...opts }, assert) {
+  console.log(name);
+  const runner = await startFakeRunner({ screen });
+  const model = await startFakeModel(typeof script === 'function' ? script(runner) : script);
+  try {
+    const r = await runAgent({ runner, model, ...opts });
+    await assert({ ...r, runner, model });
+  } finally {
+    await runner.close(); await model.close();
+  }
+}
+
+await scenario('a task that finishes', {
+  script: [toolUse('openApp', { appName: 'Clock' }), toolUse('tap', { x: 50, y: 50 }), toolUse('taskComplete', { summary: 'Alarm set for 6:45 AM.' })],
+}, ({ code, events, runner }) => {
+  check('exits 0', code === 0, `exit ${code}`);
+  check('the server sees each action, then done with the summary', JSON.stringify(types(events)) === JSON.stringify(['action', 'action', 'action', 'done']) && events.at(-1).summary === 'Alarm set for 6:45 AM.', JSON.stringify(events));
+  check('the server sees step numbers out of the budget', events.some((e) => e.type === 'step' && e.step === 1 && e.total === 10));
+  check('the app is launched by its bundle ID', runner.callsTo('/launchApp').some((c) => c.body.bundleId === 'com.apple.mobiletimer'));
+  check('a tap at 50%/50% lands at the centre of the screen, in points', runner.callsTo('/touch').some((c) => c.body.x === 201 && c.body.y === 437), JSON.stringify(runner.callsTo('/touch').map((c) => c.body)));
+});
+
+await scenario('a task the agent gives up on', {
+  script: [toolUse('taskFailed', { reason: 'There is no contact named Jordan.' })],
+}, ({ code, events }) => {
+  check('exits 1', code === 1, `exit ${code}`);
+  check('the server sees failed with the reason', events.some((e) => e.type === 'failed' && /Jordan/.test(e.reason || '')), JSON.stringify(events));
+});
+
+await scenario('the step budget runs out', {
+  script: [toolUse('tap', { x: 10, y: 10 }), toolUse('tap', { x: 20, y: 20 }), toolUse('tap', { x: 30, y: 30 })], maxSteps: 3,
+}, ({ code, events, model }) => {
+  check('exits 1', code === 1, `exit ${code}`);
+  check('the server sees a failure', events.some((e) => e.type === 'failed'), JSON.stringify(events));
+  const last = model.requests.at(-1).body.tools.map((t) => t.name);
+  check('the last step offers only the two ways to finish', last.length === 2 && last.includes('taskComplete') && last.includes('taskFailed'), last.join(','));
+});
+
+await scenario('a question the user answers', {
+  script: [toolUse('askUser', { question: 'Which Sam?', options: ['Sam Lee', 'Sam Patel'] }),
+    (req) => toolUse('taskComplete', { summary: `Texted ${JSON.stringify(req.messages).includes('Sam Lee') ? 'Sam Lee' : 'nobody'}.` })],
+  onAsk: (ask, answer) => setTimeout(() => answer('Sam Lee'), 300),
+}, ({ code, events }) => {
+  check('the server sees the question with its options', events.some((e) => e.type === 'ask' && e.question === 'Which Sam?' && e.options.join('|') === 'Sam Lee|Sam Patel'), JSON.stringify(events));
+  check('the server sees the answer arrive', events.some((e) => e.type === 'answer_seen'));
+  check('the answer reaches the model, and the run finishes', code === 0 && events.some((e) => e.type === 'done' && e.summary === 'Texted Sam Lee.'), JSON.stringify(events.at(-1)));
+});
+
+await scenario('a question nobody answers', {
+  script: [toolUse('askUser', { question: 'Which Sam?', options: ['Sam Lee', 'Sam Patel'] }),
+    (req) => toolUse('taskFailed', { reason: /no response|did not respond|not respond|unanswered|timed out/i.test(JSON.stringify(req.messages)) ? 'No answer.' : 'Model was not told.' })],
+  askUserTimeoutSec: 1,
+}, ({ events }) => {
+  check('the server sees the question time out', events.some((e) => e.type === 'ask_timeout'), JSON.stringify(events));
+  check('the model is told nobody answered', events.some((e) => e.type === 'failed' && e.reason === 'No answer.'), JSON.stringify(events.at(-1)));
+});
+
+await scenario('the model API refuses the key', {
+  script: [httpError(401, 'invalid x-api-key')],
+}, ({ code, events }) => {
+  check('exits 42: errored, not failed', code === 42, `exit ${code}`);
+  check('the server is told neither done nor failed', !events.some((e) => e.type === 'done' || e.type === 'failed'), JSON.stringify(events));
+});
+
+await scenario('the phone stops answering mid-task', {
+  script: (runner) => [toolUse('openApp', { appName: 'Clock' }), () => { runner.kill(); return toolUse('tap', { x: 50, y: 50 }); }, toolUse('tap', { x: 50, y: 50 })],
+}, ({ code, events }) => {
+  check('exits 43: the device connection died', code === 43, `exit ${code}`);
+  check('the server sees an infrastructure failure', events.some((e) => e.type === 'infra'), JSON.stringify(events));
+});
+
+await scenario('a reply with text but no tool call', {
+  script: [text('I think the alarm is set.'), toolUse('taskComplete', { summary: 'Alarm set.' })],
+}, ({ code, model }) => {
+  check('the agent asks the model to use a tool and carries on', code === 0 && model.requests.length === 2);
+});
+
+console.log(fail ? `\n❌ ${fail} FAILED, ${pass} passed` : `\n✅ ALL PASS: ${pass} passed, 0 failed`);
+if (fail) process.exit(1);

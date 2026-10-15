@@ -15,13 +15,17 @@ import { parseJsonAction, mapLocalModelAction } from './local-adapter.mjs';
 import { chatToResponsesInput, toolsToResponses, normalizeResponsesResponse } from './responses-adapter.mjs';
 
 // ─── Provider config ───
+// The base URL of each provider can be redirected with the same variables the
+// providers' own SDKs read (ANTHROPIC_BASE_URL, OPENAI_BASE_URL): for a proxy,
+// or for the test suite's fake model (agent/test/rig/fake-model.mjs).
+const base = (envName, dflt) => (process.env[envName] || dflt).replace(/\/+$/, '');
 export const LLM_CONFIG = {
   // OpenAI runs on the Responses API (2026-08 migration) — chat-completions
   // is frozen; every new capability (native web_search, computer use, …)
   // ships on /v1/responses only. The `local` provider below keeps the
   // chat-completions shape (Ollama's compat endpoint).
   openai: {
-    url: 'https://api.openai.com/v1/responses',
+    url: `${base('OPENAI_BASE_URL', 'https://api.openai.com/v1')}/responses`,
     keyEnv: 'OPENAI_API_KEY',
     keyHint: 'https://platform.openai.com/api-keys',
   },
@@ -31,7 +35,7 @@ export const LLM_CONFIG = {
     keyHint: 'https://aistudio.google.com/apikey',
   },
   anthropic: {
-    url: 'https://api.anthropic.com/v1/messages',
+    url: `${base('ANTHROPIC_BASE_URL', 'https://api.anthropic.com')}/v1/messages`,
     keyEnv: 'ANTHROPIC_API_KEY',
     keyHint: 'https://console.anthropic.com/settings/keys',
   },
