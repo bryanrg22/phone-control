@@ -371,6 +371,25 @@ await scenario('another program\'s tunnel to the same phone is not ours: never c
   } finally { other.kill('SIGKILL'); }
 });
 
+await scenario('a failed start is still on record after the clean-up suspend that follows it', async () => {
+  A.lock();
+  A.lockedStartSilent = true;                    // authorised, then silence: the phone is waiting on its owner
+  const r = await arm(A);
+  assert.equal(r.armed, false);
+  const failed = await h.status(A);
+  assert.equal(failed.arm.phase, 'failed');
+  const reason = failed.arm.reason;
+  await suspend(A);                              // what the server does at the end of every task
+  const after = await h.status(A);
+  assert.equal(after.arm.phase, 'failed', 'the suspend erased why the start failed');
+  assert.equal(after.arm.reason, reason);
+  await A.unlock();
+  A.lockedStartSilent = false;
+  await armOk(A, 'arm once unlocked');
+  await suspend(A);
+  assert.equal((await h.status(A)).arm.phase, 'suspended', 'a normal suspend is still recorded as one');
+});
+
 await scenario('runner crash on the phone → arm reattaches over the warm tunnel', async () => {
   await armOk(A);
   const [tunnel] = await h.tunnelPids(A);

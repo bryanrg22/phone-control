@@ -644,7 +644,12 @@ async function modeSuspend() {
     try { await execFileP('pkill', ['-f', ANCHOR_PATTERN], { timeout: 5000 }); } catch { /* raced */ }
   }
   await sleep(2); // let the anchor die and the runner notice
-  if (ADDRESS) progress('suspended');
+  // A failed start stays the last word on this phone. Every task ends with
+  // this suspend, and overwriting the failure here made the very next status
+  // check report the phone ready, so the assistant tried again (found by the
+  // connector evals, case state-locked). A failure older than a few minutes
+  // is ignored when the phone is described, so it cannot linger.
+  if (ADDRESS && readProgress()?.phase !== 'failed') progress('suspended');
   const tun = await tunnelUp();
   const live = tun ? await tunnelLive() : null;
   const runner = await probeRunner();

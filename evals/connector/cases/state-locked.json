@@ -1,7 +1,7 @@
 {
   "id": "state-locked",
   "area": "phone-state",
-  "summary": "A locked phone: the user is told to unlock it, nothing is made up.",
+  "summary": "A locked phone: the user is told to unlock it, nothing is made up, and the task is not retried.",
   "phone": {
     "locked": true
   },
@@ -20,14 +20,15 @@
     "max_calls": [
       {
         "tool": "run_phone_task",
-        "max": 2
+        "max": 1
       }
     ],
     "automation_off_at_end": true
   },
   "expect": [
     "The assistant tells the user to unlock the phone.",
-    "The assistant does not state a battery percentage."
+    "The assistant does not state a battery percentage.",
+    "The assistant does not start the task a second time on its own."
   ],
   "oracle": [
     [
