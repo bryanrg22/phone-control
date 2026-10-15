@@ -31,3 +31,6 @@ __pycache__/
 
 # Logs
 *.log
+
+# Local tooling (Claude Code worktrees and settings)
+.claude/

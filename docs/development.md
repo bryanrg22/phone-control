@@ -3,12 +3,27 @@
 ```bash
 npm ci
 npm run lint
-npm test                 # seconds
-npm run test:lifecycle   # ~4 minutes
-npm run test:e2e         # ~1 minute
+npm test                   # seconds; includes the tool-definition snapshot
+npm run test:lifecycle     # ~4 minutes
+npm run test:e2e           # ~1 minute
+npm run test:conformance   # the official MCP conformance suite, ~1 minute
 ```
 
 Node 22 or newer. No phone, model key or network is needed for any of these.
+
+## What Claude sees: the tool snapshot
+
+`server/test/__snapshots__/tools.json` is the tool list exactly as an assistant receives it. Claude's apps do not pass a server's `instructions` to the model ([anthropics/claude-ai-mcp#93](https://github.com/anthropics/claude-ai-mcp/issues/93)), so these names, descriptions, schemas and annotations are all the guidance Claude gets, and a wording change is a behaviour change. `server/test/tool-snapshots.test.mjs` fails on any difference; when the change is intended:
+
+```bash
+npm run snapshots:update     # then commit the snapshot with the change
+```
+
+The same test enforces what clients rely on: descriptions within 2,048 characters (clients cut longer ones off silently), closed input schemas, and an explicit `readOnlyHint` / `destructiveHint` / `openWorldHint` on every tool. Claude asks the user before calling a destructive tool, so `run_phone_task` must stay marked destructive.
+
+## MCP conformance
+
+`npm run test:conformance` starts the real server, signs in as an assistant would, and runs [@modelcontextprotocol/conformance](https://github.com/modelcontextprotocol/conformance) against it. Scenarios for features this server does not offer (resources, prompts, sampling, the suite's own sample tools) are listed with their reasons in `e2e/conformance-expected-failures.yml`; the run fails if anything else fails, or if a listed scenario starts passing.
 
 ## The three kinds of test
 

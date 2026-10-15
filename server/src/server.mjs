@@ -133,6 +133,7 @@ export function createConnectorApp({
 } = {}) {
   if (!publicUrl) throw new Error('createConnectorApp requires publicUrl');
   const BASE = publicUrl.replace(/\/+$/, '');
+  const hostAllowed = allowedHostCheck(BASE);
 
   const withStore = (fn) => {
     const db = loadStore(storePath);
@@ -163,6 +164,16 @@ export function createConnectorApp({
   }
 
   async function handle(req, res) {
+    // DNS rebinding: a web page on another domain can make a browser send
+    // requests here by pointing its own name at this machine. Such a request
+    // carries that other name in Host, so only our own public name and
+    // loopback are served (MCP transport spec; conformance scenario
+    // dns-rebinding-protection). Loopback stays allowed because a TLS front
+    // such as Tailscale Funnel may forward with Host set to 127.0.0.1.
+    if (!hostAllowed(req.headers.host)) {
+      sendJSON(res, 403, { error: 'forbidden_host', message: 'This server does not answer to that host name.' });
+      return;
+    }
     const url = new URL(req.url, BASE);
     const path = url.pathname.replace(/\/+$/, '') || '/';
 
@@ -434,10 +445,32 @@ export function createConnectorApp({
 
 /** One-line, argument-free description of a JSON-RPC payload for the log. Tool
  *  ARGUMENTS are deliberately left out: a task sentence is user content. */
+const LOOPBACK = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
+
+/** Host header check: the public URL's host, or loopback on any port. */
+export function allowedHostCheck(publicUrl) {
+  const pub = new URL(publicUrl);
+  const publicHost = pub.hostname.toLowerCase();
+  const publicPort = pub.port || (pub.protocol === 'https:' ? '443' : '80');
+  return (header) => {
+    if (typeof header !== 'string' || !header) return false;
+    let parsed;
+    try { parsed = new URL(`http://${header}`); } catch { return false; }
+    if (parsed.username || parsed.password || parsed.pathname !== '/') return false;
+    const name = parsed.hostname.toLowerCase();
+    if (LOOPBACK.has(name)) return true;
+    // The public name, with no port or with the public URL's own port.
+    return name === publicHost && (!parsed.port || parsed.port === publicPort);
+  };
+}
+
 export function describeRpc(payload) {
   const one = (m) => {
     const method = typeof m?.method === 'string' ? m.method : '?';
-    return method === 'tools/call' ? `tools/call ${String(m?.params?.name ?? '?').slice(0, 40)}` : method;
+    if (method === 'tools/call') return `tools/call ${String(m?.params?.name ?? '?').slice(0, 40)}`;
+    // Which protocol revision a client asks for decides what it expects of us.
+    if (method === 'initialize') return `initialize (protocol ${String(m?.params?.protocolVersion ?? '?').slice(0, 20)})`;
+    return method;
   };
   return Array.isArray(payload) ? payload.map(one).join(', ') : one(payload);
 }

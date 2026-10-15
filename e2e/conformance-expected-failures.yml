@@ -1,0 +1,41 @@
+# Conformance scenarios this server is EXPECTED to fail, with the reason.
+# Used by e2e/conformance.mjs (`npm run test:conformance`). The suite fails the
+# run when any other scenario fails, and also when a scenario listed here
+# starts passing, so this list cannot quietly go stale.
+#
+# Passing today: server-initialize, ping, tools-list, dns-rebinding-protection.
+server:
+  # The suite calls its own sample tools (test_simple_text, test_image_content,
+  # test_error_handling, ...). This server's tools are its own.
+  - tools-call-simple-text
+  - tools-call-image
+  - tools-call-audio
+  - tools-call-embedded-resource
+  - tools-call-mixed-content
+  - tools-call-with-logging
+  - tools-call-error
+  - tools-call-with-progress
+  # Capabilities this server does not advertise.
+  - logging-set-level
+  - completion-complete
+  - resources-list
+  - resources-read-text
+  - resources-read-binary
+  - resources-templates-read
+  - resources-subscribe
+  - resources-unsubscribe
+  - prompts-list
+  - prompts-get-simple
+  - prompts-get-with-args
+  - prompts-get-embedded-resource
+  - prompts-get-with-image
+  # Server-to-client requests. Claude's apps do not support elicitation
+  # (anthropics/claude-ai-mcp#153), so questions for the user go through
+  # get_run_status and answer_question instead.
+  - tools-call-sampling
+  - tools-call-elicitation
+  - elicitation-sep1034-defaults
+  - elicitation-sep1330-enums
+  # This server is stateless and offers no SSE stream; GET /mcp answers 405,
+  # which the transport spec allows.
+  - server-sse-multiple-streams

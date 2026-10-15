@@ -15,7 +15,7 @@ const rules = {
 
 export default [
   // runner/ is third-party Swift (see runner/README.md); var/ is run-time state.
-  { ignores: ['node_modules/**', 'runner/**', 'var/**'] },
+  { ignores: ['node_modules/**', 'runner/**', 'var/**', '.claude/**'] },
   js.configs.recommended,
   {
     files: ['**/*.mjs', '**/*.js'],

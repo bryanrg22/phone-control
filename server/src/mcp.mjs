@@ -19,8 +19,14 @@
 //     never asks.
 
 /** Newest first. We echo the client's version when we know it, which is what
- *  keeps an older client (Claude today) working against a newer server. */
-export const SUPPORTED_PROTOCOL_VERSIONS = ['2026-07-28', '2025-11-25', '2025-06-18', '2025-03-26'];
+ *  keeps an older client working against a newer server.
+ *
+ *  2026-07-28 is deliberately NOT listed: that revision replaces the
+ *  initialize handshake with a mandatory `server/discover` call, which this
+ *  server does not implement. Claude tries `server/discover` first, gets
+ *  "method not found", and falls back to `initialize` (seen in the server log),
+ *  so claiming the newer revision would only promise behaviour we lack. */
+export const SUPPORTED_PROTOCOL_VERSIONS = ['2025-11-25', '2025-06-18', '2025-03-26'];
 
 export const JSONRPC_ERRORS = {
   parse: -32700,

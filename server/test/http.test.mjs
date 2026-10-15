@@ -16,7 +16,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash, randomBytes } from 'node:crypto';
 
-import { createConnectorApp } from '../src/server.mjs';
+import { createConnectorApp, allowedHostCheck } from '../src/server.mjs';
+import { request as httpRequest } from 'node:http';
 import { createRunStore } from '../src/runs.mjs';
 import { createToolApi } from '../src/tool-api.mjs';
 import { createMcpHandler } from '../src/mcp.mjs';
@@ -66,6 +67,40 @@ const postForm = (p, form) => get(p, {
 const rpc = (msg, token) => postJSON('/mcp', msg, token ? { authorization: `Bearer ${token}` } : {});
 
 // ─── discovery ───────────────────────────────────────────────────────────────
+
+/** A request with a Host header of our choosing (fetch forbids setting Host). */
+function rawGet(path, host, origin) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(BASE + path);
+    const r = httpRequest({ host: u.hostname, port: u.port, path, method: 'GET', headers: { host, ...(origin ? { origin } : {}) } }, (res) => {
+      let body = ''; res.on('data', (d) => { body += d; }); res.on('end', () => resolve({ status: res.statusCode, body }));
+    });
+    r.on('error', reject); r.end();
+  });
+}
+
+await ok('DNS rebinding: a request naming another host is refused, before anything else runs', async () => {
+  const evil = await rawGet('/healthz', 'evil.example.com', 'http://evil.example.com');
+  assert.equal(evil.status, 403);
+  assert.equal(JSON.parse(evil.body).error, 'forbidden_host');
+  assert.equal((await rawGet('/mcp', 'evil.example.com:443')).status, 403);
+});
+
+await ok('DNS rebinding: our own public name and loopback are served', async () => {
+  for (const host of ['agent.example.com', 'agent.example.com:443', 'AGENT.example.com', 'localhost', '127.0.0.1:8788', '[::1]:3000']) {
+    assert.equal((await rawGet('/healthz', host)).status, 200, `refused ${host}`);
+  }
+});
+
+await ok('the host check rejects look-alikes and malformed headers', () => {
+  const allowed = allowedHostCheck('https://agent.example.com');
+  for (const bad of ['agent.example.com.evil.com', 'evil.agent.example.com', 'agent.example.com:8443', 'user@agent.example.com', 'agent.example.com/x', '', undefined, '127.0.0.1.evil.com']) {
+    assert.equal(allowed(bad), false, `accepted ${bad}`);
+  }
+  const withPort = allowedHostCheck('http://127.0.0.1:9999');
+  assert.equal(withPort('127.0.0.1:9999'), true);
+  assert.equal(allowedHostCheck('https://pc.example.ts.net')('pc.example.ts.net'), true);
+});
 
 await ok('healthz answers without credentials', async () => {
   const res = await get('/healthz');

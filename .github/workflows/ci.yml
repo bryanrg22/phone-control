@@ -1,9 +1,10 @@
-# Everything here runs without a phone, a model key or a network.
+# Everything here runs without a phone, a model key or any secret.
 name: ci
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,7 +15,7 @@ concurrency:
 
 jobs:
   unit:
-    name: lint and unit tests
+    name: lint, unit tests, tool snapshots
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -25,6 +26,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      # Includes server/test/tool-snapshots.test.mjs: any change to the tools
+      # Claude sees must arrive with an updated snapshot.
       - run: npm test
 
   simulated-phone:
@@ -41,3 +44,26 @@ jobs:
           node-version: 22
       - run: npm run test:lifecycle
       - run: npm run test:e2e
+
+  conformance:
+    # The official MCP conformance suite against the real server. Scenarios
+    # for features this server does not offer are listed, with reasons, in
+    # e2e/conformance-expected-failures.yml.
+    name: MCP conformance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run test:conformance
+
+  runner:
+    # Compiles the on-phone runner for the simulator: no signing, no device.
+    name: runner compiles
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: runner/build.sh --simulator
