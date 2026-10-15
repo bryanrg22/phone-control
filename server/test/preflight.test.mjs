@@ -14,7 +14,7 @@ import { parseScreenState, collectStrings, findBanner, bannerSwipe } from '../..
 import { describePhoneState, parseDeviceOverrides, createSupervisorClient } from '../src/preflight.mjs';
 import { createDeviceResolver } from '../src/device-resolver.mjs';
 import { createToolApi } from '../src/tool-api.mjs';
-import { fingerprint, serverFiles, createVersionInfo, releaseOf, commitOf, toolsFingerprint } from '../src/version.mjs';
+import { fingerprint, serverFiles, agentFiles, createVersionInfo, releaseOf, commitOf, toolsFingerprint } from '../src/version.mjs';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -357,6 +357,21 @@ await ok('a missing file changes the fingerprint instead of crashing; a missing 
   const v = createVersionInfo({ repoRoot: empty })();
   assert.deepEqual([v.device, v.agent], [null, null]);
   rmSync(empty, { recursive: true, force: true });
+});
+
+await ok('the agent fingerprint covers its subfolders but not its tests', () => {
+  const root = mkdtempSync(join(tmpdir(), 'agent-files-'));
+  mkdirSync(join(root, 'agent', 'providers'), { recursive: true });
+  mkdirSync(join(root, 'agent', 'test'), { recursive: true });
+  writeFileSync(join(root, 'agent', 'agent.mjs'), 'a');
+  writeFileSync(join(root, 'agent', 'providers', 'openai.mjs'), 'b');
+  writeFileSync(join(root, 'agent', 'test', 'x.test.mjs'), 'c');
+  const files = agentFiles(root).map((f) => f.slice(root.length + 1));
+  assert.deepEqual(files, ['agent/agent.mjs', 'agent/providers/openai.mjs']);
+  const before = fingerprint(agentFiles(root));
+  writeFileSync(join(root, 'agent', 'providers', 'openai.mjs'), 'changed');
+  assert.notEqual(fingerprint(agentFiles(root)), before, 'a provider change must change the fingerprint');
+  rmSync(root, { recursive: true, force: true });
 });
 
 await ok('the version names the release, the exact commit, and the tool list as served', () => {

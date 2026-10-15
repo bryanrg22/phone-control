@@ -14,7 +14,7 @@
 // every rubric criterion holds; that and the rubric score are their metrics.
 //
 // What is ours: the agent, run exactly as the server runs it on a phone
-// (agent/agent.mjs with the phone toolset, single-image mode, guard off),
+// (agent/agent.mjs, the same tools, the same prompt, through the same runner),
 // except that the simulator is the device and nobody answers its questions
 // (--askuser-timeout 1: an unanswered question returns "no answer").
 //
@@ -23,7 +23,8 @@
 //   <provider>_<model>/trial-<k>/              one iOSWorld run folder, judged by their script
 //       summary.json                           iOSWorld's summary (pass rate, rubric score)
 //       <NN>-<task>/task.json, trajectory.json iOSWorld's format
-//       <NN>-<task>/agent-trace/               every image the model saw, steps.jsonl
+//       <NN>-<task>/agent-trace/               the agent's full record: every model request and
+//                                              response, every tool call, every screen (agent/record.mjs)
 //       <NN>-<task>/final.png                  the screen when the run ended
 //       <NN>-<task>/app-state/                 every app's saved data after the run
 //       <NN>-<task>/agent.log, record.json     the agent's output; our timing, tokens, exit
@@ -40,7 +41,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir, homedir } from 'node:os';
 import { createHash } from 'node:crypto';
 
-import { toTrajectory, readSteps, outcomeOf, usageOf } from './trajectory.mjs';
+import { toTrajectory, readTrace, readManifest, outcomeOf, usageOf } from './trajectory.mjs';
 import { wilson } from '../lib/stats.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
 
@@ -136,9 +137,9 @@ async function runTask({ task, index, model, taskDir }) {
   const stateDir = mkdtempSync(join(tmpdir(), 'phone-agent-eval-state-'));
   const args = [join(REPO, 'agent', 'agent.mjs'), task.goal,
     '--provider', model.provider, '--model', model.model,
-    '--backend', 'direct-http-sim', '--device-profile', 'phone', '--udid', udid, '--driver-port', driverPort,
-    '--max-steps', String(PROTOCOL.max_steps), '--agent-mode', 'single-image', '--runtime-guard', 'off',
-    '--askuser-timeout', '1', '--trace-dir', traceDir, '--log-run-id', `${slug(model.model)}-${task.name}`];
+    '--simulator', udid, '--driver-port', driverPort,
+    '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', '1',
+    '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`];
   record.agent_args = args.slice(1).map((a) => (a === task.goal ? '<goal>' : a));
   const agentStart = Date.now();
   const log = createWriteStream(join(taskDir, 'agent.log'));
@@ -158,16 +159,12 @@ async function runTask({ task, index, model, taskDir }) {
   saveAppState(join(taskDir, 'app-state'));
 
   // 4. iOSWorld's format.
-  const steps = readSteps(traceDir);
-  const outcome = outcomeOf(steps);
-  // Without a final tool call, the agent's own log says why it stopped: its
-  // no-progress stop (a product feature, kept as the server runs it) or the budget.
-  if (outcome.ended === 'no_conclusion') {
-    const agentLog = readFileSync(join(taskDir, 'agent.log'), 'utf8');
-    if (agentLog.includes('no-progress circuit breaker')) outcome.ended = 'stopped_no_progress';
-    else if (agentLog.includes('Max steps reached')) outcome.ended = 'step_budget';
-  }
-  Object.assign(record, usageOf(steps), { ended: outcome.ended });
+  const trace = readTrace(traceDir);
+  const manifest = readManifest(traceDir);
+  const outcome = outcomeOf(trace);
+  // How the run ended, as the agent recorded it: completed, failed, step_budget,
+  // no_progress (its own stop, a product feature kept as the server runs it)…
+  Object.assign(record, usageOf(trace), { ended: manifest?.outcome?.status ?? outcome.ended, agent: manifest?.agent ?? null, prompt_sha256: manifest?.prompt_sha256 ?? null, tools_sha256: manifest?.tools_sha256 ?? null });
   record.cost_usd = costOf(model.provider, model.model, record);
   writeFileSync(join(taskDir, 'trajectory.json'), JSON.stringify(toTrajectory(traceDir, existsSync(finalShot) ? finalShot : null), null, 2));
 
@@ -177,7 +174,7 @@ async function runTask({ task, index, model, taskDir }) {
   if (exit.hung) return finish({ status: 'error', error: `no exit after ${hangLimitMin} minutes` });
   if (exit.code === 42) return finish({ status: 'error', error: 'model API failed (exit 42), see agent.log' });
   if (exit.code === 43) return finish({ status: 'error', error: 'device connection died (exit 43), see agent.log' });
-  if (!steps.length) return finish({ status: 'error', error: `the agent recorded no steps (exit ${exit.code}), see agent.log` });
+  if (!record.steps) return finish({ status: 'error', error: `the agent recorded no steps (exit ${exit.code}), see agent.log` });
   return finish({ status: 'ok', answer: outcome.answer });
 
   function finish({ status, error = null, answer = null }) {
@@ -260,7 +257,7 @@ const runInfo = {
   iosworld: { commit: git(IOSWORLD, 'rev-parse', 'HEAD'), dirty: (git(IOSWORLD, 'status', '--porcelain', '--untracked-files=no') || '').length > 0, tasks_sha256: createHash('sha256').update(readFileSync(TASKS_FILE)).digest('hex').slice(0, 16) },
   device: { udid, name: simInfo?.name ?? null, runtime: simInfo?.runtime ?? null, xcode: run('xcodebuild', ['-version']).split('\n')[0] },
   judge: { script: 'iOSWorld scripts/judge_trajectories.py', provider: 'openai', model: judgeModel },
-  agent: { entry: 'agent/agent.mjs', mode: 'single-image', toolset: 'phone', guard: 'off', ask_user: 'unanswered (1 s timeout)', reasoning: 'provider default' },
+  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', reasoning: 'provider default', no_progress_abort: 8 },
   models, trials, tasks: tasks.map((t) => t.name), cells: cells.map(({ model, trial, dir }) => ({ model, trial, dir })),
   node: process.version,
 };

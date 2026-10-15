@@ -2,7 +2,7 @@
 // The phone agent's stand-in for connector evals.
 //
 // The server starts it exactly as it starts agent/agent.mjs (same arguments,
-// same output markers, same question-and-answer file), so everything between
+// same events, same question-and-answer file), so everything between
 // the assistant and the phone is real. Only the agent's behaviour is scripted,
 // by the JSON file named in PHONE_AGENT_STUB_SCENARIO:
 //
@@ -28,6 +28,8 @@ const argv = process.argv.slice(2);
 const flag = (name) => { const i = argv.indexOf(name); return i >= 0 ? argv[i + 1] : null; };
 const task = argv[0];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// The agent's events (agent/protocol.mjs): one JSON object per line.
+const emit = (type, data = {}) => console.log(`@agent-event ${JSON.stringify({ type, ...data })}`);
 const scenarioFile = process.env.PHONE_AGENT_STUB_SCENARIO;
 const scenario = JSON.parse(readFileSync(scenarioFile, 'utf8'));
 
@@ -38,7 +40,7 @@ appendFileSync(`${scenarioFile}.calls.jsonl`, `${JSON.stringify({
 // The runner must really be up: a task only proceeds if automation started.
 const base = `http://${flag('--driver-host')}:${flag('--driver-port')}`;
 const info = await fetch(`${base}/deviceInfo`).catch((e) => ({ ok: false, statusText: e.message }));
-if (!info.ok) { console.log(`❌ INFRA: the runner did not answer: ${info.statusText}`); process.exit(1); }
+if (!info.ok) { emit('infra', { detail: `the runner did not answer: ${info.statusText}` }); process.exit(43); }
 
 async function waitForAnswer(timeoutMs) {
   const file = join(tmpdir(), 'agent-user-response.json');
@@ -61,36 +63,35 @@ const total = Number(flag('--max-steps') || 25);
 const started = Date.now();
 for (const s of scenario.steps) {
   step += 1;
-  console.log(`--- Step ${step}/${total} --- (${((Date.now() - started) / 1000).toFixed(1)}s total)`);
-  if (s.progress) console.log(`[Tool] tapText(${JSON.stringify({ text: s.progress })})`);
+  emit('step', { step, total, elapsed: ((Date.now() - started) / 1000).toFixed(1) });
+  if (s.progress) emit('action', { tool: 'tapText', args: { text: s.progress } });
   if (s.wait) await sleep(s.wait);
   if (s.ask) {
-    console.log(`__ASK_USER__:${JSON.stringify({ question: s.ask.question, options: s.ask.options || [] })}`);
+    emit('ask', { question: s.ask.question, options: s.ask.options || [], kind: 'options' });
     const got = await waitForAnswer(timeoutMs);
-    if (got === null) { console.log(`[askUser] No response after ${timeoutMs / 1000}s — giving up (unattended run).`); continue; }
-    console.log(`[askUser] User responded: "${got}"`);
+    if (got === null) { emit('ask_timeout'); continue; }
+    emit('answer_seen');
     answer = got;
   }
   if (s.askText) {
-    console.log(`__ASK_USER_TEXT__:${JSON.stringify({ question: s.askText.question, hint: s.askText.hint || '' })}`);
+    emit('ask', { question: s.askText.question, hint: s.askText.hint || '', kind: 'text' });
     const got = await waitForAnswer(timeoutMs);
-    if (got === null) { console.log(`[askUserText] No response after ${timeoutMs / 1000}s — giving up (unattended run).`); continue; }
-    console.log(`[askUserText] User typed: "${got}"`);
+    if (got === null) { emit('ask_timeout'); continue; }
+    emit('answer_seen');
     answer = got;
   }
   if (s.done !== undefined) {
-    console.log('✅ TASK COMPLETED');
-    console.log(String(s.done).replaceAll('{answer}', answer));
+    emit('done', { summary: String(s.done).replaceAll('{answer}', answer) });
     process.exit(0);
   }
   if (s.fail !== undefined) {
-    console.log(`❌ TASK FAILED: ${s.fail}`);
-    process.exit(0);
+    emit('failed', { reason: String(s.fail) });
+    process.exit(1);
   }
   if (s.infra !== undefined) {
-    console.log(`❌ INFRA: ${s.infra}`);
+    emit('infra', { detail: String(s.infra) });
     process.exit(43);
   }
 }
-console.log('⏱️  MAX STEPS REACHED');
-process.exit(0);
+emit('failed', { reason: 'Reached the step limit without finishing.' });
+process.exit(1);

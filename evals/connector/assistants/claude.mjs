@@ -49,15 +49,15 @@ export function createClaudeAssistant({ model = 'claude-opus-5-5', effort = 'hig
       for (;;) {
         if (now() - started > turnTimeoutMs) return { text, status: 'turn_timeout' };
         const t0 = now();
-        const res = await anthropic.messages.create({
-          model, max_tokens: 16000, system: SYSTEM_PROMPT, tools: apiTools, messages,
-          output_config: { effort },
-        });
+        const request = { model, max_tokens: 16000, system: SYSTEM_PROMPT, tools: apiTools, messages: structuredClone(messages), output_config: { effort } };
+        const res = await anthropic.messages.create(request);
         messages.push({ role: 'assistant', content: res.content });
         emit({
           type: 'model_call', ms: now() - t0, requested_model: model, served_model: res.model, stop_reason: res.stop_reason,
           request_id: res._request_id ?? null, usage: res.usage,
           stop_details: res.stop_details ?? null,
+          // The exact exchange (the SDK adds only headers, which are never recorded).
+          request, response: res,
         });
         for (const block of res.content) {
           if (block.type === 'text' && block.text) { text += (text ? '\n' : '') + block.text; emit({ type: 'assistant_text', text: block.text }); }

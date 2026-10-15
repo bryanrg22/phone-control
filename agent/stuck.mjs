@@ -1,4 +1,10 @@
-// stuck-detector.mjs — normalized-action repeat detection for the agent loop.
+// stuck.mjs — noticing an agent that is not getting anywhere.
+//
+// Two independent signals, both computed here and acted on by loop.mjs:
+//   • repeated ACTIONS (createStuckDetector): the same normalized action again
+//     and again → an advisory nudge to the model, escalating at 3 / 5 / 8;
+//   • an unchanging SCREEN (createProgressMonitor): the element list identical
+//     for N steps, or bouncing between two states for N steps → stop the run.
 //
 // Extracted + upgraded from the inline agent.mjs logic (2026-08-04) after a live
 // 12-step thrash run that the old detector missed entirely: the agent alternated
@@ -9,14 +15,13 @@
 // arg-JSON of the last 3, and escalate advisory nudges as the repeat count grows
 // instead of firing one fixed warning.
 //
-// Two signals, both advisory (the hard circuit breakers stay in agent.mjs):
+// Repeated actions — two signals, both advisory:
 //   • consecutive — 3 in a row of the same normalized action (or same tool with
 //     clustered coordinates), the original signal, kept byte-compatible in spirit.
 //   • windowed repeats — the same normalized action N times in the last `window`
 //     steps regardless of what ran in between; nudges escalate at 3 / 5 / 8.
 //
-// Pure module: no I/O, no module-global state. Mirrors must stay in sync with
-// OnDeviceAgent.swift (StuckDetector) — enforced by the parity manifest.
+// Pure module: no I/O, no module-global state.
 
 /** Normalize a tool call to a comparable key. Coordinates snap to a 10% grid so
  *  near-identical taps collide; free text is lowercased/trimmed; volatile args
@@ -113,7 +118,7 @@ export function createStuckDetector({ window = 12 } = {}) {
           return { stuck: true, nudge: `WARNING: You have now tried "${key.split(':')[0]}" ${count} times in your recent actions and the task is not advancing. Your current approach does NOT work. Stop and reconsider from scratch: re-read every visible element, consider whether this task is even possible on this device — if it is not (missing app, missing setting, unsupported feature), call taskFailed and explain why instead of repeating actions.` };
         }
         if (level === 5) {
-          return { stuck: true, nudge: `Heads up: you have repeated a similar action ${count} times in your last ${entries.length} actions without finishing the task. It might be worth reconsidering your approach — read ALL text on screen, use webSearch if this app/screen is unfamiliar, or try a structurally different path to the goal.` };
+          return { stuck: true, nudge: `Heads up: you have repeated a similar action ${count} times in your last ${entries.length} actions without finishing the task. It might be worth reconsidering your approach — read ALL text on screen, search the web if this app or screen is unfamiliar, or try a structurally different path to the goal.` };
         }
         return { stuck: false, nudge: `Note: you have used a very similar action ${count} times recently. If it is not producing the result you expect, check the UI element list for exact coordinates before trying again.` };
       }
@@ -122,4 +127,43 @@ export function createStuckDetector({ window = 12 } = {}) {
   }
 
   return { record, assess, _entries: entries };
+}
+
+
+/**
+ * The screen is not changing. Fed one screen signature per observation
+ * (elements.mjs screenSignature: labels and values, no positions).
+ *   • after 3 identical screens: a nudge to read the screen again;
+ *   • `abortAfter` identical screens in a row: stop (frozen);
+ *   • a full window of `abortAfter` screens with exactly 2 distinct states:
+ *     stop (oscillating — the agent keeps changing something and changing it back).
+ * abortAfter 0 never stops (canvas or drawing tasks, where the tree is static).
+ */
+export function createProgressMonitor({ abortAfter = 8 } = {}) {
+  let prev = null;
+  let unchanged = 0;   // drives the nudge; resets after it fires
+  let streak = 0;      // drives the frozen stop; does not reset on a nudge
+  const recent = [];
+
+  return {
+    /** @returns {{ nudge: string|null, stop: string|null }} */
+    observe(signature) {
+      let nudge = null;
+      if (signature && signature === prev) {
+        unchanged += 1; streak += 1;
+        if (unchanged >= 3) {
+          unchanged = 0;
+          nudge = 'WARNING: The screen has NOT changed after 3 actions — your actions are having no effect. Stop and read ALL text on the screen for instructions, look for fields or buttons you may have missed, or try a different approach.';
+        }
+      } else { unchanged = 0; streak = 0; }
+      prev = signature;
+      if (abortAfter <= 0) return { nudge, stop: null };
+      recent.push(signature);
+      if (recent.length > abortAfter) recent.shift();
+      if (streak >= abortAfter) return { nudge, stop: `the screen did not change for ${streak} steps` };
+      const distinct = new Set(recent.filter(Boolean)).size;
+      if (recent.length >= abortAfter && distinct === 2) return { nudge, stop: `the screen went back and forth between 2 states for ${recent.length} steps` };
+      return { nudge, stop: null };
+    },
+  };
 }

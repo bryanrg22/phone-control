@@ -1,0 +1,53 @@
+# The phone agent
+
+The program that operates the iPhone. The server starts one per task (`node agent/agent.mjs "<task>" …`, see `server/src/agent-runner.mjs`); it looks at the screen, asks a model what to do, does it through the XCTest runner on the phone, and repeats until the model says the task is done, gives up, or the step budget runs out.
+
+## How one task runs
+
+```
+observe ──► decide ──► act ──► observe ──► …            until taskComplete / taskFailed / budget
+  │           │          │
+  │           │          └─ tools.mjs: each tool call → runner calls (tap, type, launch…)
+  │           └─ providers/: one request to the model with the conversation and the tools
+  └─ observe.mjs: a screenshot (768 px wide) and the on-screen element list (elements.mjs)
+```
+
+One **step** is one model request. The model may call several tools in one step; they run in order, and the run stops at the first that fails, at `taskComplete` or at `taskFailed` (the rest are reported as not run). After a step that changed the screen the agent observes again, so the next request carries a fresh screenshot.
+
+## Files
+
+| File | Responsibility |
+| --- | --- |
+| `agent.mjs` | Entry point: reads the arguments, wires the parts together, maps the outcome to an exit code |
+| `cli-args.mjs` | The arguments (pure, unit-tested) |
+| `loop.mjs` | The loop: step budget, the final step, the stops, the outcome |
+| `observe.mjs` | Screenshot (rotated upright, resized) and element list for one step |
+| `elements.mjs` | View hierarchy → the element list the model reads; the screen signature |
+| `tools.mjs` | The tools the model can call, and what each does on the device |
+| `device.mjs` | HTTP client for the XCTest runner; which apps are installed |
+| `context.mjs` | The conversation: what is kept, what older screenshots become, the action history |
+| `prompt.mjs` | The system prompt |
+| `stuck.mjs` | Repeated actions (nudges) and no progress (stop) |
+| `providers/` | One file per model provider: request shape, response shape, retries |
+| `protocol.mjs` | What the server reads: one JSON event per line, and the answer file for questions |
+| `record.mjs` | The full record of a run (see below) |
+| `models.mjs` | Default model per provider |
+
+## What the server sees
+
+Each event is one line on standard output, `@agent-event ` followed by JSON: `step`, `thinking`, `action`, `ask`, `answer_seen`, `ask_timeout`, `done`, `failed`, `infra`. Everything else the agent prints is for people. Answers to questions arrive in `$TMPDIR/agent-user-response.json`. Exit codes: 0 done, 1 not done (gave up, budget, no progress), 42 the model API failed for good, 43 the phone stopped answering, 2 bad arguments.
+
+## The record of a run
+
+With `--trace-dir <dir>` the agent writes everything needed to replay or judge the run without re-running it, using the OpenTelemetry GenAI names for fields:
+
+- `trace.jsonl`: one line per model call (the exact request and response, model asked for and model that answered, timing, tokens) and per tool call (arguments, result, timing, error), in order.
+- `images/<sha256>.jpg`: every image sent to the model, stored once and referenced from the trace by hash.
+- `steps.jsonl`, `step-NN.jpg`: the per-step view used by the iOSWorld converter.
+
+## Design choices, and why
+
+- **Coordinates are percentages of the screen (0–100).** Normalized coordinates survive any screen size; the same idea as Gemini's and Qwen's 0–999 grids.
+- **One screenshot at a time, plus a written action history.** Older screenshots become text; the last 20 actions are listed with each request. Keeps the context small without losing what was done.
+- **Screenshot plus element list.** iOSWorld (arXiv 2606.09764) measured up to +26 points from giving strong models the accessibility tree alongside the image.
+- **The runner is the only way the agent touches the phone.** The same calls work on a real iPhone and on a simulator, which is what makes simulator benchmarks measure the real thing.

@@ -1,83 +1,96 @@
-// trajectory.mjs — turn our agent's trace into iOSWorld's trajectory format.
+// trajectory.mjs — turn the agent's run record into iOSWorld's trajectory format.
 //
-// The agent, run with --trace-dir, leaves:
-//   steps.jsonl      one line per step: every tool call with its arguments, the
-//                    model's text, token use (agent/agent.mjs saveStepRecord)
-//   step-NN.jpg|png  the screen the model was shown AFTER step NN (step-00 is
-//                    the screen before step 1)
+// The agent, run with --trace-dir, leaves (agent/record.mjs):
+//   trace.jsonl     a `chat` span per model request, an `execute_tool` span per
+//                   tool call, an `observation` event per screen the model was
+//                   shown (step 0 = before the first request)
+//   manifest.json   how the run ended, and its totals
+//   blobs/…         the images and bodies, by hash
 //
 // iOSWorld's judge (scripts/llm_action_generator.py evaluate_trajectory) reads
-// a list of steps, each with the screenshot taken BEFORE that step's actions
-// and the actions themselves, plus `post_action_screenshot` on the last step
-// for the end state, and the agent's final answer from task.json. So step k
-// gets image k-1, as the model saw it.
+// one entry per step: the screenshot taken BEFORE that step's actions, the
+// actions, and on the last step `post_action_screenshot` for the end state; the
+// agent's final answer comes from task.json. So step k gets the screen shown
+// after step k-1, when one was taken (no new screen, no image: never a stale one).
 //
 // Actions carry the tool name and arguments only, like iOSWorld's own
 // trajectories: not the tool's reply, which would hand the judge the agent's
-// own claims ("Task complete") as if they were observations. The final answer
-// reaches the judge the way iOSWorld passes it: task.json `agent_answer`.
+// own claims ("Task complete") as if they were observations. Calls the agent
+// did not run (after a failure or a conclusion in the same step) are left out.
 
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** The image saved after step n (step-00 = before step 1), or null. */
-export function imageAfter(traceDir, n) {
-  const nn = String(n).padStart(2, '0');
-  for (const ext of ['jpg', 'png']) {
-    const f = join(traceDir, `step-${nn}.${ext}`);
-    if (existsSync(f)) return f;
-  }
-  return null;
-}
-
-export function readSteps(traceDir) {
-  const f = join(traceDir, 'steps.jsonl');
+export function readTrace(traceDir) {
+  const f = join(traceDir, 'trace.jsonl');
   if (!existsSync(f)) return [];
   return readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 }
 
+export function readManifest(traceDir) {
+  const f = join(traceDir, 'manifest.json');
+  return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null;
+}
+
+const op = (r) => r.attributes?.['gen_ai.operation.name'];
+
+/** The executed tool calls of each step, in order: Map(step → [{ name, args }]). */
+function actionsByStep(trace) {
+  const by = new Map();
+  for (const r of trace) {
+    if (op(r) !== 'execute_tool' || r.eval?.skipped) continue;
+    const step = r.eval.step;
+    if (!by.has(step)) by.set(step, []);
+    by.get(step).push({ name: r.attributes['gen_ai.tool.name'], args: r.attributes['gen_ai.tool.call.arguments'] });
+  }
+  return by;
+}
+
 /** How the run ended, from the agent's own final tool call. */
-export function outcomeOf(steps) {
-  for (let i = steps.length - 1; i >= 0; i--) {
-    for (const c of steps[i].tool_calls || []) {
-      if (c.name === 'taskComplete') return { ended: 'completed', answer: c.args?.summary ?? '' };
-      if (c.name === 'taskFailed') return { ended: 'gave_up', answer: c.args?.reason ?? '' };
-    }
+export function outcomeOf(trace) {
+  const calls = [...actionsByStep(trace).values()].flat();
+  for (let i = calls.length - 1; i >= 0; i--) {
+    if (calls[i].name === 'taskComplete') return { ended: 'completed', answer: calls[i].args?.summary ?? '' };
+    if (calls[i].name === 'taskFailed') return { ended: 'gave_up', answer: calls[i].args?.reason ?? '' };
   }
   return { ended: 'no_conclusion', answer: null };
 }
 
 /**
- * @param {string} traceDir     the agent's --trace-dir
- * @param {string|null} finalScreenshot  the screen after the run ended, captured by the harness
- * @returns {object[]} iOSWorld trajectory entries
+ * @param {string} traceDir
+ * @param {string|null} finalScreenshot   the screen after the run ended, captured by the harness
  */
 export function toTrajectory(traceDir, finalScreenshot) {
-  const steps = readSteps(traceDir);
-  const traj = steps.map((s) => ({
-    step: s.step,
-    screenshot: imageAfter(traceDir, s.step - 1),
-    actions: (s.tool_calls || []).map((c) => (c.args !== undefined ? { tool: c.name, ...c.args } : { tool: c.name, invalid_arguments: c.args_raw })),
+  const trace = readTrace(traceDir);
+  const shown = new Map(trace.filter((r) => r.name === 'observation').map((r) => [r.eval.step, join(traceDir, r.eval.image)]));
+  const actions = actionsByStep(trace);
+  const steps = trace.filter((r) => op(r) === 'chat').map((r) => r.eval.step);
+  const traj = [...new Set(steps)].map((step) => ({
+    step,
+    screenshot: shown.get(step - 1) ?? null,
+    actions: (actions.get(step) || []).map(({ name, args }) => (args && typeof args === 'object' ? { tool: name, ...args } : { tool: name, invalid_arguments: args })),
   }));
   if (traj.length && finalScreenshot) traj[traj.length - 1].post_action_screenshot = finalScreenshot;
   return traj;
 }
 
-/** Totals for the record: tokens and model time across steps. */
-export function usageOf(steps) {
-  const sum = (k) => steps.reduce((a, s) => a + (s[k] || 0), 0);
+/** Totals for the eval record, from the trace. */
+export function usageOf(trace) {
+  const chats = trace.filter((r) => op(r) === 'chat');
+  const sum = (k) => chats.reduce((a, r) => a + (r.attributes[k] || 0), 0);
+  const tools = trace.filter((r) => op(r) === 'execute_tool');
   return {
-    steps: steps.length,
-    tool_calls: steps.reduce((a, s) => a + (s.tool_calls || []).length, 0),
-    ask_user_calls: steps.reduce((a, s) => a + (s.tool_calls || []).filter((c) => c.name === 'askUser' || c.name === 'askUserText').length, 0),
-    input_tokens: sum('input_tokens'),
-    output_tokens: sum('output_tokens'),
-    cache_read_input_tokens: sum('cache_read_input_tokens'),
-    cache_creation_input_tokens: sum('cache_creation_input_tokens'),
-    model_seconds: Math.round(sum('model_s') * 10) / 10,
-    served_models: [...new Set(steps.map((s) => s.served_model).filter(Boolean))],
+    steps: new Set(chats.map((r) => r.eval.step)).size,
+    model_calls: chats.length,
+    tool_calls: tools.filter((r) => !r.eval.skipped).length,
+    tool_errors: tools.filter((r) => r.status === 'ERROR').length,
+    ask_user_calls: tools.filter((r) => ['askUser', 'askUserText'].includes(r.attributes['gen_ai.tool.name'])).length,
+    input_tokens: sum('gen_ai.usage.input_tokens'),
+    output_tokens: sum('gen_ai.usage.output_tokens'),
+    cache_read_input_tokens: sum('gen_ai.usage.cache_read.input_tokens'),
+    cache_write_input_tokens: sum('gen_ai.usage.cache_write.input_tokens'),
+    reasoning_output_tokens: sum('gen_ai.usage.reasoning.output_tokens'),
+    model_seconds: Math.round(chats.reduce((a, r) => a + (r.eval.latency_ms || 0), 0) / 100) / 10,
+    served_models: [...new Set(chats.map((r) => r.attributes['gen_ai.response.model']).filter(Boolean))],
   };
 }
-
-/** Image files in a trace, for counting what the judge will see. */
-export const imagesIn = (traceDir) => (existsSync(traceDir) ? readdirSync(traceDir).filter((f) => /^step-\d+\.(jpg|png)$/.test(f)).length : 0);

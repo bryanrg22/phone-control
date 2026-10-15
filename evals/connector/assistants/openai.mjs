@@ -50,10 +50,11 @@ export function createOpenAIAssistant({ model = 'gpt-6-astra', effort = 'high', 
       for (;;) {
         if (now() - started > turnTimeoutMs) return { text, status: 'turn_timeout' };
         const t0 = now();
-        const res = await openai.responses.create({
-          model, instructions: SYSTEM_PROMPT, input, tools: apiTools,
+        const request = {
+          model, instructions: SYSTEM_PROMPT, input: structuredClone(input), tools: apiTools,
           reasoning: { effort }, store: false, include: ['reasoning.encrypted_content'], max_output_tokens: 16000,
-        });
+        };
+        const res = await openai.responses.create(request);
         input.push(...res.output);
         emit({
           type: 'model_call', ms: now() - t0, requested_model: model, served_model: res.model, stop_reason: res.status,
@@ -65,6 +66,8 @@ export function createOpenAIAssistant({ model = 'gpt-6-astra', effort = 'high', 
             cache_read_input_tokens: res.usage?.input_tokens_details?.cached_tokens ?? 0, cache_creation_input_tokens: 0,
             reasoning_tokens: res.usage?.output_tokens_details?.reasoning_tokens ?? 0,
           },
+          // The exact exchange (the SDK adds only headers, which are never recorded).
+          request, response: res,
         });
         let refused = false;
         for (const item of res.output) {

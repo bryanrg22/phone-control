@@ -41,21 +41,21 @@ const REDIRECT = 'https://claude.ai/api/mcp/auth_callback';
 const EMAIL = 'ana@example.com';
 
 // What the server starts in place of agent/agent.mjs. Same command line, same
-// output markers (server/src/agent-runner.mjs parses them).
+// events (agent/protocol.mjs; server/src/agent-runner.mjs parses them).
 const STUB_AGENT = `
 const argv = process.argv.slice(2);
 const flag = (n) => argv[argv.indexOf(n) + 1];
 const task = argv[0];
+const emit = (type, data = {}) => console.log('@agent-event ' + JSON.stringify({ type, ...data }));
 const base = 'http://' + flag('--driver-host') + ':' + flag('--driver-port');
 const post = (p, body) => fetch(base + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 const info = await fetch(base + '/deviceInfo').catch((e) => ({ ok: false, statusText: e.message }));
-if (!info.ok) { console.log('❌ INFRA: the runner did not answer: ' + info.statusText); process.exit(1); }
-console.log('--- Step 1/' + flag('--max-steps') + ' --- (0.1s total)');
-console.log('[Tool] openApp({"appName":"Settings"})');
+if (!info.ok) { emit('infra', { detail: 'the runner did not answer: ' + info.statusText }); process.exit(43); }
+emit('step', { step: 1, total: Number(flag('--max-steps')), elapsed: '0.1' });
+emit('action', { tool: 'openApp', args: { appName: 'Settings' } });
 await post('/launchApp', { bundleId: 'com.apple.Preferences' });
 if (/slowly/.test(task)) await new Promise((r) => setTimeout(r, 120000));
-console.log('✅ TASK COMPLETED');
-console.log('Opened Settings. model=' + flag('--model') + ' provider=' + flag('--provider'));
+emit('done', { summary: 'Opened Settings. model=' + flag('--model') + ' provider=' + flag('--provider') });
 `;
 
 let passed = 0; let failed = 0;

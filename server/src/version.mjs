@@ -63,8 +63,15 @@ const listing = (dir, keep) => {
 export const serverFiles = (repoRoot = REPO) => listing(join(repoRoot, 'server', 'src'), (f) => f.endsWith('.mjs'));
 /** Everything that touches the phone from the host: supervisor, screen reader, tunnel helper. */
 export const deviceFiles = (repoRoot = REPO) => listing(join(repoRoot, 'device'), (f) => f.endsWith('.mjs') || f.endsWith('.py'));
-/** The loop that drives the phone. */
-export const agentFiles = (agentRoot = REPO) => listing(join(agentRoot, 'agent'), (f) => f.endsWith('.mjs'));
+/** The loop that drives the phone, its subfolders included (agent/providers/), its tests not. */
+export const agentFiles = (agentRoot = REPO) => {
+  const walk = (dir) => {
+    let entries;
+    try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return []; }
+    return entries.flatMap((e) => (e.isDirectory() ? (e.name === 'test' ? [] : walk(join(dir, e.name))) : e.name.endsWith('.mjs') ? [join(dir, e.name)] : []));
+  };
+  return walk(join(agentRoot, 'agent')).sort();
+};
 
 /** 12 hex characters over the tool definitions exactly as an assistant receives them. */
 export function toolsFingerprint(definitions) {

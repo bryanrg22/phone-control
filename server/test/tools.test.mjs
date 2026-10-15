@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict';
 
 import { createRunStore, isTerminal, RUN_STATES } from '../src/runs.mjs';
-import { createAgentOutputParser, applyEvent, buildAgentArgs, describe } from '../src/agent-runner.mjs';
+import { createAgentOutputParser, applyEvent, buildAgentArgs, describe, EVENT_PREFIX } from '../src/agent-runner.mjs';
 import {
   createToolApi, TOOL_DEFINITIONS, HARD_MAX_STEPS, MAX_TASK_CHARS,
 } from '../src/tool-api.mjs';
@@ -192,80 +192,70 @@ function collect(lines) {
   return events;
 }
 
-await ok('parses a step line', () => {
-  const [e] = collect(['--- Step 4/25 --- (12.3s total)']);
+const ev = (o) => `${EVENT_PREFIX}${JSON.stringify(o)}`;
+
+await ok('parses a step event', () => {
+  const [e] = collect([ev({ type: 'step', step: 4, total: 25, elapsed: '12.3' })]);
   assert.deepEqual(e, { type: 'step', step: 4, total: 25, elapsed: '12.3' });
 });
 
-await ok('parses a tool call into a human sentence', () => {
-  const [e] = collect(['[Tool] openApp({"appName":"LinkedIn"})']);
+await ok('an action becomes a human sentence', () => {
+  const [e] = collect([ev({ type: 'action', tool: 'openApp', args: { appName: 'LinkedIn' } })]);
   assert.equal(e.type, 'action');
   assert.equal(e.tool, 'openApp');
   assert.equal(e.text, 'Opening LinkedIn');
 });
 
-await ok('parses __ASK_USER__ with options', () => {
-  const [e] = collect(['__ASK_USER__:{"question":"Which Sam?","options":["Sam Chen","Sam Ortiz"]}']);
+await ok('a question with options', () => {
+  const [e] = collect([ev({ type: 'ask', question: 'Which Sam?', options: ['Sam Chen', 'Sam Ortiz'], kind: 'options' })]);
   assert.equal(e.type, 'ask');
   assert.equal(e.kind, 'options');
   assert.deepEqual(e.options, ['Sam Chen', 'Sam Ortiz']);
 });
 
-await ok('parses __ASK_USER_TEXT__ with a hint', () => {
-  const [e] = collect(['__ASK_USER_TEXT__:{"question":"Code?","hint":"6 digits"}']);
+await ok('a free-text question with a hint', () => {
+  const [e] = collect([ev({ type: 'ask', question: 'Code?', hint: '6 digits', kind: 'text' })]);
   assert.equal(e.kind, 'text');
   assert.equal(e.hint, '6 digits');
 });
 
-await ok('the completion summary on the FOLLOWING line is captured', () => {
-  const events = collect([
-    '==================================================',
-    '  ✅ TASK COMPLETED',
-    '  Finished the puzzle — you scored 4 of 5.',
-    '──────────────────────────────────────────────────',
-    '  Total time:    41.2s',
-  ]);
-  const done = events.find((e) => e.type === 'done');
-  assert.equal(done.summary, 'Finished the puzzle — you scored 4 of 5.');
+await ok('done and failed carry the summary and the reason', () => {
+  const [d] = collect([ev({ type: 'done', summary: 'Finished the puzzle — you scored 4 of 5.' })]);
+  assert.equal(d.summary, 'Finished the puzzle — you scored 4 of 5.');
+  const [f] = collect([ev({ type: 'failed', reason: 'Reached the step limit without finishing.' })]);
+  assert.match(f.reason, /step limit/);
 });
 
-await ok('an inline DB-verified completion is captured without eating the next line', () => {
-  const events = collect(['  ✅ TASK COMPLETED (DB-verified) — 3 rows']);
-  assert.equal(events.filter((e) => e.type === 'done').length, 1);
-  assert.match(events[0].summary, /DB-verified/);
-});
-
-await ok('failure and max-steps both end the run with a reason', () => {
-  const failed = collect(['  ❌ TASK FAILED (12.0s)', '  Could not find the game tab.']);
-  assert.equal(failed.find((e) => e.type === 'failed').reason, 'Could not find the game tab.');
-  const maxed = collect(['  MAX STEPS REACHED']);
-  assert.match(maxed[0].reason, /step limit/);
-});
-
-await ok('an infra abort is distinguishable from a task failure', () => {
-  const [e] = collect(['  ❌ INFRA: device transport unreachable — 4 consecutive tool-error steps.']);
+await ok('an infra failure is distinguishable from a task failure', () => {
+  const [e] = collect([ev({ type: 'infra', detail: 'the phone stopped answering' })]);
   assert.equal(e.type, 'infra');
-  assert.match(e.detail, /transport unreachable/);
+  assert.match(e.detail, /stopped answering/);
 });
 
-await ok('an askUser timeout emits ask_timeout so the run does not hang', () => {
-  const [e] = collect(['[askUser] No response after 300s — giving up (unattended run).']);
+await ok('an unanswered question emits ask_timeout so the run does not hang', () => {
+  const [e] = collect([ev({ type: 'ask_timeout' })]);
   assert.equal(e.type, 'ask_timeout');
+});
+
+await ok('only event lines count: the agent\'s other output is ignored', () => {
+  const events = collect(['--- Step 2/10 ---', '[tool] tap({"x":1})', '✅ TASK COMPLETED', ev({ type: 'bogus' }), '@agent-event {not json', ev({ type: 'thinking' })]);
+  assert.deepEqual(events, [{ type: 'thinking' }]);
 });
 
 await ok('lines split across chunks are still parsed exactly once', () => {
   const events = [];
   const p = createAgentOutputParser((e) => events.push(e));
-  p.feed('--- Step 2/10 -');
-  p.feed('-- (1.0s tot');
-  p.feed('al)\n');
+  const line = ev({ type: 'step', step: 2, total: 10, elapsed: '1.0' });
+  p.feed(line.slice(0, 20));
+  p.feed(line.slice(20, 40));
+  p.feed(`${line.slice(40)}\n`);
   assert.deepEqual(events, [{ type: 'step', step: 2, total: 10, elapsed: '1.0' }]);
 });
 
 await ok('a trailing line without a newline is flushed on end()', () => {
   const events = [];
   const p = createAgentOutputParser((e) => events.push(e));
-  p.feed('  ❌ TASK FAILED: the app was not installed');
+  p.feed(ev({ type: 'failed', reason: 'the app was not installed' }));
   p.end();
   assert.equal(events[0].type, 'failed');
 });
@@ -276,13 +266,13 @@ await ok('describe() degrades to the tool name for unknown tools', () => {
 
 // ─── parser → registry mapping ───────────────────────────────────────────────
 
-await ok('applyEvent drives a full run from stdout events alone', () => {
+await ok('applyEvent drives a full run from the agent\'s events alone', () => {
   const s = createRunStore({});
   const run = s.create({ uid: ALICE, task: 'finish the game' });
   const events = collect([
-    '--- Step 1/25 --- (0.5s total)',
-    '[Tool] openApp({"appName":"LinkedIn"})',
-    '__ASK_USER__:{"question":"Which puzzle?","options":["Queens","Tango"]}',
+    ev({ type: 'step', step: 1, total: 25, elapsed: '0.5' }),
+    ev({ type: 'action', tool: 'openApp', args: { appName: 'LinkedIn' } }),
+    ev({ type: 'ask', question: 'Which puzzle?', options: ['Queens', 'Tango'], kind: 'options' }),
   ]);
   for (const e of events) applyEvent(s, run.id, e);
   let v = s.get(run.id, ALICE);
@@ -291,7 +281,7 @@ await ok('applyEvent drives a full run from stdout events alone', () => {
   assert.equal(v.last_action, 'Opening LinkedIn');
 
   s.answer(run.id, ALICE, 'Queens');
-  for (const e of collect(['  ✅ TASK COMPLETED', '  Queens solved in 41 seconds.'])) applyEvent(s, run.id, e);
+  for (const e of collect([ev({ type: 'done', summary: 'Queens solved in 41 seconds.' })])) applyEvent(s, run.id, e);
   v = s.get(run.id, ALICE);
   assert.equal(v.status, 'completed');
   assert.equal(v.success, true);
@@ -309,7 +299,7 @@ await ok('an infra event finishes the run as failed with the detail kept', () =>
 
 // ─── agent argv ──────────────────────────────────────────────────────────────
 
-await ok('buildAgentArgs targets the phone over the mesh with a finite HITL timeout', () => {
+await ok('buildAgentArgs targets the phone with a finite question timeout', () => {
   const args = buildAgentArgs({
     agentPath: '/repo/agent.mjs', task: 'do a thing', maxSteps: 12,
     driverHost: '100.64.0.11', runId: 'run_abc',
@@ -318,12 +308,11 @@ await ok('buildAgentArgs targets the phone over the mesh with a finite HITL time
   for (let i = 0; i < args.length; i++) if (args[i].startsWith('--')) pairs.set(args[i], args[i + 1]);
   assert.equal(args[0], '/repo/agent.mjs');
   assert.equal(args[1], 'do a thing');
-  assert.equal(pairs.get('--backend'), 'phone-direct');
   assert.equal(pairs.get('--driver-host'), '100.64.0.11');
   assert.equal(pairs.get('--driver-port'), '22087');
   assert.equal(pairs.get('--max-steps'), '12');
-  assert.equal(pairs.get('--log-run-id'), 'run_abc');
-  assert.equal(pairs.get('--runtime-guard'), 'off');
+  assert.equal(pairs.get('--run-id'), 'run_abc');
+  assert.equal(pairs.has('--trace-dir'), false, 'no record of a real phone unless the operator asks');
   assert.notEqual(pairs.get('--askuser-timeout'), '0', 'an unattended run could hang forever');
 });
 

@@ -20,7 +20,8 @@
 //   evals/results/connector/<run>/run_info.json         what ran: commits, versions, models, hashes
 //   evals/results/connector/<run>/summary.json, .md     pass@1 with its 95% interval, pass^k, per case
 //   evals/results/connector/<run>/<case>/trial-<n>/
-//       events.jsonl     every model call, tool call and result, in order (the raw evidence)
+//       events.jsonl     every model call (with its exact request and response), tool call
+//                        and result, in order: the raw evidence
 //       transcript.md    readable: the conversation, then each check and judgment
 //       state.json       verdict, checks, judgments, usage, timing
 //       server.log       what the server itself logged during the trial
@@ -37,6 +38,7 @@ import { summarize } from '../lib/stats.mjs';
 import { codeChecks, verdictFor, renderTranscript } from './grade.mjs';
 import { createScriptedAssistant } from './assistants/scripted.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
+import { scrub } from '../../agent/record.mjs';
 
 export const HARNESS_VERSION = '0.1.0';
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -190,8 +192,9 @@ async function runTrial(kase, n, judge, ctx) {
     assistant: assistant?.describe?.() ?? { kind: assistantKind }, judge: { provider: judge.provider, model: judge.model, prompt_hash: JUDGE_PROMPT_HASH },
     tools_hash: toolsHash, final_run: finalRun, starts, phone, default_model: defaultModel, run: ctx.runName,
   };
-  writeFileSync(join(dir, 'events.jsonl'), events.map((e) => JSON.stringify(e)).join('\n') + '\n');
-  writeFileSync(join(dir, 'state.json'), `${JSON.stringify(state, null, 2)}\n`);
+  // Key-shaped strings are scrubbed from everything written (agent/record.mjs scrub).
+  writeFileSync(join(dir, 'events.jsonl'), scrub(events.map((e) => JSON.stringify(e)).join('\n')) + '\n');
+  writeFileSync(join(dir, 'state.json'), `${scrub(JSON.stringify(state, null, 2))}\n`);
   writeFileSync(join(dir, 'server.log'), serverLog);
   writeFileSync(join(dir, 'transcript.md'), [
     `# ${kase.id} — trial ${n}: ${verdict}`, '', kase.summary || '', '', '```', transcript, '```', '',

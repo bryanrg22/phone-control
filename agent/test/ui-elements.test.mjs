@@ -7,7 +7,7 @@
 // showed no time picker and no text field, so setting the time looked like
 // "no change" and the agent stopped itself after 8 steps.
 import { readFileSync } from 'node:fs';
-import { formatUIElements, screenSignature, describeElement } from '../tools.mjs';
+import { formatElements as formatUIElements, screenSignature, describeElement } from '../elements.mjs';
 
 let pass = 0, fail = 0;
 function check(name, cond, detail = '') {

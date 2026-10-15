@@ -1,126 +1,49 @@
-// agent-runner.mjs — starts a REAL agent.mjs run and translates its stdout into
-// run-registry events.
+// agent-runner.mjs — starts the agent (agent/agent.mjs) for a run and turns
+// its events into run-registry updates.
 //
-// Deliberately NOT a second agent loop: it runs the same agent/agent.mjs a
-// person can run by hand, with two server-specific wrinkles:
+// The agent is the same program a person can run by hand. Two things are
+// specific to the server:
 //
-//  1. PER-RUN TMPDIR. agent.mjs's askUser protocol polls
-//     `join(tmpdir(), 'agent-user-response.json')` (agent/agent.mjs:139) — a
-//     SINGLE path. One phone per user makes that fine for one run, but a
-//     multi-tenant host runs several at once and they would answer each other's
-//     questions. Node resolves `os.tmpdir()` from $TMPDIR at call time, so
-//     giving each child its own TMPDIR isolates the mailbox with no change to
-//     agent.mjs at all.
+//  1. A private TMPDIR per run. The agent waits for answers to its questions
+//     in $TMPDIR/agent-user-response.json; with one directory per run, runs on
+//     a host serving several people cannot answer each other's questions.
+//  2. --run-id, stamped into the agent's record of the run.
 //
-//  2. --log-run-id. agent.mjs already stamps `runId` into every logs/tasks.jsonl
-//     record, so a connector run is attributable afterwards without racing on
-//     "the last line of the file".
+// The agent reports what it is doing as one JSON event per line on standard
+// output, prefixed `@agent-event ` (agent/protocol.mjs); everything else it
+// writes is for people and is ignored here.
 //
 // Everything impure is injected (spawn, fs, clock), so the parser and the
-// event→registry mapping are unit-testable with no device, no child process and
-// no filesystem.
+// event→registry mapping are unit-testable with no device and no child process.
 
 import { spawn as nodeSpawn } from 'node:child_process';
 import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-/** Markers agent.mjs prints. Kept in one place so a change to the agent's
- *  output has exactly one place to be reflected. */
-export const MARKERS = {
-  ask: '__ASK_USER__:',
-  askText: '__ASK_USER_TEXT__:',
-  done: 'TASK COMPLETED',
-  failed: 'TASK FAILED',
-  maxSteps: 'MAX STEPS REACHED',
-};
+/** The prefix of an event line (agent/protocol.mjs EVENT_PREFIX). */
+export const EVENT_PREFIX = '@agent-event ';
+const TYPES = new Set(['step', 'thinking', 'action', 'ask', 'answer_seen', 'ask_timeout', 'done', 'failed', 'infra']);
 
 /**
- * Streaming parser for agent.mjs stdout.
- *
- * Stateful for exactly one reason: the completion summary is printed on the
- * line AFTER "✅ TASK COMPLETED", so a pure per-line function would drop the
- * one sentence the user actually wants back in their chat.
- *
+ * Streaming parser for the agent's output: one event per `@agent-event` line.
  * @param {(event: object) => void} emit
  */
 export function createAgentOutputParser(emit) {
   let buffer = '';
-  let expect = null;              // 'done-summary' | 'failed-reason' | null
 
   function line(raw) {
-    const text = raw.trim();
-    if (!text) return;
-
-    if (expect === 'done-summary') {
-      expect = null;
-      emit({ type: 'done', summary: strip(text) });
-      return;
-    }
-    if (expect === 'failed-reason') {
-      expect = null;
-      // The failure banner carries its own reason often enough that a bare
-      // separator line means "no extra detail", not "the detail is ═══════".
-      emit({ type: 'failed', reason: /^[=─\s]+$/.test(text) ? null : strip(text) });
-      return;
-    }
-
-    if (text.includes(MARKERS.ask)) {
-      const payload = json(text.split(MARKERS.ask)[1]);
-      if (payload) emit({ type: 'ask', question: payload.question, options: payload.options || [], kind: 'options' });
-      return;
-    }
-    if (text.includes(MARKERS.askText)) {
-      const payload = json(text.split(MARKERS.askText)[1]);
-      if (payload) emit({ type: 'ask', question: payload.question, options: [], hint: payload.hint || '', kind: 'text' });
-      return;
-    }
-    if (/^\[askUser(Text)?\] No response after/.test(text)) {
-      emit({ type: 'ask_timeout' });
-      return;
-    }
-    if (/^\[askUser(Text)?\] (User responded|User typed):/.test(text)) {
-      emit({ type: 'answer_seen' });
-      return;
-    }
-    if (text.includes(MARKERS.done)) {
-      // "✅ TASK COMPLETED (DB-verified) — <context>" already carries its text.
-      const inline = text.split(MARKERS.done)[1]?.replace(/^[\s—-]*/, '').trim();
-      if (inline) emit({ type: 'done', summary: strip(inline) });
-      else expect = 'done-summary';
-      return;
-    }
-    if (text.includes(MARKERS.failed)) {
-      const inline = text.split(MARKERS.failed)[1]?.replace(/^[\s:—-]*/, '').replace(/^\([\d.]+s\)\s*/, '').trim();
-      if (inline) emit({ type: 'failed', reason: strip(inline) });
-      else expect = 'failed-reason';
-      return;
-    }
-    if (text.includes(MARKERS.maxSteps)) {
-      emit({ type: 'failed', reason: 'Reached the step limit without finishing.' });
-      return;
-    }
-    if (text.includes('❌ INFRA:')) {
-      emit({ type: 'infra', detail: strip(text.split('❌ INFRA:')[1] || '').slice(0, 200) });
-      return;
-    }
-
-    const step = text.match(/--- Step (\d+)\/(\d+).*?\(([\d.]+)s total\)/);
-    if (step) {
-      emit({ type: 'step', step: Number(step[1]), total: Number(step[2]), elapsed: step[3] });
-      return;
-    }
-    // "[Tool] tapText({...})" — the intent, announced before it runs.
-    const call = text.match(/^\[Tool\]\s+(\w+)\((\{.*\})\)\s*$/);
-    if (call) {
-      emit({ type: 'action', tool: call[1], args: json(call[2]) || {}, text: describe(call[1], json(call[2]) || {}) });
-      return;
-    }
-    if (text.startsWith('[AI] Sending to')) emit({ type: 'thinking' });
+    const i = raw.indexOf(EVENT_PREFIX);
+    if (i === -1) return;
+    const e = json(raw.slice(i + EVENT_PREFIX.length));
+    if (!e || !TYPES.has(e.type)) return;
+    if (e.type === 'action') emit({ type: 'action', tool: e.tool, args: e.args || {}, text: describe(e.tool, e.args || {}) });
+    else if (e.type === 'ask') emit({ type: 'ask', question: e.question, options: e.options || [], hint: e.hint || '', kind: e.kind === 'text' ? 'text' : 'options' });
+    else emit(e);
   }
 
   return {
-    /** Feed raw stdout/stderr chunks; partial lines are buffered. */
+    /** Feed raw output chunks; partial lines are buffered. */
     feed(chunk) {
       buffer += String(chunk);
       const parts = buffer.split('\n');
@@ -138,11 +61,6 @@ function json(s) {
   try { return JSON.parse(String(s).trim()); } catch { return null; }
 }
 
-/** Strips the agent's decoration so a chat message doesn't inherit box drawing. */
-function strip(s) {
-  return String(s).replace(/^[✅❌\s]+/, '').replace(/^(DONE|FAILED):\s*/i, '').trim();
-}
-
 /** A short, human sentence for "what is it doing right now". */
 export function describe(tool, args = {}) {
   const t = (s, n = 60) => String(s ?? '').slice(0, n);
@@ -151,8 +69,6 @@ export function describe(tool, args = {}) {
     case 'tapText': return args.text ? `Tapping "${t(args.text)}"` : 'Tapping';
     case 'inputText': return args.text ? `Typing "${t(args.text)}"` : 'Typing';
     case 'typeAndSubmit': return args.text ? `Typing and sending "${t(args.text)}"` : 'Typing';
-    case 'searchMaps': return `Searching Maps for ${t(args.query)}`;
-    case 'googleSearch':
     case 'webSearch': return `Searching the web for ${t(args.query)}`;
     case 'scroll': return `Scrolling ${t(args.direction || '')}`.trim();
     case 'takeScreenshot': return 'Looking at the screen';
@@ -206,24 +122,21 @@ export function applyEvent(store, runId, event) {
  */
 export function buildAgentArgs({
   agentPath, task, maxSteps = 25, provider = 'anthropic', model = null,
-  driverHost, driverPort = 22087, runId, askUserTimeoutSec = 300,
-  agentMode = 'single-image', extraArgs = [],
+  driverHost, driverPort = 22087, runId, askUserTimeoutSec = 300, traceDir = null, extraArgs = [],
 }) {
   if (!task || !String(task).trim()) throw new Error('task is required');
   if (!driverHost) throw new Error('driverHost is required — the phone has no address');
   return [
     agentPath, String(task),
-    '--max-steps', String(maxSteps),
     '--provider', provider,
-    // No --model → the provider's pinned default (agent/models.mjs).
+    // No --model → the provider's default (agent/models.mjs).
     ...(model ? ['--model', String(model)] : []),
-    '--backend', 'phone-direct',
     '--driver-host', String(driverHost),
     '--driver-port', String(driverPort),
-    '--agent-mode', agentMode,
-    '--runtime-guard', 'off',
+    '--max-steps', String(maxSteps),
     '--askuser-timeout', String(askUserTimeoutSec),
-    '--log-run-id', String(runId),
+    '--run-id', String(runId),
+    ...(traceDir ? ['--trace-dir', String(traceDir)] : []),
     ...extraArgs,
   ];
 }
@@ -239,6 +152,9 @@ export function startAgentProcess({
   const tmpDir = join(tmpdir(), `connector-run-${run.id}`);
   mkdirSync(tmpDir, { recursive: true, mode: 0o700 });
 
+  // The full record of a run (every screenshot, every model request) only when
+  // the operator asks for it: on a real phone it holds the person's screen.
+  const traceRoot = env.AGENT_TRACE_DIR || null;
   const args = buildAgentArgs({
     agentPath: join(repoRoot, 'agent', 'agent.mjs'),
     task: run.task,
@@ -249,6 +165,7 @@ export function startAgentProcess({
     driverPort,
     runId: run.id,
     askUserTimeoutSec,
+    traceDir: traceRoot ? join(traceRoot, run.id) : null,
   });
 
   const proc = spawnFn(process.execPath, args, {

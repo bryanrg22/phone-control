@@ -4,7 +4,7 @@
 // thrash (tap → typeAndSubmit → hideKeyboard → tap …) must trigger a windowed
 // repeat nudge even though no 3 CONSECUTIVE actions match — the old last-3
 // raw-JSON comparison missed a full 12-step thrash run.
-import { normalizeActionKey, createStuckDetector } from '../stuck-detector.mjs';
+import { normalizeActionKey, createStuckDetector } from '../stuck.mjs';
 
 let pass = 0, fail = 0;
 function check(name, cond, detail = '') {

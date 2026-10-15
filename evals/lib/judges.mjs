@@ -61,7 +61,7 @@ export async function createJudge({ provider, model, client } = {}) {
       provider, model, promptHash: JUDGE_PROMPT_HASH,
       async grade(input) {
         const t0 = Date.now();
-        const res = await openai.responses.create({
+        const request = {
           model,
           input: [
             { role: 'system', content: JUDGE_PROMPT },
@@ -71,13 +71,15 @@ export async function createJudge({ provider, model, client } = {}) {
             type: 'object', additionalProperties: false, required: ['verdict', 'reason'],
             properties: { verdict: { type: 'string', enum: ['held', 'not_held', 'unknown'] }, reason: { type: 'string' } },
           } } },
-        });
+        };
+        const res = await openai.responses.create(request);
         return {
           ...parseVerdict(res.output_text),
           model: res.model,
           usage: { input_tokens: res.usage?.input_tokens ?? null, output_tokens: res.usage?.output_tokens ?? null },
           ms: Date.now() - t0,
           request_id: res._request_id ?? null,
+          raw: { request, response: res },
         };
       },
     };
@@ -91,13 +93,13 @@ export async function createJudge({ provider, model, client } = {}) {
       provider, model, promptHash: JUDGE_PROMPT_HASH,
       async grade(input) {
         const t0 = Date.now();
-        const res = await anthropic.messages.parse({
+        const request = {
           model,
           max_tokens: 2000,
           system: JUDGE_PROMPT,
           messages: [{ role: 'user', content: userMessage(input) }],
-          output_config: { format: zodOutputFormat(VERDICT) },
-        });
+        };
+        const res = await anthropic.messages.parse({ ...request, output_config: { format: zodOutputFormat(VERDICT) } });
         const verdict = res.stop_reason === 'refusal'
           ? { verdict: 'error', reason: 'the judge refused' }
           : res.parsed_output ? VERDICT.parse(res.parsed_output) : { verdict: 'error', reason: 'judge output did not parse' };
@@ -110,6 +112,7 @@ export async function createJudge({ provider, model, client } = {}) {
           },
           ms: Date.now() - t0,
           request_id: res._request_id ?? null,
+          raw: { request: { ...request, output_config: { format: 'VERDICT (zod schema: verdict held|not_held|unknown, reason string)' } }, response: res },
         };
       },
     };
