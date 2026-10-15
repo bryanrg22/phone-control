@@ -42,7 +42,7 @@ import { tmpdir, homedir } from 'node:os';
 import { createHash } from 'node:crypto';
 
 import { toTrajectory, readTrace, readManifest, outcomeOf, usageOf } from './trajectory.mjs';
-import { wilson } from '../lib/stats.mjs';
+import { buildReport, reportMarkdown } from './report.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
 
 export const HARNESS_VERSION = '0.1.0';
@@ -165,7 +165,7 @@ async function runTask({ task, index, model, taskDir }) {
   // How the run ended, as the agent recorded it: completed, failed, step_budget,
   // no_progress (its own stop, a product feature kept as the server runs it)…
   Object.assign(record, usageOf(trace), { ended: manifest?.outcome?.status ?? outcome.ended, agent: manifest?.agent ?? null, prompt_sha256: manifest?.prompt_sha256 ?? null, tools_sha256: manifest?.tools_sha256 ?? null });
-  record.cost_usd = costOf(model.provider, model.model, record);
+  record.cost_usd = costOf(model.model, record);
   writeFileSync(join(taskDir, 'trajectory.json'), JSON.stringify(toTrajectory(traceDir, existsSync(finalShot) ? finalShot : null), null, 2));
 
   // Exit 42: the model API failed for good; 43: the device connection died; a
@@ -187,47 +187,22 @@ async function runTask({ task, index, model, taskDir }) {
   }
 }
 
-// ─── summary across models ───────────────────────────────────────────────────
+// ─── summary across models (report.mjs) ──────────────────────────────────────
 function summarize(outRoot, cells) {
-  const rows = [];
+  const byModel = new Map();
   for (const { model, trial, dir } of cells) {
     const s = JSON.parse(readFileSync(join(dir, 'summary.json'), 'utf8'));
     const records = readdirSync(dir).filter((d) => existsSync(join(dir, d, 'record.json'))).map((d) => JSON.parse(readFileSync(join(dir, d, 'record.json'), 'utf8')));
-    const ev = Object.fromEntries((s.tasks || []).map((t) => [t.task, t.evaluation]));
-    const passed = (t) => { const e = ev[t]; return !!e && (e.rubric_results ? e.rubric_results.length > 0 && e.rubric_results.every((r) => r.satisfied) : !!e.success); };
-    const byCat = {};
-    for (const r of records) {
-      if (r.status !== 'ok') continue;
-      const c = (byCat[r.category] ||= { n: 0, pass: 0, steps: 0 });
-      c.n += 1; c.steps += r.steps; if (passed(r.task)) c.pass += 1;
-    }
-    const ok = records.filter((r) => r.status === 'ok');
-    const n = ok.length; const p = ok.filter((r) => passed(r.task)).length;
-    rows.push({
-      provider: model.provider, model: model.model, trial,
-      tasks: records.length, judged: n, test_errors: records.length - n,
-      pass_rate: n ? p / n : null, pass_ci95: wilson(p, n), rubric_score: s.judge?.rubric_score ?? null,
-      by_category: Object.fromEntries(Object.entries(byCat).map(([k, c]) => [k, { n: c.n, pass_rate: c.pass / c.n, avg_steps: Math.round((c.steps / c.n) * 10) / 10 }])),
-      avg_steps: n ? Math.round((ok.reduce((a, r) => a + r.steps, 0) / n) * 10) / 10 : null,
-      ask_user_calls: ok.reduce((a, r) => a + r.ask_user_calls, 0),
-      input_tokens: records.reduce((a, r) => a + (r.input_tokens || 0), 0),
-      output_tokens: records.reduce((a, r) => a + (r.output_tokens || 0), 0),
-      cache_read_input_tokens: records.reduce((a, r) => a + (r.cache_read_input_tokens || 0), 0),
-      agent_minutes: Math.round(records.reduce((a, r) => a + (r.agent_seconds || 0), 0) / 6) / 10,
-      cost_usd: Math.round(records.reduce((a, r) => a + (r.cost_usd || 0), 0) * 100) / 100,
-      served_models: [...new Set(records.flatMap((r) => r.served_models || []))],
-      judge: s.judge?.model ?? null,
-    });
+    const evaluations = Object.fromEntries((s.tasks || []).map((t) => [t.task, t.evaluation]));
+    const key = `${model.provider}:${model.model}`;
+    if (!byModel.has(key)) byModel.set(key, { model, trials: [] });
+    byModel.get(key).trials.push({ trial, records, evaluations });
   }
+  const rows = buildReport([...byModel.values()]);
   writeFileSync(join(outRoot, 'summary.json'), `${JSON.stringify(rows, null, 2)}\n`);
-  const pct = (x) => (x === null || x === undefined ? '–' : `${Math.round(x * 100)}%`);
-  const cats = ['single_app', 'multi_app', 'memory'];
-  const md = ['# Phone agent on iOSWorld', '', `Judge: ${judgeModel} (iOSWorld's script, unchanged) · protocol: ${PROTOCOL.max_steps} steps, no time limit`, '',
-    `| model | trial | pass rate (95% interval) | ${cats.join(' | ')} | rubric score | avg steps | test errors | agent cost (list prices of ${PRICES_AS_OF}) |`,
-    `| --- | --- | --- | ${cats.map(() => '---').join(' | ')} | --- | --- | --- | --- |`,
-    ...rows.map((r) => `| ${r.provider}:${r.model} | ${r.trial} | ${pct(r.pass_rate)} (${pct(r.pass_ci95.low)}–${pct(r.pass_ci95.high)}) of ${r.judged} | ${cats.map((c) => (r.by_category[c] ? `${pct(r.by_category[c].pass_rate)} of ${r.by_category[c].n}` : '–')).join(' | ')} | ${r.rubric_score ?? '–'} | ${r.avg_steps ?? '–'} | ${r.test_errors} | $${r.cost_usd.toFixed(2)} |`), ''];
-  writeFileSync(join(outRoot, 'summary.md'), md.join('\n'));
-  console.log(`\n${md.slice(4).join('\n')}`);
+  const md = reportMarkdown(rows, { judgeModel, maxSteps: PROTOCOL.max_steps, pricesAsOf: PRICES_AS_OF });
+  writeFileSync(join(outRoot, 'summary.md'), md);
+  console.log(`\n${md}`);
 }
 
 // ─── main ────────────────────────────────────────────────────────────────────

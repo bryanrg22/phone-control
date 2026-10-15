@@ -54,7 +54,14 @@ export function createClaudeAssistant({ model = 'claude-opus-5-5', effort = 'hig
         messages.push({ role: 'assistant', content: res.content });
         emit({
           type: 'model_call', ms: now() - t0, requested_model: model, served_model: res.model, stop_reason: res.stop_reason,
-          request_id: res._request_id ?? null, usage: res.usage,
+          request_id: res._request_id ?? null,
+          // OTel GenAI convention: input_tokens includes the cached part (Anthropic reports it apart).
+          usage: {
+            input_tokens: (res.usage?.input_tokens || 0) + (res.usage?.cache_read_input_tokens || 0) + (res.usage?.cache_creation_input_tokens || 0),
+            output_tokens: res.usage?.output_tokens || 0,
+            cache_read_input_tokens: res.usage?.cache_read_input_tokens || 0,
+            cache_write_input_tokens: res.usage?.cache_creation_input_tokens || 0,
+          },
           stop_details: res.stop_details ?? null,
           // The exact exchange (the SDK adds only headers, which are never recorded).
           request, response: res,

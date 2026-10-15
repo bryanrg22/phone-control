@@ -14,7 +14,7 @@ Does the agent that operates the phone complete real tasks? Measured on [iOSWorl
 
 ## What is ours
 
-The agent, `agent/agent.mjs`, run as the server runs it on a real iPhone: the iPhone's toolset (`--device-profile phone`: every action through the XCTest runner, no simulator shortcuts), screenshot plus on-screen element list each step (`single-image`), action guard off, the model's default reasoning setting. Two things differ from a run on a phone, both forced by the benchmark:
+The agent, `agent/agent.mjs`, run as the server runs it on a real iPhone: the same tools, prompt and loop, every action through the same XCTest runner, a screenshot plus the on-screen element list each step, the model's default reasoning setting. Two things differ from a run on a phone, both forced by the benchmark:
 
 - **The device is a simulator**, driven through the same runner the phone uses.
 - **Nobody answers the agent's questions.** iOSWorld has no user, so `askUser` returns "no answer" after a second (`--askuser-timeout 1`), as in an unattended run. Each result counts how often a model asked.
@@ -57,7 +57,7 @@ node evals/phone-agent/run.mjs --judge-only evals/results/phone-agent/<run>     
 | `summary.json`, `summary.md` | per model: pass rate with its 95% interval, by category, rubric score, average steps, test errors, cost at list prices |
 | `<provider>_<model>/trial-<k>/` | an iOSWorld run folder: their `summary.json` and the judge's log |
 | `…/<NN>-<task>/task.json`, `trajectory.json` | iOSWorld's format, with the judge's verdict and per-criterion reasons written into `task.json` |
-| `…/<NN>-<task>/agent-trace/` | every image the model was shown, the element list with each, and `steps.jsonl`: every tool call with its arguments and result, the model's text and token use |
+| `…/<NN>-<task>/agent-trace/` | the agent's full record (`agent/README.md`): every model request and response exactly, every tool call, every screen it was shown, a readable transcript |
 | `…/<NN>-<task>/final.png`, `app-state/` | the screen when the run ended, and every app's saved data: the outcome as the apps recorded it |
 | `…/<NN>-<task>/agent.log`, `record.json` | the agent's own output; how it ended, steps, tokens, cost, time, exit code |
 

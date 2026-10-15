@@ -170,7 +170,7 @@ async function runTrial(kase, n, judge, ctx) {
     model_calls: modelCalls.length,
     served_models: [...new Set(modelCalls.map((e) => e.served_model))],
     input_tokens: sum('input_tokens'), output_tokens: sum('output_tokens'),
-    cache_read_input_tokens: sum('cache_read_input_tokens'), cache_creation_input_tokens: sum('cache_creation_input_tokens'),
+    cache_read_input_tokens: sum('cache_read_input_tokens'), cache_write_input_tokens: sum('cache_write_input_tokens'),
     tool_calls: events.filter((e) => e.type === 'tool_call').length,
     tool_ms: events.filter((e) => e.type === 'tool_call').reduce((a, e) => a + (e.ms || 0), 0),
     model_ms: modelCalls.reduce((a, e) => a + (e.ms || 0), 0),
@@ -179,8 +179,8 @@ async function runTrial(kase, n, judge, ctx) {
     judge_output_tokens: judged.reduce((a, j) => a + (j.usage?.output_tokens || 0), 0),
   };
   if (isModel) {
-    usage.cost_usd = costOf(MODEL_ASSISTANTS[assistantKind].provider, model, usage);
-    usage.judge_cost_usd = judge.model ? costOf(judge.provider, judge.model, { input_tokens: usage.judge_input_tokens, output_tokens: usage.judge_output_tokens }) : null;
+    usage.cost_usd = costOf(model, usage);
+    usage.judge_cost_usd = judge.model ? costOf(judge.model, { input_tokens: usage.judge_input_tokens, output_tokens: usage.judge_output_tokens }) : null;
   }
   // The model that answered must be the model that was asked for.
   if (isModel && usage.served_models.some((m) => m && !String(m).startsWith(model))) {

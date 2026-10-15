@@ -9,12 +9,10 @@
 export const PRICES_AS_OF = '2026-10-15';
 
 export const PRICES = {
-  // Anthropic: input excludes cache reads and writes, which are billed separately.
   'claude-fable-5-1': { input: 10, cache_write: 12.5, cache_read: 0.25, output: 50 },
   'claude-opus-5-5': { input: 4, cache_write: 5, cache_read: 0.2, output: 20 },
   'claude-sonnet-5-5': { input: 2, cache_write: 2.5, cache_read: 0.1, output: 10 },
   'claude-haiku-5-5': { input: 0.1, cache_write: 0.125, cache_read: 0.01, output: 0.5 },   // prompts up to 100k tokens
-  // OpenAI: input INCLUDES the cached part, which is billed at the cached rate.
   'gpt-6-astra': { input: 10, cache_read: 1, output: 50 },
   'gpt-6.1-sol': { input: 2, cache_read: 0.1, output: 10 },
   'gpt-6-luna': { input: 0.1, cache_read: 0.01, output: 0.5 },
@@ -23,17 +21,16 @@ export const PRICES = {
 
 /**
  * Dollars for one usage record, or null when the model has no listed price.
- * @param {'anthropic'|'openai'} provider  decides how cached tokens are counted
+ * Usage follows the OpenTelemetry GenAI convention, for every provider:
+ * input_tokens INCLUDES the cached part (cache_read_input_tokens) and the part
+ * written to the cache (cache_write_input_tokens); each part is billed at its
+ * own rate and the rest at the input rate.
  */
-export function costOf(provider, model, u) {
+export function costOf(model, u) {
   const p = PRICES[model];
   if (!p) return null;
-  const M = 1e6;
-  const out = (u.output_tokens || 0) * p.output;
-  if (provider === 'openai') {
-    const cached = u.cache_read_input_tokens || 0;
-    return ((Math.max(0, (u.input_tokens || 0) - cached) * p.input) + cached * p.cache_read + out) / M;
-  }
-  return ((u.input_tokens || 0) * p.input + (u.cache_read_input_tokens || 0) * p.cache_read
-    + (u.cache_creation_input_tokens || 0) * (p.cache_write ?? p.input) + out) / M;
+  const read = u.cache_read_input_tokens || 0;
+  const write = u.cache_write_input_tokens || 0;
+  const fresh = Math.max(0, (u.input_tokens || 0) - read - write);
+  return (fresh * p.input + read * p.cache_read + write * (p.cache_write ?? p.input) + (u.output_tokens || 0) * p.output) / 1e6;
 }

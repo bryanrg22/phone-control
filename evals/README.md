@@ -50,7 +50,7 @@ A new folder per run under `evals/results/connector/` (git-ignored), never overw
 | --- | --- |
 | `run_info.json` | commit (and whether it had uncommitted changes), harness version, assistant model and effort, judge model and prompt hash, case-set hash, tool-list hash |
 | `summary.json`, `summary.md` | pass@1 with its 95% interval, pass^k (every trial of a case passed), test errors and reviews, per-case verdicts |
-| `<case>/trial-<n>/events.jsonl` | every model call (requested and served model, stop reason, tokens, time, request id), every tool call with arguments, result and time: the raw evidence, enough to re-grade without re-running |
+| `<case>/trial-<n>/events.jsonl` | every model call (requested and served model, stop reason, tokens, time, request id, and the exact request and response), every tool call with arguments, result and time: the raw evidence, enough to re-grade without re-running. Key-shaped strings are scrubbed; headers are never recorded |
 | `<case>/trial-<n>/transcript.md` | the conversation as the user saw it plus every action, then each check and judgment |
 | `<case>/trial-<n>/state.json` | the verdict and its reasons, usage and timing, the run's end state on the server and the phone |
 | `<case>/trial-<n>/server.log` | what the server itself logged during the trial |

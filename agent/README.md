@@ -41,9 +41,12 @@ Each event is one line on standard output, `@agent-event ` followed by JSON: `st
 
 With `--trace-dir <dir>` the agent writes everything needed to replay or judge the run without re-running it, using the OpenTelemetry GenAI names for fields:
 
-- `trace.jsonl`: one line per model call (the exact request and response, model asked for and model that answered, timing, tokens) and per tool call (arguments, result, timing, error), in order.
-- `images/<sha256>.jpg`: every image sent to the model, stored once and referenced from the trace by hash.
-- `steps.jsonl`, `step-NN.jpg`: the per-step view used by the iOSWorld converter.
+- `manifest.json`: the task, model, settings, the agent's release and commit, hashes of the prompt and the tool definitions, the device, how the run ended, and totals (tokens in, cached, out, reasoning; model and tool calls; tool errors).
+- `trace.jsonl`: one line per record, in order. A `chat` span per model request: the model asked for and the model that answered, finish reason, tokens, timing, and references to the exact request and response. An `execute_tool` span per tool call: arguments, result, timing, error, or "not run". An `observation` event per screen shown to the model. Last, the `invoke_agent` span for the whole run.
+- `blobs/sha256/<hex>.<ext>`: every image, request body, response body, system prompt and tool list, stored once by content hash. In a stored request each base64 image is replaced by `{"$blob": "<path>"}`, the file holding those exact bytes.
+- `transcript.md`: the run for a person to read: each model reply and tool call, each screen as an image, its element list.
+
+Request headers are never recorded (they carry the API key) and key-shaped strings are scrubbed from every file. On a real phone the record contains the screen, so the server writes one only when the operator sets `AGENT_TRACE_DIR`.
 
 ## Design choices, and why
 

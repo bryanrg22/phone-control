@@ -60,10 +60,9 @@ export function createOpenAIAssistant({ model = 'gpt-6-astra', effort = 'high', 
           type: 'model_call', ms: now() - t0, requested_model: model, served_model: res.model, stop_reason: res.status,
           request_id: res._request_id ?? null, incomplete: res.incomplete_details ?? null,
           usage: {
-            // Kept in the same fields as Claude's, so the runner adds them up the same way.
-            // OpenAI's input_tokens INCLUDE the cached part.
+            // OTel GenAI convention, as Claude's: input_tokens includes the cached part.
             input_tokens: res.usage?.input_tokens ?? 0, output_tokens: res.usage?.output_tokens ?? 0,
-            cache_read_input_tokens: res.usage?.input_tokens_details?.cached_tokens ?? 0, cache_creation_input_tokens: 0,
+            cache_read_input_tokens: res.usage?.input_tokens_details?.cached_tokens ?? 0, cache_write_input_tokens: 0,
             reasoning_tokens: res.usage?.output_tokens_details?.reasoning_tokens ?? 0,
           },
           // The exact exchange (the SDK adds only headers, which are never recorded).
