@@ -9,7 +9,8 @@
 //   tap_<n>       one per on-screen element with a position (keyboard keys left out:
 //                 typing is its own action, and 29 key options would drown the rest)
 //   type_<n>      one per phrase lifted from the task, offered only when a field
-//                 that takes typing is on screen (typing goes to the focused field)
+//                 that takes typing is on screen, naming that field (typing goes
+//                 to the focused one)
 //   press_return  when the keyboard is open (submits a field, closes most keyboards)
 //   scroll_down, scroll_up, home
 //   open_<app>    for each installed app the task names, unless it is already open
@@ -85,9 +86,14 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
   tappable.slice(0, MAX_TAP_CANDIDATES).forEach((e, i) => {
     out.push({ value: `tap_${i}`, description: `Tap ${sliceDesc(e.desc)} (${e.kind} at ${e.x}%, ${e.y}%)`, tool: 'tap', args: { x: e.x, y: e.y, description: e.desc } });
   });
-  if (elements.some((e) => e.editable)) {
+  // Typing goes to whichever field is focused (iOS reports focus unreliably),
+  // so the option names the field(s) on screen: the model can tell a label
+  // field from a time to set (clock-001, 2026-10-16: "6:45 AM" typed into "Label").
+  const fields = elements.filter((e) => e.editable);
+  if (fields.length) {
+    const where = fields.length === 1 ? `into ${sliceDesc(fields[0].desc, 60)}` : `into the focused field (fields on screen: ${fields.map((f) => sliceDesc(f.desc, 40)).join(', ')})`;
     phrasesOf(task, { apps }).forEach((p, i) => {
-      out.push({ value: `type_${i}`, description: `Type "${p}" into the focused text field (tap the field first if it is not focused)`, tool: 'inputText', args: { text: p } });
+      out.push({ value: `type_${i}`, description: `Type "${p}" ${where}; tap the field first if it is not focused`, tool: 'inputText', args: { text: p } });
     });
   }
   if (keyboardUp) out.push({ value: 'press_return', description: 'Press Return on the keyboard (submits the field; closes most keyboards)', tool: 'pressKey', args: { key: 'enter' } });
