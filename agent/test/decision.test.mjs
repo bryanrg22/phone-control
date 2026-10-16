@@ -50,9 +50,8 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   check('a picker wheel is a candidate with its value', wheel && first(wheel).tool === 'tap' && /\(picker wheel at/.test(wheel.description), JSON.stringify(wheel));
   check('keyboard keys are not candidates (29 keys would drown the rest)', !c.some((x) => /^Tap "[A-Z]" \(key/.test(x.description)) && !c.some((x) => x.description.includes('(key at')), c.filter((x) => x.description.includes('key')).map((x) => x.description).join('; '));
   check('the field being typed into is still a candidate', c.some((x) => x.description.includes('text field "Label" = "Gym"')));
-  const label = elements.find((e) => e.desc.startsWith('text field "Label"'));
   const gym = by('type_0_0');
-  check('a phrase is typed into the field on screen: tap the field, then type, in one option', gym && gym.description === 'Type "Gym" into text field "Label" = "Gym" (after its current text)' && gym.actions.length === 2 && gym.actions[0].tool === 'tap' && gym.actions[0].args.x === label.x && gym.actions[0].args.y === label.y && gym.actions[1].tool === 'inputText' && gym.actions[1].args.text === 'Gym', JSON.stringify(gym));
+  check('a single-line field that already has text is replaced, by the name a tool can find it by', gym && gym.description === 'Replace the text in text field "Label" = "Gym" with "Gym"' && gym.actions.length === 1 && gym.actions[0].tool === 'replaceText' && gym.actions[0].args.field === 'Label' && gym.actions[0].args.value === 'Gym', JSON.stringify(gym));
   const hour = elements.find((e) => e.desc.includes('6 o’clock'));
   const setHour = c.find((x) => x.description === 'Set picker wheel = "6 o’clock" by tapping it and typing "6:45 AM"');
   check('a phrase starting with a digit is also offered into each picker wheel (iOS wheels take typed digits)', setHour && setHour.actions[0].args.x === hour.x && setHour.actions[1].args.text === '6:45 AM' && !c.some((x) => /^Set picker wheel .* typing "Gym"/.test(x.description)), c.filter((x) => x.value.startsWith('type_')).map((x) => x.description).join('\n'));
@@ -71,8 +70,24 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   check('apps the task does not name are not offered', !values.some((v) => v.startsWith('open_') && v !== 'open_clock'), values.join(','));
   check('no field on screen: no typing candidates, no Return', !values.some((v) => v.startsWith('type_')) && !values.includes('press_return'));
   check('an element without a frame is not tappable', !candidateActions({ elements: [{ desc: '"x"', kind: 'text', editable: false, x: null, y: null }], task: '', apps: [] }).some((x) => x.actions[0].tool === 'tap'));
-  const empty = candidateActions({ elements: [{ desc: 'text field "Label" (empty)', kind: 'text field', editable: true, x: 50, y: 48.7 }], task: TASK, apps: APPS });
-  check('an empty field: "into", no "after its current text"', empty.find((x) => x.value === 'type_0_0').description === 'Type "Gym" into text field "Label" (empty)');
+  const field = (desc, kind = 'text field', name = 'Label') => ({ desc, kind, name, editable: true, x: 50, y: 48.7, top: 46 });
+  const empty = candidateActions({ elements: [field('text field "Label" (empty)')], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
+  check('an empty field: tap it, then type', empty.description === 'Type "Gym" into text field "Label" (empty)' && empty.actions.map((a) => a.tool).join() === 'tap,inputText', JSON.stringify(empty));
+  const view = candidateActions({ elements: [field('text view "Body" = "Standup notes"', 'text view', 'Body')], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
+  check('a text view with text is appended to, not replaced', view.description === 'Type "Gym" into text view "Body" = "Standup notes" (after its current text)' && view.actions.map((a) => a.tool).join() === 'tap,inputText', JSON.stringify(view));
+  const nameless = candidateActions({ elements: [field('text field = "Work"', 'text field', null)], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
+  check('a field with text but no name cannot be found by a tool: appended to', nameless.actions.map((a) => a.tool).join() === 'tap,inputText');
+}
+{
+  // The keyboard covers the bottom of the screen: keys from 70%, a predictions row from 62%.
+  const under = { desc: '"The Godfather, 1972"', kind: 'button', editable: false, x: 50, y: 66.1, top: 63 };
+  const above = { desc: '"Cancel"', kind: 'button', editable: false, x: 88, y: 17.4, top: 15 };
+  const keys = [{ desc: '"Typing Predictions"', kind: 'element', editable: false, x: 50, y: 64.2, top: 61.7 }, { desc: '"Q"', kind: 'key', editable: false, x: 6, y: 70.6, top: 67.5 }];
+  const up = candidateActions({ elements: [above, under, ...keys], task: 'x', apps: [], keyboardUp: true });
+  check('with the keyboard up, an element under it is not offered (a tap there presses a key)', up.some((x) => x.description.startsWith('Tap "Cancel"')) && !up.some((x) => x.description.includes('Godfather')), up.map((x) => x.value).join());
+  check('and hiding the keyboard is', up.find((x) => x.value === 'hide_keyboard')?.actions[0].tool === 'hideKeyboard');
+  const down = candidateActions({ elements: [above, under], task: 'x', apps: [], keyboardUp: false });
+  check('with the keyboard down everything is reachable', down.some((x) => x.description.includes('Godfather')) && !down.some((x) => x.value === 'hide_keyboard'));
 }
 {
   const many = Array.from({ length: 200 }, (_, i) => ({ desc: `"Row ${i}"`, kind: 'cell', editable: false, x: 50, y: i / 2 }));
@@ -190,7 +205,7 @@ console.log('the request path of each provider:');
 }
 
 // ── the loop, in process, against the fake phone and a scripted decider ──
-async function loopRun({ script, screen, maxSteps = 10, abortAfter = 8, traceDir = null }) {
+async function loopRun({ script, screen, maxSteps = 10, abortAfter = 8, traceDir = null, task = TASK }) {
   const runner = await startFakeRunner({ screen });
   const device = createDevice({ host: '127.0.0.1', port: runner.port, knownApps: ['com.apple.mobiletimer'] });
   const state = { keyboardUp: false, screen: () => SCREEN };
@@ -211,7 +226,7 @@ async function loopRun({ script, screen, maxSteps = 10, abortAfter = 8, traceDir
     },
   };
   const recorder = createRecorder({ dir: traceDir, manifest: { task: 't', provider: 'test', model: 'test-decider' } });
-  const outcome = await runDecisionLoop({ task: TASK, maxSteps, decider, device, runTool, apps: ['Clock'], protocol, recorder, progress: createProgressMonitor({ abortAfter }), state, autoAllowNotifications: async () => {} });
+  const outcome = await runDecisionLoop({ task, maxSteps, decider, device, runTool, apps: ['Clock'], protocol, recorder, progress: createProgressMonitor({ abortAfter }), state, autoAllowNotifications: async () => {} });
   recorder.finish(outcome);
   await runner.close();
   return { outcome, runner, asked, logs };
@@ -251,6 +266,12 @@ console.log('the loop:');
   check('both calls are recorded under the step, with their own ids', step1.length === 2 && step1[0].attributes['gen_ai.tool.name'] === 'tap' && step1[1].attributes['gen_ai.tool.name'] === 'inputText' && step1[0].attributes['gen_ai.tool.call.id'] !== step1[1].attributes['gen_ai.tool.call.id']);
   check('the history line is the option, not two tool calls', asked[1].state.object.actions_so_far[0] === '1. Type "Gym" into text field "Label" (empty) (the screen did not change)', asked[1].state.object.actions_so_far[0]);
   rmSync(traceDir, { recursive: true, force: true });
+}
+{
+  const where = el('Where to?', { x: 60, y: 180, w: 300, h: 40, type: 49, value: 'Work' });
+  const { outcome, runner } = await loopRun({ script: ['type_0_0', 'done'], screen: () => tree(where), task: 'Request a ride from Home (410 Brannan St) to Oracle Park.' });
+  const touches = runner.callsTo('/touch');
+  check('replacing a field\'s text: the field is found by its label, selected and typed over', outcome.status === 'completed' && touches.length === 4 && touches.every((c) => c.body.x === 210 && c.body.y === 200) && runner.state.typed === '410 Brannan St', `${touches.length} touches, typed=${runner.state.typed}`);
 }
 {
   const { outcome } = await loopRun({ script: ['blocked'], screen: () => tree(el('Home')) });

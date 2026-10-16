@@ -142,3 +142,38 @@ Known gaps to measure on the 27 single-app tasks, not fix first: no option
 replaces a field's text (typing appends); `done` carries no answer, so tasks
 that ask for information cannot pass; low-confidence steps (p 0.2–0.5) on the
 Add Alarm sheet in every run.
+
+## The 27 single-app tasks, Decisions API (`gpt-6-luna`), commit de1cb39
+
+Run `evals/results/phone-agent/2026-10-16_de1cb39_decisions-luna_single-app`
+(judge gpt-5.4-mini, unchanged). **4 of 27 passed (15%, 95% interval 6–32%)**,
+rubric score 0.58; 21.7 steps on average, **3.3 s of model time per task**,
+33.5 s per task in all, **$0.007 per task** ($0.18 for the run). 651 tool calls,
+none failed. 15 runs ended with `done`, 12 with the no-progress stop.
+
+Passed: caltrack-001, clock-001, stayfinder-001, ticketbox-004.
+
+Every failure read (`agent.log`, the judge's reasons, the screens in the trace):
+
+| cause | tasks | what the log shows |
+| --- | --- | --- |
+| **Harness: taps under the open keyboard** | cinephile-001, megamart-001 | The element list does not know what the keyboard covers; the model tapped a result row at 66% that sat behind the predictions bar at 64%, which typed "The" / "j" into the search field. The LLM prompt warns about this; the decision mode offered the tap. |
+| **Harness: typing appends, never replaces** | skytrip-002, cityride-001 | "ATL" became "ATLSFOSFO"; the destination field held "Work" and the only option was to append. |
+| **Harness: a custom number pad** | splitpay-001 | The amount is entered on the app's own keypad (buttons "1".."9", "."); the model tapped 1, 2, 5, then Backspace nine times. No option enters a number on a keypad. |
+| **No free text** (expected) | lockedin-003, lockedin-004, quickchat-003, teamchat-003, notes-001, clouddocs-004, cloudslides-002 | A reply, a bullet, a note: a decision model writes nothing, and the task gives no phrase to type. |
+| **No answer** (expected) | tasterank-001 (5/7, both misses are "report …"), clouddrive-001, dinespot-001, mail-002 ("confirm it was archived"), mybank-003 (a memo the rubric adds) | `done` carries a fixed summary. |
+| **Lost, low confidence** | trailblaze-004 (`done` at p 0.15 after 4 steps), scorezone-003, weather-004, freshcart-001, quickbite-001, cloudsheets-003 | Steps at p 0.1–0.3 on long lists; freshcart's "avocados" is lowercase and never became a phrase. |
+
+Calibration, from 27 points: runs that ended with `done` at p ≥ 0.95 passed 2 of
+5; at p < 0.5, 1 of 5; the 12 no-progress runs 0. Too few to plot, but the
+direction is right.
+
+**Fixed after this run (commit after de1cb39):** taps under an open keyboard
+are not offered and "hide the keyboard" is; a single-line field with text is
+replaced (the `replaceText` tool, found by the field's label or placeholder), a
+text view is appended to. Not fixed: keypad entry, free text, answers.
+
+**LLM comparison on the same 27 tasks: not run yet** (the only LLM evidence on
+this harness is clock-001 ×7 and the two-task pilot on main). iOSWorld's paper
+reports vision+XML LLM agents far above 15% on single-app tasks; the number to
+beat is the same-commit run of one LLM.

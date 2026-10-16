@@ -7,14 +7,20 @@
 //
 // On every screen:
 //   tap_<n>       one per on-screen element with a position (keyboard keys left out:
-//                 typing is its own action, and 29 key options would drown the rest)
+//                 typing is its own action, and 29 key options would drown the rest;
+//                 elements under an open keyboard left out too: the element list
+//                 does not know what the keyboard covers, and a tap there presses
+//                 a key — cinephile-001 and megamart-001 typed stray letters, 2026-10-16)
 //   type_<n>_<k>  phrase n into field k: taps the field, then types (one option is
 //                 one step: a model without memory cannot plan "tap, then type").
 //                 Fields are the on-screen elements that take typing; for a phrase
 //                 that starts with a digit, picker wheels too: iOS time pickers
 //                 take typed digits once tapped (seen on clock-001, 2026-10-16).
-//                 Typing appends; replacing a field's text is not offered (yet)
+//                 A single-line field that already has text and a name is
+//                 REPLACED (replaceText: skytrip-002 typed "ATL" into "ATLSFOSFO");
+//                 a text view (a note, a document) is appended to.
 //   press_return  when the keyboard is open (submits a field, closes most keyboards)
+//   hide_keyboard when the keyboard is open (to reach what it covers)
 //   scroll_down, scroll_up, home
 //   open_<app>    for each installed app the task names, unless it is already open
 //   done          the task is complete on the current screen
@@ -87,7 +93,12 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
   if (final) return conclude;
 
   const out = [];
-  const tappable = elements.filter((e) => e.x !== null && e.kind !== 'key');
+  // What the keyboard covers: from the top of its keys, or of the predictions
+  // row above them when iOS shows one. Below that line nothing can be tapped.
+  const keyTops = elements.filter((e) => e.top !== null && (e.kind === 'key' || e.desc === '"Typing Predictions"')).map((e) => e.top);
+  const coverTop = keyboardUp && keyTops.length ? Math.min(...keyTops) : null;
+  const reachable = (e) => e.x !== null && e.kind !== 'key' && (coverTop === null || e.y < coverTop);
+  const tappable = elements.filter(reachable);
   tappable.slice(0, MAX_TAP_CANDIDATES).forEach((e, i) => {
     out.push({ value: `tap_${i}`, description: `Tap ${sliceDesc(e.desc)} (${e.kind} at ${e.x}%, ${e.y}%)`, actions: [{ tool: 'tap', args: { x: e.x, y: e.y, description: e.desc } }] });
   });
@@ -97,13 +108,22 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
     phrasesOf(task, { apps }).forEach((p, i) => {
       const targets = /^\d/.test(p) ? [...fields, ...wheels].slice(0, MAX_TYPING_TARGETS) : fields;
       targets.forEach((f, k) => {
-        const into = f.kind === 'picker wheel' ? `Set ${sliceDesc(f.desc, 60)} by tapping it and typing "${p}"` : `Type "${p}" into ${sliceDesc(f.desc, 60)}${/ = "/.test(f.desc) ? ' (after its current text)' : ''}`;
-        out.push({ value: `type_${i}_${k}`, description: into, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
+        const hasText = / = "/.test(f.desc);
+        if (f.kind === 'picker wheel') {
+          out.push({ value: `type_${i}_${k}`, description: `Set ${sliceDesc(f.desc, 60)} by tapping it and typing "${p}"`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
+        } else if (hasText && f.name && f.kind !== 'text view') {
+          out.push({ value: `type_${i}_${k}`, description: `Replace the text in ${sliceDesc(f.desc, 60)} with "${p}"`, actions: [{ tool: 'replaceText', args: { field: f.name, value: p } }] });
+        } else {
+          out.push({ value: `type_${i}_${k}`, description: `Type "${p}" into ${sliceDesc(f.desc, 60)}${hasText ? ' (after its current text)' : ''}`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
+        }
       });
     });
   }
   const one = (tool, args) => [{ tool, args }];
-  if (keyboardUp) out.push({ value: 'press_return', description: 'Press Return on the keyboard (submits the field; closes most keyboards)', actions: one('pressKey', { key: 'enter' }) });
+  if (keyboardUp) {
+    out.push({ value: 'press_return', description: 'Press Return on the keyboard (submits the field; closes most keyboards)', actions: one('pressKey', { key: 'enter' }) });
+    out.push({ value: 'hide_keyboard', description: 'Hide the keyboard, to reach the part of the screen it covers', actions: one('hideKeyboard', {}) });
+  }
   out.push({ value: 'scroll_down', description: 'Scroll down to reveal more of the screen', actions: one('scroll', {}) });
   out.push({ value: 'scroll_up', description: 'Scroll up to reveal what is above', actions: one('swipe', { startX: 50, startY: 30, endX: 50, endY: 70 }) });
   out.push({ value: 'home', description: 'Press the Home button (leave the current app)', actions: one('pressKey', { key: 'home' }) });

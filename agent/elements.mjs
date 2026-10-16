@@ -72,8 +72,9 @@ const EDITABLE = new Set([45, 49, 50, 52]);   // search field, text field, secur
 /**
  * The on-screen elements, one entry each, in tree order, with the line the
  * model reads and what a program needs: the centre in percent, the size in
- * points, the kind, and whether it takes typing.
- * @returns {Array<{ line: string, desc: string, text: string, kind: string, type: number|undefined, editable: boolean, focused: boolean, x: number|null, y: number|null, w: number|null, h: number|null }>}
+ * points, the top edge in percent, the kind, whether it takes typing, and the
+ * name a tool can find it by (its label or placeholder; null when it has neither).
+ * @returns {Array<{ line: string, desc: string, text: string, name: string|null, kind: string, type: number|undefined, editable: boolean, focused: boolean, x: number|null, y: number|null, top: number|null, w: number|null, h: number|null }>}
  */
 export function listElements(hierarchyText, screenW, screenH) {
   let root;
@@ -97,7 +98,8 @@ export function listElements(hierarchyText, screenW, screenH) {
         const key = f ? `${desc}@${Math.round(cx)},${Math.round(cy)}` : desc;
         if (!seen.has(key)) {
           seen.add(key);
-          out.push({ line, desc, text, kind: KINDS[node.elementType] || 'element', type: node.elementType, editable: EDITABLE.has(node.elementType), focused: node.hasFocus === true, x, y, w, h });
+          const name = (node.label || '').trim() || (node.placeholderValue || '').trim() || null;
+          out.push({ line, desc, text, name, kind: KINDS[node.elementType] || 'element', type: node.elementType, editable: EDITABLE.has(node.elementType), focused: node.hasFocus === true, x, y, top: f ? pct(f.Y, screenH) : null, w, h });
         }
       }
     }
