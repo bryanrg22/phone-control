@@ -201,12 +201,25 @@ and the screens showed the next layer:
   best other option runs" is how TypeSafe says to use calibrated answers; not
   applied yet, since it is a policy, to be measured as a variant.
 
-## Blocked, 2026-10-16 09:55 PDT
+## The four tasks again, on e478080 (code; run from 0d9b5e1)
 
-The second re-run of the four tasks on e478080
-(`2026-10-16_e478080_decisions-luna_four-fixed-2`) is a test error, not a
-result: every run ended at its first model call with OpenAI's 429
-`insufficient_quota` ("You have no credits remaining"). The judge is OpenAI
-too. Next, in order: add OpenAI credits; add `TYPESAFE_API_KEY`; re-run the
-four tasks on e478080; then the 27 with both decision models beside one LLM
-(GPT-6 Luna, $0.008 a task on clock-001) on the same commit.
+`…_four-fixed-2` is a test error (every run ended at its first call with
+OpenAI's 429 `insufficient_quota`; credits were added). `…_four-fixed-3`:
+**1 of 4 passed**, and each fix did its job on the device:
+
+| task | result | what the log shows |
+| --- | --- | --- |
+| megamart-001 | **passed** (6/6, 10 steps) | "Search for PS5 Controller … and press Return" chosen, the result row reachable, Add to cart tapped |
+| cinephile-001 | 5/6, missed "Add to Wishlist" | the search-and-submit option was chosen (p 0.84); the movie page was reached at step 14 and `done` chosen at p 0.48 without the wishlist |
+| skytrip-002 | 3/8 | both airports replaced correctly ("ATL"→"SFO", "LAX"→"JFK", the second field by position); then a date picker: "Previous Month" ×4, the year wheel, no date set |
+| cityride-001 | 5/7 | "Where to?" tapped, then `done` at **p 0.15** after 3 steps (the same as the 27-run) |
+
+So the harness defects found so far are closed; what is left on these tasks is
+the model's judgment: conclusions at p 0.15–0.48, and multi-step controls
+(a date picker) with no notion of the goal date. The two candidate policies to
+measure next, as variants, not defaults: a conclusion threshold (`done`
+needs p ≥ 0.5), and a date-picker option that enters a date in one step.
+
+Next, in order: add `TYPESAFE_API_KEY`; the 27 single-app tasks again on this
+harness with both decision models beside one LLM (GPT-6 Luna, $0.008 a task on
+clock-001) on the same commit; then the policies above as variants.
