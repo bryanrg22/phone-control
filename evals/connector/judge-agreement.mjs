@@ -31,8 +31,12 @@ import { scrub } from '../../agent/record.mjs';
 
 const argv = process.argv.slice(2);
 const opt = (n, d) => { const i = argv.indexOf(`--${n}`); return i >= 0 ? argv[i + 1] : d; };
-const skipValue = new Set(['out', 'sample', 'labels'].map((n) => argv.indexOf(`--${n}`) + 1));
+// A flag's value is not a run folder; an absent flag must not exclude anything
+// (indexOf -1 + 1 = 0 silently dropped the first run, 2026-10-16).
+const valueFlags = ['out', 'sample', 'labels'];
+const skipValue = new Set(valueFlags.map((n) => argv.indexOf(`--${n}`)).filter((i) => i >= 0).map((i) => i + 1));
 const runs = argv.filter((a, i) => !a.startsWith('--') && !skipValue.has(i));
+for (const r of runs) if (!existsSync(join(r, 'run_info.json'))) { console.error(`not a run folder (no run_info.json): ${r}`); process.exit(2); }
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
 const out = opt('out', join('evals', 'results', 'connector', `judge-agreement-${stamp}`));
 const sampleN = Number(opt('sample', '40'));
