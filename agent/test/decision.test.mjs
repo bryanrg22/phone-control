@@ -40,38 +40,46 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   const c = candidateActions({ elements, task: TASK, apps: APPS, currentApp: 'Clock', keyboardUp: true });
   const values = c.map((x) => x.value);
   const by = (v) => c.find((x) => x.value === v);
-  check('every candidate has a value, a description, a tool and arguments', c.every((x) => x.value && x.description && x.tool && typeof x.args === 'object'));
+  check('every candidate has a value, a description and a list of tool calls', c.every((x) => x.value && x.description && Array.isArray(x.actions) && x.actions.length && x.actions.every((a) => a.tool && typeof a.args === 'object')));
+  const first = (x) => x.actions[0];
   check('values are unique', new Set(values).size === values.length);
   const save = c.find((x) => x.description.startsWith('Tap "Save"'));
   const saveEl = elements.find((e) => e.desc === '"Save"');
-  check('Save is a tap at its centre, in percent, named as a button', save && save.tool === 'tap' && save.args.x === saveEl.x && save.args.y === saveEl.y && save.description === `Tap "Save" (button at ${saveEl.x}%, ${saveEl.y}%)`, JSON.stringify(save));
+  check('Save is a tap at its centre, in percent, named as a button', save && first(save).tool === 'tap' && first(save).args.x === saveEl.x && first(save).args.y === saveEl.y && save.description === `Tap "Save" (button at ${saveEl.x}%, ${saveEl.y}%)`, JSON.stringify(save));
   const wheel = c.find((x) => x.description.includes('picker wheel = "6 o’clock"'));
-  check('a picker wheel is a candidate with its value', wheel && wheel.tool === 'tap' && /\(picker wheel at/.test(wheel.description), JSON.stringify(wheel));
+  check('a picker wheel is a candidate with its value', wheel && first(wheel).tool === 'tap' && /\(picker wheel at/.test(wheel.description), JSON.stringify(wheel));
   check('keyboard keys are not candidates (29 keys would drown the rest)', !c.some((x) => /^Tap "[A-Z]" \(key/.test(x.description)) && !c.some((x) => x.description.includes('(key at')), c.filter((x) => x.description.includes('key')).map((x) => x.description).join('; '));
   check('the field being typed into is still a candidate', c.some((x) => x.description.includes('text field "Label" = "Gym"')));
-  check('the task\'s phrases are typing candidates because a field is on screen', by('type_0')?.args.text === 'Gym' && by('type_0').tool === 'inputText' && by('type_1')?.args.text === '6:45 AM', values.join(','));
-  check('a typing option names the field it goes into', by('type_1').description === 'Type "6:45 AM" into text field "Label" = "Gym"; tap the field first if it is not focused', by('type_1').description);
-  const two = candidateActions({ elements: [...elements, { desc: 'search field "Search"', kind: 'search field', editable: true, x: 50, y: 5 }], task: TASK, apps: APPS });
-  check('with several fields it lists them', /into the focused field \(fields on screen: text field "Label" = "Gym", search field "Search"\)/.test(two.find((x) => x.value === 'type_0').description), two.find((x) => x.value === 'type_0').description);
-  check('Return is offered while the keyboard is up', by('press_return')?.tool === 'pressKey' && by('press_return').args.key === 'enter');
-  check('scroll down, scroll up and home are always offered', by('scroll_down')?.tool === 'scroll' && by('scroll_up')?.tool === 'swipe' && by('home')?.args.key === 'home');
+  const label = elements.find((e) => e.desc.startsWith('text field "Label"'));
+  const gym = by('type_0_0');
+  check('a phrase is typed into the field on screen: tap the field, then type, in one option', gym && gym.description === 'Type "Gym" into text field "Label" = "Gym" (after its current text)' && gym.actions.length === 2 && gym.actions[0].tool === 'tap' && gym.actions[0].args.x === label.x && gym.actions[0].args.y === label.y && gym.actions[1].tool === 'inputText' && gym.actions[1].args.text === 'Gym', JSON.stringify(gym));
+  const hour = elements.find((e) => e.desc.includes('6 o’clock'));
+  const setHour = c.find((x) => x.description === 'Set picker wheel = "6 o’clock" by tapping it and typing "6:45 AM"');
+  check('a phrase starting with a digit is also offered into each picker wheel (iOS wheels take typed digits)', setHour && setHour.actions[0].args.x === hour.x && setHour.actions[1].args.text === '6:45 AM' && !c.some((x) => /^Set picker wheel .* typing "Gym"/.test(x.description)), c.filter((x) => x.value.startsWith('type_')).map((x) => x.description).join('\n'));
+  check('typing values are phrase × target', values.filter((v) => v.startsWith('type_')).join() === 'type_0_0,type_1_0,type_1_1,type_1_2,type_1_3', values.filter((v) => v.startsWith('type_')).join());
+  check('Return is offered while the keyboard is up', first(by('press_return')).tool === 'pressKey' && first(by('press_return')).args.key === 'enter');
+  check('scroll down, scroll up and home are always offered', first(by('scroll_down')).tool === 'scroll' && first(by('scroll_up')).tool === 'swipe' && first(by('home')).args.key === 'home');
   check('Clock is not offered to open: it is the app on screen', !values.includes('open_clock'));
-  check('done and blocked are last, mapped to taskComplete and taskFailed', values.at(-2) === 'done' && by('done').tool === 'taskComplete' && by('done').args.summary === DONE_SUMMARY && values.at(-1) === 'blocked' && by('blocked').tool === 'taskFailed');
+  check('done and blocked are last, mapped to taskComplete and taskFailed', values.at(-2) === 'done' && first(by('done')).tool === 'taskComplete' && first(by('done')).args.summary === DONE_SUMMARY && values.at(-1) === 'blocked' && first(by('blocked')).tool === 'taskFailed');
   check('the status bar is not a candidate', !c.some((x) => /battery|Cellular|10:30/.test(x.description)));
 }
 {
   const elements = listElements(JSON.stringify(tree(el('Clock', { y: 300 }), el('Notes', { y: 400 }), el('Settings', { y: 500 }))), W, H);
   const c = candidateActions({ elements, task: TASK, apps: APPS, currentApp: 'SpringBoard', keyboardUp: false });
   const values = c.map((x) => x.value);
-  check('on the home screen the app the task names is offered to open', c.find((x) => x.value === 'open_clock')?.args.appName === 'Clock');
+  check('on the home screen the app the task names is offered to open', c.find((x) => x.value === 'open_clock')?.actions[0].args.appName === 'Clock');
   check('apps the task does not name are not offered', !values.some((v) => v.startsWith('open_') && v !== 'open_clock'), values.join(','));
   check('no field on screen: no typing candidates, no Return', !values.some((v) => v.startsWith('type_')) && !values.includes('press_return'));
-  check('an element without a frame is not tappable', !candidateActions({ elements: [{ desc: '"x"', kind: 'text', editable: false, x: null, y: null }], task: '', apps: [] }).some((x) => x.tool === 'tap'));
+  check('an element without a frame is not tappable', !candidateActions({ elements: [{ desc: '"x"', kind: 'text', editable: false, x: null, y: null }], task: '', apps: [] }).some((x) => x.actions[0].tool === 'tap'));
+  const empty = candidateActions({ elements: [{ desc: 'text field "Label" (empty)', kind: 'text field', editable: true, x: 50, y: 48.7 }], task: TASK, apps: APPS });
+  check('an empty field: "into", no "after its current text"', empty.find((x) => x.value === 'type_0_0').description === 'Type "Gym" into text field "Label" (empty)');
 }
 {
   const many = Array.from({ length: 200 }, (_, i) => ({ desc: `"Row ${i}"`, kind: 'cell', editable: false, x: 50, y: i / 2 }));
   const c = candidateActions({ elements: many, task: 'x', apps: [] });
-  check(`taps are capped at ${MAX_TAP_CANDIDATES} (Jev takes 255 options)`, c.filter((x) => x.tool === 'tap').length === MAX_TAP_CANDIDATES && c.length < 255);
+  check(`taps are capped at ${MAX_TAP_CANDIDATES} (Jev takes 255 options)`, c.filter((x) => x.actions[0].tool === 'tap').length === MAX_TAP_CANDIDATES && c.length < 255);
+  const worst = candidateActions({ elements: [...many, ...Array.from({ length: 6 }, (_, i) => ({ desc: `text field "f${i}" (empty)`, kind: 'text field', editable: true, x: 50, y: 10 + i }))], task: Array.from({ length: 20 }, (_, i) => `'p${i}'`).join(' '), apps: [] });
+  check('and typing at 12 phrases × 4 targets, so the worst screen stays under 255', worst.filter((x) => x.value.startsWith('type_')).length === 48 && worst.length < 255, String(worst.length));
   const f = candidateActions({ elements: many, task: 'x', apps: [], final: true });
   check('the final step offers only done and blocked', f.map((x) => x.value).join(',') === 'done,blocked');
 }
@@ -229,6 +237,19 @@ console.log('the loop:');
   const manifest = JSON.parse(readFileSync(join(traceDir, 'manifest.json'), 'utf8'));
   check('the manifest totals the questions as model calls', manifest.totals.model_calls === 3 && manifest.totals.input_tokens === 30 && manifest.outcome.status === 'completed');
   check('the transcript is written', existsSync(join(traceDir, 'transcript.md')));
+  rmSync(traceDir, { recursive: true, force: true });
+}
+{
+  const field = { ...el('', { x: 60, y: 400, w: 280, h: 40, type: 49 }), placeholderValue: 'Label' };   // an unlabelled SwiftUI field, known by its placeholder
+  const screen = () => tree(field, el('Save', { x: 260, y: 80 }));
+  const traceDir = mkdtempSync(join(tmpdir(), 'decision-trace-'));
+  const { outcome, runner, asked } = await loopRun({ script: ['type_0_0', 'done'], screen, traceDir });
+  const touches = runner.callsTo('/touch').map((c) => c.body);
+  check('a typing option taps the field, then types, in one step', outcome.status === 'completed' && touches.length === 1 && touches[0].x === 200 && touches[0].y === 420 && runner.state.typed === 'Gym', `${JSON.stringify(touches)} typed=${runner.state.typed} ${JSON.stringify(asked[0].candidates.map((c) => c.value))}`);
+  const trace = readFileSync(join(traceDir, 'trace.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const step1 = trace.filter((r) => r.attributes?.['gen_ai.operation.name'] === 'execute_tool' && r.eval.step === 1);
+  check('both calls are recorded under the step, with their own ids', step1.length === 2 && step1[0].attributes['gen_ai.tool.name'] === 'tap' && step1[1].attributes['gen_ai.tool.name'] === 'inputText' && step1[0].attributes['gen_ai.tool.call.id'] !== step1[1].attributes['gen_ai.tool.call.id']);
+  check('the history line is the option, not two tool calls', asked[1].state.object.actions_so_far[0] === '1. Type "Gym" into text field "Label" (empty) (the screen did not change)', asked[1].state.object.actions_so_far[0]);
   rmSync(traceDir, { recursive: true, force: true });
 }
 {

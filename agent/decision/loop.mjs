@@ -4,8 +4,9 @@
 // the element list for the model), (2) the candidate actions are built from it
 // (candidates.mjs), (3) ONE choice question goes to the decision model
 // (question.mjs; the providers openai-decisions and typesafe), (4) the chosen
-// action runs through the same tools the LLM mode uses, (5) the screen is read
-// again if the action could have changed it.
+// option's tool calls run in order through the same tools the LLM mode uses
+// (most options are one call; typing is "tap the field, then type"), (5) the
+// screen is read again if an action could have changed it.
 //
 // The model writes no arguments and keeps no memory: the harness enumerates the
 // actions and sends the action history in the state. "done" ends the run as
@@ -81,7 +82,7 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     const candidates = candidateActions({ elements: seen.elements, task, apps, currentApp: seen.currentApp, keyboardUp: seen.keyboardUp, final });
     const st = decisionState({ task, history, elements: seen.lines, currentApp: seen.currentApp, keyboardUp: seen.keyboardUp });
     const messages = [{ role: 'system', content: instructions }, { role: 'user', content: st.text }];
-    const tools = candidates.map((c) => ({ name: c.value, description: c.description, parameters: { tool: c.tool, args: c.args } }));
+    const tools = candidates.map((c) => ({ name: c.value, description: c.description, parameters: { actions: c.actions } }));
 
     // ── the model ──
     emit('thinking');
@@ -99,9 +100,9 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
       continue;
     }
     const chosen = candidates.find((c) => c.value === answer.choice);
-    const id = `choice_${step}`;
+    const callId = (k) => `choice_${step}_${k}`;
     const result = {
-      message: { role: 'assistant', content: `${answer.choice}: ${chosen.description} (p=${round3(answer.probability)}, confidence ${round3(answer.confidence)})`, tool_calls: [{ id, type: 'function', function: { name: chosen.tool, arguments: JSON.stringify(chosen.args) } }] },
+      message: { role: 'assistant', content: `${answer.choice}: ${chosen.description} (p=${round3(answer.probability)}, confidence ${round3(answer.confidence)})`, tool_calls: chosen.actions.map((a, k) => ({ id: callId(k), type: 'function', function: { name: a.tool, arguments: JSON.stringify(a.args) } })) },
       finishReasons: ['choice'], responseId: answer.responseId, responseModel: answer.responseModel, usage: answer.usage, raw: answer.raw,
     };
     const ranked = Object.entries(answer.probabilities).sort((a, b) => b[1] - a[1]);
@@ -111,24 +112,40 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     });
     log(`[model] ${result.message.content}${ranked.length > 1 ? ` · next: ${ranked.slice(1, 4).map(([v, p]) => `${v} ${round3(p)}`).join(', ')}` : ''}`);
 
-    // ── the action ──
-    const { tool: name, args } = chosen;
-    emit('action', { tool: name, args });
-    log(`[tool] ${name}(${JSON.stringify(args)})`);
-    const tStart = Date.now();
-    let r;
+    // ── the action(s): in order, stopping at the first that fails ──
     let thrown = null;
-    try { r = await runTool(name, args); } catch (e) {
-      thrown = e;
-      r = { error: true, text: `Error: ${e.message}` };
+    let concluded = null;
+    let changes = false;
+    let settle = false;
+    for (let k = 0; k < chosen.actions.length; k++) {
+      const { tool: name, args } = chosen.actions[k];
+      emit('action', { tool: name, args });
+      log(`[tool] ${name}(${JSON.stringify(args)})`);
+      const tStart = Date.now();
+      let r;
+      try { r = await runTool(name, args); } catch (e) {
+        thrown = e;
+        r = { error: true, text: `Error: ${e.message}` };
+      }
+      log(`[tool] → ${String(r.text).split('\n')[0].slice(0, 200)}`);
+      recorder.toolCall({ step, id: callId(k), name, args, start: tStart, end: Date.now(), result: r.text, error: r.error ? (thrown ? thrown.message : r.text) : null, layer: thrown ? 'device' : (r.error ? 'model' : null) });
+      changes = changes || !!r.changesScreen;
+      settle = settle || !!r.settle;
+      if (r.done || r.failed) { concluded = r; break; }
+      if (r.error) {
+        for (let j = k + 1; j < chosen.actions.length; j++) {
+          const rest = chosen.actions[j];
+          recorder.toolCall({ step, id: callId(j), name: rest.tool, args: rest.args, start: Date.now(), end: Date.now(), result: 'Not run: an earlier action in this step failed.', skipped: true });
+        }
+        break;
+      }
+      if (k < chosen.actions.length - 1) await sleep(SETTLE_MS);   // a tapped field takes focus before typing
     }
-    log(`[tool] → ${String(r.text).split('\n')[0].slice(0, 200)}`);
-    recorder.toolCall({ step, id, name, args, start: tStart, end: Date.now(), result: r.text, error: r.error ? (thrown ? thrown.message : r.text) : null, layer: thrown ? 'device' : (r.error ? 'model' : null) });
     const entry = { n: step, description: chosen.description, changed: null };
     history.push(entry);
 
-    if (r.done) return { status: 'completed', summary: r.done.summary, steps: step };
-    if (r.failed) return { status: 'failed', reason: r.failed.reason, steps: step };
+    if (concluded?.done) return { status: 'completed', summary: concluded.done.summary, steps: step };
+    if (concluded?.failed) return { status: 'failed', reason: concluded.failed.reason, steps: step };
 
     if (thrown) {
       deviceErrorSteps += 1;
@@ -138,8 +155,8 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     } else deviceErrorSteps = 0;
 
     // ── a fresh look ──
-    if (r.changesScreen) {
-      if (r.settle) await sleep(SETTLE_MS);
+    if (changes) {
+      if (settle) await sleep(SETTLE_MS);
       const before = seen.signature;
       try {
         const stop = await look(step);
