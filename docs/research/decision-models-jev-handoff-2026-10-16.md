@@ -200,3 +200,13 @@ and the screens showed the next layer:
   same at p 0.15 in the 27. A rule "a conclusion needs p ≥ 0.5, otherwise the
   best other option runs" is how TypeSafe says to use calibrated answers; not
   applied yet, since it is a policy, to be measured as a variant.
+
+## Blocked, 2026-10-16 09:55 PDT
+
+The second re-run of the four tasks on e478080
+(`2026-10-16_e478080_decisions-luna_four-fixed-2`) is a test error, not a
+result: every run ended at its first model call with OpenAI's 429
+`insufficient_quota` ("You have no credits remaining"). The judge is OpenAI
+too. Next, in order: add OpenAI credits; add `TYPESAFE_API_KEY`; re-run the
+four tasks on e478080; then the 27 with both decision models beside one LLM
+(GPT-6 Luna, $0.008 a task on clock-001) on the same commit.
