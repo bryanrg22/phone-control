@@ -59,6 +59,12 @@ answers from a goal rather than a script (τ-bench), or checks that ask only
 whether an answer was sent *after* the user gave it. Until one of those is in,
 read failures on this case before counting them.
 
+**Fixed since (commit `6efe390`):** the case now uses a simulated user
+(`evals/connector/user-sim.mjs`) and an order-based check, so its numbers here
+belong to the old version. Checked on these 21 recorded trials, the new checks
+keep every pass, keep Luna's real failure, and pass Astra's trial 2; the two
+conversations that the script cut short can only be settled by a re-run.
+
 ## Earlier runs on the same models
 
 The 2026-10-15 runs (before the last case and judge fixes) were re-graded
