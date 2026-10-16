@@ -1,5 +1,7 @@
 # Baseline: seven assistant models, 2026-10-16 (commit 0f59812)
 
+> **Superseded** by [2026-10-16_9711802](../2026-10-16_9711802_seven-models/README.md): measured costs with prompt caching, and a simulated user in `hitl-two-questions`.
+
 The newest models of each company, as the assistant a person talks to, using
 the iPhone connector: 19 cases × 3 trials each, effort high, the same server,
 tools and cases for all of them, run from a clean tree. Every judgment is made
