@@ -36,7 +36,12 @@ Needs `ANTHROPIC_API_KEY` (the assistant) and `OPENAI_API_KEY` (the judge) in th
 
 `npm run test:evals:self` runs every case twice without any model: an **oracle** that does each case correctly must pass all of them (so every case is solvable and the checks accept correct behaviour), and a **null** assistant that never uses a tool and claims success must fail all of them (so the checks are strict enough to mean something). CI runs it on every change.
 
-Still to do before trusting judged scores to steer changes: hand-label a set of transcripts and measure how often the judge agrees, separately for passes and fails.
+### Can the judge be trusted?
+
+Two measurements, the ones a benchmark reports for an LLM judge (iOSWorld validated its judge on 128 hand-labelled trajectories: κ = 0.77):
+
+- **Reliability** (`evals/connector/judge-agreement.mjs`): every expectation of a run is graded again by a judge of the other model family, from the same transcript. On the seven-model baseline of 2026-10-16: **756 judgments on 399 trials, 100% agreement, Cohen's κ = 1.00**, at the judgment and the trial level; all 5 "not held" verdicts were reached by both judges with their own reasons (`evals/baselines/connector/2026-10-16_9711802_seven-models/judge-agreement/`). With 99% of judgments "held", κ says little about the hard cases on its own; the agreement on the 5 failures and on the 40 contested or sampled items in the labelling sheet is the part that matters.
+- **Validity** (the same script, `--labels`): a labelling sheet of the contested judgments plus a random sample of held ones, with the judges' verdicts hidden, for a person to fill in; the script then scores both judges against the labels, with agreement split by what the person said. The sheet for the baseline is written (`judge-agreement/six-runs/labels.md`, 40 items) and not yet labelled.
 
 ### Baselines
 

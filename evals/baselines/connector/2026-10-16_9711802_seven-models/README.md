@@ -96,6 +96,17 @@ Recommended: keep it as now. Whether the assistant writes a task that lets the
 phone decide for the user is a real property of a phone assistant, and the
 check-back version accepts the sensible default with a confirmation.
 
+## Judge agreement
+
+Every one of the 756 judgments of this baseline was graded a second time by a
+judge of the other family (Claude runs: Opus 5.5 after Sol; OpenAI runs: Sol
+after Opus), from the same transcript: **100% agreement, κ = 1.00**, at the
+judgment and the trial level; the 5 "not held" verdicts were reached by both
+judges independently (their reasons differ in wording and match in substance).
+Evidence: [judge-agreement/](judge-agreement/) (`agreement.md`, every judgment
+with both reasons in `items.json`, and the labelling sheet `labels.md` of 40
+items, not yet labelled by a person).
+
 ## Also changed from what this run found
 
 - The server's refusal of an answer that is not an option as written now says
