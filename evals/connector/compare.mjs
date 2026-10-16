@@ -2,7 +2,10 @@
 // compare.mjs — finished connector-eval runs side by side: how often each model
 // passes, and what a task costs it in steps, time and money.
 //
-//   node evals/connector/compare.mjs evals/results/connector/2026-10-16_0f59812_*_high [--out report.md]
+//   node evals/connector/compare.mjs evals/results/connector/2026-10-16_0f59812_*_high [--out report.md] [--regraded]
+//
+// --regraded takes each trial's verdict from its latest re-grade
+// (regrade-<stamp>.json, written by regrade.mjs) where there is one, and says so.
 //
 // Reads only what the runs recorded (state.json and events.jsonl, or
 // events.jsonl.gz in a test record, of each trial); nothing is re-run or re-graded. Per model:
@@ -31,7 +34,14 @@ import { readEvents } from '../lib/events.mjs';
 const argv = process.argv.slice(2);
 const outIdx = argv.indexOf('--out');
 const out = outIdx >= 0 ? argv[outIdx + 1] : null;
+const useRegrade = argv.includes('--regraded');
 const runs = argv.filter((a, i) => !a.startsWith('--') && !(outIdx >= 0 && i === outIdx + 1));
+/** The verdict to count: the latest re-grade's when asked for and present, else the run's own. */
+function verdictOf(trialDir, state) {
+  if (!useRegrade) return { verdict: state.verdict, regraded: false };
+  const latest = readdirSync(trialDir).filter((f) => /^regrade-.*\.json$/.test(f)).sort().at(-1);
+  return latest ? { verdict: JSON.parse(readFileSync(join(trialDir, latest), 'utf8')).verdict, regraded: true } : { verdict: state.verdict, regraded: false };
+}
 const notRuns = runs.filter((d) => !existsSync(join(d, 'run_info.json')));
 if (notRuns.length) { console.error(`not a run folder (no run_info.json): ${notRuns.join(', ')}`); process.exit(2); }
 if (!runs.length) { console.error('usage: compare.mjs <run folder>... [--out report.md]'); process.exit(2); }
@@ -52,6 +62,7 @@ export function cachedCostEstimate(model, modelCalls, minimum = 512) {
 }
 
 const rows = [];
+let regradedTrials = 0;
 const perCase = {};   // case → model → { tools, seconds }
 for (const dir of runs) {
   const info = JSON.parse(readFileSync(join(dir, 'run_info.json'), 'utf8'));
@@ -61,12 +72,14 @@ for (const dir of runs) {
     verdicts[kase] = [];
     for (const t of readdirSync(join(dir, kase)).filter((d) => d.startsWith('trial-')).sort()) {
       const state = JSON.parse(readFileSync(join(dir, kase, t, 'state.json'), 'utf8'));
-      verdicts[kase].push(state.error ? 'TEST_ERROR' : state.verdict);
+      const { verdict, regraded } = verdictOf(join(dir, kase, t), state);
+      if (regraded) regradedTrials += 1;
+      verdicts[kase].push(state.error ? 'TEST_ERROR' : verdict);
       if (state.error) continue;
       const calls = readEvents(join(dir, kase, t)).filter((e) => e.type === 'model_call').map((e) => e.usage);
-      trials.push({ kase, pass: state.verdict === 'PASS', u: state.usage, calls });
+      trials.push({ kase, pass: verdict === 'PASS', u: state.usage, calls });
       const c = ((perCase[kase] ||= {})[model] ||= { tools: [], seconds: [], passes: 0, n: 0 });
-      c.tools.push(state.usage.tool_calls); c.seconds.push(state.usage.model_ms / 1000); c.n += 1; if (state.verdict === 'PASS') c.passes += 1;
+      c.tools.push(state.usage.tool_calls); c.seconds.push(state.usage.model_ms / 1000); c.n += 1; if (verdict === 'PASS') c.passes += 1;
     }
   }
   const s = summarize(verdicts);
@@ -94,7 +107,7 @@ const n1 = (x) => (x === null ? '–' : x.toFixed(1));
 const models = rows.map((r) => r.model);
 const md = [
   '# Connector eval: models compared', '',
-  `${rows.length} runs · ${rows[0].trials} graded trials each · costs at list prices of ${PRICES_AS_OF} · judges from the other company`, '',
+  `${rows.length} runs · ${rows[0].trials} graded trials each · costs at list prices of ${PRICES_AS_OF} · judges from the other company${useRegrade ? ` · verdicts from the latest re-grade where there is one (${regradedTrials} trials re-graded, the rest as recorded)` : ''}`, '',
   '| model | pass@1 (95% interval) | pass^k | model calls / task | tool calls / task | model s / task (median) | total s / task | output tokens / task | input read from cache | cost / task | cost / passed task |',
   '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
   ...rows.map((r) => `| ${r.model} | ${pct(r.pass_at_1)} (${pct(r.ci.low)}–${pct(r.ci.high)}) | ${pct(r.pass_hat_k)} | ${n1(r.model_calls)} | ${n1(r.tool_calls)} | ${n1(r.model_s)} (${n1(r.model_s_median)}) | ${n1(r.wall_s)} | ${Math.round(r.output_tokens)} | ${r.cached_share === null ? '–' : pct(r.cached_share)} | ${usd(r.cost_per_task)}${r.est_cost_per_task !== null ? ` (≈${usd(r.est_cost_per_task)} cached†)` : ''} | ${usd(r.cost_per_pass)} |`),

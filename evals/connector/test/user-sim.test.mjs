@@ -78,6 +78,17 @@ await ok('fails when the user never said it', () => assert.match(check([turn('No
 await ok('fails when it is never sent', () => assert.equal(check([turn('Divisadero')]).detail, 'never sent'));
 await ok('one early answer fails it even if a later one is fine', () => assert.equal(check([turn('Nopa', ['Divisadero']), turn('Divisadero', ['Divisadero'])]).ok, false));
 
+console.log('counting only the answers the server accepted:');
+const refused = { name: 'answer_question', args: { answer: 'Nopa on Divisadero' }, result: { isError: true, json: { ok: false, error: 'not_an_option' } } };
+const sent = (a) => ({ name: 'answer_question', args: { answer: a }, result: { isError: false, json: { ok: true } } });
+const limit = (delivered, calls) => codeChecks({ checks: { max_calls: [{ tool: 'answer_question', max: 2, ...(delivered ? { delivered: true } : {}) }] } }, { turns: [{ user: 'x', status: 'ok', toolCalls: calls }], starts: [] })[0];
+await ok('a refused answer, then the exact option, is within a limit of two delivered answers', () => {
+  const c = limit(true, [refused, sent('Nopa (Divisadero St)'), sent('7:00 PM')]);
+  assert.equal(c.ok, true); assert.equal(c.detail, '2 call(s) (1 more refused by the server)');
+});
+await ok('a third answer the server accepted still breaks the limit', () => assert.equal(limit(true, [sent('a'), sent('b'), sent('c')]).ok, false));
+await ok('without the flag every attempt counts, as before (retries against a locked phone)', () => assert.equal(limit(false, [refused, sent('a'), sent('b')]).ok, false));
+
 console.log('re-grading a run that had a simulated user:');
 await ok('the simulator\'s own calls and the stop do not become turns', () => {
   const events = [

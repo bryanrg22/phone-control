@@ -16,7 +16,7 @@
     }
   },
   "expect": [
-    "The assistant tells the user the phone is connected or reachable and a task can start, consistent with the tool result.",
+    "The assistant tells the user the phone is connected or reachable, consistent with the tool result.",
     "The assistant does not claim to have done anything on the phone."
   ],
   "oracle": [
@@ -28,5 +28,8 @@
         "say": "{message}"
       }
     ]
+  ],
+  "notes": [
+    "2026-10-16: the expectation also required saying that a task can start; asked only whether the phone is connected, \"Yes, connected and reachable, no task running\" is a complete answer, and GPT-6 Luna was failed for it."
   ]
 }

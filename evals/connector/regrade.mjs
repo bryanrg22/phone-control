@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 // regrade.mjs — grade a finished connector-eval run again, without re-running it.
 //
-//   node evals/connector/regrade.mjs evals/results/connector/<run> [--judge-model M]
+//   node evals/connector/regrade.mjs evals/results/connector/<run> [--judge-model M] [--cases id,id]
+//
+// --cases re-grades only those cases (the ones whose checks or wording were
+// corrected); every other case keeps its original verdict, so unchanged
+// cases add no judge cost and no judge noise.
 //
 // For when a case's checks or expectations are corrected after a run: each
 // trial's conversation is rebuilt from its events.jsonl (every turn, reply and
@@ -28,6 +32,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const argv = process.argv.slice(2);
 const runDir = argv.find((a) => !a.startsWith('--'));
 const opt = (n, d) => { const i = argv.indexOf(`--${n}`); return i >= 0 ? argv[i + 1] : d; };
+const only = (opt('cases', '') || '').split(',').filter(Boolean);
 if (!runDir || !existsSync(join(runDir, 'run_info.json'))) { console.error('usage: regrade.mjs <run folder>'); process.exit(2); }
 
 const info = JSON.parse(readFileSync(join(runDir, 'run_info.json'), 'utf8'));
@@ -46,7 +51,8 @@ for (const caseId of readdirSync(runDir).filter((d) => cases[d]).sort()) {
   for (const t of readdirSync(join(runDir, caseId)).filter((d) => d.startsWith('trial-')).sort()) {
     const dir = join(runDir, caseId, t);
     const state = JSON.parse(readFileSync(join(dir, 'state.json'), 'utf8'));
-    if (state.error) { verdicts[caseId].push('TEST_ERROR'); continue; }  // nothing to grade: the harness broke
+    if (state.error) { verdicts[caseId].push('TEST_ERROR'); continue; }
+    if (only.length && !only.includes(caseId)) { verdicts[caseId].push(state.verdict); continue; }   // not re-graded: as recorded  // nothing to grade: the harness broke
     const events = readEvents(dir);
     const turns = rebuildTurns(events, state.checks);
     const trial = { turns, starts: state.starts, finalRun: state.final_run, phone: state.phone, defaultModel: state.default_model };
@@ -71,10 +77,10 @@ const out = join(runDir, `regrade-${stamp}`);
 mkdirSync(out);
 const summary = summarize(verdicts);
 const casesHash = createHash('sha256').update(Object.keys(cases).sort().map((id) => JSON.stringify(cases[id])).join('\n')).digest('hex').slice(0, 12);
-writeFileSync(join(out, 'summary.json'), `${JSON.stringify({ ...summary, regraded_at: stamp, cases_hash: casesHash, judge: judge.model, original: basename(runDir) }, null, 2)}\n`);
+writeFileSync(join(out, 'summary.json'), `${JSON.stringify({ ...summary, regraded_at: stamp, regraded_cases: only.length ? only : 'all', cases_hash: casesHash, judge: judge.model, original: basename(runDir) }, null, 2)}\n`);
 const pct = (x) => (x === null ? 'n/a' : `${(x * 100).toFixed(0)}%`);
 writeFileSync(join(out, 'summary.md'), [
-  `# Re-graded: ${basename(runDir)}`, '', `Cases as of ${stamp} (hash ${casesHash}); judge ${judge.provider} ${judge.model}. The assistant was not re-run.`, '',
+  `# Re-graded: ${basename(runDir)}`, '', `Cases as of ${stamp} (hash ${casesHash}); judge ${judge.provider} ${judge.model}. The assistant was not re-run.${only.length ? ` Re-graded: ${only.join(', ')}; every other case as recorded.` : ''}`, '',
   `pass@1 ${pct(summary.pass_at_1)} (95% interval ${pct(summary.pass_at_1_ci95.low)}–${pct(summary.pass_at_1_ci95.high)}) · pass^k ${pct(summary.pass_hat_k)} · ${summary.trials} graded · ${summary.test_errors} test errors`, '',
   '| case | verdicts |', '| --- | --- |', ...Object.entries(summary.per_case).map(([id, c]) => `| ${id} | ${c.verdicts.join(', ')} |`), '',
 ].join('\n'));

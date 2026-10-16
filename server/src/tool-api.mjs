@@ -331,7 +331,12 @@ export function createToolApi({
         if (res.reason === 'not_an_option') {
           return {
             ok: false, error: 'not_an_option', options: res.options,
-            message: `That is not one of the choices. The options are: ${res.options.join(', ')}. Ask the user to pick one.`,
+            // The match stays strict (the phone never gets a guess). But when the
+            // user's words plainly mean one option ("Nopa on Divisadero" for
+            // "Nopa (Divisadero St)"), asking again would be pointless: the
+            // assistant should send that option as written. (Connector evals,
+            // 2026-10-16: models did exactly this, against the old advice.)
+            message: `That is not one of the choices as written. The options are: ${res.options.join(', ')}. If the user's answer clearly means one of them, send that option exactly as written; if it does not, ask the user to pick one.`,
           };
         }
         if (res.reason === 'not_waiting') {

@@ -52,9 +52,15 @@ export function codeChecks(kase, trial) {
     const hits = callsIn(trial.turns, m.turn).filter((x) => x.name === m.tool && argsMatch(m.args, x.args));
     add(`never calls ${where(m)}`, hits.length === 0, hits.length ? `called it: ${JSON.stringify(hits[0].args)}` : 'not called');
   }
+  // delivered: count only the calls the server accepted. An answer the server
+  // rejects ("not one of the choices") never reaches the phone, and correcting
+  // it is right; elsewhere (retries against a locked phone) every attempt counts.
+  const accepted = (x) => !x.result?.isError && x.result?.json?.ok !== false;
   for (const m of c.max_calls || []) {
-    const n = callsIn(trial.turns, m.turn).filter((x) => x.name === m.tool).length;
-    add(`calls ${m.tool} at most ${m.max} time(s)${m.turn ? ` in turn ${m.turn}` : ''}`, n <= m.max, `${n} call(s)`);
+    const all = callsIn(trial.turns, m.turn).filter((x) => x.name === m.tool);
+    const n = (m.delivered ? all.filter(accepted) : all).length;
+    add(`calls ${m.tool} at most ${m.max} time(s)${m.delivered ? ' that the server accepted' : ''}${m.turn ? ` in turn ${m.turn}` : ''}`, n <= m.max,
+      `${n} call(s)${m.delivered && all.length !== n ? ` (${all.length - n} more refused by the server)` : ''}`);
   }
   // An answer sent to the phone must be one the user gave: every matching
   // answer_question comes in or after the turn where the user first said it.

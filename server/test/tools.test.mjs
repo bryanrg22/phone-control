@@ -496,6 +496,10 @@ await ok('answer_question rejects an answer nobody offered, with the options to 
   const r = await api.call('answer_question', { answer: 'Z' }, caller);
   assert.equal(r.ok, false);
   assert.deepEqual(r.options, ['A', 'B']);
+  // Send the matching option as written when the user's meaning is plain; ask only when it is not.
+  assert.match(r.message, /send that option exactly as written/);
+  assert.match(r.message, /ask the user to pick one/);
+  assert.equal(store.get(started.run_id, caller.uid).status, 'awaiting_answer', 'a refused answer must leave the question open');
 });
 
 await ok('answer_question with nothing to answer is a clean refusal', async () => {
