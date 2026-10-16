@@ -49,7 +49,17 @@ export function createClaudeAssistant({ model = 'claude-opus-5-5', effort = 'hig
       for (;;) {
         if (now() - started > turnTimeoutMs) return { text, status: 'turn_timeout' };
         const t0 = now();
-        const request = { model, max_tokens: 16000, system: SYSTEM_PROMPT, tools: apiTools, messages: structuredClone(messages), output_config: { effort } };
+        // Prompt caching, as any production client would use it: a breakpoint
+        // on the system prompt (caching the tools before it too) and automatic
+        // caching of the growing conversation. OpenAI caches without being
+        // asked; without this, Claude's costs read about 55-60% high (every
+        // request billed in full; measured on the 2026-10-16 runs).
+        const request = {
+          model, max_tokens: 16000,
+          system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
+          tools: apiTools, messages: structuredClone(messages), output_config: { effort },
+          cache_control: { type: 'ephemeral' },
+        };
         const res = await anthropic.messages.create(request);
         messages.push({ role: 'assistant', content: res.content });
         emit({
