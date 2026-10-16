@@ -45,7 +45,8 @@ export async function runAgent({ runner, model, task = 'Do the thing', maxSteps 
         // A bare PATH: no pymobiledevice3, no maestro, so nothing can reach a real device.
         PATH: `${dirname(process.execPath)}:/usr/bin:/bin`,
         HOME: state, TMPDIR: tmp, PHONE_CONTROL_STATE_DIR: state,
-        ANTHROPIC_API_KEY: 'test-key', ANTHROPIC_BASE_URL: model.url,
+        // Key-shaped (none of these is a key), so the record's scrubbing is exercised.
+        ANTHROPIC_API_KEY: `sk-ant-api03-${'TESTKEY0'.repeat(8)}`, ANTHROPIC_BASE_URL: model.url,
       },
     });
     const feed = (c) => { stdout += c; parser.feed(c); };

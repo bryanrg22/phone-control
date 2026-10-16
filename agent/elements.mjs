@@ -131,5 +131,25 @@ export function findElement(hierarchyText, text, { editable = false } = {}) {
     }
     for (const c of n.children || []) walk(c);
   })(root?.axElement || root);
-  return (editable && field) || byName || byHint;
+  // A tool that types asked for a field: a heading with the same text is not
+  // one, and typing into it would land wherever the focus happens to be.
+  return editable ? field : (byName || byHint);
+}
+
+/** Every piece of text on screen: labels, titles, values and placeholders of on-screen elements. */
+export function screenTexts(hierarchyText, screenW, screenH) {
+  let root;
+  try { root = JSON.parse(hierarchyText); } catch { return []; }
+  const out = [];
+  (function walk(n) {
+    if (!n) return;
+    if (!n.frame || onScreen(n.frame, screenW, screenH)) {
+      for (const v of [n.label, n.title, n.value, n.placeholderValue]) {
+        const t = v === null || v === undefined ? '' : String(v).trim();
+        if (t) out.push(t);
+      }
+    }
+    for (const c of n.children || []) walk(c);
+  })(root?.axElement || root);
+  return out;
 }

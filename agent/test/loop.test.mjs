@@ -159,7 +159,7 @@ await scenario('a screen that never changes stops the run', {
   check('the exact request is kept, its image replaced by a reference to the stored bytes', raw.model === 'claude-test-model' && JSON.stringify(raw).includes('"$blob"') && !JSON.stringify(raw).includes('base64,'));
   check('the exact response is kept', JSON.parse(readFileSync(join(dir, chats[0].eval.raw.response.$blob), 'utf8')).id === 'msg_fake_1');
   const everything = readdirSync(join(dir, 'blobs', 'sha256')).map((f) => readFileSync(join(dir, 'blobs', 'sha256', f), 'latin1')).join('') + readFileSync(join(dir, 'trace.jsonl'), 'utf8') + readFileSync(join(dir, 'manifest.json'), 'utf8');
-  check('the API key appears nowhere in the record', !everything.includes('test-key'));
+  check('the API key appears nowhere in the record', !everything.includes('TESTKEY0') && !everything.includes('sk-ant-api03'));
   check('a transcript a person can read', readFileSync(join(dir, 'transcript.md'), 'utf8').includes('openApp'));
   rmSync(dir, { recursive: true, force: true });
 }

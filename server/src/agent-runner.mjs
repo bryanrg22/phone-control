@@ -33,9 +33,11 @@ export function createAgentOutputParser(emit) {
   let buffer = '';
 
   function line(raw) {
-    const i = raw.indexOf(EVENT_PREFIX);
-    if (i === -1) return;
-    const e = json(raw.slice(i + EVENT_PREFIX.length));
+    // Only a line that IS an event. The agent's log quotes the model's own
+    // text; a prefix found mid-line ("[model] @agent-event {…}") would let a
+    // model, or a screen it read, forge a run's outcome.
+    if (!raw.startsWith(EVENT_PREFIX)) return;
+    const e = json(raw.slice(EVENT_PREFIX.length));
     if (!e || !TYPES.has(e.type)) return;
     if (e.type === 'action') emit({ type: 'action', tool: e.tool, args: e.args || {}, text: describe(e.tool, e.args || {}) });
     else if (e.type === 'ask') emit({ type: 'ask', question: e.question, options: e.options || [], hint: e.hint || '', kind: e.kind === 'text' ? 'text' : 'options' });
@@ -180,8 +182,11 @@ export function startAgentProcess({
     if (onLine) { try { onLine(String(chunk)); } catch { /* logging must not kill a run */ } }
     parser.feed(chunk);
   };
+  // Events come from standard output only (agent/protocol.mjs). Standard
+  // error is the agent's log for people, which quotes the model's text and is
+  // never parsed for events.
   proc.stdout?.on('data', feed);
-  proc.stderr?.on('data', feed);
+  proc.stderr?.on('data', (chunk) => { if (onLine) { try { onLine(String(chunk)); } catch { /* logging must not kill a run */ } } });
 
   proc.on('error', (e) => {
     store.finish(run.id, { success: false, summary: 'The agent could not be started.', error: e.message });

@@ -10,7 +10,7 @@
 //   settle         wait for an iOS animation before observing (navigation)
 //   done / failed  the model concluded: { summary } / { reason }
 
-import { formatElements, capElements, findElement } from './elements.mjs';
+import { formatElements, capElements, findElement, screenTexts } from './elements.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const num = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, ...(description ? { description } : {}) });
@@ -41,6 +41,7 @@ export function toolDefinitions({ apps, braveSearch = false }) {
   ];
 }
 
+const pctOK = (v) => v >= 0 && v <= 100;
 const KEYS = ['enter', 'return', 'delete', 'tab', 'space', 'escape'];
 const BUTTONS = ['home', 'lock'];
 const KEY_ALIASES = { search: 'enter', go: 'enter', done: 'enter', backspace: 'delete', esc: 'escape' };
@@ -98,8 +99,11 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
       let polls = 0;
       while (Date.now() - start < limit * 1000) {
         polls += 1;
-        const h = await device.hierarchy().catch(() => '');
-        if (target && h.toLowerCase().includes(target)) return { text: `Found "${text}" after ${((Date.now() - start) / 1000).toFixed(1)}s (${polls} poll${polls === 1 ? '' : 's'}).`, changesScreen: true };
+        // What is ON the screen, not the hierarchy's JSON: searching the raw
+        // text found "label", "width" and any digit at once (audit, 2026-10-16).
+        const s = screen();
+        const texts = screenTexts(await device.hierarchy().catch(() => ''), s.widthPoints, s.heightPoints);
+        if (target && texts.some((t) => t.toLowerCase().includes(target))) return { text: `Found "${text}" after ${((Date.now() - start) / 1000).toFixed(1)}s (${polls} poll${polls === 1 ? '' : 's'}).`, changesScreen: true };
         await sleep(1000);
       }
       return { text: `TIMEOUT: "${text}" did not appear within ${limit}s (${polls} polls). It may not exist, or the screen is stuck — try a different approach or verify with getUIElements.`, changesScreen: true };
@@ -157,11 +161,13 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     },
 
     async swipe({ startX, startY, endX, endY }) {
+      if (![startX, startY, endX, endY].every(pctOK)) return { error: true, text: `ERROR: Coordinates must be percentages 0-100, not pixels. You sent (${startX}, ${startY}) → (${endX}, ${endY}).` };
       await device.swipe(...pt(startX, startY), ...pt(endX, endY));
       return { text: 'Swiped', changesScreen: true, settle: true };
     },
 
     async drag({ startX, startY, endX, endY, holdDuration = 0.5, dragDuration = 1.0 }) {
+      if (![startX, startY, endX, endY].every(pctOK)) return { error: true, text: `ERROR: Coordinates must be percentages 0-100, not pixels. You sent (${startX}, ${startY}) → (${endX}, ${endY}).` };
       await device.drag(...pt(startX, startY), ...pt(endX, endY), holdDuration, dragDuration);
       return { text: `Dragged from (${startX}%, ${startY}%) to (${endX}%, ${endY}%) — hold ${holdDuration}s, drag ${dragDuration}s`, changesScreen: true, settle: true };
     },

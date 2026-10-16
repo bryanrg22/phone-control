@@ -36,6 +36,36 @@ export function isTerminal(status) {
  * @param {number} [opts.keep]             how many finished runs to retain per user
  * @param {(run) => void} [opts.onChange]  called after every mutation (audit/log hook)
  */
+// Words that turn a mention of an option into its opposite ("not 7:00 PM",
+// "the other one"). An answer containing one is never matched to the option it
+// mentions: "not 7:00 PM, the later one" must not send 7:00 PM to the phone.
+const NEGATIONS = new Set(['not', 'no', 'never', 'neither', 'nor', "don't", 'dont', "isn't", 'isnt', "wasn't", 'except', 'other', 'instead', 'rather', 'wrong', 'none']);
+const norm = (s) => String(s).toLowerCase().replace(/\u2019/g, "'").replace(/\s+/g, ' ').trim();
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const wordsOf = (s) => s.split(/[^\p{L}\p{N}']+/u).filter(Boolean);
+
+/**
+ * The option an answer means, or null. Exact (case- and space-insensitive)
+ * first. Otherwise the answer may wrap ONE option in a few words ("the first
+ * one, Sam Chen please"): the option must appear whole, not inside another
+ * word ("no" is not in "know" — that sent No for "I don't know", 2026-10-16),
+ * only one option may appear, and the words around it must not negate it.
+ * Anything else is refused: a wrong answer delivered to the phone is worse
+ * than a question asked twice.
+ */
+export function matchOption(answer, options) {
+  const a = norm(answer);
+  const exact = options.find((o) => norm(o) === a);
+  if (exact !== undefined) return exact;
+  const whole = (o) => new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRe(norm(o))}(?=$|[^\\p{L}\\p{N}])`, 'u');
+  const mentioned = options.filter((o) => whole(o).test(a));
+  if (mentioned.length !== 1) return null;
+  const [o] = mentioned;
+  const rest = wordsOf(a.replace(whole(o), '$1'));
+  if (rest.length > 6 || rest.some((w) => NEGATIONS.has(w))) return null;
+  return o;
+}
+
 export function createRunStore({ now = Date.now, newId = null, keep = 20, onChange = () => {} } = {}) {
   const runs = new Map();          // runId -> run
   let counter = 0;
@@ -224,12 +254,7 @@ export function createRunStore({ now = Date.now, newId = null, keep = 20, onChan
 
       let chosen = answer;
       if (r.questionType === 'options' && r.options.length) {
-        const hit = r.options.find((o) => String(o).toLowerCase() === answer.toLowerCase())
-          // A model relaying an answer often paraphrases ("the first one, Sam Chen").
-          // Accept an unambiguous substring match; refuse an ambiguous one.
-          || (r.options.filter((o) => answer.toLowerCase().includes(String(o).toLowerCase())).length === 1
-            ? r.options.find((o) => answer.toLowerCase().includes(String(o).toLowerCase()))
-            : null);
+        const hit = matchOption(answer, r.options);
         if (!hit) return { ok: false, reason: 'not_an_option', options: r.options };
         chosen = hit;
       }

@@ -114,5 +114,48 @@ console.log('the user, and the end:');
   check('an unknown tool is an error', (await run('flyToMoon', {})).error);
 }
 
+
+console.log('waitForText reads the screen, not the hierarchy JSON:');
+{
+  const { run } = mock({ hierarchy: tree(node('Alarms', { type: 48 })) });
+  const yes = await run('waitForText', { text: 'Alarms', timeoutSec: 1 });
+  check('finds a label that is on screen', /^Found/.test(yes.text), yes.text);
+  const t0 = Date.now();
+  const no = await run('waitForText', { text: 'frame', timeoutSec: 1 });
+  check('does not find a JSON key name ("frame" matched at once before 2026-10-16)', /^TIMEOUT/.test(no.text), no.text);
+  const digit = await run('waitForText', { text: '2', timeoutSec: 1 });
+  check('does not find a digit that only appears in a frame size', /^TIMEOUT/.test(digit.text), digit.text);
+  check('a miss waits out the timeout rather than returning early', Date.now() - t0 >= 1900);
+}
+
+console.log('gestures refuse pixels like tap does:');
+{
+  const { run, calls } = mock();
+  const s = await run('swipe', { startX: 200, startY: 600, endX: 200, endY: 100 });
+  const d = await run('drag', { startX: 50, startY: 50, endX: 300, endY: 50 });
+  check('swipe with pixel values is an error, and nothing moves', s.error && !calls.some((c) => c[0] === 'swipe'), s.text);
+  check('drag with pixel values is an error, and nothing moves', d.error && !calls.some((c) => c[0] === 'drag'), d.text);
+  await run('swipe', { startX: 50, startY: 70, endX: 50, endY: 30 });
+  check('a percentage swipe goes through, in points', calls.some((c) => c[0] === 'swipe' && c[1] === 201 && c[2] === 612), JSON.stringify(calls));
+}
+
+console.log('replaceText:');
+{
+  const { run, calls } = mock({ hierarchy: tree(node('Label', { type: 48, x: 20, y: 200 })) });
+  const r = await run('replaceText', { field: 'Label', value: 'Gym' });
+  check('a heading with the field\'s name is not a field: an error, nothing tapped or typed', r.error && calls.length === 0, r.text);
+  const miss = await run('replaceText', { field: 'Nope', value: 'x' });
+  check('a missing field is an error', miss.error && calls.length === 0);
+}
+{
+  const { run, calls, state } = mock({ hierarchy: tree(node('Label', { type: 48, x: 20, y: 200 }), node('', { type: 49, value: 'Old', x: 20, y: 260, w: 300, h: 40 })) });
+  // The field has no label: it is found by its placeholder.
+  const h = JSON.parse(tree(node('Label', { type: 48, x: 20, y: 200 }), { ...node('', { type: 49, value: 'Old', x: 20, y: 260, w: 300, h: 40 }), placeholderValue: 'Label' }));
+  const { run: run2, calls: calls2, state: state2 } = mock({ hierarchy: JSON.stringify(h) });
+  const r = await run2('replaceText', { field: 'Label', value: 'Gym' });
+  check('the real field is focused, selected (three more taps) and typed over', !r.error && calls2.filter((c) => c[0] === 'tap').length === 4 && calls2.at(-1)[0] === 'type' && calls2.at(-1)[1] === 'Gym' && state2.keyboardUp, JSON.stringify(calls2));
+  void run; void calls; void state;
+}
+
 console.log(fail ? `\n❌ ${fail} FAILED, ${pass} passed` : `\n✅ ALL PASS: ${pass} passed, 0 failed`);
 if (fail) process.exit(1);

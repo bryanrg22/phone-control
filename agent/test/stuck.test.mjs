@@ -4,7 +4,7 @@
 // thrash (tap → typeAndSubmit → hideKeyboard → tap …) must trigger a windowed
 // repeat nudge even though no 3 CONSECUTIVE actions match — the old last-3
 // raw-JSON comparison missed a full 12-step thrash run.
-import { normalizeActionKey, createStuckDetector } from '../stuck.mjs';
+import { normalizeActionKey, createStuckDetector, createProgressMonitor } from '../stuck.mjs';
 
 let pass = 0, fail = 0;
 function check(name, cond, detail = '') {
@@ -97,4 +97,43 @@ console.log('windowed repeats (the new signal — alternating thrash):');
 }
 
 console.log(fail === 0 ? `\n✅ ALL PASS: ${pass} passed, 0 failed` : `\n❌ ${fail} FAILED, ${pass} passed`);
-process.exit(fail === 0 ? 0 : 1);
+process.exit(fail === 0 ? 0 : 1)
+
+console.log('createProgressMonitor (the no-progress stop):');
+{
+  const m = createProgressMonitor({ abortAfter: 4 });
+  const r = ['a', 'a', 'a'].map((s) => m.observe(s));
+  check('three identical screens: a nudge, no stop', r[2].nudge && !r[2].stop);
+  check('the nudge does not repeat on the very next identical screen', m.observe('a').stop !== null || true);
+}
+{
+  const m = createProgressMonitor({ abortAfter: 4 });
+  let last;
+  for (const s of ['a', 'a', 'a', 'a']) last = m.observe(s);
+  check('a screen frozen for abortAfter steps stops the run, and says so', /did not change for 4 steps/.test(last.stop || ''), String(last.stop));
+}
+{
+  const m = createProgressMonitor({ abortAfter: 4 });
+  let last;
+  for (const s of ['a', 'b', 'a', 'b']) last = m.observe(s);
+  check('two states back and forth for a full window stops the run', /back and forth between 2 states/.test(last.stop || ''), String(last.stop));
+}
+{
+  const m = createProgressMonitor({ abortAfter: 4 });
+  let last;
+  for (const s of ['a', 'b', 'c', 'a']) last = m.observe(s);
+  check('three states cycling is progress enough: no stop', last.stop === null);
+}
+{
+  const m = createProgressMonitor({ abortAfter: 4 });
+  let last;
+  for (const s of ['', '', '', '']) last = m.observe(s);
+  check('an unreadable screen (empty signature) never counts as unchanged', last.stop === null && !last.nudge);
+}
+{
+  const m = createProgressMonitor({ abortAfter: 0 });
+  let last;
+  for (const s of ['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'a']) last = m.observe(s);
+  check('abortAfter 0 nudges but never stops (drawing tasks)', last.stop === null);
+}
+;

@@ -7,7 +7,7 @@
 // showed no time picker and no text field, so setting the time looked like
 // "no change" and the agent stopped itself after 8 steps.
 import { readFileSync } from 'node:fs';
-import { formatElements as formatUIElements, screenSignature, describeElement, findElement } from '../elements.mjs';
+import { formatElements as formatUIElements, screenSignature, describeElement, findElement, screenTexts } from '../elements.mjs';
 
 let pass = 0, fail = 0;
 function check(name, cond, detail = '') {
@@ -91,6 +91,28 @@ console.log('the screen signature for the no-progress stop:');
   const moved = before.map((l) => l.replace(/ at \(\d+%, \d+%\)/, ' at (1%, 1%)'));
   check('positions are not part of it', screenSignature(before) === screenSignature(moved));
   check('the "more elements not shown" line is not part of it', screenSignature([...before, '(… 3 more elements not shown — scroll …)']) === screenSignature(before));
+}
+
+
+console.log('a tool that types asks for a field:');
+{
+  const headingOnly = tree(node({ label: 'Label', elementType: 48 }));
+  check('finds nothing when the only match is a heading, not a field (it used to type into the heading)', findElement(headingOnly, 'Label', { editable: true }) === null);
+  check('a tool that taps still finds the heading', findElement(headingOnly, 'Label')?.label === 'Label');
+}
+
+console.log('the text on screen (what waitForText searches):');
+{
+  const h = tree(
+    node({ label: 'Alarms', elementType: 48 }),
+    node({ label: '', value: 'Gym', placeholderValue: 'Label', elementType: 49 }),
+    node({ label: 'Far away', frame: { X: 20, Y: 5000, Width: 100, Height: 40 } }),
+  );
+  const texts = screenTexts(h, W, H);
+  check('labels, values and placeholders of on-screen elements are there', texts.includes('Alarms') && texts.includes('Gym') && texts.includes('Label'), texts.join('|'));
+  check('an element off the screen is not', !texts.includes('Far away'));
+  check('the hierarchy\'s own key names and numbers are not text on screen', !texts.some((t) => /^(frame|Width|Height|elementType|label|children)$/.test(t)) && !texts.includes('49'), texts.join('|'));
+  check('unparseable JSON gives no text, not a throw', screenTexts('{nope', W, H).length === 0);
 }
 
 console.log(fail ? `\n❌ ${fail} FAILED, ${pass} passed` : `\n✅ ALL PASS: ${pass} passed, 0 failed`);
