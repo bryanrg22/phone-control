@@ -197,11 +197,22 @@ export function createTaskRunner({
     }
   }
 
+  // One task at a time per person, INCLUDING the clean-up after it. A run is
+  // finished (and a new one may be started) the moment the agent reports its
+  // outcome, while its clean-up (back to the Claude app, automation put down)
+  // still runs; a new run starting then collided with it and failed at once
+  // (found by the connector evals, 2026-10-15: a retry 1.5 s after a failure).
+  const lanes = new Map();   // uid → the promise of the latest run's whole lifecycle
+
   return {
-    /** Starts the lifecycle and returns at once; the run record carries progress. */
+    /** Starts the lifecycle (after the previous one for this person ends) and returns at once. */
     start(ctx) {
-      const done = runTask(ctx);
+      const before = lanes.get(ctx.uid);
+      if (before) store.note(ctx.run.id, 'Finishing the previous task on your phone…');
+      const done = (before || Promise.resolve()).then(() => (terminal(ctx.run) ? null : runTask(ctx)));
       done.catch((e) => log(`run ${ctx.run.id}: unhandled: ${e?.message || e}`));
+      const lane = done.catch(() => {}).finally(() => { if (lanes.get(ctx.uid) === lane) lanes.delete(ctx.uid); });
+      lanes.set(ctx.uid, lane);
       return done;
     },
   };

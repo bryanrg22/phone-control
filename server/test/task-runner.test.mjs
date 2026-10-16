@@ -81,6 +81,64 @@ function world({ statuses, inspects = [{ runnerHealthy: true }], screens = [{ lo
 const READY = { ready: true, state: 'ready', message: 'The phone is connected and ready.' };
 const WAKING = { ready: false, state: 'waking', message: 'Starting automation on your phone. This can take up to a minute; ask me again in a few seconds.' };
 
+// ─── one task at a time, clean-up included ───────────────────────────────────
+
+await ok('a task started while the last one is still cleaning up waits for it, then runs', async () => {
+  const store = createRunStore({});
+  const order = [];
+  let releaseSuspend;
+  const suspendGate = new Promise((r) => { releaseSuspend = r; });
+  let suspends = 0;
+  const procs = [];
+  const runner = createTaskRunner({
+    store,
+    devices: { status: async () => { order.push('bring-up'); return { ...WHERE, ...READY }; }, resolve: () => ({ state: 'enrolled', ...WHERE }) },
+    supervisor: {
+      inspect: async () => ({ runnerHealthy: true }), screenState: async () => ({ locked: false }),
+      cancelArm: async () => false,
+      suspend: async () => { suspends += 1; order.push(`suspend-${suspends}-start`); if (suspends === 1) await suspendGate; order.push(`suspend-${suspends}-end`); return { suspended: true }; },
+    },
+    startAgent: () => { order.push('agent'); const proc = new EventEmitter(); proc.kill = () => setImmediate(() => proc.emit('close', null)); procs.push(proc); return { proc }; },
+    sleep: async () => { for (const r of store.list?.(UID) || []) store.polled(r.id); await tick(); },
+    limits: { startTimeoutMs: 60000, startPollMs: 10, watchEveryMs: 10, misses: 2, abandonMs: 1e9, dropGraceMs: 1e9, clientCheckMs: 10 },
+  });
+  const first = store.create({ uid: UID, task: 'turn on Bluetooth', meta: { model: LUNA.id } });
+  const one = runner.start({ run: first, uid: UID, model: LUNA });
+  while (!order.includes('agent')) await tick();
+  // The agent reports failure: the run is over for the person, its clean-up is not.
+  store.finish(first.id, { success: false, summary: 'No Bluetooth control.' });
+  procs[0].emit('close', 1);
+  while (!order.includes('suspend-1-start')) await tick();
+
+  const second = store.create({ uid: UID, task: 'turn on Bluetooth in Settings', meta: { model: LUNA.id } });
+  const two = runner.start({ run: second, uid: UID, model: LUNA });
+  for (let i = 0; i < 50; i++) await tick();
+  assert.equal(order.filter((o) => o === 'bring-up').length, 1, `the second task started before the first was cleaned up: ${order.join(', ')}`);
+  assert.match(store.get(second.id, UID).last_action, /Finishing the previous task/);
+
+  releaseSuspend();
+  await settled(one);
+  while (order.filter((o) => o === 'agent').length < 2) await tick();
+  assert.deepEqual(order.slice(0, 6), ['bring-up', 'agent', 'suspend-1-start', 'suspend-1-end', 'bring-up', 'agent']);
+  store.finish(second.id, { success: true, summary: 'done' });
+  procs[1].emit('close', 0);
+  assert.ok(await settled(two), 'the second task never finished');
+});
+
+await ok('a task stopped while it waits for the previous one never touches the phone', async () => {
+  const w = world({ statuses: [READY] });
+  const firstDone = w.start();
+  while (w.calls.agent.length === 0) await tick();
+  // The first run is over for the person; its agent has not exited, so its clean-up has not run.
+  w.store.finish(w.run.id, { success: true, summary: 'ok' });
+  const second = w.store.create({ uid: UID, task: 'another', meta: { model: LUNA.id } });
+  const two = w.runner.start({ run: second, uid: UID, model: LUNA });
+  w.store.finish(second.id, { success: false, summary: 'Stopped.', status: 'stopped' });
+  w.proc.emit('close', 0);
+  await settled(firstDone); await settled(two);
+  assert.equal(w.calls.agent.length, 1, 'the stopped task started an agent anyway');
+});
+
 // ─── the lifecycle ───────────────────────────────────────────────────────────
 
 await ok('a task starts automation, runs the agent with the chosen model, and puts automation down', async () => {
