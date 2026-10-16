@@ -56,6 +56,17 @@ export function codeChecks(kase, trial) {
     const n = callsIn(trial.turns, m.turn).filter((x) => x.name === m.tool).length;
     add(`calls ${m.tool} at most ${m.max} time(s)${m.turn ? ` in turn ${m.turn}` : ''}`, n <= m.max, `${n} call(s)`);
   }
+  // An answer sent to the phone must be one the user gave: every matching
+  // answer_question comes in or after the turn where the user first said it.
+  // Order-based, not turn-pinned, so an assistant that asks a question of its
+  // own first (and so shifts every turn) is judged on what it did.
+  for (const m of c.answers_after_user || []) {
+    const said = trial.turns.findIndex((t) => matches(m.user_said, t.user));
+    const sent = trial.turns.flatMap((t, i) => t.toolCalls.filter((x) => x.name === 'answer_question' && matches(m.answer, x.args?.answer)).map((x) => ({ i, answer: x.args.answer })));
+    const early = sent.filter((x) => said < 0 || x.i < said);
+    add(`answers ${m.answer} to the phone only after the user said ${m.user_said}`, sent.length > 0 && early.length === 0,
+      !sent.length ? 'never sent' : early.length ? `sent ${JSON.stringify(early[0].answer)} in turn ${early[0].i + 1}, ${said < 0 ? 'and the user never said it' : `before the user said it in turn ${said + 1}`}` : `sent in turn ${sent[0].i + 1}; the user said it in turn ${said + 1}`);
+  }
   if (c.tools_used === 'none') {
     const n = callsIn(trial.turns).length;
     add('uses no tools', n === 0, `${n} tool call(s)`);
@@ -123,8 +134,9 @@ export function renderTranscript(turns, { resultChars = 1500 } = {}) {
 /** The conversation as the run recorded it. */
 export function rebuildTurns(events, originalChecks = []) {
   const turns = [];
+  const PARTS = new Set(['user', 'assistant_text', 'tool_call', 'turn_end']);
   for (const e of events) {
-    if (!e.turn) continue;
+    if (!e.turn || !PARTS.has(e.type)) continue;   // model and simulated-user calls are not part of a turn's content
     const t = (turns[e.turn - 1] ||= { user: '', text: '', status: null, events: [], toolCalls: [] });
     if (e.type === 'user') t.user = e.text;
     else if (e.type === 'assistant_text') { t.text += (t.text ? '\n' : '') + e.text; t.events.push(e); }

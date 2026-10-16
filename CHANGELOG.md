@@ -9,6 +9,7 @@
 - **The conversation no longer grows with every step** (older screens drop their element lists), Claude requests read the conversation from the prompt cache, and OpenAI requests keep the model's reasoning across steps.
 - **The server reads the agent's events as JSON** instead of scraping its output.
 - **A full record of a run** (`--trace-dir`; on the server, `AGENT_TRACE_DIR`): every model request and response, every tool call and every screen, in OpenTelemetry GenAI field names. Assistant evals record each model and judge call's exact request and response too.
+- **Connector evals:** a model can play the user from a written instruction (τ-bench's method), for conversations a fixed script cannot follow; `hitl-two-questions` uses it, with an order-based check (`answers_after_user`) instead of turn-pinned ones. Claude assistants now use prompt caching, as OpenAI's do on their own. `compare.mjs` sets runs side by side by pass rate, steps, time, cache use and cost. Test records store raw model exchanges compressed.
 - **Phone-agent evals on iOSWorld** (`evals/phone-agent/`): the agent on iOSWorld's 26 apps and 133 tasks, scored by iOSWorld's own judge.
 
 ## 0.2.0 — 2026-10-15

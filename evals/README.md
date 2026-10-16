@@ -84,4 +84,16 @@ A case is one JSON file in `evals/connector/cases/`:
 }
 ```
 
-Checks available: `must_call`, `must_call_any`, `must_not_call`, `max_calls`, `tools_used: "none"`, `starts {min,max}`, `task_matches`, `task_model`, `final_run_status`, `automation_off_at_end`, `default_model`, `reply_matches`. A value starting with `/` is a regular expression. Every case needs an oracle plan, and must fail with the null assistant.
+Checks available: `must_call`, `must_call_any`, `must_not_call`, `max_calls`, `answers_after_user`, `tools_used: "none"`, `starts {min,max}`, `task_matches`, `task_model`, `final_run_status`, `automation_off_at_end`, `default_model`, `reply_matches`. A value starting with `/` is a regular expression. Every case needs an oracle plan, and must fail with the null assistant.
+
+### A simulated user, for conversations a script cannot follow
+
+`turns` is a fixed script: fine for one or two lines, wrong as soon as a good assistant might ask its own question first, because every later line then answers the wrong thing. A case can instead describe the person:
+
+```json
+"user": { "instruction": "You want a table for two tonight at Nopa, the one on Divisadero. 7 PM suits you. Give each detail only when asked.", "max_turns": 8 }
+```
+
+With a model assistant, a model then plays that person ([`connector/user-sim.mjs`](connector/user-sim.mjs), the method of τ-bench): it sees only what a person would (its own lines and the assistant's replies, never the tools), says one line at a time, reveals a detail only when the conversation needs it, never invents one, and ends with `###STOP###` when the goal is met or plainly cannot be. The first line is still `turns[0]`, so every trial starts from the same request. One fixed simulator plays the user for every assistant (`--user-model`, default GPT-6.1 Sol), and its every call is recorded like the assistant's (`user_sim_call` events, with its own token and cost totals). The oracle and null self-tests keep using `turns`.
+
+Checks for such a case must not pin answers to turn numbers. `answers_after_user` asks the order-based question instead: `{ "answer": "/divisadero/i", "user_said": "/divisadero/i" }` passes only if that answer reaches the phone, and only in or after the turn where the user first said it.

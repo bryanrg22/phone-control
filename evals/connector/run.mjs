@@ -7,6 +7,14 @@
 //   node evals/connector/run.mjs --cases hitl,stop            only cases whose id contains these
 //   node evals/connector/run.mjs --assistant oracle --expect all-pass    test the harness itself
 //   node evals/connector/run.mjs --assistant null   --expect all-fail
+//   node evals/connector/run.mjs --user-model claude-opus-5-5           who plays the user (see below)
+//   node evals/connector/run.mjs --judge none --allow-unjudged         smoke test only: nothing is judged
+//
+// A case's user is its fixed lines ("turns"), or, when the case gives a
+// "user" instruction and the assistant is a model, a model playing that
+// person (user-sim.mjs, τ-bench's method): one fixed simulator for every
+// assistant, GPT-6.1 Sol by default. The oracle and null self-tests always use
+// the fixed lines, so they stay free and deterministic.
 //
 // Each trial runs in a fresh stack (evals/lib/stack.mjs): the real server, a
 // simulated phone, and a scripted stand-in for the phone agent, so what is
@@ -39,6 +47,7 @@ import { codeChecks, verdictFor, renderTranscript } from './grade.mjs';
 import { createScriptedAssistant } from './assistants/scripted.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
 import { scrub } from '../../agent/record.mjs';
+import { createSimulatedUser, USER_SIM_PROMPT_HASH } from './user-sim.mjs';
 
 export const HARNESS_VERSION = '0.1.0';
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -64,6 +73,12 @@ const judgeProvider = opt('judge', isModel ? MODEL_ASSISTANTS[assistantKind].jud
 // until 2026-10-15 and failed an exemplary partial-success answer with a reason
 // that contradicted itself.)
 const judgeModel = opt('judge-model', judgeProvider === 'openai' ? 'gpt-6.1-sol' : judgeProvider === 'anthropic' ? 'claude-opus-5-5' : null);
+// A model run with no judge would score every expectation as met: refused,
+// unless asked for explicitly (a smoke test of the mechanics), and then marked.
+const unjudged = isModel && judgeProvider === 'none';
+if (unjudged && !argv.includes('--allow-unjudged')) { console.error('--judge none on a model assistant leaves every expectation unchecked, so its verdicts would read as passes. Pass --allow-unjudged for a smoke test.'); process.exit(2); }
+const userModel = opt('user-model', 'gpt-6.1-sol');
+const userProvider = userModel.startsWith('claude') ? 'anthropic' : 'openai';
 const runName = opt('run', `${new Date().toISOString().replace(/[:.]/g, '-')}_${isModel ? `${model}_${effort}` : assistantKind}`);
 const outRoot = join(opt('out', join(REPO, 'evals', 'results')), 'connector', runName);
 
@@ -74,6 +89,7 @@ const allCases = caseFiles.map((f) => ({ file: f, ...JSON.parse(readFileSync(joi
 for (const c of allCases) {
   for (const k of ['id', 'turns', 'checks', 'oracle']) if (!(k in c)) throw new Error(`${c.file}: missing "${k}"`);
   if (c.oracle.length !== c.turns.length) throw new Error(`${c.file}: the oracle plan must have one entry per turn`);
+  if (c.user && (typeof c.user.instruction !== 'string' || !c.user.instruction.trim())) throw new Error(`${c.file}: "user" needs an "instruction"`);
 }
 const cases = filter.length ? allCases.filter((c) => filter.some((f) => c.id.includes(f))) : allCases;
 if (!cases.length) { console.error(`no case matches ${filter.join(',')}`); process.exit(2); }
@@ -106,6 +122,7 @@ async function runTrial(kase, n, judge, ctx) {
   const t0 = Date.now();
   let toolsHash = null;
   let assistant = null;
+  let simUser = null;
   try {
     stack = await startStack({ phone: kase.phone || {}, scenario: kase.scenario || { steps: [{ done: 'Done.' }] } });
     const tools = await stack.mcp.listTools();
@@ -120,8 +137,18 @@ async function runTrial(kase, n, judge, ctx) {
       }
     }
     assistant = await newAssistant(kase);
-    for (let i = 0; i < kase.turns.length; i++) {
-      const user = kase.turns[i];
+    // Who plays the user: a model from the case's instruction, or its fixed lines.
+    simUser = isModel && kase.user ? await createSimulatedUser({ provider: userProvider, model: userModel, instruction: kase.user.instruction }) : null;
+    const maxTurns = simUser ? (kase.user.max_turns ?? 8) : kase.turns.length;
+    for (let i = 0; i < maxTurns; i++) {
+      let user = kase.turns[i];
+      if (simUser && i > 0) {
+        const reply = await simUser.next(turns);
+        emit({ turn: i + 1, type: 'user_sim_call', ...reply.call, text: reply.text, stop: reply.stop });
+        if (reply.error) throw new Error(reply.error);
+        if (reply.stop) { emit({ turn: i, type: 'user_stop' }); break; }
+        user = reply.text;
+      }
       const turnEvents = [];
       const turnEmit = (e) => { turnEvents.push(e); emit({ turn: i + 1, ...e }); };
       turnEmit({ type: 'user', text: user });
@@ -183,6 +210,14 @@ async function runTrial(kase, n, judge, ctx) {
     judge_input_tokens: judged.reduce((a, j) => a + (j.usage?.input_tokens || 0), 0),
     judge_output_tokens: judged.reduce((a, j) => a + (j.usage?.output_tokens || 0), 0),
   };
+  const simCalls = events.filter((e) => e.type === 'user_sim_call');
+  if (simUser) {
+    usage.user_sim_calls = simCalls.length;
+    usage.user_sim_input_tokens = simCalls.reduce((a, e) => a + (e.usage?.input_tokens || 0), 0);
+    usage.user_sim_output_tokens = simCalls.reduce((a, e) => a + (e.usage?.output_tokens || 0), 0);
+    usage.user_sim_cost_usd = simCalls.reduce((a, e) => a + (costOf(userModel, e.usage) || 0), 0);
+    usage.user_stopped = events.some((e) => e.type === 'user_stop');
+  }
   if (isModel) {
     usage.cost_usd = costOf(model, usage);
     usage.judge_cost_usd = judge.model ? costOf(judge.model, { input_tokens: usage.judge_input_tokens, output_tokens: usage.judge_output_tokens }) : null;
@@ -195,7 +230,7 @@ async function runTrial(kase, n, judge, ctx) {
   const state = {
     case: kase.id, trial: n, verdict, error, checks, judged, usage,
     assistant: assistant?.describe?.() ?? { kind: assistantKind }, judge: { provider: judge.provider, model: judge.model, prompt_hash: JUDGE_PROMPT_HASH },
-    tools_hash: toolsHash, final_run: finalRun, starts, phone, default_model: defaultModel, run: ctx.runName,
+    user: simUser ? simUser.describe() : { kind: 'scripted', lines: kase.turns }, tools_hash: toolsHash, final_run: finalRun, starts, phone, default_model: defaultModel, run: ctx.runName,
   };
   // Key-shaped strings are scrubbed from everything written (agent/record.mjs scrub).
   writeFileSync(join(dir, 'events.jsonl'), scrub(events.map((e) => JSON.stringify(e)).join('\n')) + '\n');
@@ -218,20 +253,22 @@ const runInfo = {
   git: { commit: git(['rev-parse', 'HEAD']), dirty: (git(['status', '--porcelain']) || '').length > 0 },
   assistant: { kind: assistantKind, model: isModel ? model : null, effort: isModel ? effort : null },
   judge: { provider: judgeProvider, model: judgeModel, prompt_hash: JUDGE_PROMPT_HASH },
+  unjudged,
+  user_simulator: isModel && cases.some((c) => c.user) ? { provider: userProvider, model: userModel, prompt_hash: USER_SIM_PROMPT_HASH, cases: cases.filter((c) => c.user).map((c) => c.id) } : null,
   trials, cases: cases.map((c) => c.id), cases_hash: casesHash, node: process.version, platform: `${process.platform}-${process.arch}`,
 };
 writeFileSync(join(outRoot, 'run_info.json'), `${JSON.stringify(runInfo, null, 2)}\n`);
-console.log(`connector evals — ${assistantKind}${isModel ? ` ${model} (${effort})` : ''}, judge ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''}, ${cases.length} case(s) × ${trials} trial(s)\n  ${outRoot}\n`);
+console.log(`connector evals — ${assistantKind}${isModel ? ` ${model} (${effort})` : ''}, judge ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''}${runInfo.user_simulator ? `, simulated user ${userModel}` : ''}, ${cases.length} case(s) × ${trials} trial(s)\n  ${outRoot}\n`);
 
 const verdicts = {};
 const toolHashes = new Set();
-let costUsd = 0; let judgeCostUsd = 0;
+let costUsd = 0; let judgeCostUsd = 0; let userSimCostUsd = 0;
 for (const kase of cases) {
   verdicts[kase.id] = [];
   for (let n = 1; n <= trials; n++) {
     const r = await runTrial(kase, n, judge, { runName });
     verdicts[kase.id].push(r.verdict);
-    costUsd += r.state.usage.cost_usd || 0; judgeCostUsd += r.state.usage.judge_cost_usd || 0;
+    costUsd += r.state.usage.cost_usd || 0; judgeCostUsd += r.state.usage.judge_cost_usd || 0; userSimCostUsd += r.state.usage.user_sim_cost_usd || 0;
     if (r.toolsHash) toolHashes.add(r.toolsHash);
     const why = [...r.state.checks.filter((c) => !c.ok).map((c) => c.name), ...r.state.judged.filter((j) => j.verdict !== 'held').map((j) => `${j.verdict}: ${j.expectation}`)];
     console.log(`  ${r.verdict.padEnd(10)} ${kase.id} #${n}  (${(r.state.usage.wall_ms / 1000).toFixed(1)}s, ${r.state.usage.tool_calls} tool calls)${r.state.error ? `  ${r.state.error.message}` : ''}${why.length && r.verdict !== 'PASS' ? `\n             ${why.join('\n             ')}` : ''}`);
@@ -239,7 +276,7 @@ for (const kase of cases) {
 }
 
 const summary = summarize(verdicts);
-if (isModel) Object.assign(summary, { cost_usd: Math.round(costUsd * 100) / 100, judge_cost_usd: Math.round(judgeCostUsd * 100) / 100, prices_as_of: PRICES_AS_OF });
+if (isModel) Object.assign(summary, { cost_usd: Math.round(costUsd * 100) / 100, judge_cost_usd: Math.round(judgeCostUsd * 100) / 100, user_sim_cost_usd: Math.round(userSimCostUsd * 100) / 100, prices_as_of: PRICES_AS_OF });
 runInfo.finished = new Date().toISOString();
 runInfo.tools_hashes = [...toolHashes];
 writeFileSync(join(outRoot, 'run_info.json'), `${JSON.stringify(runInfo, null, 2)}\n`);
@@ -247,7 +284,7 @@ writeFileSync(join(outRoot, 'summary.json'), `${JSON.stringify(summary, null, 2)
 const pct = (x) => (x === null ? 'n/a' : `${(x * 100).toFixed(0)}%`);
 const md = [
   `# Connector evals: ${runName}`, '',
-  `Assistant: ${assistantKind}${isModel ? ` ${model} (${effort})` : ''} · judge: ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''} · commit ${runInfo.git.commit?.slice(0, 7)}${runInfo.git.dirty ? ' (uncommitted changes)' : ''}`, '',
+  `${unjudged ? '**UNJUDGED SMOKE TEST: expectations were not checked; verdicts are code checks only.**\n\n' : ''}Assistant: ${assistantKind}${isModel ? ` ${model} (${effort})` : ''} · judge: ${judgeProvider}${judgeModel ? ` ${judgeModel}` : ''} · commit ${runInfo.git.commit?.slice(0, 7)}${runInfo.git.dirty ? ' (uncommitted changes)' : ''}`, '',
   `pass@1 ${pct(summary.pass_at_1)} (95% interval ${pct(summary.pass_at_1_ci95.low)}–${pct(summary.pass_at_1_ci95.high)}) · pass^${trials} ${pct(summary.pass_hat_k)} · ${summary.trials} graded trials · ${summary.test_errors} test errors · ${summary.reviews} for review`, '',
   '| case | verdicts |', '| --- | --- |',
   ...Object.entries(summary.per_case).map(([id, c]) => `| ${id} | ${c.verdicts.join(', ')} |`), '',

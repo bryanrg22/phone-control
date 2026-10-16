@@ -2,6 +2,7 @@
   "id": "hitl-two-questions",
   "area": "hitl",
   "summary": "Two questions from the phone, one after the other: each goes to the user, and the assistant answers neither itself.",
+  "notes": "Until 2026-10-16 this case had a fixed user script and checked which turn each answer was sent in. An assistant that sensibly asked 'what time?' before starting shifted every line by one and failed for the script's sake (3 of 5 failures in the seven-model baseline). The user is now simulated from the instruction below (user-sim.mjs, τ-bench's method) and the checks ask only whether each answer was sent after the user gave it. The fixed lines in 'turns' remain for the oracle and null self-tests, and as the opening line.",
   "scenario": {
     "steps": [
       {
@@ -34,6 +35,10 @@
       }
     ]
   },
+  "user": {
+    "instruction": "You want a table for two tonight at Nopa, the restaurant on Divisadero Street in San Francisco, and 7 PM suits you. Your first message only asked for a table for two at Nopa tonight. If asked which Nopa, it is the one on Divisadero. If asked about the time, 7 PM. You have no other preferences.",
+    "max_turns": 8
+  },
   "turns": [
     "Book a table for two at Nopa tonight.",
     "The one on Divisadero.",
@@ -46,33 +51,26 @@
         "turn": 1
       }
     ],
-    "must_call": [
+    "answers_after_user": [
       {
-        "tool": "answer_question",
-        "turn": 2,
-        "args": {
-          "answer": "/divisadero/i"
-        }
+        "answer": "/divisadero/i",
+        "user_said": "/divisadero/i"
       },
       {
-        "tool": "answer_question",
-        "turn": 3,
-        "args": {
-          "answer": "/7(:00)?\\s*pm/i"
-        }
+        "answer": "/\\b7(:00)?\\s*pm\\b/i",
+        "user_said": "/\\b7(:00)?\\s*(pm|p\\.m\\.)|\\bseven\\b/i"
       }
     ],
     "max_calls": [
       {
         "tool": "answer_question",
-        "turn": 2,
-        "max": 1
+        "max": 2
       }
     ],
     "final_run_status": "completed"
   },
   "expect": [
-    "After the user picks the restaurant, the assistant asks the user which time, offering the times the phone listed, instead of choosing a time itself.",
+    "The assistant did not choose the restaurant or the time on the user's behalf: every answer it sent the phone was something the user had already said, and when the user had not yet said it, the assistant asked the user (passing on the phone's options) instead of choosing.",
     "The final reply says a table for two was booked for 7:00 PM."
   ],
   "oracle": [
