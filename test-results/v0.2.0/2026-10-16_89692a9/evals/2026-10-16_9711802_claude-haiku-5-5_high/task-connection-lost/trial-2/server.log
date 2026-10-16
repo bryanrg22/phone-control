@@ -1,0 +1,22 @@
+[2026-10-16T07:13:55.494Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:13:55.495Z] token: issued connector credential lnk_f9dff55542d0287f for owner@example.com
+[2026-10-16T07:13:55.496Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:13:56.963Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:13:57.197Z] run run_mvamt6fg01 started for owner@example.com: Open the Mail app and tell me the sender of the newest email in the inbox.
+[2026-10-16T07:13:57.275Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:13:58.037Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:00.551Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:02.421Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:03.062Z] run run_mvamt6fg01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:03.687Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:14:05.178Z] run run_mvamt6fg01: automation put down
+[2026-10-16T07:14:05.358Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:14:05.485Z] run run_mvamtcto02 started for owner@example.com: Open the Mail app and tell me the sender of the newest email in the inbox.
+[2026-10-16T07:14:05.486Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:05.598Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:14:06.696Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:07.700Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:09.859Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:11.408Z] run run_mvamtcto02: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:12.286Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:12.288Z] mcp: tools/call get_phone_status from owner@example.com (claude)

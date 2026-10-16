@@ -1,0 +1,14 @@
+[2026-10-16T07:07:00.917Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:07:00.918Z] token: issued connector credential lnk_a9be88e2f6162a73 for owner@example.com
+[2026-10-16T07:07:00.919Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:07:02.445Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:07:02.648Z] run run_mvamkak701 started for owner@example.com: Clear all notifications on the phone: open Notification Center by swiping down f
+[2026-10-16T07:07:02.723Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:07:03.765Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:07:05.954Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:07:08.321Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:07:19.445Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:07:31.064Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:07:42.523Z] run run_mvamkak701: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:07:42.953Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:07:42.954Z] mcp: tools/call get_phone_status from owner@example.com (claude)

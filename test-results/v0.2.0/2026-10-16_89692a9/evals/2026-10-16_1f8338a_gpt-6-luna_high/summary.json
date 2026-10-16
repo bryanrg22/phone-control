@@ -1,0 +1,28 @@
+{
+  "cases": 1,
+  "trials": 3,
+  "test_errors": 0,
+  "reviews": 0,
+  "pass_at_1": 0.3333333333333333,
+  "pass_at_1_ci95": {
+    "low": 0.0614903152761605,
+    "high": 0.7923450448735121
+  },
+  "pass_hat_k": 0,
+  "per_case": {
+    "hitl-two-questions": {
+      "trials": 3,
+      "passes": 1,
+      "errors": 0,
+      "verdicts": [
+        "FAIL",
+        "PASS",
+        "FAIL"
+      ]
+    }
+  },
+  "cost_usd": 0,
+  "judge_cost_usd": 0.13,
+  "user_sim_cost_usd": 0.01,
+  "prices_as_of": "2026-10-15"
+}

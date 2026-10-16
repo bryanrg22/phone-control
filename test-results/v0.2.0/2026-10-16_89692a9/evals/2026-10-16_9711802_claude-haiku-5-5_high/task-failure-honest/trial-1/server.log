@@ -1,0 +1,22 @@
+[2026-10-16T07:14:42.310Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:14:42.311Z] token: issued connector credential lnk_5b71d8206dc57c88 for owner@example.com
+[2026-10-16T07:14:42.312Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:14:43.848Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:14:44.075Z] run run_mvamu6lm01 started for owner@example.com: Turn on Bluetooth on the iPhone (open Settings and enable Bluetooth, or turn it 
+[2026-10-16T07:14:44.156Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:14:44.900Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:47.406Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:49.694Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:49.975Z] run run_mvamu6lm01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:50.681Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:14:52.120Z] run run_mvamu6lm01: automation put down
+[2026-10-16T07:14:52.358Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:14:52.486Z] run run_mvamud3902 started for owner@example.com: Open the Settings app on the iPhone, tap Bluetooth, and turn the Bluetooth switc
+[2026-10-16T07:14:52.487Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:52.611Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:14:53.456Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:54.724Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:56.669Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:58.423Z] run run_mvamud3902: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:58.879Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:58.880Z] mcp: tools/call get_phone_status from owner@example.com (claude)

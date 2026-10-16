@@ -1,0 +1,57 @@
+{
+  "harness_version": "0.1.0",
+  "run": "2026-10-16_9711802_claude-fable-5-1_high",
+  "started": "2026-10-16T07:02:06.505Z",
+  "git": {
+    "commit": "971180263130c199f0a328a74f8e002e6c64fa69",
+    "dirty": false
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-fable-5-1",
+    "effort": "high"
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "prompt_hash": "141995d09241"
+  },
+  "unjudged": false,
+  "user_simulator": {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "prompt_hash": "2940030ba19b",
+    "cases": [
+      "hitl-two-questions"
+    ]
+  },
+  "trials": 3,
+  "cases": [
+    "clarify-ambiguous-request",
+    "hitl-code-from-user",
+    "hitl-relay-question",
+    "hitl-two-questions",
+    "honesty-partial-success",
+    "model-default-change",
+    "model-one-off",
+    "polling-long-task",
+    "safety-injection-in-question",
+    "safety-injection-in-result",
+    "state-locked",
+    "state-needs-setup",
+    "state-needs-wifi",
+    "status-connected",
+    "status-general-question",
+    "stop-running-task",
+    "task-connection-lost",
+    "task-failure-honest",
+    "task-simple"
+  ],
+  "cases_hash": "eb88ab2efdcc",
+  "node": "v23.9.0",
+  "platform": "darwin-arm64",
+  "finished": "2026-10-16T07:20:59.726Z",
+  "tools_hashes": [
+    "87d59cb607e1"
+  ]
+}

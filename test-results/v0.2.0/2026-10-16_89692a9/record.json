@@ -1,0 +1,335 @@
+{
+  "release": "0.2.0",
+  "commit": "89692a9c0f895cfd9ce43524ad32b1910c0adbd9",
+  "dirty": false,
+  "recorded_at": "2026-10-16T07:41:48.815Z",
+  "note": "Seven-model connector baseline with prompt caching and a simulated user (evals/baselines/connector/2026-10-16_9711802_seven-models). Full runs on 9711802, with hitl-two-questions and status-connected re-graded after their correction in 1f8338a (shown beside the original); a fresh run of hitl-two-questions on 1f8338a checks the corrected case and the clearer refusal message.",
+  "tools_fingerprint": "87d59cb607e1",
+  "environment": {
+    "node": "v23.9.0",
+    "platform": "darwin 25.6.0 arm64",
+    "xcode": "Xcode 26.4"
+  },
+  "suites": [
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 1,
+      "counts": null,
+      "not_verified": []
+    },
+    {
+      "name": "unit",
+      "command": "npm test",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 10,
+      "counts": {
+        "passed": 22,
+        "failed": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "lifecycle",
+      "command": "npm run test:lifecycle",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 228,
+      "counts": {
+        "passed": 26,
+        "failed": 0,
+        "skipped": 2
+      },
+      "not_verified": [
+        "suspend on one phone leaves another phone's session alone",
+        "network label: Wi-Fi, cellular and UNREACHABLE are three different answers"
+      ]
+    },
+    {
+      "name": "e2e",
+      "command": "npm run test:e2e",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 33,
+      "counts": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "conformance",
+      "command": "npm run test:conformance",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 115,
+      "counts": {
+        "passed": 5,
+        "failed": 0,
+        "expected_failures": 25
+      },
+      "not_verified": []
+    },
+    {
+      "name": "eval-harness-self-test",
+      "command": "npm run test:evals:self",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 183,
+      "counts": {
+        "oracle assistant": "100% of 19 trials passed",
+        "null assistant": "0% of 19 trials passed"
+      },
+      "not_verified": []
+    }
+  ],
+  "evals": [
+    {
+      "run": "2026-10-16_9711802_claude-fable-5-1_high",
+      "assistant": "claude-fable-5-1 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": {
+        "folder": "regrade-2026-10-16T07-24-21-260Z",
+        "pass_at_1": "100% (94%–100%)",
+        "pass_hat_k": "100%",
+        "cases": [
+          "hitl-two-questions",
+          "status-connected"
+        ]
+      },
+      "trials": "57 graded, 0 test errors",
+      "commit": "9711802",
+      "differs_from_record": true,
+      "changed_since_eval": "48 files changed, 3798 insertions(+), 17 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_9711802_claude-haiku-5-5_high",
+      "assistant": "claude-haiku-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "96% (88%–99%)",
+      "pass_hat_k": "89%",
+      "regraded": {
+        "folder": "regrade-2026-10-16T07-24-21-255Z",
+        "pass_at_1": "96% (88%–99%)",
+        "pass_hat_k": "89%",
+        "cases": [
+          "hitl-two-questions",
+          "status-connected"
+        ]
+      },
+      "trials": "57 graded, 0 test errors",
+      "commit": "9711802",
+      "differs_from_record": true,
+      "changed_since_eval": "48 files changed, 3798 insertions(+), 17 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_9711802_claude-opus-5-5_high",
+      "assistant": "claude-opus-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": {
+        "folder": "regrade-2026-10-16T07-24-21-259Z",
+        "pass_at_1": "100% (94%–100%)",
+        "pass_hat_k": "100%",
+        "cases": [
+          "hitl-two-questions",
+          "status-connected"
+        ]
+      },
+      "trials": "57 graded, 0 test errors",
+      "commit": "9711802",
+      "differs_from_record": true,
+      "changed_since_eval": "48 files changed, 3798 insertions(+), 17 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_9711802_claude-sonnet-5-5_high",
+      "assistant": "claude-sonnet-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "98% (91%–100%)",
+      "pass_hat_k": "95%",
+      "regraded": {
+        "folder": "regrade-2026-10-16T07-24-21-255Z",
+        "pass_at_1": "100% (94%–100%)",
+        "pass_hat_k": "100%",
+        "cases": [
+          "hitl-two-questions",
+          "status-connected"
+        ]
+      },
+      "trials": "57 graded, 0 test errors",
+      "commit": "9711802",
+      "differs_from_record": true,
+      "changed_since_eval": "48 files changed, 3798 insertions(+), 17 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_9711802_gpt-6-astra_high",
+      "assistant": "gpt-6-astra (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": {
+        "folder": "regrade-2026-10-16T07-24-21-265Z",
+        "pass_at_1": "100% (94%–100%)",
+        "pass_hat_k": "100%",
+        "cases": [
+          "hitl-two-questions",
+          "status-connected"
+        ]
+      },
+      "trials": "57 graded, 0 test errors",
+      "commit": "9711802",
+      "differs_from_record": true,
+      "changed_since_eval": "48 files changed, 3798 insertions(+), 17 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_9711802_gpt-6-luna_high",
+      "assistant": "gpt-6-luna (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "91% (81%–96%)",
+      "pass_hat_k": "84%",
+      "regraded": {
+        "folder": "regrade-2026-10-16T07-24-21-265Z",
+        "pass_at_1": "95% (86%–98%)",
+        "pass_hat_k": "89%",
+        "cases": [
+          "hitl-two-questions",
+          "status-connected"
+        ]
+      },
+      "trials": "57 graded, 0 test errors",
+      "commit": "9711802",
+      "differs_from_record": true,
+      "changed_since_eval": "48 files changed, 3798 insertions(+), 17 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_9711802_gpt-6.1-sol_high",
+      "assistant": "gpt-6.1-sol (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": {
+        "folder": "regrade-2026-10-16T07-24-21-265Z",
+        "pass_at_1": "100% (94%–100%)",
+        "pass_hat_k": "100%",
+        "cases": [
+          "hitl-two-questions",
+          "status-connected"
+        ]
+      },
+      "trials": "57 graded, 0 test errors",
+      "commit": "9711802",
+      "differs_from_record": true,
+      "changed_since_eval": "48 files changed, 3798 insertions(+), 17 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_1f8338a_claude-fable-5-1_high",
+      "assistant": "claude-fable-5-1 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "100% (44%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": null,
+      "trials": "3 graded, 0 test errors",
+      "commit": "1f8338a",
+      "differs_from_record": true,
+      "changed_since_eval": "40 files changed, 3732 insertions(+), 1 deletion(-)"
+    },
+    {
+      "run": "2026-10-16_1f8338a_claude-haiku-5-5_high",
+      "assistant": "claude-haiku-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "67% (21%–94%)",
+      "pass_hat_k": "0%",
+      "regraded": null,
+      "trials": "3 graded, 0 test errors",
+      "commit": "1f8338a",
+      "differs_from_record": true,
+      "changed_since_eval": "40 files changed, 3732 insertions(+), 1 deletion(-)"
+    },
+    {
+      "run": "2026-10-16_1f8338a_claude-opus-5-5_high",
+      "assistant": "claude-opus-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "100% (44%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": null,
+      "trials": "3 graded, 0 test errors",
+      "commit": "1f8338a",
+      "differs_from_record": true,
+      "changed_since_eval": "40 files changed, 3732 insertions(+), 1 deletion(-)"
+    },
+    {
+      "run": "2026-10-16_1f8338a_claude-sonnet-5-5_high",
+      "assistant": "claude-sonnet-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "67% (21%–94%)",
+      "pass_hat_k": "0%",
+      "regraded": null,
+      "trials": "3 graded, 0 test errors",
+      "commit": "1f8338a",
+      "differs_from_record": true,
+      "changed_since_eval": "40 files changed, 3732 insertions(+), 1 deletion(-)"
+    },
+    {
+      "run": "2026-10-16_1f8338a_gpt-6-astra_high",
+      "assistant": "gpt-6-astra (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "100% (44%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": null,
+      "trials": "3 graded, 0 test errors",
+      "commit": "1f8338a",
+      "differs_from_record": true,
+      "changed_since_eval": "40 files changed, 3732 insertions(+), 1 deletion(-)"
+    },
+    {
+      "run": "2026-10-16_1f8338a_gpt-6-luna_high",
+      "assistant": "gpt-6-luna (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "33% (6%–79%)",
+      "pass_hat_k": "0%",
+      "regraded": null,
+      "trials": "3 graded, 0 test errors",
+      "commit": "1f8338a",
+      "differs_from_record": true,
+      "changed_since_eval": "40 files changed, 3732 insertions(+), 1 deletion(-)"
+    },
+    {
+      "run": "2026-10-16_1f8338a_gpt-6.1-sol_high",
+      "assistant": "gpt-6.1-sol (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "100% (44%–100%)",
+      "pass_hat_k": "100%",
+      "regraded": null,
+      "trials": "3 graded, 0 test errors",
+      "commit": "1f8338a",
+      "differs_from_record": true,
+      "changed_since_eval": "40 files changed, 3732 insertions(+), 1 deletion(-)"
+    }
+  ],
+  "changes": {
+    "previous": {
+      "release": "0.2.0",
+      "commit": "017c23f8aa5bfe9985aec88dddaebc79459e2856",
+      "recorded_at": "2026-10-16T06:22:07.350Z"
+    },
+    "commits": [
+      "89692a9 test record: show a re-graded eval run's latest re-grade beside its original result",
+      "5765eef evals: seven-model baseline with caching and the simulated user (9711802)",
+      "1f8338a evals: case fixes from the seven-model run, and a clearer refusal message",
+      "9711802 evals: matrix.mjs runs several models at once, after a preflight",
+      "5e2b7a7 baseline: note that hitl-two-questions changed after this run",
+      "6efe390 evals: a simulated user for hitl-two-questions, with order-based checks",
+      "a2f6e9b test record 2026-10-16 at 017c23f: every suite, and the seven-model connector evals"
+    ],
+    "tools_changed": false
+  },
+  "complete": true,
+  "all_passed": true
+}

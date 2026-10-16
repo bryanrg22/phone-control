@@ -1,0 +1,23 @@
+[2026-10-16T07:17:24.915Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:17:24.916Z] token: issued connector credential lnk_84c1d0a0eda56bc7 for owner@example.com
+[2026-10-16T07:17:24.920Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:17:26.372Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:17:26.670Z] run run_mvamxo2501 started for owner@example.com: Turn on Bluetooth
+[2026-10-16T07:17:26.758Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:17:27.546Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:17:30.022Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:17:31.000Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:17:32.584Z] run run_mvamxo2501: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:17:32.994Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:17:33.133Z] run run_mvamxt1p02 started for owner@example.com: Open the Settings app, tap Bluetooth, and switch the Bluetooth toggle on
+[2026-10-16T07:17:34.480Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:17:34.717Z] run run_mvamxo2501: automation put down
+[2026-10-16T07:17:34.852Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:17:36.081Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:17:37.012Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:17:39.531Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:17:40.670Z] run run_mvamxt1p02: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:17:41.226Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:17:42.804Z] run run_mvamxt1p02: automation put down
+[2026-10-16T07:17:45.855Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:17:45.858Z] mcp: tools/call get_phone_status from owner@example.com (claude)

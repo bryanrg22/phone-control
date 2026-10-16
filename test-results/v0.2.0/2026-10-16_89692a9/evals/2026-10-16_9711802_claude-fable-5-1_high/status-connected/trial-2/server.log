@@ -1,0 +1,6 @@
+[2026-10-16T07:16:21.475Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:16:21.476Z] token: issued connector credential lnk_3b6c9e3d93e379d0 for owner@example.com
+[2026-10-16T07:16:21.478Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:16:23.010Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:16:24.770Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:16:24.772Z] mcp: tools/call get_phone_status from owner@example.com (claude)

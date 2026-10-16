@@ -1,0 +1,16 @@
+[2026-10-16T07:25:45.536Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:25:45.539Z] token: issued connector credential lnk_21a9ea6331c6a78a for owner@example.com
+[2026-10-16T07:25:45.542Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:25:54.478Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:25:54.689Z] run run_mvan8k1s01 started for owner@example.com: Book a reservation for two people at Nopa on Divisadero Street in San Francisco 
+[2026-10-16T07:25:54.769Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:25:56.407Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:25:58.042Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:26:05.975Z] mcp: tools/call answer_question from owner@example.com (claude)
+[2026-10-16T07:26:07.457Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:26:13.649Z] mcp: tools/call answer_question from owner@example.com (claude)
+[2026-10-16T07:26:15.319Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:26:15.411Z] run run_mvan8k1s01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:26:17.549Z] run run_mvan8k1s01: automation put down
+[2026-10-16T07:26:18.876Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:26:18.878Z] mcp: tools/call get_phone_status from owner@example.com (claude)

@@ -1,0 +1,12 @@
+[2026-10-16T07:12:30.736Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:12:30.737Z] token: issued connector credential lnk_bfd751f24985709e for owner@example.com
+[2026-10-16T07:12:30.738Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:12:32.106Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:12:32.295Z] run run_mvamrcx201 started for owner@example.com: Open Notes and read aloud the user's newest note, reporting its contents in chat
+[2026-10-16T07:12:32.372Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:12:33.511Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:12:35.646Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:12:37.070Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:12:37.975Z] run run_mvamrcx201: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:12:39.410Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:12:39.411Z] mcp: tools/call get_phone_status from owner@example.com (claude)

@@ -1,0 +1,12 @@
+[2026-10-16T07:11:20.395Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:11:20.395Z] token: issued connector credential lnk_b0e00def6f2bab7d for owner@example.com
+[2026-10-16T07:11:20.396Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:11:21.744Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:11:21.942Z] run run_mvampumt01 started for owner@example.com: Open Settings, go to Battery, and read the current battery percentage.
+[2026-10-16T07:11:22.022Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:11:22.705Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:11:29.277Z] preflight: bring-up for 127.0.0.1 ended (code 43)
+[2026-10-16T07:11:32.229Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:11:33.453Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:11:33.454Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:11:33.539Z] run run_mvampumt01: automation put down

@@ -1,0 +1,569 @@
+
+> phone-control@0.2.0 test
+> node --test "server/test/*.test.mjs" "agent/test/*.test.mjs" "evals/phone-agent/test/*.test.mjs" "evals/connector/test/*.test.mjs" "evals/lib/test/*.test.mjs"
+
+parsing:
+  ✓ the task is every word that is not a flag
+  ✓ defaults: anthropic, 25 steps, port 22087, 300 s to answer, stop after 8 unchanged screens
+  ✓ no temperature is sent unless asked for
+  ✓ no record unless asked for
+  ✓ a provider without --model gets its default
+  ✓ --simulator drives a local simulator: the runner is on 127.0.0.1
+  ✓ --max-steps is capped at 300
+  ✓ a phone needs --driver-host
+  ✓ an unknown flag is an error, not ignored
+  ✓ a flag with no value is an error
+  ✓ no task is an error
+  ✓ an unknown provider is an error
+  ✓ a bad --max-steps is an error
+  ✓ a temperature the model rejects is an error
+  ✓ every error exits 2
+  ✓ --help lists every flag
+what the server passes:
+  ✓ the agent accepts every argument the server sends
+  ✓ and reads them as meant
+the process:
+  ✓ --help exits 0
+  ✓ a bad argument exits 2
+  ✓ a missing API key exits 1 before touching the phone
+
+✅ ALL PASS: 21 passed, 0 failed
+✔ agent/test/agent-cli.test.mjs (254.705459ms)
+the runner client:
+  ✓ the keyboard check offers every installed app, home screen last
+  ✓ the app opened last is offered first
+  ✓ a tap is sent in points
+  ✓ a swipe uses swipeV2 (orientation-aware)
+  ✓ a runner that fails makes the call throw (the loop counts these)
+installed apps on a simulator:
+  ✓ display name → bundle ID
+
+✅ ALL PASS: 6 passed, 0 failed
+✔ agent/test/device.test.mjs (189.383208ms)
+a task that finishes
+  ✓ exits 0
+  ✓ the server sees each action, then done with the summary
+  ✓ the server sees step numbers out of the budget
+  ✓ the app is launched by its bundle ID
+  ✓ a tap at 50%/50% lands at the centre of the screen, in points
+a task the agent gives up on
+  ✓ exits 1
+  ✓ the server sees failed with the reason
+the step budget runs out
+  ✓ exits 1
+  ✓ the server sees a failure
+  ✓ the last step offers only the two ways to finish
+a question the user answers
+  ✓ the server sees the question with its options
+  ✓ the server sees the answer arrive
+  ✓ the answer reaches the model, and the run finishes
+a question nobody answers
+  ✓ the server sees the question time out
+  ✓ the model is told nobody answered
+the model API refuses the key
+  ✓ exits 42: errored, not failed
+  ✓ the server is told neither done nor failed
+the phone stops answering mid-task
+  ✓ exits 43: the device connection died
+  ✓ the server sees an infrastructure failure
+a reply with text but no tool call
+  ✓ the agent asks the model to use a tool and carries on
+taskComplete ends the step: what came after it does not run
+  ✓ exits 0
+  ✓ only the tap before taskComplete reached the phone
+  ✓ no model request after the conclusion
+an action that fails ends the step: the rest is reported "not run"
+  ✓ the tap after the failed action never reached the phone
+  ✓ every call got a result, the skipped one marked as an error
+the agent does not leave the app the user is in
+  ✓ no Home press unless the model asks for one
+older screens do not stay in the conversation
+  ✓ one screenshot in the request
+  ✓ one element list in the request, the current one
+  ✓ the task is still there
+a screen that never changes stops the run
+  ✓ exits 1
+  ✓ the server sees a failure that says why
+  ✓ it stopped long before the budget
+the record of a run
+  ✓ exits 0, and the manifest records the outcome and the model
+  ✓ one chat span per model request, with OTel GenAI names
+  ✓ one execute_tool span per tool call, with arguments and result
+  ✓ the run itself is a span, the parent of the others
+  ✓ every screen the model was shown is recorded, from step 0
+  ✓ the exact request is kept, its image replaced by a reference to the stored bytes
+  ✓ the exact response is kept
+  ✓ the API key appears nowhere in the record
+  ✓ a transcript a person can read
+
+✅ ALL PASS: 41 passed, 0 failed
+✔ agent/test/loop.test.mjs (10263.98725ms)
+Anthropic Messages API:
+  ✓ the system prompt is separate
+  ✓ a screenshot becomes a base64 image block
+  ✓ tool calls become tool_use blocks with parsed input
+  ✓ consecutive tool results are one user turn
+  ✓ a failed tool result is marked is_error
+  ✓ an empty assistant turn gets placeholder text (the API rejects empty ones)
+  ✓ a reply becomes the loop's assistant message
+OpenAI Responses API:
+  ✓ the system prompt is instructions
+  ✓ a screenshot becomes input_image beside input_text
+  ✓ tool calls become function_call items
+  ✓ tool results become function_call_output items
+  ✓ a reply becomes the loop's assistant message
+  ✓ reasoning is kept on the message
+  ✓ and sent back first on the next request, so the model keeps its reasoning
+which errors end a run:
+  ✓ 401, 402, 403 cannot be retried
+  ✓ no credit (Anthropic 400) cannot be retried
+  ✓ insufficient_quota (OpenAI 429) cannot be retried
+  ✓ a plain 429 can be retried
+  ✓ Gemini's per-minute "quota" 429 can be retried
+  ✓ a malformed-request 400 is not an account problem
+the request path:
+  ✓ a 529 is retried, and every attempt is reported
+  ✓ a 401 throws at once, tagged non-recoverable
+  ✓ input tokens include the cached ones (OTel GenAI)
+  ✓ the model that answered is kept
+  ✓ the exact request and response are returned for the record
+  ✓ the system prompt, the last tool and the newest message are cache breakpoints
+  ✓ native web search is offered
+  ✓ nothing is stored at OpenAI, and encrypted reasoning is requested
+  ✓ on a final step only the named tools are offered, and no search
+  ✓ cached and reasoning tokens are kept; input already includes the cached part
+
+✅ ALL PASS: 30 passed, 0 failed
+✔ agent/test/providers.test.mjs (1296.412416ms)
+normalizeActionKey:
+  ✓ tap coords snap to 10% grid (49≈51)
+  ✓ distant taps stay distinct
+  ✓ tapText normalizes label case/space
+  ✓ tap description is ignored
+  ✓ argless tools key by name
+  ✓ typeAndSubmit keyed by field+text
+consecutive stuck (original signal preserved):
+  ✓ 2 repeats → not stuck yet
+  ✓ 3 identical consecutive → stuck with the classic warning
+  ✓ 3 consecutive taps clustered within 10% → stuck (semantic match)
+  ✓ 3 consecutive taps far apart → NOT stuck
+windowed repeats (the new signal — alternating thrash):
+  ✓ 3rd non-consecutive repeat → mild nudge
+  ✓ mild nudge is advisory, not stuck
+  ✓ same level does not re-fire next step
+  ✓ 5th repeat → escalated reconsider-approach nudge
+  ✓ 8th repeat → strongest nudge mentions taskFailed/infeasibility
+  ✓ key aged out of window → count resets
+
+✅ ALL PASS: 16 passed, 0 failed
+✔ agent/test/stuck.test.mjs (29.806ms)
+OpenAI reasoning family (fixed temperature — VERIFIED live on gpt-5.5):
+  ✓ pinned openai model rejects 0
+  ✓ gpt-5.5 rejects 0
+  ✓ gpt-5.5 rejects 0.7
+  ✓ gpt-5.5 accepts the explicit default 1
+  ✓ gpt-5.6-terra rejects 0 (same gpt-5 family rule)
+  ✓ gpt-5.6-terra accepts the explicit default 1
+  ✓ o3-family rejects 0
+  ✓ o1 rejects 0
+  ✓ gpt-6-luna rejects 0 (GPT-6 models are reasoning models)
+  ✓ gpt-6.1-sol accepts the explicit default 1
+  ✓ gpt-4o (non-reasoning) accepts 0
+Other providers (per API docs — SUSPECTED, no live probe):
+  ✓ anthropic pinned model accepts 0
+  ✓ gemini pinned model accepts 0
+
+✅ ALL PASS: 13 passed, 0 failed
+✔ agent/test/temperature-support.test.mjs (31.130834ms)
+the tool set:
+  ✓ only tools that work on a real iPhone
+  ✓ webSearch only when the provider has no search of its own
+  ✓ openApp lists the apps it can open
+touching the phone:
+  ✓ openApp launches by bundle ID
+  ✓ an unknown app is an error that lists the apps, and nothing is pressed
+  ✓ tap converts percent to points
+  ✓ pixels instead of percent are refused, not tapped
+  ✓ tapText taps the centre of the matching element
+  ✓ tapText on a missing label is an error, and nothing is tapped
+  ✓ pressKey home is the hardware button
+  ✓ common aliases are mapped (done → enter)
+  ✓ an unknown key is refused
+telling the truth:
+  ✓ hideKeyboard when Return closes it: says hidden
+  ✓ hideKeyboard when a tap on an empty area closes it: says hidden
+  ✓ hideKeyboard when nothing closes it: says still up
+  ✓ typeAndSubmit with no such field types nothing and says so
+  ✓ typeAndSubmit with no Send button says NOTHING WAS SENT
+  ✓ typeAndSubmit taps the Send button it found and names it
+the user, and the end:
+  ✓ an unanswered question is reported as such, with no answer assumed
+  ✓ a free-text answer reaches the model
+  ✓ taskComplete and taskFailed conclude, with their text
+  ✓ an unknown tool is an error
+
+✅ ALL PASS: 22 passed, 0 failed
+✔ agent/test/tools.test.mjs (3895.054459ms)
+the element list on the real Add Alarm sheet:
+  ✓ the three picker wheels appear with their values
+  ✓ the label field appears with what was typed, named by its placeholder
+  ✓ the buttons are still there
+  ✓ the status-bar clock is left out
+  ✓ status-bar signal and battery are left out
+what is noise and what is not:
+  ✓ an alarm time in the app is kept (it used to be deleted as "the clock")
+  ✓ the status-bar clock is dropped by its position
+  ✓ a label merely containing AM is kept
+  ✓ two elements with one label at two places are both listed
+only what is on screen, and every field:
+  ✓ an icon with a zero-size frame (another home-screen page) is left out
+  ✓ an element whose centre is off the screen is left out
+  ✓ an empty unlabelled field is listed by its placeholder
+  ✓ ordinary elements are still there
+  ✓ a tool naming a label finds the labelled element first
+  ✓ a tool naming a placeholder finds the field
+  ✓ nothing matches, nothing is found
+  ✓ a tool that types gets the field, not the heading with the same text
+how one element reads:
+  ✓ a labelled switch shows its state
+  ✓ a value equal to the label is not repeated
+  ✓ static text with a value shows only its label
+  ✓ an unlabelled element with no value is skipped
+  ✓ an unlabelled value of an unknown kind is skipped
+  ✓ a very long value is clipped
+the screen signature for the no-progress stop:
+  ✓ turning a picker wheel changes the signature (it is progress)
+  ✓ the same screen gives the same signature
+  ✓ positions are not part of it
+  ✓ the "more elements not shown" line is not part of it
+
+✅ ALL PASS: 27 passed, 0 failed
+✔ agent/test/ui-elements.test.mjs (40.531417ms)
+prompt caching:
+  ✓ the system prompt carries a cache breakpoint (caching the tools before it too)
+  ✓ every request turns on automatic caching of the conversation
+  ✓ no message content carries its own marker (automatic caching places it; 4 slots at most)
+  ✓ the prefix is identical from one request to the next (else nothing is read back)
+token counts (OpenTelemetry GenAI convention):
+  ✓ input_tokens includes the cached and cache-written parts
+  ✓ a cache read is billed at the cache rate, not the input rate
+
+6 passed
+✔ evals/connector/test/claude-assistant.test.mjs (119.6235ms)
+rebuilding a run
+  ✓ turns, replies and tool calls come back as they were recorded
+  ✓ the code checks give the same answers on a rebuilt run
+  ✓ a run recorded before turn_end existed takes how a turn ended from its original checks
+
+3 passed
+✔ evals/connector/test/regrade.test.mjs (32.891833ms)
+what the simulated user sees:
+  ✓ roles are flipped as in τ-bench: its own lines are "assistant", the assistant's replies "user"
+  ✓ it never sees a tool call or its result, only what a person would
+  ✓ a reply with no text is shown as such, not as an empty message
+reading its reply:
+  ✓ a line is taken as the next user message, surrounding quotes removed
+  ✓ ###STOP### ends the conversation, alone or with text around it
+  ✓ an empty reply is an error (a test error, never a silent stop)
+the calls it makes:
+  ✓ OpenAI: the instruction is in the prompt, low effort, nothing stored; usage recorded
+  ✓ Anthropic: the conversation opens with a user turn, then alternates
+answers sent only after the user gave them:
+  ✓ passes when the answer comes in the turn the user says it
+  ✓ passes when it comes later than that (the assistant asked something else first)
+  ✓ fails when the assistant answers before the user said it
+  ✓ fails when the user never said it
+  ✓ fails when it is never sent
+  ✓ one early answer fails it even if a later one is fine
+counting only the answers the server accepted:
+  ✓ a refused answer, then the exact option, is within a limit of two delivered answers
+  ✓ a third answer the server accepted still breaks the limit
+  ✓ without the flag every attempt counts, as before (retries against a locked phone)
+re-grading a run that had a simulated user:
+  ✓ the simulator's own calls and the stop do not become turns
+
+18 passed
+✔ evals/connector/test/user-sim.test.mjs (166.275875ms)
+  ✓ a fresh trial is read from events.jsonl
+  ✓ every events.jsonl, at any depth, is replaced by events.jsonl.gz
+  ✓ nothing else is touched
+  ✓ a compressed trial reads back exactly (non-ASCII included)
+  ✓ compressing again finds nothing to do
+  ✓ a trial with no events says so, naming the folder
+
+6 passed
+✔ evals/lib/test/events.test.mjs (39.443375ms)
+cost
+  ✓ the cached part of the input is billed at the cached rate, not twice
+  ✓ OpenAI: no cache writes; cached input at the cached rate
+  ✓ no tokens cost nothing; an unpriced model has no cost rather than a wrong one
+  ✓ every model evaluated has a price
+statistics
+  ✓ the Wilson interval contains the observed rate and stays within 0-1
+  ✓ pass^k counts only cases where every trial passed; test errors are left out
+
+6 passed
+✔ evals/lib/test/prices-stats.test.mjs (35.803333ms)
+report
+  ✓ a task passes only when every rubric criterion holds (iOSWorld)
+  ✓ pass rate over judged runs, test errors apart
+  ✓ pass^k: tasks that passed in every trial
+  ✓ by category, with the paper's categories
+  ✓ rubric score is the mean share of criteria held
+  ✓ how every run ended is counted, the broken one included
+  ✓ tokens, cost, tool errors and the serving model are totalled
+  ✓ one trial has no pass^k
+  ✓ the Markdown carries outcomes, efficiency and endings
+
+9 passed
+✔ evals/phone-agent/test/report.test.mjs (69.08025ms)
+trajectory conversion
+  ✓ each step gets the screen the model was shown before it acted
+  ✓ a step after which the screen was not observed again gets no image, not a stale one
+  ✓ the end state is attached to the last step only, as iOSWorld does
+  ✓ actions carry the tool and its arguments; calls the agent did not run are left out
+  ✓ the answer is what the agent said when it finished, or why it gave up
+  ✓ tokens, model time and questions to the user are totalled
+  ✓ a run with no record yields no trajectory, so it is a test error
+
+7 passed
+✔ evals/phone-agent/test/trajectory.test.mjs (32.041542ms)
+  ✓ missing store loads empty; a corrupt store authorizes nobody
+  ✓ store round-trips through disk
+  ✓ minted token is prefixed, round-trips, and a wrong token misses
+  ✓ plaintext token is never stored — only its hash
+  ✓ revoked credentials fail closed
+  ✓ revokeAllForUid disconnects every assistant for one user only
+  ✓ mintClientToken is 32 bytes of entropy, base64url
+  ✓ parseBearer accepts only a Bearer header
+  ✓ link code is unambiguous and normalizes forgiving input
+  ✓ link code redeems exactly once and binds the right uid
+  ✓ link code expires
+  ✓ minting a new code invalidates the previous one
+  ✓ garbage codes are rejected without a lookup
+  ✓ DCR requires at least one redirect URI and rejects non-https
+  ✓ registered client is findable; unknown id is not
+  ✓ authorization code requires a known client, exact redirect, and S256
+  ✓ happy path: code + correct verifier yields a working credential
+  ✓ wrong PKCE verifier is refused
+  ✓ a short verifier is refused before any comparison
+  ✓ code is bound to its client and its redirect URI
+  ✓ expired code is refused
+  ✓ replaying a code revokes the credential it already issued
+  ✓ unknown code is invalid_grant, not a crash
+  ✓ pruneExpired drops stale codes but keeps live credentials
+
+24 connector-auth assertions passed
+✔ server/test/auth.test.mjs (34.422666ms)
+  ✓ DNS rebinding: a request naming another host is refused, before anything else runs
+  ✓ DNS rebinding: our own public name and loopback are served
+  ✓ the host check rejects look-alikes and malformed headers
+  ✓ healthz answers without credentials
+  ✓ protected-resource metadata points at our authorization server
+  ✓ discovery answers at BOTH the root and the RFC 9728 path-inserted form
+  ✓ authorization-server metadata advertises PKCE S256 only
+  ✓ an unauthenticated MCP call is 401 with the metadata pointer clients need
+  ✓ a made-up token is refused
+  ✓ GET /mcp is 405 — this server has no SSE stream to open
+  ✓ the URL-token path stays closed unless it is explicitly enabled
+  ✓ dynamic client registration issues a public client id
+  ✓ registration refuses a non-https redirect
+  ✓ the consent page names the client and asks for the app's code
+  ✓ authorize refuses an unregistered client, a mismatched redirect, and non-S256
+  ✓ the app exchanges a signed-in identity for a link code; a bad token gets nothing
+  ✓ a wrong link code re-renders the form instead of granting anything
+  ✓ the right link code redirects back with a code and the state intact
+  ✓ the token endpoint exchanges code + verifier for a credential
+  ✓ replaying the authorization code fails AND kills the credential it issued
+  ✓ an unsupported grant type is refused
+  ✓ initialize + tools/list work over MCP with a real credential
+  ✓ a notification over HTTP gets 202 with no body
+  ✓ a task started over MCP actually reaches the runner
+  ✓ a question raised mid-run comes back through get_run_status and is answerable
+  ✓ another tenant cannot see or stop that run, by id
+  ✓ REST /v1/phone reports readiness
+  ✓ REST start → status → stop round-trips for a second tenant
+  ✓ REST rejects a bad task with 400 and a reason
+  ✓ an unknown path is 404, not a stack trace
+  ✓ the app can disconnect every assistant, and the credential dies immediately
+
+31 connector-server assertions passed
+✔ server/test/http.test.mjs (120.719542ms)
+  ✓ flags and positionals are separated; a flag without a value is true
+  ✓ device add registers a phone, creating the directory and a private file
+  ✓ adding the same email again updates the phone and keeps the person's identity
+  ✓ bad input is refused with a reason, and nothing is written
+  ✓ the registry is what the server resolves a person's phone from
+  ✓ link-code mints a code that redeems to that person exactly once
+  ✓ link-code refuses someone with no phone registered
+  ✓ revoke and device remove both kill that person's assistant connections
+
+8 phonectl assertions passed
+✔ server/test/phonectl.test.mjs (38.977458ms)
+  ✓ locked screen: locked, with the signals that said so
+  ✓ status bar: Wi-Fi and cellular bars are read separately
+  ✓ no Wi-Fi indicator → wifi is null, cellular still read
+  ✓ an empty or missing tree is "cannot tell", never "unlocked"
+  ✓ "Locked" on its own (an app's label) is not the lock screen
+  ✓ the walker survives cycles and odd shapes
+  ✓ another app's banner over the top is found with the frame to swipe; no match means nothing to touch
+  ✓ the banner swipe starts in the middle of the banner and goes straight up off the top
+  ✓ armed on Wi-Fi → ready, no caveat
+  ✓ armed on cellular → ready, with the "a drop will need Wi-Fi" warning
+  ✓ bring-up in flight → waking; stuck on the owner → waiting_on_phone
+  ✓ powered off / flat / not unlocked since restart → unreachable, and NOT "find Wi-Fi"
+  ✓ cellular with nothing warm → needs_wifi; cellular with a warm tunnel → startable
+  ✓ Wi-Fi with a dead or missing tunnel → startable (a cold build works there)
+  ✓ a fresh failure names its cause; an old one is ignored
+  ✓ a phone that was never paired: says so before anything is tried, and is not startable
+  ✓ the phone refuses the server's connection: reported once as needing attention, not retried forever
+  ✓ a failure does not hide an unreachable phone
+  ✓ stopped on the phone (both volume buttons) is said out loud
+  ✓ no status at all → unknown, not a guess
+  ✓ ready phone: no bring-up is started
+  ✓ ASKING about a startable phone starts nothing: it reports standby
+  ✓ starting a task on a startable phone: one bring-up, with the registry slot, and the answer is "waking"
+  ✓ unreachable / needs_wifi / in flight: nothing is started
+  ✓ arming not allowed: startable is reported as needs_wake with the manual step
+  ✓ a start that died waiting on the owner is reported ONCE, then retried when asked again
+  ✓ an operator override redirects to the phone's real address (by email, any case)
+  ✓ overrides are validated, not trusted
+  ✓ startArm runs the one fixed command and never two at once per phone
+  ✓ a bring-up keeps the supervisor's own narration in a log
+  ✓ inspect returns null instead of throwing when the host cannot be read
+  ✓ a fingerprint depends on names and contents, not on where the files live or their order
+  ✓ files changed after start are reported as stale; device and agent code are always read fresh
+  ✓ a missing file changes the fingerprint instead of crashing; a missing component reports null
+  ✓ the agent fingerprint covers its subfolders but not its tests
+  ✓ the version names the release, the exact commit, and the tool list as served
+  ✓ a copy made with git archive reports the commit stamped into it
+  ✓ the tool fingerprint changes with any change to what an assistant sees
+  ✓ get_phone_status carries the server version
+  ✓ get_phone_status never asks the resolver to start anything, and reports standby as ready-to-start
+
+40 phone-state assertions passed
+✔ server/test/preflight.test.mjs (195.534708ms)
+  ✓ a task started while the last one is still cleaning up waits for it, then runs
+  ✓ a task stopped while it waits for the previous one never touches the phone
+  ✓ a task starts automation, runs the agent with the chosen model, and puts automation down
+  ✓ phone unreachable: the run fails with the real reason and the agent never starts
+  ✓ waiting on the passcode is narrated, and the task goes ahead once the owner answers
+  ✓ a start that never completes times out, says so, and cleans up
+  ✓ a start the owner must fix (needs attention) ends the run with that instruction
+  ✓ locked phone: refused before the agent starts, automation put straight back down
+  ✓ an unreadable screen is not treated as locked
+  ✓ user says stop while automation is still starting: no agent, phone left clean
+  ✓ user says stop mid-task: the agent is killed and automation is put down
+  ✓ stopped on the phone (both volume buttons) mid-task: said in those words
+  ✓ connection lost mid-task (power-off, no signal): said as a lost connection
+  ✓ one bad reading is a blip, not a verdict
+  ✓ a status check that could not be read at all does not end the task
+  ✓ phone locked mid-task: the agent is stopped and the user is told why
+  ✓ the agent dying without a verdict still ends the run and cleans the phone
+  ✓ if putting automation down fails, the run still ends and nothing throws
+  ✓ the chat stops following a running task: the agent is stopped and automation put down
+  ✓ a status check cut off mid-wait ends the task much sooner than plain silence
+  ✓ a dropped check followed by a fresh one is forgiven
+  ✓ a task waiting for the user's answer is NOT treated as abandoned
+  ✓ the chat goes away while automation is still STARTING: the bring-up is cancelled, nothing is left running
+  ✓ before the agent starts, the top of the screen is cleared — after the lock check, before the agent
+  ✓ a locked phone is never swiped at
+  ✓ when a task ends, the phone is returned to the Claude app, THEN automation is put down
+  ✓ "stay" leaves the phone where the task ended
+  ✓ nothing is brought forward when automation never came up
+  ✓ a status check waits for progress and answers the moment something changes
+  ✓ with nothing new it answers after about ten seconds, and tells the model to call straight back
+  ✓ repeating the same progress note does not wake a waiting status check
+  ✓ a finished run is answered at once, however often it is asked
+  ✓ every check marks the chat as listening; one cut off mid-wait is recorded as dropped
+  ✓ where to leave the phone is recorded with the task
+  ✓ models resolve from ids and from how people say them; a family name means its newest member
+  ✓ a key is "present" only when it is actually set
+  ✓ the default is GPT-6 Luna, and a task on a standby phone is accepted without starting automation itself
+  ✓ "use Sonnet for this one" changes that task only
+  ✓ "from now on use Sol" changes the default, per user, and shows up in the status answer
+  ✓ an older model is still chosen by its version, and a saved older default still works
+  ✓ an unknown model, or one with no key on the server, is refused BEFORE the phone is touched
+  ✓ a phone that cannot start is refused with its own message
+  ✓ the tool list offers set_default_model and a model argument only where they exist
+  ✓ the agent is launched with the chosen model, or with none to use its own default
+
+44 task-runner assertions passed
+✔ server/test/task-runner.test.mjs (72.634542ms)
+tool definitions as served
+  ✓ matches the committed snapshot (UPDATE_SNAPSHOTS=1 to accept an intended change)
+  ✓ every name is short, lowercase and unique
+  ✓ every description, and every parameter description, fits in 2048 characters
+  ✓ every input schema is closed and lists its required fields
+  ✓ every tool states readOnlyHint, destructiveHint and openWorldHint
+  ✓ the tool that acts on the phone is marked destructive, so Claude asks before it by default
+  ✓ the tools that only look are marked read-only
+
+7 tool-definition assertions passed
+✔ server/test/tool-snapshots.test.mjs (34.6625ms)
+  ✓ a created run starts in "starting" and is visible to its owner only
+  ✓ only one run at a time per user; a second user is unaffected
+  ✓ progress moves starting → running and records the action
+  ✓ a question surfaces on the status view and is answerable
+  ✓ a paraphrased answer resolves to an offered option; ambiguity does not
+  ✓ an off-menu answer to a closed question is refused
+  ✓ a free-text question accepts free text
+  ✓ another tenant cannot answer or stop your run
+  ✓ answering a run that is not waiting reports why
+  ✓ stop kills the process, is idempotent, and reports what happened
+  ✓ a terminal run ignores late progress and cannot be re-finished
+  ✓ clearQuestion releases a run whose askUser timed out
+  ✓ the status view never leaks internals or another tenant
+  ✓ finished runs are pruned per user, active ones never
+  ✓ isTerminal covers exactly the final states
+  ✓ parses a step event
+  ✓ an action becomes a human sentence
+  ✓ a question with options
+  ✓ a free-text question with a hint
+  ✓ done and failed carry the summary and the reason
+  ✓ an infra failure is distinguishable from a task failure
+  ✓ an unanswered question emits ask_timeout so the run does not hang
+  ✓ only event lines count: the agent's other output is ignored
+  ✓ lines split across chunks are still parsed exactly once
+  ✓ a trailing line without a newline is flushed on end()
+  ✓ describe() degrades to the tool name for unknown tools
+  ✓ applyEvent drives a full run from the agent's events alone
+  ✓ an infra event finishes the run as failed with the detail kept
+  ✓ buildAgentArgs targets the phone with a finite question timeout
+  ✓ buildAgentArgs refuses to guess a phone address or an empty task
+  ✓ device states map to actionable messages
+  ✓ a live runner reads ready; a dead one reads needs_wake, not "broken"
+  ✓ an arm delegate is used when configured, and its failure stays honest
+  ✓ every tool is annotated with a title and a read-only/destructive hint
+  ✓ tool descriptions teach the poll-and-relay protocol
+  ✓ a call without an authenticated caller is impossible
+  ✓ an unknown tool is a clean error, not a throw
+  ✓ run_phone_task refuses when the phone is not ready, and never spawns
+  ✓ run_phone_task validates the task before touching anything
+  ✓ max_steps is clamped, never trusted
+  ✓ a failed spawn finishes the run instead of leaving it hanging
+  ✓ a second task while one is running reports busy, not a silent queue
+  ✓ the full conversational loop: start → poll → question → answer → finish
+  ✓ answer_question rejects an answer nobody offered, with the options to re-ask
+  ✓ answer_question with nothing to answer is a clean refusal
+  ✓ stop_run stops the active run and is honest when there was nothing to stop
+  ✓ one user cannot address another user's run by id
+  ✓ initialize echoes a supported protocol version and advertises tools
+  ✓ an unknown protocol version falls back to our newest
+  ✓ notifications get no response at all
+  ✓ tools/list returns every tool with its schema and annotations
+  ✓ tools/call returns JSON in a text block and flags tool errors
+  ✓ a tool that throws becomes a tool error, not a protocol error
+  ✓ an unknown tool and a malformed message are proper JSON-RPC errors
+  ✓ ping answers empty
+
+55 connector-api assertions passed
+✔ server/test/tools.test.mjs (43.881583ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10271.889833

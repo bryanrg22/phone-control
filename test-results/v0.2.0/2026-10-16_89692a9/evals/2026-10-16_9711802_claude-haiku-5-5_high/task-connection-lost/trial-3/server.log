@@ -1,0 +1,21 @@
+[2026-10-16T07:14:20.132Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:14:20.133Z] token: issued connector credential lnk_d99f29f7ba5ac75e for owner@example.com
+[2026-10-16T07:14:20.134Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:14:21.559Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:14:21.752Z] run run_mvamtpdj01 started for owner@example.com: Open the Mail app and tell me who sent my newest email (the sender name of the m
+[2026-10-16T07:14:21.834Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:14:22.749Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:25.121Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:26.173Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:27.314Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:14:27.649Z] run run_mvamtpdj01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:29.766Z] run run_mvamtpdj01: automation put down
+[2026-10-16T07:14:30.455Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:14:30.582Z] run run_mvamtw6t02 started for owner@example.com: Open the Mail app and tell me who sent my newest email (the sender name of the m
+[2026-10-16T07:14:30.702Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:14:31.417Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:32.819Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:34.850Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:36.476Z] run run_mvamtw6t02: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:36.866Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:36.868Z] mcp: tools/call get_phone_status from owner@example.com (claude)

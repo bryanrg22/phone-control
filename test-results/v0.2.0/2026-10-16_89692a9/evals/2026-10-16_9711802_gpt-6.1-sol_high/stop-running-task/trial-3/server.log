@@ -1,0 +1,13 @@
+[2026-10-16T07:16:53.923Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:16:53.924Z] token: issued connector credential lnk_416db25b4a5e9e0e for owner@example.com
+[2026-10-16T07:16:53.925Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:16:53.926Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:16:54.142Z] run run_mvamwyyl01 started for owner@example.com: Find coffee shops near me in Maps
+[2026-10-16T07:16:54.144Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:16:54.229Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:16:54.397Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:16:57.489Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:16:58.812Z] mcp: tools/call stop_run from owner@example.com (claude)
+[2026-10-16T07:17:00.371Z] run run_mvamwyyl01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:17:00.920Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:17:00.922Z] mcp: tools/call get_phone_status from owner@example.com (claude)

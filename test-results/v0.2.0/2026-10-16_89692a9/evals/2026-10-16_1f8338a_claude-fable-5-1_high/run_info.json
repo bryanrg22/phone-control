@@ -1,0 +1,39 @@
+{
+  "harness_version": "0.1.0",
+  "run": "2026-10-16_1f8338a_claude-fable-5-1_high",
+  "started": "2026-10-16T07:25:44.899Z",
+  "git": {
+    "commit": "1f8338ae70eba6f720d0ec025e610d457f581e28",
+    "dirty": false
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-fable-5-1",
+    "effort": "high"
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "prompt_hash": "141995d09241"
+  },
+  "unjudged": false,
+  "user_simulator": {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "prompt_hash": "2940030ba19b",
+    "cases": [
+      "hitl-two-questions"
+    ]
+  },
+  "trials": 3,
+  "cases": [
+    "hitl-two-questions"
+  ],
+  "cases_hash": "7064f0338379",
+  "node": "v23.9.0",
+  "platform": "darwin-arm64",
+  "finished": "2026-10-16T07:27:24.248Z",
+  "tools_hashes": [
+    "87d59cb607e1"
+  ]
+}

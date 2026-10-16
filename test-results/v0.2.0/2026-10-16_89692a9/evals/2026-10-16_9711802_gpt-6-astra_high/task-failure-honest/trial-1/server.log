@@ -1,0 +1,21 @@
+[2026-10-16T07:20:07.096Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:20:07.097Z] token: issued connector credential lnk_f459e92f34d51c39 for owner@example.com
+[2026-10-16T07:20:07.098Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:20:08.459Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:20:08.668Z] run run_mvan152301 started for owner@example.com: Turn on Bluetooth on my phone.
+[2026-10-16T07:20:08.748Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:20:10.334Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:20:12.036Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:20:14.045Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:20:14.551Z] run run_mvan152301: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:20:16.698Z] run run_mvan152301: automation put down
+[2026-10-16T07:20:17.839Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:20:17.981Z] run run_mvan1c8t02 started for owner@example.com: Turn on Bluetooth through the iPhone Settings app and verify that it is on.
+[2026-10-16T07:20:18.095Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:20:20.213Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:20:20.688Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:20:23.914Z] run run_mvan1c8t02: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:20:24.219Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:20:26.066Z] run run_mvan1c8t02: automation put down
+[2026-10-16T07:20:26.338Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:20:26.339Z] mcp: tools/call get_phone_status from owner@example.com (claude)

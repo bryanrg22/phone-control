@@ -1,0 +1,21 @@
+[2026-10-16T07:13:33.439Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:13:33.440Z] token: issued connector credential lnk_7436d9169eeb7264 for owner@example.com
+[2026-10-16T07:13:33.441Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:13:34.890Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:13:35.124Z] run run_mvamspeb01 started for owner@example.com: Open the Mail app on the iPhone and tell me the name and email address of the se
+[2026-10-16T07:13:35.204Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:13:37.032Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:13:38.480Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:13:39.383Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:13:40.828Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:13:40.991Z] run run_mvamspeb01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:13:42.821Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:13:42.941Z] run run_mvamsvfh02 started for owner@example.com: Open the Mail app on the iPhone and tell me the name and email address of the se
+[2026-10-16T07:13:43.108Z] run run_mvamspeb01: automation put down
+[2026-10-16T07:13:43.224Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:13:43.784Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:13:45.325Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:13:47.457Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:13:49.081Z] run run_mvamsvfh02: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:13:49.843Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:13:49.845Z] mcp: tools/call get_phone_status from owner@example.com (claude)

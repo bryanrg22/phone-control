@@ -1,0 +1,22 @@
+[2026-10-16T07:14:05.260Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T07:14:05.261Z] token: issued connector credential lnk_8d03308c2865531b for owner@example.com
+[2026-10-16T07:14:05.262Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T07:14:06.528Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:14:06.734Z] run run_mvamtdsc01 started for owner@example.com: Open the Mail app and tell me who sent the newest email in the inbox (just read 
+[2026-10-16T07:14:06.810Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:14:07.646Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:10.125Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:11.027Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:12.079Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T07:14:12.607Z] run run_mvamtdsc01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:13.646Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T07:14:13.763Z] run run_mvamtj7n02 started for owner@example.com: Open the Mail app and tell me who sent the newest email in the inbox (just read 
+[2026-10-16T07:14:14.698Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:14.758Z] run run_mvamtdsc01: automation put down
+[2026-10-16T07:14:14.883Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T07:14:15.947Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:16.995Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T07:14:19.023Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:20.688Z] run run_mvamtj7n02: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T07:14:21.543Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T07:14:21.544Z] mcp: tools/call get_phone_status from owner@example.com (claude)
