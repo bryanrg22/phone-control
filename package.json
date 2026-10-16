@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "node server/src/server.mjs",
-    "test": "node --test \"server/test/*.test.mjs\" \"agent/test/*.test.mjs\" \"evals/phone-agent/test/*.test.mjs\" \"evals/connector/test/*.test.mjs\" \"evals/lib/test/*.test.mjs\"",
+    "test": "node --test \"server/test/*.test.mjs\" \"agent/test/*.test.mjs\" \"evals/phone-agent/test/*.test.mjs\" \"evals/connector/test/*.test.mjs\" \"evals/lib/test/*.test.mjs\" \"scripts/test/*.test.mjs\"",
     "test:lifecycle": "node device/test/lifecycle.test.mjs",
     "test:e2e": "node e2e/simulated.test.mjs",
     "test:all": "npm test && npm run test:lifecycle && npm run test:e2e && npm run test:conformance",

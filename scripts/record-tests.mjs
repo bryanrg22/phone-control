@@ -21,7 +21,7 @@
 // what changed in between.
 
 import { spawn, execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, cpSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync, cpSync, statSync, rmSync } from 'node:fs';
 import { join, dirname, basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { platform, release as osRelease, homedir } from 'node:os';
@@ -31,6 +31,7 @@ import { createMcpHandler, servedTools } from '../server/src/mcp.mjs';
 import { createRunStore } from '../server/src/runs.mjs';
 import { releaseOf, toolsFingerprint } from '../server/src/version.mjs';
 import { compressEvents } from '../evals/lib/events.mjs';
+import { evalRows } from './lib/eval-rows.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -179,30 +180,28 @@ const changes = {
 };
 
 const evals = [];
-for (const run of evalRuns) {
-  const info = JSON.parse(readFileSync(join(run, 'run_info.json'), 'utf8'));
-  const summary = JSON.parse(readFileSync(join(run, 'summary.json'), 'utf8'));
-  cpSync(run, join(dir, 'evals', basename(run)), { recursive: true });
-  // The raw model exchanges are most of a run's size: kept, compressed (evals/lib/events.mjs).
-  compressEvents(join(dir, 'evals', basename(run)));
-  const pct = (x) => (x === null || x === undefined ? 'n/a' : `${Math.round(x * 100)}%`);
-  const ranOn = info.git?.commit || null;
-  // A run re-graded after a case was corrected (evals/connector/regrade.mjs)
-  // is shown with its latest re-grade beside the original, never instead of it.
-  const latestRegrade = readdirSync(run).filter((d) => d.startsWith('regrade-') && existsSync(join(run, d, 'summary.json'))).sort().at(-1);
-  const regraded = latestRegrade ? JSON.parse(readFileSync(join(run, latestRegrade, 'summary.json'), 'utf8')) : null;
-  evals.push({
-    run: basename(run),
-    assistant: info.assistant.model ? `${info.assistant.model}${info.assistant.effort ? ` (${info.assistant.effort})` : ''}` : info.assistant.kind,
-    judge: info.judge.model ? `${info.judge.provider} ${info.judge.model}` : info.judge.provider,
-    pass_at_1: `${pct(summary.pass_at_1)} (${pct(summary.pass_at_1_ci95.low)}–${pct(summary.pass_at_1_ci95.high)})`,
-    pass_hat_k: pct(summary.pass_hat_k),
-    regraded: regraded ? { folder: latestRegrade, pass_at_1: `${pct(regraded.pass_at_1)} (${pct(regraded.pass_at_1_ci95.low)}–${pct(regraded.pass_at_1_ci95.high)})`, pass_hat_k: pct(regraded.pass_hat_k), cases: regraded.regraded_cases ?? 'all' } : null,
-    trials: `${summary.trials} graded, ${summary.test_errors} test errors`,
-    commit: ranOn ? `${ranOn.slice(0, 7)}${info.git.dirty ? '+dirty' : ''}` : 'unknown',
-    differs_from_record: ranOn !== commit,
-    changed_since_eval: ranOn && ranOn !== commit ? (git('diff', '--stat', ranOn, commit, '--', 'server', 'device', 'agent', 'evals') || '').split('\n').slice(-1)[0].trim() : null,
-  });
+try {
+  for (const run of evalRuns) {
+    const info = JSON.parse(readFileSync(join(run, 'run_info.json'), 'utf8'));
+    const summary = JSON.parse(readFileSync(join(run, 'summary.json'), 'utf8'));
+    // A run re-graded after a case was corrected (evals/connector/regrade.mjs)
+    // is shown with its latest re-grade beside the original, never instead of it.
+    const latestRegrade = readdirSync(run).filter((d) => d.startsWith('regrade-') && existsSync(join(run, d, 'summary.json'))).sort().at(-1) ?? null;
+    const regraded = latestRegrade ? JSON.parse(readFileSync(join(run, latestRegrade, 'summary.json'), 'utf8')) : null;
+    // Rows first (a run the record cannot describe fails here, before anything is copied).
+    evals.push(...evalRows({
+      runName: basename(run), info, summary, regraded, regradedFolder: latestRegrade, recordCommit: commit,
+      changedSince: (from, to) => (git('diff', '--stat', from, to, '--', 'server', 'device', 'agent', 'evals') || '').split('\n').slice(-1)[0].trim(),
+    }));
+    cpSync(run, join(dir, 'evals', basename(run)), { recursive: true });
+    // The raw model exchanges are most of a run's size: kept, compressed (evals/lib/events.mjs).
+    compressEvents(join(dir, 'evals', basename(run)));
+  }
+} catch (e) {
+  // A record is complete or absent: never a folder with the suites and no RECORD.md (2026-10-16).
+  rmSync(dir, { recursive: true, force: true });
+  console.error(`\ncould not file the evals, record removed: ${e.message}`);
+  process.exit(1);
 }
 
 const record = {
