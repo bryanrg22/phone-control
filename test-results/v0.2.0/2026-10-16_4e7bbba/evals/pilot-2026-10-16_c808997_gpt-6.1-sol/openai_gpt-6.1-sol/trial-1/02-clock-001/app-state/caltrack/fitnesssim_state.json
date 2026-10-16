@@ -1,0 +1,4922 @@
+{
+  "dailyLogs" : [
+    {
+      "date" : "2026-10-16T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 140,
+          "date" : "2026-10-16T07:00:00Z",
+          "durationMinutes" : 35,
+          "exerciseName" : "Walking",
+          "id" : "exercise_entry_001"
+        }
+      ],
+      "id" : "2026-10-16",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 150,
+            "carbs" : 27,
+            "fat" : 3,
+            "fiber" : 4,
+            "foodName" : "Oatmeal",
+            "id" : "food_011",
+            "protein" : 5,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 0
+          },
+          "id" : "meal_entry_001",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 105,
+            "carbs" : 27,
+            "fat" : 0.4,
+            "fiber" : 3.1,
+            "foodName" : "Banana",
+            "id" : "food_009",
+            "protein" : 1.3,
+            "servingSize" : "1 medium banana",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_002",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 130,
+            "carbs" : 6,
+            "fat" : 3.5,
+            "fiber" : 0,
+            "foodName" : "Greek yogurt",
+            "id" : "food_007",
+            "protein" : 17,
+            "servingSize" : "1 cup",
+            "sodium" : 60
+          },
+          "id" : "meal_entry_003",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 290,
+            "carbs" : 10,
+            "fat" : 14,
+            "fiber" : 4,
+            "foodName" : "Grilled chicken salad",
+            "id" : "food_028",
+            "protein" : 30,
+            "servingSize" : "1 salad",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_004",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 95,
+            "carbs" : 25,
+            "fat" : 0.3,
+            "fiber" : 4.4,
+            "foodName" : "Apple",
+            "id" : "food_008",
+            "protein" : 0.5,
+            "servingSize" : "1 medium apple",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_005",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 233,
+            "carbs" : 0,
+            "fat" : 14,
+            "fiber" : 0,
+            "foodName" : "Salmon",
+            "id" : "food_006",
+            "protein" : 25,
+            "servingSize" : "5 oz fillet",
+            "sodium" : 75
+          },
+          "id" : "meal_entry_006",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 222,
+            "carbs" : 39,
+            "fat" : 3.6,
+            "fiber" : 5,
+            "foodName" : "Quinoa",
+            "id" : "food_022",
+            "protein" : 8,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 13
+          },
+          "id" : "meal_entry_007",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 120,
+            "carbs" : 18,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Roasted vegetables",
+            "id" : "food_062",
+            "protein" : 3,
+            "servingSize" : "1 cup",
+            "sodium" : 140
+          },
+          "id" : "meal_entry_008",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 164,
+            "carbs" : 6,
+            "fat" : 14,
+            "fiber" : 3.5,
+            "foodName" : "Almonds",
+            "id" : "food_013",
+            "protein" : 6,
+            "servingSize" : "1 oz",
+            "sodium" : 0
+          },
+          "id" : "meal_entry_009",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-16T07:00:00Z",
+          "foodItem" : {
+            "calories" : 160,
+            "carbs" : 5,
+            "fat" : 2,
+            "fiber" : 1,
+            "foodName" : "Protein shake",
+            "id" : "food_012",
+            "protein" : 30,
+            "servingSize" : "1 bottle",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_010",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8420,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-10-15T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 330,
+          "date" : "2026-10-15T07:00:00Z",
+          "durationMinutes" : 30,
+          "exerciseName" : "Running",
+          "id" : "exercise_entry_002"
+        }
+      ],
+      "id" : "2026-10-15",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 2,
+            "fat" : 14,
+            "fiber" : 0,
+            "foodName" : "Scrambled eggs",
+            "id" : "food_025",
+            "protein" : 12,
+            "servingSize" : "2 large eggs",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_011",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 110,
+            "carbs" : 20,
+            "fat" : 1.5,
+            "fiber" : 4,
+            "foodName" : "Whole wheat bread",
+            "id" : "food_017",
+            "protein" : 6,
+            "servingSize" : "2 slices",
+            "sodium" : 200
+          },
+          "id" : "meal_entry_012",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 95,
+            "carbs" : 25,
+            "fat" : 0.3,
+            "fiber" : 4.4,
+            "foodName" : "Apple",
+            "id" : "food_008",
+            "protein" : 0.5,
+            "servingSize" : "1 medium apple",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_013",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 360,
+            "carbs" : 31,
+            "fat" : 14,
+            "fiber" : 5,
+            "foodName" : "Turkey wrap",
+            "id" : "food_029",
+            "protein" : 27,
+            "servingSize" : "1 wrap",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_014",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 233,
+            "carbs" : 0,
+            "fat" : 14,
+            "fiber" : 0,
+            "foodName" : "Salmon",
+            "id" : "food_006",
+            "protein" : 25,
+            "servingSize" : "5 oz fillet",
+            "sodium" : 75
+          },
+          "id" : "meal_entry_015",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 216,
+            "carbs" : 45,
+            "fat" : 1.8,
+            "fiber" : 3.5,
+            "foodName" : "Brown rice",
+            "id" : "food_003",
+            "protein" : 5,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 10
+          },
+          "id" : "meal_entry_016",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 55,
+            "carbs" : 11,
+            "fat" : 0.6,
+            "fiber" : 5.1,
+            "foodName" : "Broccoli",
+            "id" : "food_010",
+            "protein" : 3.7,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 49
+          },
+          "id" : "meal_entry_017",
+          "mealType" : "Dinner",
+          "quantity" : 1.5
+        },
+        {
+          "date" : "2026-10-15T07:00:00Z",
+          "foodItem" : {
+            "calories" : 160,
+            "carbs" : 5,
+            "fat" : 2,
+            "fiber" : 1,
+            "foodName" : "Protein shake",
+            "id" : "food_012",
+            "protein" : 30,
+            "servingSize" : "1 bottle",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_018",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 10420,
+      "waterCups" : 8
+    },
+    {
+      "date" : "2026-10-14T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 220,
+          "date" : "2026-10-14T07:00:00Z",
+          "durationMinutes" : 45,
+          "exerciseName" : "Strength training",
+          "id" : "exercise_entry_003"
+        }
+      ],
+      "id" : "2026-10-14",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 250,
+            "carbs" : 28,
+            "fat" : 8,
+            "fiber" : 3,
+            "foodName" : "Yogurt parfait",
+            "id" : "food_032",
+            "protein" : 15,
+            "servingSize" : "1 cup",
+            "sodium" : 115
+          },
+          "id" : "meal_entry_019",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 165,
+            "carbs" : 0,
+            "fat" : 3.6,
+            "fiber" : 0,
+            "foodName" : "Chicken breast",
+            "id" : "food_001",
+            "protein" : 31,
+            "servingSize" : "4 oz",
+            "sodium" : 74
+          },
+          "id" : "meal_entry_020",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 222,
+            "carbs" : 39,
+            "fat" : 3.6,
+            "fiber" : 5,
+            "foodName" : "Quinoa",
+            "id" : "food_022",
+            "protein" : 8,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 13
+          },
+          "id" : "meal_entry_021",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 80,
+            "carbs" : 7,
+            "fat" : 4,
+            "fiber" : 3,
+            "foodName" : "Spinach salad",
+            "id" : "food_021",
+            "protein" : 3,
+            "servingSize" : "2 cups",
+            "sodium" : 120
+          },
+          "id" : "meal_entry_022",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 250,
+            "carbs" : 0,
+            "fat" : 16,
+            "fiber" : 0,
+            "foodName" : "Sirloin steak",
+            "id" : "food_030",
+            "protein" : 26,
+            "servingSize" : "5 oz",
+            "sodium" : 60
+          },
+          "id" : "meal_entry_023",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 112,
+            "carbs" : 26,
+            "fat" : 0.1,
+            "fiber" : 4,
+            "foodName" : "Sweet potato",
+            "id" : "food_014",
+            "protein" : 2,
+            "servingSize" : "1 medium potato",
+            "sodium" : 72
+          },
+          "id" : "meal_entry_024",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 55,
+            "carbs" : 11,
+            "fat" : 0.6,
+            "fiber" : 5.1,
+            "foodName" : "Broccoli",
+            "id" : "food_010",
+            "protein" : 3.7,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 49
+          },
+          "id" : "meal_entry_025",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-14T07:00:00Z",
+          "foodItem" : {
+            "calories" : 160,
+            "carbs" : 24,
+            "fat" : 7,
+            "fiber" : 1,
+            "foodName" : "Brownie",
+            "id" : "food_038",
+            "protein" : 2,
+            "servingSize" : "1 square",
+            "sodium" : 95
+          },
+          "id" : "meal_entry_026",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 9120,
+      "waterCups" : 7
+    },
+    {
+      "date" : "2026-10-13T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 140,
+          "date" : "2026-10-13T07:00:00Z",
+          "durationMinutes" : 40,
+          "exerciseName" : "Yoga",
+          "id" : "exercise_entry_004"
+        }
+      ],
+      "id" : "2026-10-13",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-13T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Eggs",
+            "id" : "food_002",
+            "protein" : 12,
+            "servingSize" : "2 large eggs",
+            "sodium" : 124
+          },
+          "id" : "meal_entry_027",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-13T07:00:00Z",
+          "foodItem" : {
+            "calories" : 340,
+            "carbs" : 33,
+            "fat" : 12,
+            "fiber" : 4,
+            "foodName" : "Turkey sandwich",
+            "id" : "food_016",
+            "protein" : 24,
+            "servingSize" : "1 sandwich",
+            "sodium" : 780
+          },
+          "id" : "meal_entry_028",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-13T07:00:00Z",
+          "foodItem" : {
+            "calories" : 62,
+            "carbs" : 15.4,
+            "fat" : 0.2,
+            "fiber" : 3.1,
+            "foodName" : "Orange",
+            "id" : "food_034",
+            "protein" : 1.2,
+            "servingSize" : "1 medium orange",
+            "sodium" : 0
+          },
+          "id" : "meal_entry_029",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-13T07:00:00Z",
+          "foodItem" : {
+            "calories" : 340,
+            "carbs" : 14,
+            "fat" : 18,
+            "fiber" : 3,
+            "foodName" : "Chicken curry",
+            "id" : "food_056",
+            "protein" : 28,
+            "servingSize" : "1 bowl",
+            "sodium" : 780
+          },
+          "id" : "meal_entry_030",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-13T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 36,
+            "fat" : 5,
+            "fiber" : 2,
+            "foodName" : "Naan",
+            "id" : "food_057",
+            "protein" : 6,
+            "servingSize" : "1 piece",
+            "sodium" : 430
+          },
+          "id" : "meal_entry_031",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-13T07:00:00Z",
+          "foodItem" : {
+            "calories" : 130,
+            "carbs" : 6,
+            "fat" : 3.5,
+            "fiber" : 0,
+            "foodName" : "Greek yogurt",
+            "id" : "food_007",
+            "protein" : 17,
+            "servingSize" : "1 cup",
+            "sodium" : 60
+          },
+          "id" : "meal_entry_032",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 7450,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-10-12T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-10-12",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-12T07:00:00Z",
+          "foodItem" : {
+            "calories" : 150,
+            "carbs" : 27,
+            "fat" : 3,
+            "fiber" : 4,
+            "foodName" : "Oatmeal",
+            "id" : "food_011",
+            "protein" : 5,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 0
+          },
+          "id" : "meal_entry_033",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-12T07:00:00Z",
+          "foodItem" : {
+            "calories" : 85,
+            "carbs" : 21,
+            "fat" : 0.5,
+            "fiber" : 3.6,
+            "foodName" : "Blueberries",
+            "id" : "food_020",
+            "protein" : 1,
+            "servingSize" : "1 cup",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_034",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-12T07:00:00Z",
+          "foodItem" : {
+            "calories" : 120,
+            "carbs" : 0,
+            "fat" : 1,
+            "fiber" : 0,
+            "foodName" : "Tuna",
+            "id" : "food_015",
+            "protein" : 26,
+            "servingSize" : "1 can in water",
+            "sodium" : 320
+          },
+          "id" : "meal_entry_035",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-12T07:00:00Z",
+          "foodItem" : {
+            "calories" : 320,
+            "carbs" : 18,
+            "fat" : 15,
+            "fiber" : 4,
+            "foodName" : "Shrimp stir fry",
+            "id" : "food_031",
+            "protein" : 27,
+            "servingSize" : "1 bowl",
+            "sodium" : 720
+          },
+          "id" : "meal_entry_036",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-12T07:00:00Z",
+          "foodItem" : {
+            "calories" : 205,
+            "carbs" : 45,
+            "fat" : 0.4,
+            "fiber" : 0.6,
+            "foodName" : "White rice",
+            "id" : "food_004",
+            "protein" : 4.2,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_037",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-12T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 15,
+            "fat" : 12,
+            "fiber" : 3,
+            "foodName" : "Trail mix",
+            "id" : "food_058",
+            "protein" : 5,
+            "servingSize" : "1\/4 cup",
+            "sodium" : 85
+          },
+          "id" : "meal_entry_038",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8230,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-10-11T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 410,
+          "date" : "2026-10-11T07:00:00Z",
+          "durationMinutes" : 50,
+          "exerciseName" : "Cycling",
+          "id" : "exercise_entry_005"
+        }
+      ],
+      "id" : "2026-10-11",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-11T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Hard-boiled eggs",
+            "id" : "food_063",
+            "protein" : 12,
+            "servingSize" : "2 eggs",
+            "sodium" : 130
+          },
+          "id" : "meal_entry_039",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-11T07:00:00Z",
+          "foodItem" : {
+            "calories" : 250,
+            "carbs" : 49,
+            "fat" : 1.5,
+            "fiber" : 2,
+            "foodName" : "Plain bagel",
+            "id" : "food_046",
+            "protein" : 10,
+            "servingSize" : "1 bagel",
+            "sodium" : 510
+          },
+          "id" : "meal_entry_040",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-11T07:00:00Z",
+          "foodItem" : {
+            "calories" : 100,
+            "carbs" : 2,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Cream cheese",
+            "id" : "food_047",
+            "protein" : 2,
+            "servingSize" : "2 tbsp",
+            "sodium" : 95
+          },
+          "id" : "meal_entry_041",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-11T07:00:00Z",
+          "foodItem" : {
+            "calories" : 330,
+            "carbs" : 14,
+            "fat" : 27,
+            "fiber" : 2,
+            "foodName" : "Caesar salad",
+            "id" : "food_027",
+            "protein" : 8,
+            "servingSize" : "1 salad",
+            "sodium" : 640
+          },
+          "id" : "meal_entry_042",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-11T07:00:00Z",
+          "foodItem" : {
+            "calories" : 280,
+            "carbs" : 52,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Pasta with marinara",
+            "id" : "food_050",
+            "protein" : 8,
+            "servingSize" : "1 bowl",
+            "sodium" : 560
+          },
+          "id" : "meal_entry_043",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-11T07:00:00Z",
+          "foodItem" : {
+            "calories" : 250,
+            "carbs" : 8,
+            "fat" : 16,
+            "fiber" : 1,
+            "foodName" : "Meatballs",
+            "id" : "food_051",
+            "protein" : 18,
+            "servingSize" : "4 meatballs",
+            "sodium" : 590
+          },
+          "id" : "meal_entry_044",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-11T07:00:00Z",
+          "foodItem" : {
+            "calories" : 190,
+            "carbs" : 19,
+            "fat" : 8,
+            "fiber" : 0,
+            "foodName" : "Latte",
+            "id" : "food_042",
+            "protein" : 10,
+            "servingSize" : "16 fl oz",
+            "sodium" : 140
+          },
+          "id" : "meal_entry_045",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 9540,
+      "waterCups" : 7
+    },
+    {
+      "date" : "2026-10-10T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-10-10",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 160,
+            "carbs" : 5,
+            "fat" : 2,
+            "fiber" : 1,
+            "foodName" : "Protein shake",
+            "id" : "food_012",
+            "protein" : 30,
+            "servingSize" : "1 bottle",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_046",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 105,
+            "carbs" : 27,
+            "fat" : 0.4,
+            "fiber" : 3.1,
+            "foodName" : "Banana",
+            "id" : "food_009",
+            "protein" : 1.3,
+            "servingSize" : "1 medium banana",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_047",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 30,
+            "fat" : 2,
+            "fiber" : 9,
+            "foodName" : "Lentil soup",
+            "id" : "food_053",
+            "protein" : 12,
+            "servingSize" : "1 bowl",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_048",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 110,
+            "carbs" : 20,
+            "fat" : 1.5,
+            "fiber" : 4,
+            "foodName" : "Whole wheat bread",
+            "id" : "food_017",
+            "protein" : 6,
+            "servingSize" : "2 slices",
+            "sodium" : 200
+          },
+          "id" : "meal_entry_049",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 260,
+            "carbs" : 16,
+            "fat" : 14,
+            "fiber" : 5,
+            "foodName" : "Tofu stir fry",
+            "id" : "food_054",
+            "protein" : 18,
+            "servingSize" : "1 bowl",
+            "sodium" : 650
+          },
+          "id" : "meal_entry_050",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 190,
+            "carbs" : 14,
+            "fat" : 8,
+            "fiber" : 8,
+            "foodName" : "Edamame",
+            "id" : "food_055",
+            "protein" : 17,
+            "servingSize" : "1 cup",
+            "sodium" : 15
+          },
+          "id" : "meal_entry_051",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 205,
+            "carbs" : 45,
+            "fat" : 0.4,
+            "fiber" : 0.6,
+            "foodName" : "White rice",
+            "id" : "food_004",
+            "protein" : 4.2,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_052",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-10T07:00:00Z",
+          "foodItem" : {
+            "calories" : 95,
+            "carbs" : 25,
+            "fat" : 0.3,
+            "fiber" : 4.4,
+            "foodName" : "Apple",
+            "id" : "food_008",
+            "protein" : 0.5,
+            "servingSize" : "1 medium apple",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_053",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 7810,
+      "waterCups" : 7
+    },
+    {
+      "date" : "2026-10-09T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 300,
+          "date" : "2026-10-09T07:00:00Z",
+          "durationMinutes" : 35,
+          "exerciseName" : "Swimming",
+          "id" : "exercise_entry_006"
+        }
+      ],
+      "id" : "2026-10-09",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-09T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 6,
+            "fat" : 14,
+            "fiber" : 2,
+            "foodName" : "Veggie omelet",
+            "id" : "food_064",
+            "protein" : 15,
+            "servingSize" : "1 omelet",
+            "sodium" : 290
+          },
+          "id" : "meal_entry_054",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-09T07:00:00Z",
+          "foodItem" : {
+            "calories" : 290,
+            "carbs" : 10,
+            "fat" : 14,
+            "fiber" : 4,
+            "foodName" : "Grilled chicken salad",
+            "id" : "food_028",
+            "protein" : 30,
+            "servingSize" : "1 salad",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_055",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-09T07:00:00Z",
+          "foodItem" : {
+            "calories" : 255,
+            "carbs" : 38,
+            "fat" : 7,
+            "fiber" : 2,
+            "foodName" : "California sushi roll",
+            "id" : "food_060",
+            "protein" : 9,
+            "servingSize" : "1 roll",
+            "sodium" : 580
+          },
+          "id" : "meal_entry_056",
+          "mealType" : "Dinner",
+          "quantity" : 2
+        },
+        {
+          "date" : "2026-10-09T07:00:00Z",
+          "foodItem" : {
+            "calories" : 35,
+            "carbs" : 7,
+            "fat" : 0.3,
+            "fiber" : 0.3,
+            "foodName" : "Rice cake",
+            "id" : "food_059",
+            "protein" : 0.7,
+            "servingSize" : "1 cake",
+            "sodium" : 25
+          },
+          "id" : "meal_entry_057",
+          "mealType" : "Snacks",
+          "quantity" : 2
+        },
+        {
+          "date" : "2026-10-09T07:00:00Z",
+          "foodItem" : {
+            "calories" : 190,
+            "carbs" : 8,
+            "fat" : 16,
+            "fiber" : 2,
+            "foodName" : "Peanut butter",
+            "id" : "food_018",
+            "protein" : 7,
+            "servingSize" : "2 tbsp",
+            "sodium" : 140
+          },
+          "id" : "meal_entry_058",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 9900,
+      "waterCups" : 8
+    },
+    {
+      "date" : "2026-10-08T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-10-08",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-08T07:00:00Z",
+          "foodItem" : {
+            "calories" : 175,
+            "carbs" : 30,
+            "fat" : 4,
+            "fiber" : 1,
+            "foodName" : "Pancakes",
+            "id" : "food_048",
+            "protein" : 4,
+            "servingSize" : "2 pancakes",
+            "sodium" : 350
+          },
+          "id" : "meal_entry_059",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-08T07:00:00Z",
+          "foodItem" : {
+            "calories" : 104,
+            "carbs" : 26.8,
+            "fat" : 0,
+            "fiber" : 0,
+            "foodName" : "Maple syrup",
+            "id" : "food_049",
+            "protein" : 0,
+            "servingSize" : "2 tbsp",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_060",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-08T07:00:00Z",
+          "foodItem" : {
+            "calories" : 290,
+            "carbs" : 24,
+            "fat" : 10,
+            "fiber" : 8,
+            "foodName" : "Turkey chili",
+            "id" : "food_052",
+            "protein" : 24,
+            "servingSize" : "1 bowl",
+            "sodium" : 620
+          },
+          "id" : "meal_entry_061",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-08T07:00:00Z",
+          "foodItem" : {
+            "calories" : 233,
+            "carbs" : 0,
+            "fat" : 14,
+            "fiber" : 0,
+            "foodName" : "Salmon",
+            "id" : "food_006",
+            "protein" : 25,
+            "servingSize" : "5 oz fillet",
+            "sodium" : 75
+          },
+          "id" : "meal_entry_062",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-08T07:00:00Z",
+          "foodItem" : {
+            "calories" : 222,
+            "carbs" : 39,
+            "fat" : 3.6,
+            "fiber" : 5,
+            "foodName" : "Quinoa",
+            "id" : "food_022",
+            "protein" : 8,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 13
+          },
+          "id" : "meal_entry_063",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-08T07:00:00Z",
+          "foodItem" : {
+            "calories" : 55,
+            "carbs" : 11,
+            "fat" : 0.6,
+            "fiber" : 5.1,
+            "foodName" : "Broccoli",
+            "id" : "food_010",
+            "protein" : 3.7,
+            "servingSize" : "1 cup cooked",
+            "sodium" : 49
+          },
+          "id" : "meal_entry_064",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-08T07:00:00Z",
+          "foodItem" : {
+            "calories" : 110,
+            "carbs" : 26,
+            "fat" : 0.5,
+            "fiber" : 0.5,
+            "foodName" : "Orange juice",
+            "id" : "food_044",
+            "protein" : 2,
+            "servingSize" : "8 fl oz",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_065",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 7110,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-10-07T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-10-07",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 130,
+            "carbs" : 6,
+            "fat" : 3.5,
+            "fiber" : 0,
+            "foodName" : "Greek yogurt",
+            "id" : "food_007",
+            "protein" : 17,
+            "servingSize" : "1 cup",
+            "sodium" : 60
+          },
+          "id" : "meal_entry_066",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 29,
+            "fat" : 9,
+            "fiber" : 4,
+            "foodName" : "Granola",
+            "id" : "food_033",
+            "protein" : 5,
+            "servingSize" : "1\/2 cup",
+            "sodium" : 45
+          },
+          "id" : "meal_entry_067",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 70,
+            "carbs" : 17,
+            "fat" : 0.4,
+            "fiber" : 5,
+            "foodName" : "Mixed berries",
+            "id" : "food_035",
+            "protein" : 1,
+            "servingSize" : "1 cup",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_068",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 430,
+            "carbs" : 29,
+            "fat" : 22,
+            "fiber" : 3,
+            "foodName" : "Chicken quesadilla",
+            "id" : "food_065",
+            "protein" : 27,
+            "servingSize" : "1 quesadilla",
+            "sodium" : 840
+          },
+          "id" : "meal_entry_069",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 165,
+            "carbs" : 0,
+            "fat" : 3.6,
+            "fiber" : 0,
+            "foodName" : "Chicken breast",
+            "id" : "food_001",
+            "protein" : 31,
+            "servingSize" : "4 oz",
+            "sodium" : 74
+          },
+          "id" : "meal_entry_070",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 112,
+            "carbs" : 26,
+            "fat" : 0.1,
+            "fiber" : 4,
+            "foodName" : "Sweet potato",
+            "id" : "food_014",
+            "protein" : 2,
+            "servingSize" : "1 medium potato",
+            "sodium" : 72
+          },
+          "id" : "meal_entry_071",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 80,
+            "carbs" : 7,
+            "fat" : 4,
+            "fiber" : 3,
+            "foodName" : "Spinach salad",
+            "id" : "food_021",
+            "protein" : 3,
+            "servingSize" : "2 cups",
+            "sodium" : 120
+          },
+          "id" : "meal_entry_072",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 70,
+            "carbs" : 6,
+            "fat" : 5,
+            "fiber" : 2,
+            "foodName" : "Hummus",
+            "id" : "food_036",
+            "protein" : 2,
+            "servingSize" : "2 tbsp",
+            "sodium" : 120
+          },
+          "id" : "meal_entry_073",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-07T07:00:00Z",
+          "foodItem" : {
+            "calories" : 35,
+            "carbs" : 8,
+            "fat" : 0.2,
+            "fiber" : 2.3,
+            "foodName" : "Carrot sticks",
+            "id" : "food_037",
+            "protein" : 0.8,
+            "servingSize" : "1 cup",
+            "sodium" : 69
+          },
+          "id" : "meal_entry_074",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8700,
+      "waterCups" : 7
+    },
+    {
+      "date" : "2026-10-06T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 160,
+          "date" : "2026-10-06T07:00:00Z",
+          "durationMinutes" : 40,
+          "exerciseName" : "Walking",
+          "id" : "exercise_entry_007"
+        }
+      ],
+      "id" : "2026-10-06",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-06T07:00:00Z",
+          "foodItem" : {
+            "calories" : 310,
+            "carbs" : 43,
+            "fat" : 8,
+            "fiber" : 7,
+            "foodName" : "Overnight oats",
+            "id" : "food_066",
+            "protein" : 16,
+            "servingSize" : "1 jar",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_075",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-06T07:00:00Z",
+          "foodItem" : {
+            "calories" : 85,
+            "carbs" : 21,
+            "fat" : 0.5,
+            "fiber" : 3.6,
+            "foodName" : "Blueberries",
+            "id" : "food_020",
+            "protein" : 1,
+            "servingSize" : "1 cup",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_076",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-06T07:00:00Z",
+          "foodItem" : {
+            "calories" : 520,
+            "carbs" : 46,
+            "fat" : 18,
+            "fiber" : 9,
+            "foodName" : "Chicken burrito bowl",
+            "id" : "food_068",
+            "protein" : 39,
+            "servingSize" : "1 bowl",
+            "sodium" : 870
+          },
+          "id" : "meal_entry_077",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-06T07:00:00Z",
+          "foodItem" : {
+            "calories" : 540,
+            "carbs" : 32,
+            "fat" : 29,
+            "fiber" : 7,
+            "foodName" : "Mediterranean salmon bowl",
+            "id" : "food_069",
+            "protein" : 34,
+            "servingSize" : "1 bowl",
+            "sodium" : 690
+          },
+          "id" : "meal_entry_078",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-06T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 20,
+            "fat" : 8,
+            "fiber" : 6,
+            "foodName" : "High-protein granola bar",
+            "id" : "food_076",
+            "protein" : 15,
+            "servingSize" : "1 bar",
+            "sodium" : 170
+          },
+          "id" : "meal_entry_079",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 7120,
+      "waterCups" : 5
+    },
+    {
+      "date" : "2026-10-05T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 220,
+          "date" : "2026-10-05T07:00:00Z",
+          "durationMinutes" : 45,
+          "exerciseName" : "Strength training",
+          "id" : "exercise_entry_008"
+        }
+      ],
+      "id" : "2026-10-05",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-05T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Eggs",
+            "id" : "food_002",
+            "protein" : 12,
+            "servingSize" : "2 large eggs",
+            "sodium" : 124
+          },
+          "id" : "meal_entry_080",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-05T07:00:00Z",
+          "foodItem" : {
+            "calories" : 110,
+            "carbs" : 20,
+            "fat" : 1.5,
+            "fiber" : 4,
+            "foodName" : "Whole wheat bread",
+            "id" : "food_017",
+            "protein" : 6,
+            "servingSize" : "2 slices",
+            "sodium" : 200
+          },
+          "id" : "meal_entry_081",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-05T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 30,
+            "fat" : 2,
+            "fiber" : 9,
+            "foodName" : "Lentil soup",
+            "id" : "food_053",
+            "protein" : 12,
+            "servingSize" : "1 bowl",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_082",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-05T07:00:00Z",
+          "foodItem" : {
+            "calories" : 610,
+            "carbs" : 42,
+            "fat" : 30,
+            "fiber" : 6,
+            "foodName" : "Chicken shawarma plate",
+            "id" : "food_074",
+            "protein" : 38,
+            "servingSize" : "1 plate",
+            "sodium" : 980
+          },
+          "id" : "meal_entry_083",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-05T07:00:00Z",
+          "foodItem" : {
+            "calories" : 70,
+            "carbs" : 6,
+            "fat" : 5,
+            "fiber" : 2,
+            "foodName" : "Hummus",
+            "id" : "food_036",
+            "protein" : 2,
+            "servingSize" : "2 tbsp",
+            "sodium" : 120
+          },
+          "id" : "meal_entry_084",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8120,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-10-04T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-10-04",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-04T07:00:00Z",
+          "foodItem" : {
+            "calories" : 220,
+            "carbs" : 18,
+            "fat" : 6,
+            "fiber" : 2,
+            "foodName" : "Cottage cheese bowl",
+            "id" : "food_067",
+            "protein" : 24,
+            "servingSize" : "1 bowl",
+            "sodium" : 410
+          },
+          "id" : "meal_entry_085",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-04T07:00:00Z",
+          "foodItem" : {
+            "calories" : 95,
+            "carbs" : 25,
+            "fat" : 0.3,
+            "fiber" : 4.4,
+            "foodName" : "Apple",
+            "id" : "food_008",
+            "protein" : 0.5,
+            "servingSize" : "1 medium apple",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_086",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-04T07:00:00Z",
+          "foodItem" : {
+            "calories" : 410,
+            "carbs" : 34,
+            "fat" : 16,
+            "fiber" : 5,
+            "foodName" : "Turkey meatball wrap",
+            "id" : "food_070",
+            "protein" : 30,
+            "servingSize" : "1 wrap",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_087",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-04T07:00:00Z",
+          "foodItem" : {
+            "calories" : 340,
+            "carbs" : 14,
+            "fat" : 18,
+            "fiber" : 3,
+            "foodName" : "Chicken curry",
+            "id" : "food_056",
+            "protein" : 28,
+            "servingSize" : "1 bowl",
+            "sodium" : 780
+          },
+          "id" : "meal_entry_088",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-04T07:00:00Z",
+          "foodItem" : {
+            "calories" : 190,
+            "carbs" : 31,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Green smoothie",
+            "id" : "food_073",
+            "protein" : 9,
+            "servingSize" : "16 fl oz",
+            "sodium" : 110
+          },
+          "id" : "meal_entry_089",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8460,
+      "waterCups" : 7
+    },
+    {
+      "date" : "2026-10-03T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 410,
+          "date" : "2026-10-03T07:00:00Z",
+          "durationMinutes" : 50,
+          "exerciseName" : "Cycling",
+          "id" : "exercise_entry_009"
+        }
+      ],
+      "id" : "2026-10-03",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-03T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 6,
+            "fat" : 14,
+            "fiber" : 2,
+            "foodName" : "Veggie omelet",
+            "id" : "food_064",
+            "protein" : 15,
+            "servingSize" : "1 omelet",
+            "sodium" : 290
+          },
+          "id" : "meal_entry_090",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-03T07:00:00Z",
+          "foodItem" : {
+            "calories" : 80,
+            "carbs" : 15,
+            "fat" : 2,
+            "fiber" : 0,
+            "foodName" : "Iced coffee",
+            "id" : "food_043",
+            "protein" : 1,
+            "servingSize" : "16 fl oz",
+            "sodium" : 35
+          },
+          "id" : "meal_entry_091",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-03T07:00:00Z",
+          "foodItem" : {
+            "calories" : 290,
+            "carbs" : 10,
+            "fat" : 14,
+            "fiber" : 4,
+            "foodName" : "Grilled chicken salad",
+            "id" : "food_028",
+            "protein" : 30,
+            "servingSize" : "1 salad",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_092",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-03T07:00:00Z",
+          "foodItem" : {
+            "calories" : 430,
+            "carbs" : 34,
+            "fat" : 19,
+            "fiber" : 5,
+            "foodName" : "Shrimp taco plate",
+            "id" : "food_075",
+            "protein" : 28,
+            "servingSize" : "2 tacos",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_093",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-03T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 27,
+            "fat" : 5,
+            "fiber" : 7,
+            "foodName" : "Roasted chickpeas",
+            "id" : "food_072",
+            "protein" : 8,
+            "servingSize" : "1\/2 cup",
+            "sodium" : 240
+          },
+          "id" : "meal_entry_094",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 9460,
+      "waterCups" : 8
+    },
+    {
+      "date" : "2026-10-02T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 120,
+          "date" : "2026-10-02T07:00:00Z",
+          "durationMinutes" : 35,
+          "exerciseName" : "Yoga",
+          "id" : "exercise_entry_010"
+        }
+      ],
+      "id" : "2026-10-02",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-02T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Hard-boiled eggs",
+            "id" : "food_063",
+            "protein" : 12,
+            "servingSize" : "2 eggs",
+            "sodium" : 130
+          },
+          "id" : "meal_entry_095",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-02T07:00:00Z",
+          "foodItem" : {
+            "calories" : 122,
+            "carbs" : 12,
+            "fat" : 5,
+            "fiber" : 0,
+            "foodName" : "2% milk",
+            "id" : "food_045",
+            "protein" : 8,
+            "servingSize" : "1 cup",
+            "sodium" : 115
+          },
+          "id" : "meal_entry_096",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-02T07:00:00Z",
+          "foodItem" : {
+            "calories" : 330,
+            "carbs" : 14,
+            "fat" : 27,
+            "fiber" : 2,
+            "foodName" : "Caesar salad",
+            "id" : "food_027",
+            "protein" : 8,
+            "servingSize" : "1 salad",
+            "sodium" : 640
+          },
+          "id" : "meal_entry_097",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-02T07:00:00Z",
+          "foodItem" : {
+            "calories" : 320,
+            "carbs" : 18,
+            "fat" : 15,
+            "fiber" : 4,
+            "foodName" : "Shrimp stir fry",
+            "id" : "food_031",
+            "protein" : 27,
+            "servingSize" : "1 bowl",
+            "sodium" : 720
+          },
+          "id" : "meal_entry_098",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-02T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 15,
+            "fat" : 12,
+            "fiber" : 3,
+            "foodName" : "Trail mix",
+            "id" : "food_058",
+            "protein" : 5,
+            "servingSize" : "1\/4 cup",
+            "sodium" : 85
+          },
+          "id" : "meal_entry_099",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 10460,
+      "waterCups" : 5
+    },
+    {
+      "date" : "2026-10-01T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-10-01",
+      "mealEntries" : [
+        {
+          "date" : "2026-10-01T07:00:00Z",
+          "foodItem" : {
+            "calories" : 240,
+            "carbs" : 28,
+            "fat" : 11,
+            "fiber" : 9,
+            "foodName" : "Berry chia pudding",
+            "id" : "food_077",
+            "protein" : 8,
+            "servingSize" : "1 cup",
+            "sodium" : 95
+          },
+          "id" : "meal_entry_100",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-01T07:00:00Z",
+          "foodItem" : {
+            "calories" : 105,
+            "carbs" : 27,
+            "fat" : 0.4,
+            "fiber" : 3.1,
+            "foodName" : "Banana",
+            "id" : "food_009",
+            "protein" : 1.3,
+            "servingSize" : "1 medium banana",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_101",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-01T07:00:00Z",
+          "foodItem" : {
+            "calories" : 360,
+            "carbs" : 31,
+            "fat" : 14,
+            "fiber" : 5,
+            "foodName" : "Turkey wrap",
+            "id" : "food_029",
+            "protein" : 27,
+            "servingSize" : "1 wrap",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_102",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-01T07:00:00Z",
+          "foodItem" : {
+            "calories" : 280,
+            "carbs" : 52,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Pasta with marinara",
+            "id" : "food_050",
+            "protein" : 8,
+            "servingSize" : "1 bowl",
+            "sodium" : 560
+          },
+          "id" : "meal_entry_103",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-10-01T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 4,
+            "fat" : 2,
+            "fiber" : 1,
+            "foodName" : "Chocolate whey shake",
+            "id" : "food_071",
+            "protein" : 26,
+            "servingSize" : "1 scoop with water",
+            "sodium" : 150
+          },
+          "id" : "meal_entry_104",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 10800,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-09-30T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 160,
+          "date" : "2026-09-30T07:00:00Z",
+          "durationMinutes" : 40,
+          "exerciseName" : "Walking",
+          "id" : "exercise_entry_011"
+        }
+      ],
+      "id" : "2026-09-30",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-30T07:00:00Z",
+          "foodItem" : {
+            "calories" : 310,
+            "carbs" : 43,
+            "fat" : 8,
+            "fiber" : 7,
+            "foodName" : "Overnight oats",
+            "id" : "food_066",
+            "protein" : 16,
+            "servingSize" : "1 jar",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_105",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-30T07:00:00Z",
+          "foodItem" : {
+            "calories" : 85,
+            "carbs" : 21,
+            "fat" : 0.5,
+            "fiber" : 3.6,
+            "foodName" : "Blueberries",
+            "id" : "food_020",
+            "protein" : 1,
+            "servingSize" : "1 cup",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_106",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-30T07:00:00Z",
+          "foodItem" : {
+            "calories" : 520,
+            "carbs" : 46,
+            "fat" : 18,
+            "fiber" : 9,
+            "foodName" : "Chicken burrito bowl",
+            "id" : "food_068",
+            "protein" : 39,
+            "servingSize" : "1 bowl",
+            "sodium" : 870
+          },
+          "id" : "meal_entry_107",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-30T07:00:00Z",
+          "foodItem" : {
+            "calories" : 540,
+            "carbs" : 32,
+            "fat" : 29,
+            "fiber" : 7,
+            "foodName" : "Mediterranean salmon bowl",
+            "id" : "food_069",
+            "protein" : 34,
+            "servingSize" : "1 bowl",
+            "sodium" : 690
+          },
+          "id" : "meal_entry_108",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-30T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 20,
+            "fat" : 8,
+            "fiber" : 6,
+            "foodName" : "High-protein granola bar",
+            "id" : "food_076",
+            "protein" : 15,
+            "servingSize" : "1 bar",
+            "sodium" : 170
+          },
+          "id" : "meal_entry_109",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 7120,
+      "waterCups" : 5
+    },
+    {
+      "date" : "2026-09-29T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 220,
+          "date" : "2026-09-29T07:00:00Z",
+          "durationMinutes" : 45,
+          "exerciseName" : "Strength training",
+          "id" : "exercise_entry_012"
+        }
+      ],
+      "id" : "2026-09-29",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-29T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Eggs",
+            "id" : "food_002",
+            "protein" : 12,
+            "servingSize" : "2 large eggs",
+            "sodium" : 124
+          },
+          "id" : "meal_entry_110",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-29T07:00:00Z",
+          "foodItem" : {
+            "calories" : 110,
+            "carbs" : 20,
+            "fat" : 1.5,
+            "fiber" : 4,
+            "foodName" : "Whole wheat bread",
+            "id" : "food_017",
+            "protein" : 6,
+            "servingSize" : "2 slices",
+            "sodium" : 200
+          },
+          "id" : "meal_entry_111",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-29T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 30,
+            "fat" : 2,
+            "fiber" : 9,
+            "foodName" : "Lentil soup",
+            "id" : "food_053",
+            "protein" : 12,
+            "servingSize" : "1 bowl",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_112",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-29T07:00:00Z",
+          "foodItem" : {
+            "calories" : 610,
+            "carbs" : 42,
+            "fat" : 30,
+            "fiber" : 6,
+            "foodName" : "Chicken shawarma plate",
+            "id" : "food_074",
+            "protein" : 38,
+            "servingSize" : "1 plate",
+            "sodium" : 980
+          },
+          "id" : "meal_entry_113",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-29T07:00:00Z",
+          "foodItem" : {
+            "calories" : 70,
+            "carbs" : 6,
+            "fat" : 5,
+            "fiber" : 2,
+            "foodName" : "Hummus",
+            "id" : "food_036",
+            "protein" : 2,
+            "servingSize" : "2 tbsp",
+            "sodium" : 120
+          },
+          "id" : "meal_entry_114",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8120,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-09-28T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-09-28",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-28T07:00:00Z",
+          "foodItem" : {
+            "calories" : 220,
+            "carbs" : 18,
+            "fat" : 6,
+            "fiber" : 2,
+            "foodName" : "Cottage cheese bowl",
+            "id" : "food_067",
+            "protein" : 24,
+            "servingSize" : "1 bowl",
+            "sodium" : 410
+          },
+          "id" : "meal_entry_115",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-28T07:00:00Z",
+          "foodItem" : {
+            "calories" : 95,
+            "carbs" : 25,
+            "fat" : 0.3,
+            "fiber" : 4.4,
+            "foodName" : "Apple",
+            "id" : "food_008",
+            "protein" : 0.5,
+            "servingSize" : "1 medium apple",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_116",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-28T07:00:00Z",
+          "foodItem" : {
+            "calories" : 410,
+            "carbs" : 34,
+            "fat" : 16,
+            "fiber" : 5,
+            "foodName" : "Turkey meatball wrap",
+            "id" : "food_070",
+            "protein" : 30,
+            "servingSize" : "1 wrap",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_117",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-28T07:00:00Z",
+          "foodItem" : {
+            "calories" : 340,
+            "carbs" : 14,
+            "fat" : 18,
+            "fiber" : 3,
+            "foodName" : "Chicken curry",
+            "id" : "food_056",
+            "protein" : 28,
+            "servingSize" : "1 bowl",
+            "sodium" : 780
+          },
+          "id" : "meal_entry_118",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-28T07:00:00Z",
+          "foodItem" : {
+            "calories" : 190,
+            "carbs" : 31,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Green smoothie",
+            "id" : "food_073",
+            "protein" : 9,
+            "servingSize" : "16 fl oz",
+            "sodium" : 110
+          },
+          "id" : "meal_entry_119",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8460,
+      "waterCups" : 7
+    },
+    {
+      "date" : "2026-09-27T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 410,
+          "date" : "2026-09-27T07:00:00Z",
+          "durationMinutes" : 50,
+          "exerciseName" : "Cycling",
+          "id" : "exercise_entry_013"
+        }
+      ],
+      "id" : "2026-09-27",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-27T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 6,
+            "fat" : 14,
+            "fiber" : 2,
+            "foodName" : "Veggie omelet",
+            "id" : "food_064",
+            "protein" : 15,
+            "servingSize" : "1 omelet",
+            "sodium" : 290
+          },
+          "id" : "meal_entry_120",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-27T07:00:00Z",
+          "foodItem" : {
+            "calories" : 80,
+            "carbs" : 15,
+            "fat" : 2,
+            "fiber" : 0,
+            "foodName" : "Iced coffee",
+            "id" : "food_043",
+            "protein" : 1,
+            "servingSize" : "16 fl oz",
+            "sodium" : 35
+          },
+          "id" : "meal_entry_121",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-27T07:00:00Z",
+          "foodItem" : {
+            "calories" : 290,
+            "carbs" : 10,
+            "fat" : 14,
+            "fiber" : 4,
+            "foodName" : "Grilled chicken salad",
+            "id" : "food_028",
+            "protein" : 30,
+            "servingSize" : "1 salad",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_122",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-27T07:00:00Z",
+          "foodItem" : {
+            "calories" : 430,
+            "carbs" : 34,
+            "fat" : 19,
+            "fiber" : 5,
+            "foodName" : "Shrimp taco plate",
+            "id" : "food_075",
+            "protein" : 28,
+            "servingSize" : "2 tacos",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_123",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-27T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 27,
+            "fat" : 5,
+            "fiber" : 7,
+            "foodName" : "Roasted chickpeas",
+            "id" : "food_072",
+            "protein" : 8,
+            "servingSize" : "1\/2 cup",
+            "sodium" : 240
+          },
+          "id" : "meal_entry_124",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 9460,
+      "waterCups" : 8
+    },
+    {
+      "date" : "2026-09-26T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 120,
+          "date" : "2026-09-26T07:00:00Z",
+          "durationMinutes" : 35,
+          "exerciseName" : "Yoga",
+          "id" : "exercise_entry_014"
+        }
+      ],
+      "id" : "2026-09-26",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-26T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Hard-boiled eggs",
+            "id" : "food_063",
+            "protein" : 12,
+            "servingSize" : "2 eggs",
+            "sodium" : 130
+          },
+          "id" : "meal_entry_125",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-26T07:00:00Z",
+          "foodItem" : {
+            "calories" : 122,
+            "carbs" : 12,
+            "fat" : 5,
+            "fiber" : 0,
+            "foodName" : "2% milk",
+            "id" : "food_045",
+            "protein" : 8,
+            "servingSize" : "1 cup",
+            "sodium" : 115
+          },
+          "id" : "meal_entry_126",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-26T07:00:00Z",
+          "foodItem" : {
+            "calories" : 330,
+            "carbs" : 14,
+            "fat" : 27,
+            "fiber" : 2,
+            "foodName" : "Caesar salad",
+            "id" : "food_027",
+            "protein" : 8,
+            "servingSize" : "1 salad",
+            "sodium" : 640
+          },
+          "id" : "meal_entry_127",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-26T07:00:00Z",
+          "foodItem" : {
+            "calories" : 320,
+            "carbs" : 18,
+            "fat" : 15,
+            "fiber" : 4,
+            "foodName" : "Shrimp stir fry",
+            "id" : "food_031",
+            "protein" : 27,
+            "servingSize" : "1 bowl",
+            "sodium" : 720
+          },
+          "id" : "meal_entry_128",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-26T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 15,
+            "fat" : 12,
+            "fiber" : 3,
+            "foodName" : "Trail mix",
+            "id" : "food_058",
+            "protein" : 5,
+            "servingSize" : "1\/4 cup",
+            "sodium" : 85
+          },
+          "id" : "meal_entry_129",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 10460,
+      "waterCups" : 5
+    },
+    {
+      "date" : "2026-09-25T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-09-25",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-25T07:00:00Z",
+          "foodItem" : {
+            "calories" : 240,
+            "carbs" : 28,
+            "fat" : 11,
+            "fiber" : 9,
+            "foodName" : "Berry chia pudding",
+            "id" : "food_077",
+            "protein" : 8,
+            "servingSize" : "1 cup",
+            "sodium" : 95
+          },
+          "id" : "meal_entry_130",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-25T07:00:00Z",
+          "foodItem" : {
+            "calories" : 105,
+            "carbs" : 27,
+            "fat" : 0.4,
+            "fiber" : 3.1,
+            "foodName" : "Banana",
+            "id" : "food_009",
+            "protein" : 1.3,
+            "servingSize" : "1 medium banana",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_131",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-25T07:00:00Z",
+          "foodItem" : {
+            "calories" : 360,
+            "carbs" : 31,
+            "fat" : 14,
+            "fiber" : 5,
+            "foodName" : "Turkey wrap",
+            "id" : "food_029",
+            "protein" : 27,
+            "servingSize" : "1 wrap",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_132",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-25T07:00:00Z",
+          "foodItem" : {
+            "calories" : 280,
+            "carbs" : 52,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Pasta with marinara",
+            "id" : "food_050",
+            "protein" : 8,
+            "servingSize" : "1 bowl",
+            "sodium" : 560
+          },
+          "id" : "meal_entry_133",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-25T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 4,
+            "fat" : 2,
+            "fiber" : 1,
+            "foodName" : "Chocolate whey shake",
+            "id" : "food_071",
+            "protein" : 26,
+            "servingSize" : "1 scoop with water",
+            "sodium" : 150
+          },
+          "id" : "meal_entry_134",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 10800,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-09-24T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 160,
+          "date" : "2026-09-24T07:00:00Z",
+          "durationMinutes" : 40,
+          "exerciseName" : "Walking",
+          "id" : "exercise_entry_015"
+        }
+      ],
+      "id" : "2026-09-24",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-24T07:00:00Z",
+          "foodItem" : {
+            "calories" : 310,
+            "carbs" : 43,
+            "fat" : 8,
+            "fiber" : 7,
+            "foodName" : "Overnight oats",
+            "id" : "food_066",
+            "protein" : 16,
+            "servingSize" : "1 jar",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_135",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-24T07:00:00Z",
+          "foodItem" : {
+            "calories" : 85,
+            "carbs" : 21,
+            "fat" : 0.5,
+            "fiber" : 3.6,
+            "foodName" : "Blueberries",
+            "id" : "food_020",
+            "protein" : 1,
+            "servingSize" : "1 cup",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_136",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-24T07:00:00Z",
+          "foodItem" : {
+            "calories" : 520,
+            "carbs" : 46,
+            "fat" : 18,
+            "fiber" : 9,
+            "foodName" : "Chicken burrito bowl",
+            "id" : "food_068",
+            "protein" : 39,
+            "servingSize" : "1 bowl",
+            "sodium" : 870
+          },
+          "id" : "meal_entry_137",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-24T07:00:00Z",
+          "foodItem" : {
+            "calories" : 540,
+            "carbs" : 32,
+            "fat" : 29,
+            "fiber" : 7,
+            "foodName" : "Mediterranean salmon bowl",
+            "id" : "food_069",
+            "protein" : 34,
+            "servingSize" : "1 bowl",
+            "sodium" : 690
+          },
+          "id" : "meal_entry_138",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-24T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 20,
+            "fat" : 8,
+            "fiber" : 6,
+            "foodName" : "High-protein granola bar",
+            "id" : "food_076",
+            "protein" : 15,
+            "servingSize" : "1 bar",
+            "sodium" : 170
+          },
+          "id" : "meal_entry_139",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 7120,
+      "waterCups" : 5
+    },
+    {
+      "date" : "2026-09-23T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 220,
+          "date" : "2026-09-23T07:00:00Z",
+          "durationMinutes" : 45,
+          "exerciseName" : "Strength training",
+          "id" : "exercise_entry_016"
+        }
+      ],
+      "id" : "2026-09-23",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-23T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Eggs",
+            "id" : "food_002",
+            "protein" : 12,
+            "servingSize" : "2 large eggs",
+            "sodium" : 124
+          },
+          "id" : "meal_entry_140",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-23T07:00:00Z",
+          "foodItem" : {
+            "calories" : 110,
+            "carbs" : 20,
+            "fat" : 1.5,
+            "fiber" : 4,
+            "foodName" : "Whole wheat bread",
+            "id" : "food_017",
+            "protein" : 6,
+            "servingSize" : "2 slices",
+            "sodium" : 200
+          },
+          "id" : "meal_entry_141",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-23T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 30,
+            "fat" : 2,
+            "fiber" : 9,
+            "foodName" : "Lentil soup",
+            "id" : "food_053",
+            "protein" : 12,
+            "servingSize" : "1 bowl",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_142",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-23T07:00:00Z",
+          "foodItem" : {
+            "calories" : 610,
+            "carbs" : 42,
+            "fat" : 30,
+            "fiber" : 6,
+            "foodName" : "Chicken shawarma plate",
+            "id" : "food_074",
+            "protein" : 38,
+            "servingSize" : "1 plate",
+            "sodium" : 980
+          },
+          "id" : "meal_entry_143",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-23T07:00:00Z",
+          "foodItem" : {
+            "calories" : 70,
+            "carbs" : 6,
+            "fat" : 5,
+            "fiber" : 2,
+            "foodName" : "Hummus",
+            "id" : "food_036",
+            "protein" : 2,
+            "servingSize" : "2 tbsp",
+            "sodium" : 120
+          },
+          "id" : "meal_entry_144",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8120,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-09-22T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-09-22",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-22T07:00:00Z",
+          "foodItem" : {
+            "calories" : 220,
+            "carbs" : 18,
+            "fat" : 6,
+            "fiber" : 2,
+            "foodName" : "Cottage cheese bowl",
+            "id" : "food_067",
+            "protein" : 24,
+            "servingSize" : "1 bowl",
+            "sodium" : 410
+          },
+          "id" : "meal_entry_145",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-22T07:00:00Z",
+          "foodItem" : {
+            "calories" : 95,
+            "carbs" : 25,
+            "fat" : 0.3,
+            "fiber" : 4.4,
+            "foodName" : "Apple",
+            "id" : "food_008",
+            "protein" : 0.5,
+            "servingSize" : "1 medium apple",
+            "sodium" : 2
+          },
+          "id" : "meal_entry_146",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-22T07:00:00Z",
+          "foodItem" : {
+            "calories" : 410,
+            "carbs" : 34,
+            "fat" : 16,
+            "fiber" : 5,
+            "foodName" : "Turkey meatball wrap",
+            "id" : "food_070",
+            "protein" : 30,
+            "servingSize" : "1 wrap",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_147",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-22T07:00:00Z",
+          "foodItem" : {
+            "calories" : 340,
+            "carbs" : 14,
+            "fat" : 18,
+            "fiber" : 3,
+            "foodName" : "Chicken curry",
+            "id" : "food_056",
+            "protein" : 28,
+            "servingSize" : "1 bowl",
+            "sodium" : 780
+          },
+          "id" : "meal_entry_148",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-22T07:00:00Z",
+          "foodItem" : {
+            "calories" : 190,
+            "carbs" : 31,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Green smoothie",
+            "id" : "food_073",
+            "protein" : 9,
+            "servingSize" : "16 fl oz",
+            "sodium" : 110
+          },
+          "id" : "meal_entry_149",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8460,
+      "waterCups" : 7
+    },
+    {
+      "date" : "2026-09-21T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 410,
+          "date" : "2026-09-21T07:00:00Z",
+          "durationMinutes" : 50,
+          "exerciseName" : "Cycling",
+          "id" : "exercise_entry_017"
+        }
+      ],
+      "id" : "2026-09-21",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-21T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 6,
+            "fat" : 14,
+            "fiber" : 2,
+            "foodName" : "Veggie omelet",
+            "id" : "food_064",
+            "protein" : 15,
+            "servingSize" : "1 omelet",
+            "sodium" : 290
+          },
+          "id" : "meal_entry_150",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-21T07:00:00Z",
+          "foodItem" : {
+            "calories" : 80,
+            "carbs" : 15,
+            "fat" : 2,
+            "fiber" : 0,
+            "foodName" : "Iced coffee",
+            "id" : "food_043",
+            "protein" : 1,
+            "servingSize" : "16 fl oz",
+            "sodium" : 35
+          },
+          "id" : "meal_entry_151",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-21T07:00:00Z",
+          "foodItem" : {
+            "calories" : 290,
+            "carbs" : 10,
+            "fat" : 14,
+            "fiber" : 4,
+            "foodName" : "Grilled chicken salad",
+            "id" : "food_028",
+            "protein" : 30,
+            "servingSize" : "1 salad",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_152",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-21T07:00:00Z",
+          "foodItem" : {
+            "calories" : 430,
+            "carbs" : 34,
+            "fat" : 19,
+            "fiber" : 5,
+            "foodName" : "Shrimp taco plate",
+            "id" : "food_075",
+            "protein" : 28,
+            "servingSize" : "2 tacos",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_153",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-21T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 27,
+            "fat" : 5,
+            "fiber" : 7,
+            "foodName" : "Roasted chickpeas",
+            "id" : "food_072",
+            "protein" : 8,
+            "servingSize" : "1\/2 cup",
+            "sodium" : 240
+          },
+          "id" : "meal_entry_154",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 9460,
+      "waterCups" : 8
+    },
+    {
+      "date" : "2026-09-20T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 120,
+          "date" : "2026-09-20T07:00:00Z",
+          "durationMinutes" : 35,
+          "exerciseName" : "Yoga",
+          "id" : "exercise_entry_018"
+        }
+      ],
+      "id" : "2026-09-20",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-20T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Hard-boiled eggs",
+            "id" : "food_063",
+            "protein" : 12,
+            "servingSize" : "2 eggs",
+            "sodium" : 130
+          },
+          "id" : "meal_entry_155",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-20T07:00:00Z",
+          "foodItem" : {
+            "calories" : 122,
+            "carbs" : 12,
+            "fat" : 5,
+            "fiber" : 0,
+            "foodName" : "2% milk",
+            "id" : "food_045",
+            "protein" : 8,
+            "servingSize" : "1 cup",
+            "sodium" : 115
+          },
+          "id" : "meal_entry_156",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-20T07:00:00Z",
+          "foodItem" : {
+            "calories" : 330,
+            "carbs" : 14,
+            "fat" : 27,
+            "fiber" : 2,
+            "foodName" : "Caesar salad",
+            "id" : "food_027",
+            "protein" : 8,
+            "servingSize" : "1 salad",
+            "sodium" : 640
+          },
+          "id" : "meal_entry_157",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-20T07:00:00Z",
+          "foodItem" : {
+            "calories" : 320,
+            "carbs" : 18,
+            "fat" : 15,
+            "fiber" : 4,
+            "foodName" : "Shrimp stir fry",
+            "id" : "food_031",
+            "protein" : 27,
+            "servingSize" : "1 bowl",
+            "sodium" : 720
+          },
+          "id" : "meal_entry_158",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-20T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 15,
+            "fat" : 12,
+            "fiber" : 3,
+            "foodName" : "Trail mix",
+            "id" : "food_058",
+            "protein" : 5,
+            "servingSize" : "1\/4 cup",
+            "sodium" : 85
+          },
+          "id" : "meal_entry_159",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 10460,
+      "waterCups" : 5
+    },
+    {
+      "date" : "2026-09-19T07:00:00Z",
+      "exerciseEntries" : [
+
+      ],
+      "id" : "2026-09-19",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-19T07:00:00Z",
+          "foodItem" : {
+            "calories" : 240,
+            "carbs" : 28,
+            "fat" : 11,
+            "fiber" : 9,
+            "foodName" : "Berry chia pudding",
+            "id" : "food_077",
+            "protein" : 8,
+            "servingSize" : "1 cup",
+            "sodium" : 95
+          },
+          "id" : "meal_entry_160",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-19T07:00:00Z",
+          "foodItem" : {
+            "calories" : 105,
+            "carbs" : 27,
+            "fat" : 0.4,
+            "fiber" : 3.1,
+            "foodName" : "Banana",
+            "id" : "food_009",
+            "protein" : 1.3,
+            "servingSize" : "1 medium banana",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_161",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-19T07:00:00Z",
+          "foodItem" : {
+            "calories" : 360,
+            "carbs" : 31,
+            "fat" : 14,
+            "fiber" : 5,
+            "foodName" : "Turkey wrap",
+            "id" : "food_029",
+            "protein" : 27,
+            "servingSize" : "1 wrap",
+            "sodium" : 760
+          },
+          "id" : "meal_entry_162",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-19T07:00:00Z",
+          "foodItem" : {
+            "calories" : 280,
+            "carbs" : 52,
+            "fat" : 4,
+            "fiber" : 5,
+            "foodName" : "Pasta with marinara",
+            "id" : "food_050",
+            "protein" : 8,
+            "servingSize" : "1 bowl",
+            "sodium" : 560
+          },
+          "id" : "meal_entry_163",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-19T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 4,
+            "fat" : 2,
+            "fiber" : 1,
+            "foodName" : "Chocolate whey shake",
+            "id" : "food_071",
+            "protein" : 26,
+            "servingSize" : "1 scoop with water",
+            "sodium" : 150
+          },
+          "id" : "meal_entry_164",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 10800,
+      "waterCups" : 6
+    },
+    {
+      "date" : "2026-09-18T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 160,
+          "date" : "2026-09-18T07:00:00Z",
+          "durationMinutes" : 40,
+          "exerciseName" : "Walking",
+          "id" : "exercise_entry_019"
+        }
+      ],
+      "id" : "2026-09-18",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-18T07:00:00Z",
+          "foodItem" : {
+            "calories" : 310,
+            "carbs" : 43,
+            "fat" : 8,
+            "fiber" : 7,
+            "foodName" : "Overnight oats",
+            "id" : "food_066",
+            "protein" : 16,
+            "servingSize" : "1 jar",
+            "sodium" : 180
+          },
+          "id" : "meal_entry_165",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-18T07:00:00Z",
+          "foodItem" : {
+            "calories" : 85,
+            "carbs" : 21,
+            "fat" : 0.5,
+            "fiber" : 3.6,
+            "foodName" : "Blueberries",
+            "id" : "food_020",
+            "protein" : 1,
+            "servingSize" : "1 cup",
+            "sodium" : 1
+          },
+          "id" : "meal_entry_166",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-18T07:00:00Z",
+          "foodItem" : {
+            "calories" : 520,
+            "carbs" : 46,
+            "fat" : 18,
+            "fiber" : 9,
+            "foodName" : "Chicken burrito bowl",
+            "id" : "food_068",
+            "protein" : 39,
+            "servingSize" : "1 bowl",
+            "sodium" : 870
+          },
+          "id" : "meal_entry_167",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-18T07:00:00Z",
+          "foodItem" : {
+            "calories" : 540,
+            "carbs" : 32,
+            "fat" : 29,
+            "fiber" : 7,
+            "foodName" : "Mediterranean salmon bowl",
+            "id" : "food_069",
+            "protein" : 34,
+            "servingSize" : "1 bowl",
+            "sodium" : 690
+          },
+          "id" : "meal_entry_168",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-18T07:00:00Z",
+          "foodItem" : {
+            "calories" : 210,
+            "carbs" : 20,
+            "fat" : 8,
+            "fiber" : 6,
+            "foodName" : "High-protein granola bar",
+            "id" : "food_076",
+            "protein" : 15,
+            "servingSize" : "1 bar",
+            "sodium" : 170
+          },
+          "id" : "meal_entry_169",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 7120,
+      "waterCups" : 5
+    },
+    {
+      "date" : "2026-09-17T07:00:00Z",
+      "exerciseEntries" : [
+        {
+          "caloriesBurned" : 220,
+          "date" : "2026-09-17T07:00:00Z",
+          "durationMinutes" : 45,
+          "exerciseName" : "Strength training",
+          "id" : "exercise_entry_020"
+        }
+      ],
+      "id" : "2026-09-17",
+      "mealEntries" : [
+        {
+          "date" : "2026-09-17T07:00:00Z",
+          "foodItem" : {
+            "calories" : 140,
+            "carbs" : 1,
+            "fat" : 10,
+            "fiber" : 0,
+            "foodName" : "Eggs",
+            "id" : "food_002",
+            "protein" : 12,
+            "servingSize" : "2 large eggs",
+            "sodium" : 124
+          },
+          "id" : "meal_entry_170",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-17T07:00:00Z",
+          "foodItem" : {
+            "calories" : 110,
+            "carbs" : 20,
+            "fat" : 1.5,
+            "fiber" : 4,
+            "foodName" : "Whole wheat bread",
+            "id" : "food_017",
+            "protein" : 6,
+            "servingSize" : "2 slices",
+            "sodium" : 200
+          },
+          "id" : "meal_entry_171",
+          "mealType" : "Breakfast",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-17T07:00:00Z",
+          "foodItem" : {
+            "calories" : 180,
+            "carbs" : 30,
+            "fat" : 2,
+            "fiber" : 9,
+            "foodName" : "Lentil soup",
+            "id" : "food_053",
+            "protein" : 12,
+            "servingSize" : "1 bowl",
+            "sodium" : 480
+          },
+          "id" : "meal_entry_172",
+          "mealType" : "Lunch",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-17T07:00:00Z",
+          "foodItem" : {
+            "calories" : 610,
+            "carbs" : 42,
+            "fat" : 30,
+            "fiber" : 6,
+            "foodName" : "Chicken shawarma plate",
+            "id" : "food_074",
+            "protein" : 38,
+            "servingSize" : "1 plate",
+            "sodium" : 980
+          },
+          "id" : "meal_entry_173",
+          "mealType" : "Dinner",
+          "quantity" : 1
+        },
+        {
+          "date" : "2026-09-17T07:00:00Z",
+          "foodItem" : {
+            "calories" : 70,
+            "carbs" : 6,
+            "fat" : 5,
+            "fiber" : 2,
+            "foodName" : "Hummus",
+            "id" : "food_036",
+            "protein" : 2,
+            "servingSize" : "2 tbsp",
+            "sodium" : 120
+          },
+          "id" : "meal_entry_174",
+          "mealType" : "Snacks",
+          "quantity" : 1
+        }
+      ],
+      "stepCount" : 8120,
+      "waterCups" : 6
+    }
+  ],
+  "exerciseCatalog" : [
+    {
+      "caloriesBurned" : 330,
+      "category" : "Cardio",
+      "durationMinutes" : 30,
+      "exerciseName" : "Running",
+      "id" : "exercise_001"
+    },
+    {
+      "caloriesBurned" : 120,
+      "category" : "Cardio",
+      "durationMinutes" : 30,
+      "exerciseName" : "Walking",
+      "id" : "exercise_002"
+    },
+    {
+      "caloriesBurned" : 370,
+      "category" : "Cardio",
+      "durationMinutes" : 45,
+      "exerciseName" : "Cycling",
+      "id" : "exercise_003"
+    },
+    {
+      "caloriesBurned" : 300,
+      "category" : "Cardio",
+      "durationMinutes" : 35,
+      "exerciseName" : "Swimming",
+      "id" : "exercise_004"
+    },
+    {
+      "caloriesBurned" : 220,
+      "category" : "Strength",
+      "durationMinutes" : 45,
+      "exerciseName" : "Strength training",
+      "id" : "exercise_005"
+    },
+    {
+      "caloriesBurned" : 140,
+      "category" : "Recovery",
+      "durationMinutes" : 40,
+      "exerciseName" : "Yoga",
+      "id" : "exercise_006"
+    },
+    {
+      "caloriesBurned" : 320,
+      "category" : "Cardio",
+      "durationMinutes" : 40,
+      "exerciseName" : "Elliptical",
+      "id" : "exercise_007"
+    },
+    {
+      "caloriesBurned" : 280,
+      "category" : "Cardio",
+      "durationMinutes" : 25,
+      "exerciseName" : "HIIT",
+      "id" : "exercise_008"
+    },
+    {
+      "caloriesBurned" : 180,
+      "category" : "Recovery",
+      "durationMinutes" : 45,
+      "exerciseName" : "Pilates",
+      "id" : "exercise_009"
+    },
+    {
+      "caloriesBurned" : 260,
+      "category" : "Cardio",
+      "durationMinutes" : 30,
+      "exerciseName" : "Rowing",
+      "id" : "exercise_010"
+    },
+    {
+      "caloriesBurned" : 410,
+      "category" : "Cardio",
+      "durationMinutes" : 60,
+      "exerciseName" : "Hiking",
+      "id" : "exercise_011"
+    },
+    {
+      "caloriesBurned" : 70,
+      "category" : "Recovery",
+      "durationMinutes" : 20,
+      "exerciseName" : "Mobility flow",
+      "id" : "exercise_012"
+    }
+  ],
+  "foodDatabase" : [
+    {
+      "calories" : 165,
+      "carbs" : 0,
+      "category" : "Protein",
+      "fat" : 3.6,
+      "fiber" : 0,
+      "foodName" : "Chicken breast",
+      "id" : "food_001",
+      "protein" : 31,
+      "searchKeywords" : [
+        "chicken",
+        "protein",
+        "lean"
+      ],
+      "servingSize" : "4 oz",
+      "sodium" : 74
+    },
+    {
+      "calories" : 140,
+      "carbs" : 1,
+      "category" : "Breakfast",
+      "fat" : 10,
+      "fiber" : 0,
+      "foodName" : "Eggs",
+      "id" : "food_002",
+      "protein" : 12,
+      "searchKeywords" : [
+        "eggs",
+        "breakfast",
+        "protein"
+      ],
+      "servingSize" : "2 large eggs",
+      "sodium" : 124
+    },
+    {
+      "calories" : 216,
+      "carbs" : 45,
+      "category" : "Grains",
+      "fat" : 1.8,
+      "fiber" : 3.5,
+      "foodName" : "Brown rice",
+      "id" : "food_003",
+      "protein" : 5,
+      "searchKeywords" : [
+        "rice",
+        "brown rice",
+        "grain"
+      ],
+      "servingSize" : "1 cup cooked",
+      "sodium" : 10
+    },
+    {
+      "calories" : 205,
+      "carbs" : 45,
+      "category" : "Grains",
+      "fat" : 0.4,
+      "fiber" : 0.6,
+      "foodName" : "White rice",
+      "id" : "food_004",
+      "protein" : 4.2,
+      "searchKeywords" : [
+        "rice",
+        "white rice",
+        "grain"
+      ],
+      "servingSize" : "1 cup cooked",
+      "sodium" : 1
+    },
+    {
+      "calories" : 240,
+      "carbs" : 12,
+      "category" : "Healthy Fats",
+      "fat" : 22,
+      "fiber" : 10,
+      "foodName" : "Avocado",
+      "id" : "food_005",
+      "protein" : 3,
+      "searchKeywords" : [
+        "avocado",
+        "fat",
+        "produce"
+      ],
+      "servingSize" : "1 medium avocado",
+      "sodium" : 10
+    },
+    {
+      "calories" : 233,
+      "carbs" : 0,
+      "category" : "Protein",
+      "fat" : 14,
+      "fiber" : 0,
+      "foodName" : "Salmon",
+      "id" : "food_006",
+      "protein" : 25,
+      "searchKeywords" : [
+        "salmon",
+        "fish",
+        "protein"
+      ],
+      "servingSize" : "5 oz fillet",
+      "sodium" : 75
+    },
+    {
+      "calories" : 130,
+      "carbs" : 6,
+      "category" : "Dairy",
+      "fat" : 3.5,
+      "fiber" : 0,
+      "foodName" : "Greek yogurt",
+      "id" : "food_007",
+      "protein" : 17,
+      "searchKeywords" : [
+        "yogurt",
+        "greek",
+        "protein"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 60
+    },
+    {
+      "calories" : 95,
+      "carbs" : 25,
+      "category" : "Fruit",
+      "fat" : 0.3,
+      "fiber" : 4.4,
+      "foodName" : "Apple",
+      "id" : "food_008",
+      "protein" : 0.5,
+      "searchKeywords" : [
+        "apple",
+        "fruit",
+        "snack"
+      ],
+      "servingSize" : "1 medium apple",
+      "sodium" : 2
+    },
+    {
+      "calories" : 105,
+      "carbs" : 27,
+      "category" : "Fruit",
+      "fat" : 0.4,
+      "fiber" : 3.1,
+      "foodName" : "Banana",
+      "id" : "food_009",
+      "protein" : 1.3,
+      "searchKeywords" : [
+        "banana",
+        "fruit",
+        "snack"
+      ],
+      "servingSize" : "1 medium banana",
+      "sodium" : 1
+    },
+    {
+      "calories" : 55,
+      "carbs" : 11,
+      "category" : "Vegetables",
+      "fat" : 0.6,
+      "fiber" : 5.1,
+      "foodName" : "Broccoli",
+      "id" : "food_010",
+      "protein" : 3.7,
+      "searchKeywords" : [
+        "broccoli",
+        "vegetable",
+        "greens"
+      ],
+      "servingSize" : "1 cup cooked",
+      "sodium" : 49
+    },
+    {
+      "calories" : 150,
+      "carbs" : 27,
+      "category" : "Breakfast",
+      "fat" : 3,
+      "fiber" : 4,
+      "foodName" : "Oatmeal",
+      "id" : "food_011",
+      "protein" : 5,
+      "searchKeywords" : [
+        "oatmeal",
+        "oats",
+        "breakfast"
+      ],
+      "servingSize" : "1 cup cooked",
+      "sodium" : 0
+    },
+    {
+      "calories" : 160,
+      "carbs" : 5,
+      "category" : "Protein",
+      "fat" : 2,
+      "fiber" : 1,
+      "foodName" : "Protein shake",
+      "id" : "food_012",
+      "protein" : 30,
+      "searchKeywords" : [
+        "protein shake",
+        "shake",
+        "post workout"
+      ],
+      "servingSize" : "1 bottle",
+      "sodium" : 180
+    },
+    {
+      "calories" : 164,
+      "carbs" : 6,
+      "category" : "Snacks",
+      "fat" : 14,
+      "fiber" : 3.5,
+      "foodName" : "Almonds",
+      "id" : "food_013",
+      "protein" : 6,
+      "searchKeywords" : [
+        "almonds",
+        "nuts",
+        "snack"
+      ],
+      "servingSize" : "1 oz",
+      "sodium" : 0
+    },
+    {
+      "calories" : 112,
+      "carbs" : 26,
+      "category" : "Vegetables",
+      "fat" : 0.1,
+      "fiber" : 4,
+      "foodName" : "Sweet potato",
+      "id" : "food_014",
+      "protein" : 2,
+      "searchKeywords" : [
+        "sweet potato",
+        "potato",
+        "carbs"
+      ],
+      "servingSize" : "1 medium potato",
+      "sodium" : 72
+    },
+    {
+      "calories" : 120,
+      "carbs" : 0,
+      "category" : "Protein",
+      "fat" : 1,
+      "fiber" : 0,
+      "foodName" : "Tuna",
+      "id" : "food_015",
+      "protein" : 26,
+      "searchKeywords" : [
+        "tuna",
+        "fish",
+        "protein"
+      ],
+      "servingSize" : "1 can in water",
+      "sodium" : 320
+    },
+    {
+      "calories" : 340,
+      "carbs" : 33,
+      "category" : "Lunch",
+      "fat" : 12,
+      "fiber" : 4,
+      "foodName" : "Turkey sandwich",
+      "id" : "food_016",
+      "protein" : 24,
+      "searchKeywords" : [
+        "turkey sandwich",
+        "sandwich",
+        "lunch"
+      ],
+      "servingSize" : "1 sandwich",
+      "sodium" : 780
+    },
+    {
+      "calories" : 110,
+      "carbs" : 20,
+      "category" : "Grains",
+      "fat" : 1.5,
+      "fiber" : 4,
+      "foodName" : "Whole wheat bread",
+      "id" : "food_017",
+      "protein" : 6,
+      "searchKeywords" : [
+        "bread",
+        "whole wheat",
+        "toast"
+      ],
+      "servingSize" : "2 slices",
+      "sodium" : 200
+    },
+    {
+      "calories" : 190,
+      "carbs" : 8,
+      "category" : "Healthy Fats",
+      "fat" : 16,
+      "fiber" : 2,
+      "foodName" : "Peanut butter",
+      "id" : "food_018",
+      "protein" : 7,
+      "searchKeywords" : [
+        "peanut butter",
+        "spread",
+        "fat"
+      ],
+      "servingSize" : "2 tbsp",
+      "sodium" : 140
+    },
+    {
+      "calories" : 110,
+      "carbs" : 5,
+      "category" : "Dairy",
+      "fat" : 4.5,
+      "fiber" : 0,
+      "foodName" : "Cottage cheese",
+      "id" : "food_019",
+      "protein" : 13,
+      "searchKeywords" : [
+        "cottage cheese",
+        "dairy",
+        "protein"
+      ],
+      "servingSize" : "1\/2 cup",
+      "sodium" : 360
+    },
+    {
+      "calories" : 85,
+      "carbs" : 21,
+      "category" : "Fruit",
+      "fat" : 0.5,
+      "fiber" : 3.6,
+      "foodName" : "Blueberries",
+      "id" : "food_020",
+      "protein" : 1,
+      "searchKeywords" : [
+        "blueberries",
+        "berries",
+        "fruit"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 1
+    },
+    {
+      "calories" : 80,
+      "carbs" : 7,
+      "category" : "Vegetables",
+      "fat" : 4,
+      "fiber" : 3,
+      "foodName" : "Spinach salad",
+      "id" : "food_021",
+      "protein" : 3,
+      "searchKeywords" : [
+        "spinach",
+        "salad",
+        "greens"
+      ],
+      "servingSize" : "2 cups",
+      "sodium" : 120
+    },
+    {
+      "calories" : 222,
+      "carbs" : 39,
+      "category" : "Grains",
+      "fat" : 3.6,
+      "fiber" : 5,
+      "foodName" : "Quinoa",
+      "id" : "food_022",
+      "protein" : 8,
+      "searchKeywords" : [
+        "quinoa",
+        "grain",
+        "carbs"
+      ],
+      "servingSize" : "1 cup cooked",
+      "sodium" : 13
+    },
+    {
+      "calories" : 130,
+      "carbs" : 23,
+      "category" : "Legumes",
+      "fat" : 0.5,
+      "fiber" : 8,
+      "foodName" : "Black beans",
+      "id" : "food_023",
+      "protein" : 8,
+      "searchKeywords" : [
+        "black beans",
+        "beans",
+        "fiber"
+      ],
+      "servingSize" : "1\/2 cup",
+      "sodium" : 280
+    },
+    {
+      "calories" : 70,
+      "carbs" : 0,
+      "category" : "Breakfast",
+      "fat" : 4,
+      "fiber" : 0,
+      "foodName" : "Turkey bacon",
+      "id" : "food_024",
+      "protein" : 6,
+      "searchKeywords" : [
+        "turkey bacon",
+        "bacon",
+        "breakfast"
+      ],
+      "servingSize" : "2 slices",
+      "sodium" : 360
+    },
+    {
+      "calories" : 180,
+      "carbs" : 2,
+      "category" : "Breakfast",
+      "fat" : 14,
+      "fiber" : 0,
+      "foodName" : "Scrambled eggs",
+      "id" : "food_025",
+      "protein" : 12,
+      "searchKeywords" : [
+        "scrambled eggs",
+        "eggs",
+        "breakfast"
+      ],
+      "servingSize" : "2 large eggs",
+      "sodium" : 180
+    },
+    {
+      "calories" : 420,
+      "carbs" : 32,
+      "category" : "Breakfast",
+      "fat" : 24,
+      "fiber" : 3,
+      "foodName" : "Bacon breakfast burrito",
+      "id" : "food_026",
+      "protein" : 19,
+      "searchKeywords" : [
+        "burrito",
+        "breakfast burrito",
+        "bacon"
+      ],
+      "servingSize" : "1 burrito",
+      "sodium" : 920
+    },
+    {
+      "calories" : 330,
+      "carbs" : 14,
+      "category" : "Lunch",
+      "fat" : 27,
+      "fiber" : 2,
+      "foodName" : "Caesar salad",
+      "id" : "food_027",
+      "protein" : 8,
+      "searchKeywords" : [
+        "caesar salad",
+        "salad",
+        "lunch"
+      ],
+      "servingSize" : "1 salad",
+      "sodium" : 640
+    },
+    {
+      "calories" : 290,
+      "carbs" : 10,
+      "category" : "Lunch",
+      "fat" : 14,
+      "fiber" : 4,
+      "foodName" : "Grilled chicken salad",
+      "id" : "food_028",
+      "protein" : 30,
+      "searchKeywords" : [
+        "chicken salad",
+        "salad",
+        "grilled chicken"
+      ],
+      "servingSize" : "1 salad",
+      "sodium" : 480
+    },
+    {
+      "calories" : 360,
+      "carbs" : 31,
+      "category" : "Lunch",
+      "fat" : 14,
+      "fiber" : 5,
+      "foodName" : "Turkey wrap",
+      "id" : "food_029",
+      "protein" : 27,
+      "searchKeywords" : [
+        "turkey wrap",
+        "wrap",
+        "lunch"
+      ],
+      "servingSize" : "1 wrap",
+      "sodium" : 760
+    },
+    {
+      "calories" : 250,
+      "carbs" : 0,
+      "category" : "Dinner",
+      "fat" : 16,
+      "fiber" : 0,
+      "foodName" : "Sirloin steak",
+      "id" : "food_030",
+      "protein" : 26,
+      "searchKeywords" : [
+        "steak",
+        "sirloin",
+        "protein"
+      ],
+      "servingSize" : "5 oz",
+      "sodium" : 60
+    },
+    {
+      "calories" : 320,
+      "carbs" : 18,
+      "category" : "Dinner",
+      "fat" : 15,
+      "fiber" : 4,
+      "foodName" : "Shrimp stir fry",
+      "id" : "food_031",
+      "protein" : 27,
+      "searchKeywords" : [
+        "shrimp",
+        "stir fry",
+        "dinner"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 720
+    },
+    {
+      "calories" : 250,
+      "carbs" : 28,
+      "category" : "Breakfast",
+      "fat" : 8,
+      "fiber" : 3,
+      "foodName" : "Yogurt parfait",
+      "id" : "food_032",
+      "protein" : 15,
+      "searchKeywords" : [
+        "parfait",
+        "yogurt",
+        "breakfast"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 115
+    },
+    {
+      "calories" : 210,
+      "carbs" : 29,
+      "category" : "Breakfast",
+      "fat" : 9,
+      "fiber" : 4,
+      "foodName" : "Granola",
+      "id" : "food_033",
+      "protein" : 5,
+      "searchKeywords" : [
+        "granola",
+        "cereal",
+        "breakfast"
+      ],
+      "servingSize" : "1\/2 cup",
+      "sodium" : 45
+    },
+    {
+      "calories" : 62,
+      "carbs" : 15.4,
+      "category" : "Fruit",
+      "fat" : 0.2,
+      "fiber" : 3.1,
+      "foodName" : "Orange",
+      "id" : "food_034",
+      "protein" : 1.2,
+      "searchKeywords" : [
+        "orange",
+        "fruit",
+        "citrus"
+      ],
+      "servingSize" : "1 medium orange",
+      "sodium" : 0
+    },
+    {
+      "calories" : 70,
+      "carbs" : 17,
+      "category" : "Fruit",
+      "fat" : 0.4,
+      "fiber" : 5,
+      "foodName" : "Mixed berries",
+      "id" : "food_035",
+      "protein" : 1,
+      "searchKeywords" : [
+        "berries",
+        "mixed berries",
+        "fruit"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 2
+    },
+    {
+      "calories" : 70,
+      "carbs" : 6,
+      "category" : "Snacks",
+      "fat" : 5,
+      "fiber" : 2,
+      "foodName" : "Hummus",
+      "id" : "food_036",
+      "protein" : 2,
+      "searchKeywords" : [
+        "hummus",
+        "dip",
+        "snack"
+      ],
+      "servingSize" : "2 tbsp",
+      "sodium" : 120
+    },
+    {
+      "calories" : 35,
+      "carbs" : 8,
+      "category" : "Snacks",
+      "fat" : 0.2,
+      "fiber" : 2.3,
+      "foodName" : "Carrot sticks",
+      "id" : "food_037",
+      "protein" : 0.8,
+      "searchKeywords" : [
+        "carrots",
+        "vegetable",
+        "snack"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 69
+    },
+    {
+      "calories" : 160,
+      "carbs" : 24,
+      "category" : "Dessert",
+      "fat" : 7,
+      "fiber" : 1,
+      "foodName" : "Brownie",
+      "id" : "food_038",
+      "protein" : 2,
+      "searchKeywords" : [
+        "brownie",
+        "dessert",
+        "sweet"
+      ],
+      "servingSize" : "1 square",
+      "sodium" : 95
+    },
+    {
+      "calories" : 285,
+      "carbs" : 36,
+      "category" : "Dinner",
+      "fat" : 10,
+      "fiber" : 2.5,
+      "foodName" : "Cheese pizza slice",
+      "id" : "food_039",
+      "protein" : 12,
+      "searchKeywords" : [
+        "pizza",
+        "slice",
+        "cheese"
+      ],
+      "servingSize" : "1 slice",
+      "sodium" : 640
+    },
+    {
+      "calories" : 303,
+      "carbs" : 30,
+      "category" : "Dinner",
+      "fat" : 14,
+      "fiber" : 1,
+      "foodName" : "Cheeseburger",
+      "id" : "food_040",
+      "protein" : 17,
+      "searchKeywords" : [
+        "burger",
+        "cheeseburger",
+        "fast food"
+      ],
+      "servingSize" : "1 burger",
+      "sodium" : 720
+    },
+    {
+      "calories" : 365,
+      "carbs" : 48,
+      "category" : "Sides",
+      "fat" : 17,
+      "fiber" : 4,
+      "foodName" : "French fries",
+      "id" : "food_041",
+      "protein" : 4,
+      "searchKeywords" : [
+        "fries",
+        "potatoes",
+        "fast food"
+      ],
+      "servingSize" : "1 medium order",
+      "sodium" : 246
+    },
+    {
+      "calories" : 190,
+      "carbs" : 19,
+      "category" : "Beverages",
+      "fat" : 8,
+      "fiber" : 0,
+      "foodName" : "Latte",
+      "id" : "food_042",
+      "protein" : 10,
+      "searchKeywords" : [
+        "latte",
+        "coffee",
+        "drink"
+      ],
+      "servingSize" : "16 fl oz",
+      "sodium" : 140
+    },
+    {
+      "calories" : 80,
+      "carbs" : 15,
+      "category" : "Beverages",
+      "fat" : 2,
+      "fiber" : 0,
+      "foodName" : "Iced coffee",
+      "id" : "food_043",
+      "protein" : 1,
+      "searchKeywords" : [
+        "iced coffee",
+        "coffee",
+        "drink"
+      ],
+      "servingSize" : "16 fl oz",
+      "sodium" : 35
+    },
+    {
+      "calories" : 110,
+      "carbs" : 26,
+      "category" : "Beverages",
+      "fat" : 0.5,
+      "fiber" : 0.5,
+      "foodName" : "Orange juice",
+      "id" : "food_044",
+      "protein" : 2,
+      "searchKeywords" : [
+        "orange juice",
+        "juice",
+        "drink"
+      ],
+      "servingSize" : "8 fl oz",
+      "sodium" : 2
+    },
+    {
+      "calories" : 122,
+      "carbs" : 12,
+      "category" : "Dairy",
+      "fat" : 5,
+      "fiber" : 0,
+      "foodName" : "2% milk",
+      "id" : "food_045",
+      "protein" : 8,
+      "searchKeywords" : [
+        "milk",
+        "2 percent",
+        "drink"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 115
+    },
+    {
+      "calories" : 250,
+      "carbs" : 49,
+      "category" : "Breakfast",
+      "fat" : 1.5,
+      "fiber" : 2,
+      "foodName" : "Plain bagel",
+      "id" : "food_046",
+      "protein" : 10,
+      "searchKeywords" : [
+        "bagel",
+        "bread",
+        "breakfast"
+      ],
+      "servingSize" : "1 bagel",
+      "sodium" : 510
+    },
+    {
+      "calories" : 100,
+      "carbs" : 2,
+      "category" : "Breakfast",
+      "fat" : 10,
+      "fiber" : 0,
+      "foodName" : "Cream cheese",
+      "id" : "food_047",
+      "protein" : 2,
+      "searchKeywords" : [
+        "cream cheese",
+        "spread",
+        "breakfast"
+      ],
+      "servingSize" : "2 tbsp",
+      "sodium" : 95
+    },
+    {
+      "calories" : 175,
+      "carbs" : 30,
+      "category" : "Breakfast",
+      "fat" : 4,
+      "fiber" : 1,
+      "foodName" : "Pancakes",
+      "id" : "food_048",
+      "protein" : 4,
+      "searchKeywords" : [
+        "pancakes",
+        "breakfast",
+        "griddle"
+      ],
+      "servingSize" : "2 pancakes",
+      "sodium" : 350
+    },
+    {
+      "calories" : 104,
+      "carbs" : 26.8,
+      "category" : "Condiments",
+      "fat" : 0,
+      "fiber" : 0,
+      "foodName" : "Maple syrup",
+      "id" : "food_049",
+      "protein" : 0,
+      "searchKeywords" : [
+        "syrup",
+        "maple",
+        "breakfast"
+      ],
+      "servingSize" : "2 tbsp",
+      "sodium" : 2
+    },
+    {
+      "calories" : 280,
+      "carbs" : 52,
+      "category" : "Dinner",
+      "fat" : 4,
+      "fiber" : 5,
+      "foodName" : "Pasta with marinara",
+      "id" : "food_050",
+      "protein" : 8,
+      "searchKeywords" : [
+        "pasta",
+        "marinara",
+        "dinner"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 560
+    },
+    {
+      "calories" : 250,
+      "carbs" : 8,
+      "category" : "Dinner",
+      "fat" : 16,
+      "fiber" : 1,
+      "foodName" : "Meatballs",
+      "id" : "food_051",
+      "protein" : 18,
+      "searchKeywords" : [
+        "meatballs",
+        "beef",
+        "protein"
+      ],
+      "servingSize" : "4 meatballs",
+      "sodium" : 590
+    },
+    {
+      "calories" : 290,
+      "carbs" : 24,
+      "category" : "Dinner",
+      "fat" : 10,
+      "fiber" : 8,
+      "foodName" : "Turkey chili",
+      "id" : "food_052",
+      "protein" : 24,
+      "searchKeywords" : [
+        "chili",
+        "turkey",
+        "soup"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 620
+    },
+    {
+      "calories" : 180,
+      "carbs" : 30,
+      "category" : "Lunch",
+      "fat" : 2,
+      "fiber" : 9,
+      "foodName" : "Lentil soup",
+      "id" : "food_053",
+      "protein" : 12,
+      "searchKeywords" : [
+        "lentil soup",
+        "soup",
+        "lentils"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 480
+    },
+    {
+      "calories" : 260,
+      "carbs" : 16,
+      "category" : "Dinner",
+      "fat" : 14,
+      "fiber" : 5,
+      "foodName" : "Tofu stir fry",
+      "id" : "food_054",
+      "protein" : 18,
+      "searchKeywords" : [
+        "tofu",
+        "stir fry",
+        "plant protein"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 650
+    },
+    {
+      "calories" : 190,
+      "carbs" : 14,
+      "category" : "Snacks",
+      "fat" : 8,
+      "fiber" : 8,
+      "foodName" : "Edamame",
+      "id" : "food_055",
+      "protein" : 17,
+      "searchKeywords" : [
+        "edamame",
+        "soybeans",
+        "protein"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 15
+    },
+    {
+      "calories" : 340,
+      "carbs" : 14,
+      "category" : "Dinner",
+      "fat" : 18,
+      "fiber" : 3,
+      "foodName" : "Chicken curry",
+      "id" : "food_056",
+      "protein" : 28,
+      "searchKeywords" : [
+        "curry",
+        "chicken curry",
+        "dinner"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 780
+    },
+    {
+      "calories" : 210,
+      "carbs" : 36,
+      "category" : "Sides",
+      "fat" : 5,
+      "fiber" : 2,
+      "foodName" : "Naan",
+      "id" : "food_057",
+      "protein" : 6,
+      "searchKeywords" : [
+        "naan",
+        "bread",
+        "indian"
+      ],
+      "servingSize" : "1 piece",
+      "sodium" : 430
+    },
+    {
+      "calories" : 180,
+      "carbs" : 15,
+      "category" : "Snacks",
+      "fat" : 12,
+      "fiber" : 3,
+      "foodName" : "Trail mix",
+      "id" : "food_058",
+      "protein" : 5,
+      "searchKeywords" : [
+        "trail mix",
+        "snack",
+        "nuts"
+      ],
+      "servingSize" : "1\/4 cup",
+      "sodium" : 85
+    },
+    {
+      "calories" : 35,
+      "carbs" : 7,
+      "category" : "Snacks",
+      "fat" : 0.3,
+      "fiber" : 0.3,
+      "foodName" : "Rice cake",
+      "id" : "food_059",
+      "protein" : 0.7,
+      "searchKeywords" : [
+        "rice cake",
+        "snack",
+        "light"
+      ],
+      "servingSize" : "1 cake",
+      "sodium" : 25
+    },
+    {
+      "calories" : 255,
+      "carbs" : 38,
+      "category" : "Dinner",
+      "fat" : 7,
+      "fiber" : 2,
+      "foodName" : "California sushi roll",
+      "id" : "food_060",
+      "protein" : 9,
+      "searchKeywords" : [
+        "sushi",
+        "california roll",
+        "dinner"
+      ],
+      "servingSize" : "1 roll",
+      "sodium" : 580
+    },
+    {
+      "calories" : 220,
+      "carbs" : 32,
+      "category" : "Beverages",
+      "fat" : 5,
+      "fiber" : 2,
+      "foodName" : "Yogurt smoothie",
+      "id" : "food_061",
+      "protein" : 12,
+      "searchKeywords" : [
+        "smoothie",
+        "yogurt smoothie",
+        "drink"
+      ],
+      "servingSize" : "12 fl oz",
+      "sodium" : 120
+    },
+    {
+      "calories" : 120,
+      "carbs" : 18,
+      "category" : "Vegetables",
+      "fat" : 4,
+      "fiber" : 5,
+      "foodName" : "Roasted vegetables",
+      "id" : "food_062",
+      "protein" : 3,
+      "searchKeywords" : [
+        "roasted vegetables",
+        "vegetables",
+        "side"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 140
+    },
+    {
+      "calories" : 140,
+      "carbs" : 1,
+      "category" : "Breakfast",
+      "fat" : 10,
+      "fiber" : 0,
+      "foodName" : "Hard-boiled eggs",
+      "id" : "food_063",
+      "protein" : 12,
+      "searchKeywords" : [
+        "hard boiled eggs",
+        "eggs",
+        "protein"
+      ],
+      "servingSize" : "2 eggs",
+      "sodium" : 130
+    },
+    {
+      "calories" : 210,
+      "carbs" : 6,
+      "category" : "Breakfast",
+      "fat" : 14,
+      "fiber" : 2,
+      "foodName" : "Veggie omelet",
+      "id" : "food_064",
+      "protein" : 15,
+      "searchKeywords" : [
+        "omelet",
+        "veggie omelet",
+        "breakfast"
+      ],
+      "servingSize" : "1 omelet",
+      "sodium" : 290
+    },
+    {
+      "calories" : 430,
+      "carbs" : 29,
+      "category" : "Lunch",
+      "fat" : 22,
+      "fiber" : 3,
+      "foodName" : "Chicken quesadilla",
+      "id" : "food_065",
+      "protein" : 27,
+      "searchKeywords" : [
+        "quesadilla",
+        "chicken",
+        "mexican"
+      ],
+      "servingSize" : "1 quesadilla",
+      "sodium" : 840
+    },
+    {
+      "calories" : 310,
+      "carbs" : 43,
+      "category" : "Breakfast",
+      "fat" : 8,
+      "fiber" : 7,
+      "foodName" : "Overnight oats",
+      "id" : "food_066",
+      "protein" : 16,
+      "searchKeywords" : [
+        "overnight oats",
+        "oats",
+        "breakfast"
+      ],
+      "servingSize" : "1 jar",
+      "sodium" : 180
+    },
+    {
+      "calories" : 220,
+      "carbs" : 18,
+      "category" : "Breakfast",
+      "fat" : 6,
+      "fiber" : 2,
+      "foodName" : "Cottage cheese bowl",
+      "id" : "food_067",
+      "protein" : 24,
+      "searchKeywords" : [
+        "cottage cheese",
+        "protein bowl",
+        "breakfast"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 410
+    },
+    {
+      "calories" : 520,
+      "carbs" : 46,
+      "category" : "Lunch",
+      "fat" : 18,
+      "fiber" : 9,
+      "foodName" : "Chicken burrito bowl",
+      "id" : "food_068",
+      "protein" : 39,
+      "searchKeywords" : [
+        "burrito bowl",
+        "chicken bowl",
+        "lunch"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 870
+    },
+    {
+      "calories" : 540,
+      "carbs" : 32,
+      "category" : "Dinner",
+      "fat" : 29,
+      "fiber" : 7,
+      "foodName" : "Mediterranean salmon bowl",
+      "id" : "food_069",
+      "protein" : 34,
+      "searchKeywords" : [
+        "salmon bowl",
+        "mediterranean",
+        "dinner"
+      ],
+      "servingSize" : "1 bowl",
+      "sodium" : 690
+    },
+    {
+      "calories" : 410,
+      "carbs" : 34,
+      "category" : "Lunch",
+      "fat" : 16,
+      "fiber" : 5,
+      "foodName" : "Turkey meatball wrap",
+      "id" : "food_070",
+      "protein" : 30,
+      "searchKeywords" : [
+        "turkey wrap",
+        "meatball wrap",
+        "lunch"
+      ],
+      "servingSize" : "1 wrap",
+      "sodium" : 760
+    },
+    {
+      "calories" : 140,
+      "carbs" : 4,
+      "category" : "Protein",
+      "fat" : 2,
+      "fiber" : 1,
+      "foodName" : "Chocolate whey shake",
+      "id" : "food_071",
+      "protein" : 26,
+      "searchKeywords" : [
+        "whey",
+        "protein shake",
+        "post workout"
+      ],
+      "servingSize" : "1 scoop with water",
+      "sodium" : 150
+    },
+    {
+      "calories" : 180,
+      "carbs" : 27,
+      "category" : "Snacks",
+      "fat" : 5,
+      "fiber" : 7,
+      "foodName" : "Roasted chickpeas",
+      "id" : "food_072",
+      "protein" : 8,
+      "searchKeywords" : [
+        "chickpeas",
+        "snack",
+        "plant protein"
+      ],
+      "servingSize" : "1\/2 cup",
+      "sodium" : 240
+    },
+    {
+      "calories" : 190,
+      "carbs" : 31,
+      "category" : "Beverages",
+      "fat" : 4,
+      "fiber" : 5,
+      "foodName" : "Green smoothie",
+      "id" : "food_073",
+      "protein" : 9,
+      "searchKeywords" : [
+        "smoothie",
+        "greens",
+        "drink"
+      ],
+      "servingSize" : "16 fl oz",
+      "sodium" : 110
+    },
+    {
+      "calories" : 610,
+      "carbs" : 42,
+      "category" : "Dinner",
+      "fat" : 30,
+      "fiber" : 6,
+      "foodName" : "Chicken shawarma plate",
+      "id" : "food_074",
+      "protein" : 38,
+      "searchKeywords" : [
+        "shawarma",
+        "chicken plate",
+        "dinner"
+      ],
+      "servingSize" : "1 plate",
+      "sodium" : 980
+    },
+    {
+      "calories" : 430,
+      "carbs" : 34,
+      "category" : "Dinner",
+      "fat" : 19,
+      "fiber" : 5,
+      "foodName" : "Shrimp taco plate",
+      "id" : "food_075",
+      "protein" : 28,
+      "searchKeywords" : [
+        "shrimp tacos",
+        "taco plate",
+        "dinner"
+      ],
+      "servingSize" : "2 tacos",
+      "sodium" : 760
+    },
+    {
+      "calories" : 210,
+      "carbs" : 20,
+      "category" : "Snacks",
+      "fat" : 8,
+      "fiber" : 6,
+      "foodName" : "High-protein granola bar",
+      "id" : "food_076",
+      "protein" : 15,
+      "searchKeywords" : [
+        "granola bar",
+        "protein bar",
+        "snack"
+      ],
+      "servingSize" : "1 bar",
+      "sodium" : 170
+    },
+    {
+      "calories" : 240,
+      "carbs" : 28,
+      "category" : "Breakfast",
+      "fat" : 11,
+      "fiber" : 9,
+      "foodName" : "Berry chia pudding",
+      "id" : "food_077",
+      "protein" : 8,
+      "searchKeywords" : [
+        "chia pudding",
+        "berries",
+        "breakfast"
+      ],
+      "servingSize" : "1 cup",
+      "sodium" : 95
+    }
+  ],
+  "nextExerciseEntrySequence" : 21,
+  "nextMealEntrySequence" : 175,
+  "nextWeightEntrySequence" : 16,
+  "nutritionGoal" : {
+    "goalCalories" : 2450,
+    "goalCarbs" : 250,
+    "goalFat" : 75,
+    "goalProtein" : 170,
+    "targetWeight" : 176,
+    "weeklyWeightChange" : -0.7
+  },
+  "pushNotificationsEnabled" : true,
+  "recentFoodIDs" : [
+    "food_011",
+    "food_009",
+    "food_007",
+    "food_028",
+    "food_008",
+    "food_006",
+    "food_022",
+    "food_062",
+    "food_013",
+    "food_012"
+  ],
+  "reminderNotificationsEnabled" : true,
+  "selectedTab" : "today",
+  "userProfile" : {
+    "activityLevel" : "Moderately Active",
+    "dailyCalorieGoal" : 2450,
+    "goalWeight" : 176,
+    "height" : 70,
+    "id" : "profile_001",
+    "unitSystem" : "pounds",
+    "userName" : "Jordan Avery",
+    "weight" : 182.2
+  },
+  "weightEntries" : [
+    {
+      "date" : "2026-10-16T07:00:00Z",
+      "id" : "weight_entry_001",
+      "weight" : 182.2
+    },
+    {
+      "date" : "2026-10-14T07:00:00Z",
+      "id" : "weight_entry_002",
+      "weight" : 182.72
+    },
+    {
+      "date" : "2026-10-12T07:00:00Z",
+      "id" : "weight_entry_003",
+      "weight" : 183.23999999999998
+    },
+    {
+      "date" : "2026-10-10T07:00:00Z",
+      "id" : "weight_entry_004",
+      "weight" : 183.76
+    },
+    {
+      "date" : "2026-10-08T07:00:00Z",
+      "id" : "weight_entry_005",
+      "weight" : 184.28
+    },
+    {
+      "date" : "2026-10-06T07:00:00Z",
+      "id" : "weight_entry_006",
+      "weight" : 184.79999999999998
+    },
+    {
+      "date" : "2026-10-04T07:00:00Z",
+      "id" : "weight_entry_007",
+      "weight" : 185.32
+    },
+    {
+      "date" : "2026-10-02T07:00:00Z",
+      "id" : "weight_entry_008",
+      "weight" : 185.83999999999997
+    },
+    {
+      "date" : "2026-09-30T07:00:00Z",
+      "id" : "weight_entry_009",
+      "weight" : 186.35999999999999
+    },
+    {
+      "date" : "2026-09-28T07:00:00Z",
+      "id" : "weight_entry_010",
+      "weight" : 186.88
+    },
+    {
+      "date" : "2026-09-26T07:00:00Z",
+      "id" : "weight_entry_011",
+      "weight" : 187.39999999999998
+    },
+    {
+      "date" : "2026-09-24T07:00:00Z",
+      "id" : "weight_entry_012",
+      "weight" : 187.92
+    },
+    {
+      "date" : "2026-09-22T07:00:00Z",
+      "id" : "weight_entry_013",
+      "weight" : 188.44
+    },
+    {
+      "date" : "2026-09-20T07:00:00Z",
+      "id" : "weight_entry_014",
+      "weight" : 188.95999999999998
+    },
+    {
+      "date" : "2026-09-18T07:00:00Z",
+      "id" : "weight_entry_015",
+      "weight" : 189.48
+    }
+  ]
+}

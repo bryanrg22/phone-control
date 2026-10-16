@@ -1,0 +1,92 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Set a new alarm for 6:45 AM labeled 'Gym' in the Clock app and confirm it's set.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "name": "openApp",
+    "arguments": {
+     "appName": "Clock"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "response": "Opened Clock"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+    "name": "tap",
+    "arguments": {
+     "x": 39.5,
+     "y": 94.1,
+     "description": "Open Alarm tab"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+    "response": "Tapped (39.5%, 94.1%) - Open Alarm tab"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/63a645611a93b85260eea901e2f6c163c34e89122211357df4fd2d2211bb6908.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"Clock\" at (50%, 50%) size 402x874\n- \"Edit\" at (11.7%, 9.6%) size 54x36\n- \"Add\" at (90.5%, 9.6%) size 36x36\n- \"Alarms\" at (17.9%, 16%) size 112x41\n- \"7:00\" at (12.8%, 22.7%) size 63x38\n- \"Morning run, Weekdays\" at (23.9%, 25.8%) size 152x17\n- \"7:00, Morning run, Weekdays\" = \"1\" at (87.2%, 23.6%) size 63x28\n- \"9:30\" at (13.1%, 31.4%) size 65x38\n- \"Client call, Weekdays\" at (22%, 34.5%) size 137x17\n- \"9:30, Client call, Weekdays\" = \"1\" at (87.2%, 32.3%) size 63x28\n- \"12:30\" at (14.6%, 40.1%) size 78x38\n- \"Lunch\" at (9.9%, 43.2%) size 40x17\n- \"12:30, Lunch\" = \"0\" at (87.2%, 41%) size 63x28\n- \"6:15\" at (12.4%, 48.8%) size 60x38\n- \"Wrap up, Weekdays\" at (20.9%, 51.9%) size 128x17\n- \"6:15, Wrap up, Weekdays\" = \"0\" at (87.2%, 49.7%) size 63x28\n- \"Tab Bar\" at (50%, 95.3%) size 402x83\n- \"World Clock\" at (18.6%, 94.1%) size 100x54\n- \"Globe\" at (18.6%, 93.2%) size 27x27\n- \"Alarm\" at (39.5%, 94.1%) size 100x54\n- \"alarm\" at (39.6%, 93.1%) size 26x28\n- \"Stopwatch\" at (60.5%, 94.1%) size 100x54\n- \"stopwatch\" at (60.4%, 93.1%) size 27x30\n- \"Timer\" at (81.4%, 94.1%) size 100x54\n- \"Timer\" at (81.3%, 93.2%) size 27x27\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: openApp(Clock)\nStep 2: tap(39.5, 94.1, Open Alarm tab)"
+   }
+  ]
+ }
+]

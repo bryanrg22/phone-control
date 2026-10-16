@@ -1,0 +1,558 @@
+{
+ "model": "gpt-6.1-sol",
+ "input": [
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Task: Set a new alarm for 6:45 AM labeled 'Gym' in the Clock app and confirm it's set.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+   "name": "openApp",
+   "arguments": "{\"appName\":\"Clock\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+   "output": "Opened Clock"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+   "name": "tap",
+   "arguments": "{\"x\":39.5,\"y\":94.1,\"description\":\"Open Alarm tab\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+   "output": "Tapped (39.5%, 94.1%) - Open Alarm tab"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_5T9eanVBQp6c8fnR2GR2S90F",
+   "name": "tap",
+   "arguments": "{\"x\":90.5,\"y\":9.6,\"description\":\"Add a new alarm\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_5T9eanVBQp6c8fnR2GR2S90F",
+   "output": "Tapped (90.5%, 9.6%) - Add a new alarm"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_0a7196b908cd6d13016ad1e22fba6087d08ede259272eff95a",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eIy--rtWRftsGqYya-yAYNUI0B4ClUuOFlZHEW_k57qr1CVQy9Swp6NZkQ9FVK6EBHgwUSH60alIY6SVSHhyofynwc3wdNW8_4Z9hJ0r2UaklDJAQnSVSOtNT_5y2Q8VfTSFBpOXD1Tpwa5K61mUAC9xa0M5JAdpymynvdzHf3NoHUKNYk9BjzHTZZ2181R2xvumnxO2lvVECtbSiNs2OOTqYUeiEy_i2peLmG1Icf6h415o2TkNRhJiJPLpLraRQ1xyX3ODWeniGCXRd4HOwJshn-gratyMlI6gLGBYVgQTrGlqHkxsmSUShFnl6lvglx0XgOXsbaw4vVi9LDb6ejdzPXQ-o1FUwBhDLHQkYGZ6ei4sRak9U-9MA4K8JJqpe8BqQgSClb4rGm1bwalU4beTjGvgZ_xgUdfSjps6a1tZ6OQDiHxYlSK0RrNoIjRwy9_ZYQe6rEy3mOUZ-Bo77BB8ylIKd90JzCE_HzgoSciubOk7fInVMuIHK0LhM7tCspR3Li_xAqRN2nWYLDWGPzMsAGoPF9XSpv6Pc5zzdlTwAgYo0CyUCe3WQDxshP84FI0gQeu0afLBIpNCTb88eItBZgAEff8Dwnja57Z0dcmgYbjO-sMwj97edup094m16Oqj98LFJWANZ-XBU-rTqQ3FGf2fEzMVIM4sehmNeYST68VatxYMQ8uLkrzRX3L0lb2J0Y29pqLz34ujXepLT8XPEoZcqbair6xjS8vK98hX4xx3Uot5uH53sM4GKfGoadWwiPg7FxwIR8ckoV5eiVaurF7sI31LBnI_DrMgX45emaxiYVlMg2QHTceEYIBGlqFeCD0y6hVqa-xkcpTNrESvF_doJC9OfHnP0xdQWUWjJAMvwd0uKLLiod2gv4vzwiLGX7zlq97AFugu359TOCfP6AGaazU_N_2YK60hDSW1gMSxfgH8iFkyMV1H9Tqy_4HDC3E46OF6tSAKg7Kr7M4NdrTSpR1SMLUzOGURHvOt_sIYsJXssEKQJByhgqBje3T-98Of_I_8G_YBW1_Hln4hFQzxAGrm4wD_Wg_Rci4biLCF8spzJh1vNA7H1L0C88d_lwnDjtZNR1iMjWZNXQPf-yADpGtWBa_kJeekfF2Ge56XlEEbYV4GTKbtCaJQRJGJZSJDhZyHluPNhCO8gVZKrhN1-EvjOGNhtZy97Rq-rsdIIrmhYvVAuaotnkZqUqbLPl0gkUwfIggH-00ZCUm3_WTqcOKqUnRgIWvv91Ns2gC1emMTTZBRcMZsHEc_HtRN7QimF3O5AKozLnzhH0h_5KR2kHVt-r5exZV6xlBZFOFr6hMxwj94L3UyzZb0_PccCM_h7Ymz3mp7tvoNg0jzn6hgtWKiIERxxXV7iw59riPhtLBIW407b3-Aub1r6l0Unr-YOssuHNGI789TIUoJmcyiRh1fqMsyTSbtyEj2WpZzVPVWr3_m6VjcFN0GVHXgdId6zXVzarN6xt4QRa-uM3F4Gmx8p8VVxchXLEZsPRYNmzp9ihxExPHCt5pl89h-jsi4IIzB03kE-FDNMHAp_lE8u5P06JGA2BVK9i56Ba_YvIAJdqSCUVvwYf32IKsqdQ3sOngKDqYewrtvJAJX7Bz9W0B_VCnQQDPKvtlxoTeJseQeOOv13Rt8_WKuUqYeR6Znd4ts2WVa1x2HPZh2z_Y68G2yxbvHXuEWT0JYD0j5942h_X7Ea0ixOrjOufusaSkHgvtvmGGNSNp0ZTO-p5dT5kWRN0PZhF2qM7koD4aVy4TeHBIXiL9DMPDF8nbv2HnZQ9o0icSemFemah3udG3nEipRG0_Kk0WdmCH699K7U0NAwZnyNTd932nT4zp6oRMcsVhI9nDBACnAEWEnMlGZcG4p-R25KvVDiKtG5rddLFU0iGKZYWZUEsr7qgPMgFR_clc0xvhjhxbKP2-Hm5uyQdkp1ov2ITJLbmj4ERwjNRpFLMkQxxS8HMFQRDudWMO44t4m_WTP9sapz3eYHnvAmvEHLoDtx-KMIqThZiN5qENXGrZpTzfEPuPL6_FlDY0RDLLYVQyfl96SopQ_hmsxgfEBGnJvh4eLHyf4YFuTNuVMtrFO9Lcy_8ryFgjO_PieLG0MuZjOI5iO4R4tdSMjyg_WmEVzZwAMy-zKHY=",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_lBPhheVs8igKhZ0iRdUSDFij",
+   "name": "swipe",
+   "arguments": "{\"startX\":34.5,\"startY\":35.0,\"endX\":34.5,\"endY\":17.0}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_lBPhheVs8igKhZ0iRdUSDFij",
+   "output": "Swiped"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_0a7196b908cd6d13016ad1e2355b4487d09e36c70ae3e70bdd",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eI3gk-AerjFbWx2gVfTc6t1BIkxEBNgWUeA4cHmzsya4vJDQve0Dg8mHTvtg1_kU_-9yfQ6uiaGAuBgqhEAz-XLeRLwwIO-rdmCLtZRVfys3FE8tMJ_yhHs4lzazeNYVg3jd-FOpjE9KAS21m_z1Um0sQmShvS9zyyhNw5doOtk5T0AvkNX7b0R5EDVnM5KDg-1Zuay4BezTltlne8rwA185EDx7ETsDC33m7KjW_xrXs_EsvKFuQ3rVtaMNcpqE96RAtkyvAUpia9soXvdZiCvpzEBCg0q4L-gLWkf6PAjpxbyvjSj1ZUiob7MNvY7Srz3-xqP6wn6Z7aa4iSDtHOlmT4Rthmbksw_7qbsbL_kEfRY0HTBKNZxj9fF8DSJlSaLTfmmE6FPo8lvGhPdDmmffzbz69E-6szytdkgorDXyfyVfM8w9mQkMHe9FN8MgP5b7nAnNl5vetA-KV75M2nG_fDi7EHy7u76eAYMtBEQrraGa68ikGWZzEaW0FVQGicGsYvWwDkKE1HbzBbdGaeKmGnl54MNSn0iffI4tg_7QD_Jy8XEYQBEsggGkC4ZCCZ7GbF8cgGwrOPNMFNttTvxy1ycE4REukdI6gUDzazYfH1z0ONdzYwayQiTmzDXSynQni8jQ5BfZR8nkvoz0Z2Qb-M6UdOXo_v5sTPPho8yUzizvy-ozM7qfRpaT7_54cu39Rg0s4Df0F8J7Dg08N9yWfFT_ym7lUXAVXyFdYK1b2dFJHWIkJd5F6AF9ee-uBydZOQ_JwuUC2UpONsexHKf8Nmm5jKu4oBmRwfDIBtrBpOp-BcYn8Ybfcvn_z54FrJcqsNl-CZgztN054jQxMwtQqamh33a3fHKiJ0Uwu-HPXFme377wPgBSoYxUkKYlib0ru79dEp_WrX4qfklQzki-sgj71p_hc3hSpapwTZX0l9goz9YpwDCWujbpXRRjfIDCKD_9BGY6kLiTt-zDyZc5lnH5LLw0ZupwOEKGbtsKiT5Q-yqWtznHeZ1VyZc-m1jA4nTRYLp6JumCo_ZrilQdPMXYxdhBibG6YiVttr7QiA0fX7KgQgc6BMxxACB-zKh8iP2oSHy-gjPLsYnGxzlAMN6GMKbBKOUDG_RqTelpw_xuG09Cp4XCVt97XXWRNKzi8XWxrGQhJmmTn0_-AJ6ANsFw3mC9Jat8o8HmVHba8j8Va0r0_XFjubuWfEkh3e5_IQLFQgsLzdBH0A6SsnF8ym_N2FdQ7-wc1WLjazS9UoWI33QCohkj-PxIMYIUV2ynxweFcRcnuaBe8EpZOi7uKbxpeaNhu8fxQj0ZIMG0n8zl3ElkXRp9Df3wzz2RMX74WvbOWS3OcbjbifvaLWKMXAZFw95x5jial0vhSlcVjAF2kS1rkt1nqgb3-ePCBHn-Bic771koQRJ8dcS8ueFBxKytfzWTCz_BpFD3nxdnsMtQ0rliHHmfUPFAIJqqOcnEojvEGmuQO31hM0zhk0KTWMYKnJauj67YsSO5Qx-0jqkbKu0Q8_tvInMNh6Fdv7u5EmTTy_I8OKqJWQJ8hRTmh_xQZNmkhHMQX1Kt1ipKGrA87E4gm7xkGc3z8HAVsGoCJfplhidBLAih3OjUHlTLtyoDB2I5OQgP8GaDAohRO6N_7BKI2a5JsvTV4JODd6D965rzeqq4wWD-FvDUeaXtGbrzbQKUTh_xv4wsjnnUXYYMg0rExgAF5_ojT2xDUfV-QK5GKoo0tjSh8DLHBv2IWlovnk5e5UUmuYcOS0mo_A2x2RbSZYNAgsdPogKuj4UDWuuNXxJlD-yZ2g9iVZmxEh0sYWPiU_vI9eb1wBrRJWSHfYk1JVQXAR6NE5yn-4VbEF7ywjtg9AkdOUcksM-87ek54P1AneP_HFc1qvMlY2fMEvQydoOQvH8WVuIyA7-8yTz616-S2LkZ87dNYpQCkAXOvatO7DZLp0fMXPuDwZ7rTdFeTHJ2WgRAuF1iSc1iKPUeC3qZhSufRMqMVo1iGJN5dwpbFNBm6dyS8taB6mSmtncTvzoHqOuqmvBKzQKRsLUrW5RpQC7oygACaovpEFtBWyyicSQdL3qOO6NIPbyELAlYl0W3A8cSICzF5bSdm3zgUaeZY5eLnZaYn6UD4Ti4syCmKitNM3u1_CPmMXzW8k5bY5ymqXA6ouphinMmiTpt5n5Q-S0nH6X_5eOlA==",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_8X07nEj16BtN4Hu8ZOpZie9K",
+   "name": "drag",
+   "arguments": "{\"startX\":34.5,\"startY\":25.0,\"endX\":34.5,\"endY\":35.8,\"holdDuration\":0.1,\"dragDuration\":1.5}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_8X07nEj16BtN4Hu8ZOpZie9K",
+   "output": "Dragged from (34.5%, 25%) to (34.5%, 35.8%) — hold 0.1s, drag 1.5s"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_0a7196b908cd6d13016ad1e23bf38887d0b0d9736a57e2509b",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eJBUDScEzF25xDkrQ-zetUegPg4-jFXrAzzmh_DNvbYVUtkehQLHOY_lHUW684o3oerM8Wrv1GkeOhDMaITNqEzZV-dqX0ffrqB4uRsF6mCW-H9JR2blB1xw8Jn5rZne7nzTAXkZa48mpbvWK6iSeHGa25ryJG5d8cVrP0vbGfNqpXUblLMAz15KdyQawieuhn2Jp1Zi7z8QTFrJEOJKTJ4QZ2x8DBw0m9uMSJ7Fb6zMYHjBn9X5qmtbPBUWQiRGN7OOTnZa6gr7GQLaUlR6mR5_TA6_-eOm30UiI6CNDSzGGEnfIHvq3Z45rLUsvusqie5Dak9RlSeWZD-OhODW8m9jc44SJo6UwylAwgcIan8kNTxnt223WfukuOkf1TfF1W9zUn4F1HsrNPQjfeAdEeHz82ZVBl1x1FpQfC9KRUgD4F6gkuMe3Jj0lx83lFDEHpbtNJlqHO8bjruQQUWena8Yc3u-aUYb3kzYQOkQpwOJPae8QiGYm2DllVgPCB0k4XhT3LcHlDrT_uZ5pqM-CU_bkzXjkJ3EATiOmjbNCplzwl_9Jw8a0uX3qEsJn8goRjqcABA5V5XEgAp2YLdtGjO9izZhJt_JU5Qx4fMNtfRFqdKa66OqxNJ95okmXu0Lq46-93lxRlfalAtpjKwN1Iavg3fImIJSno6AfwBKG6BFDlkbcrONrFytn4l-hjYvvm4RgNZQyfYimd3q1f9CoeVabd7vvY8r5sJjv6QrY0aRLtAuuCdSC7wH7AwBn1F71Tk4MU26vuuBY-A0rHQTb41hbFmCXQpquM7XcWVSVqdr18XMkrzICevuTLbTUDtYC_Q67QJPUgS8egO_NIgVOgIwMYC4qViyUg4hHYcwT1QmGTez0IKWEUIk3KqtjPY1xjBagE82jg_LuqqUQaVCUUjDjl8feOj9Phwu0soVOVHcejC_toOS_1TQfBMR79ggfIYMnZFqm0IPkJ9wthkilp4I4HY_cz9BC7w9Fk-ooFi12oDiXWnVv5Hylra3Og3-fsTiXUqTi_C0fGKIU5qbEUNANSLECtRlqhrZ-DzgbLmCHlc31T6nCcthzaubpZHq2O21ZlIII1ibGEoEt6CHnUpCdJkWnjASUdYe9c0FzRmm5eCSn_dte2xJ6ucd3y_aSMOest3WekPS-5AtKsWYXagbnJ3_XbjgOCP6ijYYo-AjrJXz2_xaNu94OBhJjjj3AdB4jH6CaZpJx1OMoDgYKCSLl90-zD-Yi14wjJi4RYr-SWIlpkQqY2NMle8pFUkMKzwTuw_4_zxZhTFiPzG3FE6krgXiBDfCnL5DGDR3p6XpbNSPV0oEMur6krRCjI4w5UgCue7Yw-PKjCT_alPGPwXP4PxKrIHrWw305FdbzCsHh0VhUVtAXTBN2E17pFIqK7gHNYskvR0eD9iUm_A2iNh-sqj1mb7OX7cD70EwWwAEGn0PhSi5h145CL239Jg8JsbcaXN5XokMU3mcNRuPjtx9CXnMXkpf4iPS49WG068XXX4QSbYgAK9DvzgD2McFHxFr59gjDGF6E5pHk1kBHb3aeKHtMX1lm6D9L1grfTtKoiCXz9XcqVUXiea2YWK9RTxJ-hoFf5Iaqf8bu_aNYau_OvwASQQtDqCh4wO1XNHDpi5QxTCV0h5FIORrEBBEyCX9DbVbMfSHHe1FriQ73fw0OlW95Cbp_TyIwb0abWk566q7xDGgIJqIc-3Tjn1KRHs-UTbvNBOyerKbVS8JLSSmR-rloSdV43JJ2JnnMIIgjKKdvMMFo8upHCJYPpk18L_coAyImmCvbrZQCNfeBXtxNPnk6pDsk5KvWrxXWKn2Zgypk7VP5uwW1wEgwdH2drarZpkIs9yyvrrIFCVDVywk_pdcfskvMQm1nHn9JNV7GOK4xgiAdqab9MEV8ij95eMU4QUAy3RNt-eSbW9hymM1aIvblfl2liaIW6RqldMh-c923BpxHhPm0zGeXBL4hTisFp3Ns1kfZRUqoGr-VXgTeQIjW9K6DxCpy3Q394w9_vqX6VdkS3NkUsfbr7GCKK5pWOJQjFY5IsVYxQSY4SUMQZYRBTJz-3bRTV2jUSluU72-kXT0DKIvW01F27hmI2qYgSE1d6toUpLmzlM77ARc85QVaTI4d1j5-1-EhU8xuVhmW9zPbkrxtWLShNzKR8z2MEB9G83x6ZgeH9m9Xc6x27Je4W3Hvbrhnu96v0R8ui7zPrEJCVU8A7kY1xkpK4pZDdjtZT3tq5uRjzSy6oYCx2D2G-ZvCQxiRy-eRQ9FPvbhKeK-68816IAjeCYrAgOJDS0qinst2CeAAcyAoil89ErAZEZYWgIf2z1cxk63890j2Vy9NgBOIoivMH_Sbld5j7-vFR3BFcEJVBpN6NZX3IWpVrsU4ifBY2ulyBW7wpIRMnN4sXH7gpmIBz8lxb9xQdKUZGHmfPeE8AxFZzMqcpK6-sFKo7KGNIrXydqeM86xhRIljTVa_YiGtapL7kLMwrFjKCzJCax6NkWQWz9UnSH7D__nrblVKv_8jJoOzYeJCeopCffg17Ix-8tgw-u_4DPC4Esg9NrK8OiOiZo6TkhhS3k8Nr64EN6E4mNlx4zXS5k2QJHsCzOHTmCgG6x-F5fucQnwy2q1yQ2Q1K2BjKgctV7CpOXcBVDcLHtip2CPWcXujjPSwSGWyToO_eD-Bo9haMVR8-krlWTGATGQaPdibk23c5weaWNAapNvGn43hVD16AO0u2s89I47ptBTVsd-qa1rT_TBIKXE353tw3GQlJAlPPpwF7p2k1yQo3_MvY5JGX7B_Twy0bRtrPpRc84ecKK3ifHwxGLei_smjcuLirsiwPP7O0gVTq6NxT36xzuQ9IpkXZA6fUYGmGCla-6Dj-rJ6YHoSbi3rCiDOxtOXpZVBvAUIoSBWDCPVd7l1shDWOunyiqC6-ckaEaSic4342BDnumZFphPZBhAzrgwSoXNdI55Dvg8lh_M7jK0sh6NGAxAkajvtoDqYrp46mIPkXy5gOs0EW8QBj_3ghYVF1euqUMAqzuOKXouJjW1lrhhodj35nGy03dan08oqQjGaPzi69XDrholNjsdRqlXoDRHDE7wFG8aTLvgnGG1qGX6ZTGypc06cM5ANJIkPVOOZ4Wh2pSe2cKCiqIRjqMGDVK6PYV1z11ULWbQJPim4TYajBVxByHKpIjN6ZKTLhf-bhozPu6OPUdhSRxEDMqjmKM-O27jS-wbLBEdqVTcFxAAOnG_3SP8piMVE7r",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_P63ZtETuNXkLl7n304WSVBlG",
+   "name": "tap",
+   "arguments": "{\"x\":34.5,\"y\":24.8,\"description\":\"Select hour 6\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_P63ZtETuNXkLl7n304WSVBlG",
+   "output": "Tapped (34.5%, 24.8%) - Select hour 6"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_image",
+     "image_url": {
+      "$blob": "blobs/sha256/df88a0c570c0fd7b8262dca6b273a35a03d514743ddefb1f70aa582b8659e64e.jpg"
+     },
+     "detail": "auto"
+    },
+    {
+     "type": "input_text",
+     "text": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"Clock\" at (50%, 50%) size 402x874\n- \"Cancel\" at (14.7%, 11.4%) size 78x36\n- \"Add Alarm\" at (50%, 11.4%) size 83x21\n- \"Save\" at (87.3%, 11.4%) size 62x36\n- picker wheel = \"6 o’clock\" at (34.5%, 28.4%) size 55x291\n- picker wheel = \"37 minutes\" at (48.8%, 28.4%) size 50x291\n- picker wheel = \"AM\" at (64.3%, 28.4%) size 65x291\n- \"Label\" at (9.1%, 44.4%) size 33x16\n- text field \"Label\" (empty) at (50%, 48.7%) size 362x44\n- \"Repeat\" at (10.3%, 54.4%) size 43x16\n- \"Never\" at (50%, 58.7%) size 362x44\n- \"Never\" at (13.3%, 58.7%) size 43x20\nUse tap(x, y) with coordinates above for precise tapping."
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Context] Action history:\nStep 1: openApp(Clock)\nStep 2: tap(39.5, 94.1, Open Alarm tab)\nStep 3: tap(90.5, 9.6, Add a new alarm)\nStep 4: swipe(34.5, 35, 34.5, 17)\nStep 5: drag(34.5, 25, 34.5, 35.8, 0.1, 1.5)\nStep 6: tap(34.5, 24.8, Select hour 6)"
+    }
+   ]
+  }
+ ],
+ "store": false,
+ "include": [
+  "reasoning.encrypted_content"
+ ],
+ "reasoning": {
+  "effort": "high"
+ },
+ "instructions": "<SYSTEM_CAPABILITY>\n* You are an AI agent controlling a real iPhone running iOS 26 or later (with the Liquid Glass design).\n* You see real iOS screenshots and interact with native iOS apps via tool calls.\n* You understand iOS UI patterns: translucent navigation bars at top, tab bars at bottom, swipe gestures, modal sheets, the status bar, the home indicator, and standard Apple app layouts.\n* Coordinates are PERCENTAGES (0-100), NOT pixels. x=0 is left edge, x=100 is right edge, y=0 is top, y=100 is bottom.\n* After EVERY action, a screenshot is auto-captured. Verify it worked before moving on — do NOT call takeScreenshot again if you already received one this step.\n* For ASYNC results — a reply/message loading, search results, a network round-trip — call waitForText(\"expected text\") to poll until it appears (one step), instead of repeatedly screenshotting to check if something finished loading. Do NOT re-confirm the same screen multiple times; use waitForText.\n* ALWAYS chain multiple tool calls in a single response when they are independent. For example: openApp + takeScreenshot, tapText + inputText. Do NOT make one tool call per response when you can batch them. This is critical for speed.\n* The current date is 10/16/2026.\n</SYSTEM_CAPABILITY>\n\n<AVAILABLE_APPS>\nCarPlay, Files, Emoji, EscrowSecurityAlert, Fitness, Color, Health, Maps, Contacts, Messages, Astronomy, Wallet, Passwords, Kaleidoscope, Unity, Weather Wallpaper, Settings, Pride, ShortcutsActions, SystemIntents, VoiceOver, AssistiveTouch, Voice Control, FullKeyboardAccess, Live Captions, Calendar, Safari, Photos, News, Reminders, Shortcuts, SpringBoard, CalTrack, Cinephile, CityRide, Clock, CloudDocs, CloudDrive, CloudSheets, CloudSlides, DineSpot, FreshCart, LockedIn, Mail, MegaMart, MyBank, Notes, QuickBite, QuickChat, ScoreZone, SkyTrip, SplitPay, StayFinder, TasteRank, TeamChat, TicketBox, TrailBlaze, Weather, maestro-driver-ios, maestro-driver-iosUITests-Runner\n</AVAILABLE_APPS>\n\n<STRATEGY>\n1. Use openApp to launch the right app for the task.\n2. Every screenshot automatically includes UI elements with exact coordinates. Use these coordinates with tap(x, y) for precise tapping — do NOT guess coordinates from the screenshot.\n2b. OCCLUSION WARNING: the element list does NOT know what the keyboard covers. When the keyboard is visible in the screenshot (it appears after typing), any listed element in the bottom ~45% of the screen may be BEHIND the keyboard — tapping its coordinates will press a KEY instead (corrupting your text). Call hideKeyboard FIRST, take note of the refreshed layout, then tap.\n3. If you need to refresh UI elements without a screenshot, call getUIElements.\n4. After completing actions: takeScreenshot to VERIFY the task is actually done, then taskComplete.\n</STRATEGY>\n\n<IMPORTANT>\n* iOS Messages: the SEND button is a BLUE UP-ARROW circle INSIDE the text input bar on the far right. Its position changes when the keyboard is open — always use coordinates from the auto-bundled UI elements, NOT hardcoded values. Do NOT tap the text effects/formatting button. To message a specific contact, find their existing conversation first — do NOT tap \"New Message\" unless they have no existing thread.\n* iOS Photos: the MOST RECENT photo/image is at the BOTTOM-RIGHT of the grid. Scroll DOWN first if needed.\n* iOS Maps: the search bar is at the BOTTOM of the screen, not the top.\n</IMPORTANT>\n\n<RULES>\n- If the same action fails 2 times with no change, your coordinates are WRONG. Check the UI elements list bundled with the screenshot for exact coordinates, or scroll to reveal hidden elements, or try a completely different approach.\n- Use openApp to launch apps, then navigate UI with tap/tapText/inputText\n- Prefer using tap(x, y) with coordinates from the auto-bundled UI elements list. These coordinates come directly from the view hierarchy and are exact.\n- Use tapText when you know the exact accessibility text. Use getUIElements only if you need to refresh the element list without taking a screenshot.\n- CHANGING A FIELD VALUE: to set/edit/replace text that a field ALREADY contains, use replaceText(field, value) — it focuses, clears, and types in one step. Do NOT use inputText for this: inputText only APPENDS, so you end up with \"oldvalue\"+\"newvalue\" and then waste steps trying to select-all and delete. inputText is only for an empty/freshly-focused field.\n- SYSTEM PERMISSION DIALOGS: a system popup (Allow Notifications / Tracking / Location / Contacts), usually right after first launch, is NOT part of your task. Dismiss it in ONE tap — tap \"Allow\" / \"Allow While Using\" (or \"Don't Allow\" only if the task implies declining) — then continue. Don't deliberate over it or let it derail the task.\n- BEFORE calling taskComplete, you MUST takeScreenshot and verify the task is actually done on screen.\n- If the task asks for INFORMATION (a count, a name, a price, any value) and the answer is visible on the current screen, call taskComplete IMMEDIATELY with the answer in the summary. NEVER state the answer as plain text without a tool call — that wastes a full extra step re-deriving what you already know.\n- SCREEN UNDERSTANDING (do this BEFORE every action on a new or changed screen): (1) Describe what app/screen you see, (2) Read ALL visible text — especially instructions, labels, and placeholders, (3) Identify interactive elements — text fields, buttons, toggles — from the UI elements list, (4) Determine the correct interaction: should you tap, type, scroll, or something else? Only THEN choose your action. This is critical for unfamiliar apps, games, and non-standard interfaces.\n- UNFAMILIAR APPS: If after reading the screen you still don't understand how to interact, use null to look up how the app works BEFORE acting. Do NOT blindly tap UI elements.\n- GAMES: When playing any game, BEFORE your first move: (1) null for strategy tips specific to this game, (2) SCAN the full screen — identify your resources, cards, pieces, score, and the opponent's state, (3) Plan your first move in 1 sentence, then act. For real-time games: DEFEND FIRST — if under attack, counter the threat before attacking. Never cap resources — if at max, spend immediately. Speed over perfection. Do NOT call takeScreenshot between actions — execute 2-3 actions in one response, then the auto-captured screenshot after your last action is your verification. Use it in the next step to verify AND plan. For card games like Clash Royale: ALWAYS use drag to deploy cards directly from your hand to the arena — never tap-select-tap-place. Batch 2-3 drags per response. For turn-based/puzzle games: think 2-3 moves ahead, eliminate impossible options first, track what you've tried — never repeat a failed move.\n- WEB SEARCH: For factual information (weather, scores, prices, news, how-to, definitions), ALWAYS use null first — it returns results without leaving the current app. Do NOT open Safari, Weather, or any other app just to look up information that null can provide. Only navigate to an app when the task requires YOUR personal data (your calendar, your photos, your messages, your contacts) that isn't available on the web. NEVER open result URLs on the device — read the search results from the tool response.\n- CRITICAL — askUser RULES: The user's command IS the confirmation. If they said \"text Emiliano hello\", JUST DO IT — do NOT ask \"do you want to send this?\" Only call askUser when: (1) contact is ambiguous (multiple people match), (2) purchases or payments, (3) deleting data, (4) the task is genuinely vague and you need clarification. NEVER re-confirm an explicit command. NEVER parrot the task back as a question.\n- askUser vs askUserText: Use askUser (closed, with options array) when the answer is a small enumerable set — Yes/No, pick-this-contact, pick-this-category. Use askUserText (freeform, with optional hint) when the answer is open — email address, OTP code, search string, password, any text the user has to type. NEVER call askUser with a freeform question and no real options; that produces an unanswerable prompt for the user. If you're tempted to write options like [\"Type the answer manually\", \"Cancel\"], that's a sign you should be calling askUserText instead.\n</RULES>",
+ "tools": [
+  {
+   "type": "function",
+   "name": "openApp",
+   "description": "Open an app by name. Available: CarPlay, Files, Emoji, EscrowSecurityAlert, Fitness, Color, Health, Maps, Contacts, Messages, Astronomy, Wallet, Passwords, Kaleidoscope, Unity, Weather Wallpaper, Settings, Pride, ShortcutsActions, SystemIntents, VoiceOver, AssistiveTouch, Voice Control, FullKeyboardAccess, Live Captions, Calendar, Safari, Photos, News, Reminders, Shortcuts, SpringBoard, CalTrack, Cinephile, CityRide, Clock, CloudDocs, CloudDrive, CloudSheets, CloudSlides, DineSpot, FreshCart, LockedIn, Mail, MegaMart, MyBank, Notes, QuickBite, QuickChat, ScoreZone, SkyTrip, SplitPay, StayFinder, TasteRank, TeamChat, TicketBox, TrailBlaze, Weather, maestro-driver-ios, maestro-driver-iosUITests-Runner",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "appName": {
+      "type": "string",
+      "description": "App name"
+     }
+    },
+    "required": [
+     "appName"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "takeScreenshot",
+   "description": "Capture the current screen. NOTE: screenshots are auto-captured after action tools (tap, type, etc.) so you usually do NOT need to call this separately. Only use for initial observation or to verify final task completion.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "getUIElements",
+   "description": "Get all UI elements on screen with their text, IDs, and positions. Use this to find exact buttons/fields before tapping. More accurate than guessing coordinates from a screenshot.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "waitForText",
+   "description": "Wait for text / an element to APPEAR on screen, polling up to N seconds in a SINGLE step. Use this for ASYNC results — a chat reply loading, search results coming back, any network round-trip — instead of repeatedly screenshotting to check whether something loaded. Returns as soon as the text appears, or times out.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string",
+      "description": "The visible text / accessibility label to wait for"
+     },
+     "timeoutSec": {
+      "type": "number",
+      "description": "Max seconds to wait (default 10, max 30)"
+     }
+    },
+    "required": [
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "tap",
+   "description": "Tap at screen coordinates. MUST be percentages 0-100 (NOT pixels). x=0 left edge, x=50 center, x=100 right edge. y=0 top, y=50 middle, y=100 bottom. Example: center of screen is x=50,y=50. USE DECIMALS: 1% is ~3.9pt wide and ~8.5pt tall, so a whole-number guess can land OUTSIDE a small control (a 44pt button is only ~5% tall). Give at least one decimal place (e.g. 43.7), and prefer coordinates from the bundled UI-element list over eyeballing the screenshot.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "x": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "X percentage 0-100, decimals allowed (e.g. 43.75)"
+     },
+     "y": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Y percentage 0-100, decimals allowed (e.g. 72.25)"
+     },
+     "description": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "x",
+     "y"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "tapText",
+   "description": "Tap a visible element by its EXACT accessibility label (not fuzzy). Call getUIElements first to read the exact label, then pass it verbatim.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "inputText",
+   "description": "Type text into focused field. Only after tapping a text field. NOTE: this APPENDS — to CHANGE/REPLACE an existing value use replaceText instead.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "replaceText",
+   "description": "CHANGE the value of an existing text field in ONE reliable step: it focuses the field, clears its current contents, then types the new value. ALWAYS prefer this over inputText when a field ALREADY HAS text you need to change (set/edit/update a value) — inputText only appends, which is the #1 cause of getting stuck fumbling select-all/delete. Pass the field's EXACT accessibility label (from getUIElements) and the new value.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "field": {
+      "type": "string",
+      "description": "Exact a11y label of the text field (from getUIElements)"
+     },
+     "value": {
+      "type": "string",
+      "description": "The new value to set (fully replaces the old one)"
+     }
+    },
+    "required": [
+     "field",
+     "value"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "pressKey",
+   "description": "Press a keyboard key or hardware button.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "key": {
+      "type": "string",
+      "enum": [
+       "enter",
+       "return",
+       "delete",
+       "tab",
+       "space",
+       "escape",
+       "home",
+       "lock"
+      ],
+      "description": "Keyboard key (enter/return/delete/tab/space/escape) or hardware button (home/lock)"
+     }
+    },
+    "required": [
+     "key"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "scroll",
+   "description": "Scroll down.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "swipe",
+   "description": "Swipe gesture (quick flick). Coordinates as percentages.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "startX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     },
+     "startY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     },
+     "endX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     },
+     "endY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     }
+    },
+    "required": [
+     "startX",
+     "startY",
+     "endX",
+     "endY"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "drag",
+   "description": "Drag-and-drop: long press to pick up, move slowly to destination, release. Use for moving cards, rearranging items, drag-and-drop games. Coordinates as percentages.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "startX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Start X percentage (pick up)"
+     },
+     "startY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Start Y percentage (pick up)"
+     },
+     "endX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "End X percentage (drop)"
+     },
+     "endY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "End Y percentage (drop)"
+     },
+     "holdDuration": {
+      "type": "number",
+      "description": "Seconds to hold before dragging (default 0.5)"
+     },
+     "dragDuration": {
+      "type": "number",
+      "description": "Seconds for the drag movement (default 1.0)"
+     }
+    },
+    "required": [
+     "startX",
+     "startY",
+     "endX",
+     "endY"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "hideKeyboard",
+   "description": "Dismiss the keyboard.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "typeAndSubmit",
+   "description": "Tap a text field, type text, and press enter/send — all in one step. Use this instead of separate tap + inputText + pressKey calls. Much faster for search bars, message fields, form inputs. This tool HANDLES SENDING — do NOT tap the send button after calling this. Instead, take a screenshot to verify the message was sent.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "elementText": {
+      "type": "string",
+      "description": "Text of the field to tap (e.g. \"Search\", \"Message\") — uses tapText"
+     },
+     "text": {
+      "type": "string",
+      "description": "Text to type"
+     },
+     "submitKey": {
+      "type": "string",
+      "enum": [
+       "enter",
+       "send"
+      ],
+      "description": "How to submit after typing (default: enter). \"send\" taps the Messages blue-arrow button; \"enter\" presses the keyboard return key."
+     }
+    },
+    "required": [
+     "elementText",
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "askUser",
+   "description": "Ask the user a CLOSED question — one with a known small set of answers (2-4 preset options). Use for: confirmation (\"Yes / No\"), disambiguation (\"Mom — 555-1234 / Mom Tracy — 555-9876\"), or category-pick. Do NOT use for routine actions like tapping, scrolling, or opening apps. Do NOT use when the answer is freeform (email, password, OTP, search string) — use askUserText for those.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "question": {
+      "type": "string",
+      "description": "The question to ask the user"
+     },
+     "options": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "List of options for the user to choose from (2-4 options)"
+     }
+    },
+    "required": [
+     "question",
+     "options"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "askUserText",
+   "description": "Ask the user an OPEN/freeform question — when the answer cannot reasonably be enumerated. Use for: email address, username, OTP / 2FA code, search query, password (when explicitly needed), free-text input. The UI will show the user a text field. Do NOT use for confirmations (use askUser with Yes/No options) or for actions you can perform yourself.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "question": {
+      "type": "string",
+      "description": "The question to ask the user"
+     },
+     "hint": {
+      "type": "string",
+      "description": "Optional format hint shown as placeholder (e.g. \"firstname.lastname@nvidia.com\" or \"6-digit code\")"
+     }
+    },
+    "required": [
+     "question"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "taskComplete",
+   "description": "Task is done. Call when verified complete.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "summary": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "summary"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "taskFailed",
+   "description": "Task cannot be completed.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "reason": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "reason"
+    ]
+   }
+  }
+ ],
+ "tool_choice": "auto"
+}

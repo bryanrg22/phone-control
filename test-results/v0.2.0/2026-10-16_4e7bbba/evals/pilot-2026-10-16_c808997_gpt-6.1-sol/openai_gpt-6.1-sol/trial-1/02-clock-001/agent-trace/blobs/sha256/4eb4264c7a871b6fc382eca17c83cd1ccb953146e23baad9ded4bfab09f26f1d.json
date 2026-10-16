@@ -1,0 +1,161 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Set a new alarm for 6:45 AM labeled 'Gym' in the Clock app and confirm it's set.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "name": "openApp",
+    "arguments": {
+     "appName": "Clock"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "response": "Opened Clock"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+    "name": "tap",
+    "arguments": {
+     "x": 39.5,
+     "y": 94.1,
+     "description": "Open Alarm tab"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+    "response": "Tapped (39.5%, 94.1%) - Open Alarm tab"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_5T9eanVBQp6c8fnR2GR2S90F",
+    "name": "tap",
+    "arguments": {
+     "x": 90.5,
+     "y": 9.6,
+     "description": "Add a new alarm"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_5T9eanVBQp6c8fnR2GR2S90F",
+    "response": "Tapped (90.5%, 9.6%) - Add a new alarm"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_lBPhheVs8igKhZ0iRdUSDFij",
+    "name": "swipe",
+    "arguments": {
+     "startX": 34.5,
+     "startY": 35,
+     "endX": 34.5,
+     "endY": 17
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_lBPhheVs8igKhZ0iRdUSDFij",
+    "response": "Swiped"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/390b6822bb70352a9526ec3a80a20d7cb844d6166e0e9196a256fc0df8cb068a.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"Clock\" at (50%, 50%) size 402x874\n- \"Cancel\" at (14.7%, 11.4%) size 78x36\n- \"Add Alarm\" at (50%, 11.4%) size 83x21\n- \"Save\" at (87.3%, 11.4%) size 62x36\n- picker wheel = \"9 o’clock\" at (34.5%, 28.4%) size 55x291\n- picker wheel = \"37 minutes\" at (48.8%, 28.4%) size 50x291\n- picker wheel = \"AM\" at (64.3%, 28.4%) size 65x291\n- \"Label\" at (9.1%, 44.4%) size 33x16\n- text field \"Label\" (empty) at (50%, 48.7%) size 362x44\n- \"Repeat\" at (10.3%, 54.4%) size 43x16\n- \"Never\" at (50%, 58.7%) size 362x44\n- \"Never\" at (13.3%, 58.7%) size 43x20\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: openApp(Clock)\nStep 2: tap(39.5, 94.1, Open Alarm tab)\nStep 3: tap(90.5, 9.6, Add a new alarm)\nStep 4: swipe(34.5, 35, 34.5, 17)"
+   }
+  ]
+ }
+]

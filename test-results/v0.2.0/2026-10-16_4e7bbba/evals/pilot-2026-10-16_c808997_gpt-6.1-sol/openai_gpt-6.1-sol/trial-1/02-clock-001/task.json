@@ -1,0 +1,49 @@
+{
+  "index": 2,
+  "task": "clock-001",
+  "goal": "Set a new alarm for 6:45 AM labeled 'Gym' in the Clock app and confirm it's set.",
+  "apps": [
+    "clock"
+  ],
+  "category": "single_app",
+  "status": "ok",
+  "error": null,
+  "agent_answer": "Set and confirmed: the \u201cGym\u201d alarm is enabled for 6:45 AM.",
+  "evaluation": {
+    "success": true,
+    "score": 1.0,
+    "reasoning": "The trajectory shows the Clock app opened on the Alarm tab, a new alarm added, time adjusted to 6:45 AM, label set to Gym, saved, and the final alarms list displays 6:45 with Gym and the toggle enabled, confirming it is active.",
+    "rubric_results": [
+      {
+        "criterion": "Open Clock app and navigate to the Alarm tab",
+        "satisfied": true,
+        "reasoning": "The Clock app is opened and the Alarm tab is selected in the alarms screen."
+      },
+      {
+        "criterion": "Tap the add alarm button",
+        "satisfied": true,
+        "reasoning": "The add alarm screen is shown after tapping the plus button."
+      },
+      {
+        "criterion": "Set the alarm time to 6:45 AM",
+        "satisfied": true,
+        "reasoning": "The time picker is adjusted until 6:45 AM is selected."
+      },
+      {
+        "criterion": "Set the alarm label to 'Gym'",
+        "satisfied": true,
+        "reasoning": "The label field contains 'Gym'."
+      },
+      {
+        "criterion": "Save the alarm",
+        "satisfied": true,
+        "reasoning": "The alarm is saved and returns to the alarms list."
+      },
+      {
+        "criterion": "Confirm the alarm is set and active",
+        "satisfied": true,
+        "reasoning": "The final alarms list shows a 6:45 alarm labeled Gym with the toggle switched on."
+      }
+    ]
+  }
+}

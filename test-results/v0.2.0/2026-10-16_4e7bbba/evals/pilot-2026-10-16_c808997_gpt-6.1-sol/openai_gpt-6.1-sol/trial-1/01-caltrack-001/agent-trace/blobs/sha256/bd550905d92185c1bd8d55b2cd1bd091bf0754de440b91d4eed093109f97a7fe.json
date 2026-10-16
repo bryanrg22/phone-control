@@ -1,0 +1,371 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Log today's breakfast in CalTrack — search the food database for 'oatmeal', add a serving, and give me the calories and macros.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "name": "tap",
+    "arguments": {
+     "x": 15.4,
+     "y": 49.7,
+     "description": "Open CalTrack"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "response": "Tapped (15.4%, 49.7%) - Open CalTrack"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+    "name": "tap",
+    "arguments": {
+     "x": 92,
+     "y": 60,
+     "description": "Add food to today's breakfast"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+    "response": "Tapped (92%, 60%) - Add food to today's breakfast"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_Z6tBOdSEZSanLCcQrm0ClU9u",
+    "name": "typeAndSubmit",
+    "arguments": {
+     "elementText": "Search foods",
+     "text": "oatmeal",
+     "submitKey": "enter"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_Z6tBOdSEZSanLCcQrm0ClU9u",
+    "response": "Typed \"oatmeal\" into \"Search foods\" and submitted via enter"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_G6qWCZM5JolcuV1O7hHt81UN",
+    "name": "tap",
+    "arguments": {
+     "x": 50,
+     "y": 38.8,
+     "description": "Select oatmeal, one cup cooked"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_G6qWCZM5JolcuV1O7hHt81UN",
+    "response": "Tapped (50%, 38.8%) - Select oatmeal, one cup cooked"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_fU5jiJbxWBVJfQc1zOWyt4uX",
+    "name": "tap",
+    "arguments": {
+     "x": 50,
+     "y": 92.8,
+     "description": "Add one serving of oatmeal to breakfast"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_fU5jiJbxWBVJfQc1zOWyt4uX",
+    "response": "Tapped (50%, 92.8%) - Add one serving of oatmeal to breakfast"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_ZjdXgfJDToyVfdSNH09ZijfY",
+    "name": "hideKeyboard",
+    "arguments": {}
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_ZjdXgfJDToyVfdSNH09ZijfY",
+    "response": "Keyboard hidden"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_TT8ZOaP059fiSNbUzeIuM2ii",
+    "name": "tap",
+    "arguments": {
+     "x": 50,
+     "y": 94.9,
+     "description": "Dismiss keyboard typing tutorial"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_TT8ZOaP059fiSNbUzeIuM2ii",
+    "response": "Tapped (50%, 94.9%) - Dismiss keyboard typing tutorial"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_ERjIDYj5OyRJAFuygd40wpQq",
+    "name": "tap",
+    "arguments": {
+     "x": 50,
+     "y": 38.8,
+     "description": "Open oatmeal serving details"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_ERjIDYj5OyRJAFuygd40wpQq",
+    "response": "Tapped (50%, 38.8%) - Open oatmeal serving details"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_a0vUZo8E5lKmlNlMM5AFwvn7",
+    "name": "tap",
+    "arguments": {
+     "x": 50,
+     "y": 92.8,
+     "description": "Log one cup cooked oatmeal to breakfast"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_a0vUZo8E5lKmlNlMM5AFwvn7",
+    "response": "Tapped (50%, 92.8%) - Log one cup cooked oatmeal to breakfast"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "Note: you have used a very similar action 3 times recently. If it is not producing the result you expect, check the UI element list for exact coordinates before trying again."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_iT0Nt0sEGZNZTnuozHiDCswP",
+    "name": "tap",
+    "arguments": {
+     "x": 13.3,
+     "y": 11.4,
+     "description": "Close food search and verify today's breakfast log"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_iT0Nt0sEGZNZTnuozHiDCswP",
+    "response": "Tapped (13.3%, 11.4%) - Close food search and verify today's breakfast log"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/29b2a50835a9d46f4be0898fd1bb8325c3727eca9d473ecd44d97214c6e1fe45.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"CalTrack\" at (50%, 50%) size 402x874\n- \"Today\" at (15.8%, 16%) size 95x41\n- \"Remaining\" at (50%, 26.9%) size 56x13\n- \"621\" at (50%, 30.1%) size 57x38\n- \"Calories\" at (50%, 33.3%) size 44x13\n- \"Flag\" at (10%, 41.4%) size 11x12\n- \"Food\" at (34.9%, 41.4%) size 8x14\n- \"Flame\" at (60.5%, 41.4%) size 10x13\n- \"Selected\" at (88.2%, 41.4%) size 12x12\n- \"2450\" at (9.9%, 43.6%) size 39x18\n- \"−\" at (22.5%, 43.6%) size 13x24\n- \"1969\" at (34.9%, 43.7%) size 38x18\n- \"+\" at (47.3%, 43.6%) size 13x24\n- \"140\" at (60.5%, 43.7%) size 28x18\n- \"=\" at (73.7%, 43.6%) size 13x24\n- \"621\" at (88.2%, 43.6%) size 27x18\n- \"Goal\" at (9.9%, 45.8%) size 24x13\n- \"Food\" at (34.9%, 46%) size 26x13\n- \"Exercise\" at (60.5%, 45.9%) size 44x13\n- \"Remaining\" at (88.2%, 45.9%) size 55x13\n- \"Protein\" at (9.3%, 51.7%) size 43x14\n- \"Carbs\" at (40.3%, 51.7%) size 35x14\n- \"Fat\" at (70.3%, 51.7%) size 19x14\n- \"135.8 / 170 g\" at (12.3%, 55.1%) size 67x13\n- \"217 / 250 g\" at (43.3%, 55.1%) size 59x13\n- \"64.8 / 75 g\" at (75%, 55.1%) size 57x13\n- \"Sunrise\" at (7.2%, 60%) size 24x19\n- \"Breakfast\" at (21.9%, 60%) size 76x20\n- \"685\" at (82.4%, 60%) size 29x18\n- \"Add\" at (92%, 60%) size 32x32\n- \"Banana, 1 1 medium banana, 105\" at (50%, 66.3%) size 402x54\n- \"Banana\" at (10.3%, 65.4%) size 51x18\n- \"1 1 medium banana\" at (17.4%, 67.4%) size 108x14\n- \"105\" at (92.9%, 66.3%) size 25x18\n- \"Greek yogurt, 1 1 cup, 130\" at (50%, 72.6%) size 402x54\n- \"Greek yogurt\" at (15.1%, 71.6%) size 89x18\n- \"1 1 cup\" at (8.8%, 73.7%) size 39x14\n- \"130\" at (92.9%, 72.6%) size 25x18\n- \"Oatmeal, 1 1 cup cooked, 150\" at (50%, 78.8%) size 402x54\n- \"Oatmeal\" at (11.2%, 77.9%) size 58x18\n- \"1 1 cup cooked\" at (14.4%, 80%) size 84x14\n- \"150\" at (92.9%, 78.8%) size 25x18\n- \"Oatmeal, 1 1 cup cooked, 150\" at (50%, 85.1%) size 402x54\n- \"Oatmeal\" at (11.2%, 84.1%) size 58x18\n- \"1 1 cup cooked\" at (14.4%, 86.2%) size 84x14\n- \"150\" at (92.9%, 85.1%) size 25x18\n- \"Oatmeal, 1 1 cup cooked, 150\" at (50%, 91.3%) size 402x54\n- \"Oatmeal\" at (11.2%, 90.4%) size 58x18\n- \"1 1 cup cooked\" at (14.4%, 92.5%) size 84x14\n- \"150\" at (92.9%, 91.3%) size 25x18\n- \"Add Food\" at (50%, 97.1%) size 402x46\n- \"Add\" at (88.1%, 85.5%) size 56x56\n- \"Tab Bar\" at (50%, 95.3%) size 402x83\n- \"Today\" at (28.6%, 94.1%) size 94x54\n- \"text.document.fill\" at (28.5%, 93.2%) size 25x29\n- \"Progress\" at (50%, 94.1%) size 94x54\n- \"chart column\" at (50.1%, 93.2%) size 35x25\n- \"More\" at (71.4%, 94.1%) size 94x54\n- \"More\" at (71.3%, 93.2%) size 27x27\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: tap(15.4, 49.7, Open CalTrack)\nStep 2: tap(92, 60, Add food to today's breakfast)\nStep 3: typeAndSubmit(Search foods, oatmeal, enter)\nStep 4: tap(50, 38.8, Select oatmeal, one cup cooked)\nStep 5: tap(50, 92.8, Add one serving of oatmeal to breakfast)\nStep 6: hideKeyboard\nStep 7: tap(50, 94.9, Dismiss keyboard typing tutorial)\nStep 8: tap(50, 38.8, Open oatmeal serving details)\nStep 9: tap(50, 92.8, Log one cup cooked oatmeal to breakfast)\nStep 10: tap(13.3, 11.4, Close food search and verify today's breakfast l)"
+   }
+  ]
+ }
+]

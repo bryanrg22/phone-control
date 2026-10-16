@@ -1,0 +1,55 @@
+{
+  "task": "Log today's breakfast in CalTrack — search the food database for 'oatmeal', add a serving, and give me the calories and macros.",
+  "run_id": "gpt-6.1-sol-caltrack-001",
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "agent": {
+    "release": "0.2.0",
+    "commit": "6c9035aba11ec8135b04bf25608110e407a6e3ab",
+    "dirty": false
+  },
+  "settings": {
+    "max_steps": 50,
+    "askuser_timeout_s": 1,
+    "no_progress_abort": 8,
+    "temperature": null,
+    "reasoning": "high",
+    "web_search": false,
+    "image_width": 768
+  },
+  "prompt_sha256": "12d07ca0cdb1",
+  "tools_sha256": "46616eec354e",
+  "device": {
+    "address": "127.0.0.1:22187",
+    "simulator": "DF68C5E8-9704-4D31-A0CA-8DC9B32BA001",
+    "screen": {
+      "heightPoints": 874,
+      "widthPoints": 402,
+      "widthPixels": 1206,
+      "heightPixels": 2622
+    },
+    "apps": 60,
+    "apps_source": "simctl"
+  },
+  "node": "v23.9.0",
+  "trace_id": "caa89df9aea2f9a4c080b15e8c632040",
+  "started": "2026-10-16T08:34:08.567Z",
+  "ended": "2026-10-16T08:35:28.908Z",
+  "duration_s": 80.341,
+  "outcome": {
+    "status": "no_progress",
+    "reason": "no progress: the screen went back and forth between 2 states for 8 steps",
+    "steps": 17
+  },
+  "totals": {
+    "model_calls": 17,
+    "tool_calls": 17,
+    "tool_errors": 0,
+    "input_tokens": 119008,
+    "output_tokens": 1001,
+    "cache_read_input_tokens": 58128,
+    "cache_write_input_tokens": 0,
+    "reasoning_output_tokens": 416,
+    "images": 35
+  }
+}

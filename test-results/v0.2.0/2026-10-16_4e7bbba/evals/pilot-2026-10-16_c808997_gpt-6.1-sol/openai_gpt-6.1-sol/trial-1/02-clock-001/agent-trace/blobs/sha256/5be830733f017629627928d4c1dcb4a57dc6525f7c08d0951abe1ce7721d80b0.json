@@ -1,0 +1,360 @@
+[
+ {
+  "name": "openApp",
+  "description": "Open an app by name. Available: CarPlay, Files, Emoji, EscrowSecurityAlert, Fitness, Color, Health, Maps, Contacts, Messages, Astronomy, Wallet, Passwords, Kaleidoscope, Unity, Weather Wallpaper, Settings, Pride, ShortcutsActions, SystemIntents, VoiceOver, AssistiveTouch, Voice Control, FullKeyboardAccess, Live Captions, Calendar, Safari, Photos, News, Reminders, Shortcuts, SpringBoard, CalTrack, Cinephile, CityRide, Clock, CloudDocs, CloudDrive, CloudSheets, CloudSlides, DineSpot, FreshCart, LockedIn, Mail, MegaMart, MyBank, Notes, QuickBite, QuickChat, ScoreZone, SkyTrip, SplitPay, StayFinder, TasteRank, TeamChat, TicketBox, TrailBlaze, Weather, maestro-driver-ios, maestro-driver-iosUITests-Runner",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "appName": {
+     "type": "string",
+     "description": "App name"
+    }
+   },
+   "required": [
+    "appName"
+   ]
+  }
+ },
+ {
+  "name": "takeScreenshot",
+  "description": "Capture the current screen. NOTE: screenshots are auto-captured after action tools (tap, type, etc.) so you usually do NOT need to call this separately. Only use for initial observation or to verify final task completion.",
+  "parameters": {
+   "type": "object",
+   "properties": {}
+  }
+ },
+ {
+  "name": "getUIElements",
+  "description": "Get all UI elements on screen with their text, IDs, and positions. Use this to find exact buttons/fields before tapping. More accurate than guessing coordinates from a screenshot.",
+  "parameters": {
+   "type": "object",
+   "properties": {}
+  }
+ },
+ {
+  "name": "waitForText",
+  "description": "Wait for text / an element to APPEAR on screen, polling up to N seconds in a SINGLE step. Use this for ASYNC results — a chat reply loading, search results coming back, any network round-trip — instead of repeatedly screenshotting to check whether something loaded. Returns as soon as the text appears, or times out.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "text": {
+     "type": "string",
+     "description": "The visible text / accessibility label to wait for"
+    },
+    "timeoutSec": {
+     "type": "number",
+     "description": "Max seconds to wait (default 10, max 30)"
+    }
+   },
+   "required": [
+    "text"
+   ]
+  }
+ },
+ {
+  "name": "tap",
+  "description": "Tap at screen coordinates. MUST be percentages 0-100 (NOT pixels). x=0 left edge, x=50 center, x=100 right edge. y=0 top, y=50 middle, y=100 bottom. Example: center of screen is x=50,y=50. USE DECIMALS: 1% is ~3.9pt wide and ~8.5pt tall, so a whole-number guess can land OUTSIDE a small control (a 44pt button is only ~5% tall). Give at least one decimal place (e.g. 43.7), and prefer coordinates from the bundled UI-element list over eyeballing the screenshot.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "x": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100,
+     "description": "X percentage 0-100, decimals allowed (e.g. 43.75)"
+    },
+    "y": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100,
+     "description": "Y percentage 0-100, decimals allowed (e.g. 72.25)"
+    },
+    "description": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "x",
+    "y"
+   ]
+  }
+ },
+ {
+  "name": "tapText",
+  "description": "Tap a visible element by its EXACT accessibility label (not fuzzy). Call getUIElements first to read the exact label, then pass it verbatim.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "text": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "text"
+   ]
+  }
+ },
+ {
+  "name": "inputText",
+  "description": "Type text into focused field. Only after tapping a text field. NOTE: this APPENDS — to CHANGE/REPLACE an existing value use replaceText instead.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "text": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "text"
+   ]
+  }
+ },
+ {
+  "name": "replaceText",
+  "description": "CHANGE the value of an existing text field in ONE reliable step: it focuses the field, clears its current contents, then types the new value. ALWAYS prefer this over inputText when a field ALREADY HAS text you need to change (set/edit/update a value) — inputText only appends, which is the #1 cause of getting stuck fumbling select-all/delete. Pass the field's EXACT accessibility label (from getUIElements) and the new value.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "field": {
+     "type": "string",
+     "description": "Exact a11y label of the text field (from getUIElements)"
+    },
+    "value": {
+     "type": "string",
+     "description": "The new value to set (fully replaces the old one)"
+    }
+   },
+   "required": [
+    "field",
+    "value"
+   ]
+  }
+ },
+ {
+  "name": "pressKey",
+  "description": "Press a keyboard key or hardware button.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "key": {
+     "type": "string",
+     "enum": [
+      "enter",
+      "return",
+      "delete",
+      "tab",
+      "space",
+      "escape",
+      "home",
+      "lock"
+     ],
+     "description": "Keyboard key (enter/return/delete/tab/space/escape) or hardware button (home/lock)"
+    }
+   },
+   "required": [
+    "key"
+   ]
+  }
+ },
+ {
+  "name": "scroll",
+  "description": "Scroll down.",
+  "parameters": {
+   "type": "object",
+   "properties": {}
+  }
+ },
+ {
+  "name": "swipe",
+  "description": "Swipe gesture (quick flick). Coordinates as percentages.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "startX": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100
+    },
+    "startY": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100
+    },
+    "endX": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100
+    },
+    "endY": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100
+    }
+   },
+   "required": [
+    "startX",
+    "startY",
+    "endX",
+    "endY"
+   ]
+  }
+ },
+ {
+  "name": "drag",
+  "description": "Drag-and-drop: long press to pick up, move slowly to destination, release. Use for moving cards, rearranging items, drag-and-drop games. Coordinates as percentages.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "startX": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100,
+     "description": "Start X percentage (pick up)"
+    },
+    "startY": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100,
+     "description": "Start Y percentage (pick up)"
+    },
+    "endX": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100,
+     "description": "End X percentage (drop)"
+    },
+    "endY": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 100,
+     "description": "End Y percentage (drop)"
+    },
+    "holdDuration": {
+     "type": "number",
+     "description": "Seconds to hold before dragging (default 0.5)"
+    },
+    "dragDuration": {
+     "type": "number",
+     "description": "Seconds for the drag movement (default 1.0)"
+    }
+   },
+   "required": [
+    "startX",
+    "startY",
+    "endX",
+    "endY"
+   ]
+  }
+ },
+ {
+  "name": "hideKeyboard",
+  "description": "Dismiss the keyboard.",
+  "parameters": {
+   "type": "object",
+   "properties": {}
+  }
+ },
+ {
+  "name": "typeAndSubmit",
+  "description": "Tap a text field, type text, and press enter/send — all in one step. Use this instead of separate tap + inputText + pressKey calls. Much faster for search bars, message fields, form inputs. This tool HANDLES SENDING — do NOT tap the send button after calling this. Instead, take a screenshot to verify the message was sent.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "elementText": {
+     "type": "string",
+     "description": "Text of the field to tap (e.g. \"Search\", \"Message\") — uses tapText"
+    },
+    "text": {
+     "type": "string",
+     "description": "Text to type"
+    },
+    "submitKey": {
+     "type": "string",
+     "enum": [
+      "enter",
+      "send"
+     ],
+     "description": "How to submit after typing (default: enter). \"send\" taps the Messages blue-arrow button; \"enter\" presses the keyboard return key."
+    }
+   },
+   "required": [
+    "elementText",
+    "text"
+   ]
+  }
+ },
+ {
+  "name": "askUser",
+  "description": "Ask the user a CLOSED question — one with a known small set of answers (2-4 preset options). Use for: confirmation (\"Yes / No\"), disambiguation (\"Mom — 555-1234 / Mom Tracy — 555-9876\"), or category-pick. Do NOT use for routine actions like tapping, scrolling, or opening apps. Do NOT use when the answer is freeform (email, password, OTP, search string) — use askUserText for those.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "question": {
+     "type": "string",
+     "description": "The question to ask the user"
+    },
+    "options": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "List of options for the user to choose from (2-4 options)"
+    }
+   },
+   "required": [
+    "question",
+    "options"
+   ]
+  }
+ },
+ {
+  "name": "askUserText",
+  "description": "Ask the user an OPEN/freeform question — when the answer cannot reasonably be enumerated. Use for: email address, username, OTP / 2FA code, search query, password (when explicitly needed), free-text input. The UI will show the user a text field. Do NOT use for confirmations (use askUser with Yes/No options) or for actions you can perform yourself.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "question": {
+     "type": "string",
+     "description": "The question to ask the user"
+    },
+    "hint": {
+     "type": "string",
+     "description": "Optional format hint shown as placeholder (e.g. \"firstname.lastname@nvidia.com\" or \"6-digit code\")"
+    }
+   },
+   "required": [
+    "question"
+   ]
+  }
+ },
+ {
+  "name": "taskComplete",
+  "description": "Task is done. Call when verified complete.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "summary": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "summary"
+   ]
+  }
+ },
+ {
+  "name": "taskFailed",
+  "description": "Task cannot be completed.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "reason": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "reason"
+   ]
+  }
+ }
+]

@@ -1,0 +1,60 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Log today's breakfast in CalTrack — search the food database for 'oatmeal', add a serving, and give me the calories and macros.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "name": "tap",
+    "arguments": {
+     "x": 15.4,
+     "y": 49.7,
+     "description": "Open CalTrack"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "response": "Tapped (15.4%, 49.7%) - Open CalTrack"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/cf7e7a1fd0e94bea51d923fe44f8af86d8296aaee03ffb84ae41f38fc0cf0270.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"CalTrack\" at (50%, 50%) size 402x874\n- \"Today\" at (15.8%, 16%) size 95x41\n- \"Remaining\" at (50%, 26.9%) size 56x13\n- \"921\" at (50%, 30.1%) size 56x38\n- \"Calories\" at (50%, 33.3%) size 44x13\n- \"Flag\" at (10%, 41.4%) size 11x12\n- \"Food\" at (34.9%, 41.4%) size 8x14\n- \"Flame\" at (60.5%, 41.4%) size 10x13\n- \"Selected\" at (88.2%, 41.4%) size 12x12\n- \"2450\" at (9.9%, 43.6%) size 39x18\n- \"−\" at (22.5%, 43.6%) size 13x24\n- \"1669\" at (34.9%, 43.7%) size 38x18\n- \"+\" at (47.3%, 43.6%) size 13x24\n- \"140\" at (60.5%, 43.7%) size 28x18\n- \"=\" at (73.7%, 43.6%) size 13x24\n- \"921\" at (88.2%, 43.6%) size 27x18\n- \"Goal\" at (9.9%, 45.8%) size 24x13\n- \"Food\" at (34.9%, 46%) size 26x13\n- \"Exercise\" at (60.5%, 45.9%) size 44x13\n- \"Remaining\" at (88.2%, 45.9%) size 55x13\n- \"Protein\" at (9.3%, 51.7%) size 43x14\n- \"Carbs\" at (40.3%, 51.7%) size 35x14\n- \"Fat\" at (70.3%, 51.7%) size 19x14\n- \"125.8 / 170 g\" at (12.3%, 55.1%) size 67x13\n- \"163 / 250 g\" at (43.4%, 55.1%) size 60x13\n- \"58.8 / 75 g\" at (75%, 55.1%) size 57x13\n- \"Sunrise\" at (7.2%, 60%) size 24x19\n- \"Breakfast\" at (21.9%, 60%) size 76x20\n- \"385\" at (82.5%, 60%) size 29x18\n- \"Add\" at (92%, 60%) size 32x32\n- \"Banana, 1 1 medium banana, 105\" at (50%, 66.3%) size 402x54\n- \"Banana\" at (10.3%, 65.4%) size 51x18\n- \"1 1 medium banana\" at (17.4%, 67.4%) size 108x14\n- \"105\" at (92.9%, 66.3%) size 25x18\n- \"Greek yogurt, 1 1 cup, 130\" at (50%, 72.6%) size 402x54\n- \"Greek yogurt\" at (15.1%, 71.6%) size 89x18\n- \"1 1 cup\" at (8.8%, 73.7%) size 39x14\n- \"130\" at (92.9%, 72.6%) size 25x18\n- \"Oatmeal, 1 1 cup cooked, 150\" at (50%, 78.8%) size 402x54\n- \"Oatmeal\" at (11.2%, 77.9%) size 58x18\n- \"1 1 cup cooked\" at (14.4%, 80%) size 84x14\n- \"150\" at (92.9%, 78.8%) size 25x18\n- \"Add Food\" at (50%, 84.6%) size 402x46\n- \"fork.knife.circle.fill\" at (6.5%, 91.3%) size 17x17\n- \"Lunch\" at (17%, 91.3%) size 49x20\n- \"385\" at (82.5%, 91.3%) size 29x18\n- \"Add\" at (92%, 91.3%) size 32x32\n- \"Apple, 1 1 medium apple, 95\" at (50%, 97.7%) size 402x54\n- \"Apple\" at (8.9%, 96.8%) size 40x18\n- \"1 1 medium apple\" at (16.1%, 98.8%) size 98x14\n- \"95\" at (93.7%, 97.7%) size 19x18\n- \"Add\" at (88.1%, 85.5%) size 56x56\n- \"Tab Bar\" at (50%, 95.3%) size 402x83\n- \"Today\" at (28.6%, 94.1%) size 94x54\n- \"text.document.fill\" at (28.5%, 93.2%) size 25x29\n- \"Progress\" at (50%, 94.1%) size 94x54\n- \"chart column\" at (50.1%, 93.2%) size 35x25\n- \"More\" at (71.4%, 94.1%) size 94x54\n- \"More\" at (71.3%, 93.2%) size 27x27\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: tap(15.4, 49.7, Open CalTrack)"
+   }
+  ]
+ }
+]

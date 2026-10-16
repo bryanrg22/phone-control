@@ -1,0 +1,94 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Log today's breakfast in CalTrack — search the food database for 'oatmeal', add a serving, and give me the calories and macros.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "name": "tap",
+    "arguments": {
+     "x": 15.4,
+     "y": 49.7,
+     "description": "Open CalTrack"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "response": "Tapped (15.4%, 49.7%) - Open CalTrack"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+    "name": "tap",
+    "arguments": {
+     "x": 92,
+     "y": 60,
+     "description": "Add food to today's breakfast"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+    "response": "Tapped (92%, 60%) - Add food to today's breakfast"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/9223667dc41f4a8da82146654df688f474d17876259c1c84acf979a7a5c9e90e.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"CalTrack\" at (50%, 50%) size 402x874\n- \"Close\" at (13.3%, 11.4%) size 67x36\n- \"Search Food\" at (28.6%, 17.8%) size 198x41\n- text field \"Search foods\" (empty) at (50%, 24%) size 338x22\n- \"Recent Foods\" at (50%, 31.3%) size 370x40\n- \"Oatmeal, 1 cup cooked, P 5g  C 27g  F 3g, 150 cal\" at (50%, 38.8%) size 370x91\n- \"Brightness Higher\" at (13%, 38.8%) size 19x19\n- \"Oatmeal\" at (28.2%, 36.5%) size 67x20\n- \"1 cup cooked\" at (31.2%, 39.2%) size 91x18\n- \"P 5g  C 27g  F 3g\" at (32%, 41.5%) size 97x14\n- \"150 cal\" at (80.2%, 38.8%) size 51x18\n- \"Banana, 1 medium banana, P 1.3g  C 27g  F 0.4g, 105 cal\" at (50%, 49.2%) size 370x91\n- \"apple.logo\" at (12.9%, 49.2%) size 14x17\n- \"Banana\" at (27.3%, 46.9%) size 59x20\n- \"1 medium banana\" at (34.8%, 49.5%) size 120x18\n- \"P 1.3g  C 27g  F 0.4g\" at (34.4%, 51.8%) size 116x14\n- \"105 cal\" at (80.2%, 49.2%) size 51x18\n- \"Greek yogurt, 1 cup, P 17g  C 6g  F 3.5g, 130 cal\" at (50%, 59.6%) size 370x91\n- \"Greek yogurt\" at (32.8%, 57.3%) size 104x20\n- \"1 cup\" at (24.4%, 59.9%) size 36x18\n- \"P 17g  C 6g  F 3.5g\" at (33.1%, 62.2%) size 106x14\n- \"130 cal\" at (80.2%, 59.6%) size 51x18\n- \"Grilled chicken salad, 1 salad, P 30g  C 10g  F 14g, 290 cal\" at (50%, 69.9%) size 370x91\n- \"Shopping Bag\" at (12.9%, 69.9%) size 15x17\n- \"Grilled chicken salad\" at (40.3%, 67.6%) size 164x20\n- \"1 salad\" at (25.7%, 70.3%) size 47x18\n- \"P 30g  C 10g  F 14g\" at (33.6%, 72.6%) size 110x14\n- \"290 cal\" at (79.9%, 69.9%) size 53x18\n- \"Apple, 1 medium apple, P 0.5g  C 25g  F 0.3g, 95 cal\" at (50%, 80.3%) size 370x91\n- \"apple.logo\" at (12.9%, 80.3%) size 14x17\n- \"Apple\" at (25.7%, 78%) size 46x20\n- \"1 medium apple\" at (33.3%, 80.7%) size 108x18\n- \"P 0.5g  C 25g  F 0.3g\" at (34.7%, 83%) size 119x14\n- \"95 cal\" at (81.1%, 80.3%) size 44x18\n- \"Salmon, 5 oz fillet, P 25g  C 0g  F 14g, 233 cal\" at (50%, 90.7%) size 370x91\n- \"dumbbell.fill\" at (13%, 90.7%) size 23x13\n- \"Salmon\" at (27.3%, 88.4%) size 59x20\n- \"5 oz fillet\" at (27.7%, 91%) size 63x18\n- \"P 25g  C 0g  F 14g\" at (32.9%, 93.3%) size 104x14\n- \"233 cal\" at (80%, 90.7%) size 53x18\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: tap(15.4, 49.7, Open CalTrack)\nStep 2: tap(92, 60, Add food to today's breakfast)"
+   }
+  ]
+ }
+]

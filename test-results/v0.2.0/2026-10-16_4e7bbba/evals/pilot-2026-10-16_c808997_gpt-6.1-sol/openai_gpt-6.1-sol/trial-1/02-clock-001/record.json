@@ -1,0 +1,61 @@
+{
+  "task": "clock-001",
+  "category": "single_app",
+  "difficulty": "easy",
+  "apps": [
+    "clock"
+  ],
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "reset_seconds": 72.8,
+  "agent_args": [
+    "<goal>",
+    "--provider",
+    "openai",
+    "--model",
+    "gpt-6.1-sol",
+    "--simulator",
+    "DF68C5E8-9704-4D31-A0CA-8DC9B32BA001",
+    "--driver-port",
+    "22187",
+    "--max-steps",
+    "50",
+    "--askuser-timeout",
+    "1",
+    "--no-web-search",
+    "--effort",
+    "high",
+    "--trace-dir",
+    "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace",
+    "--run-id",
+    "gpt-6.1-sol-clock-001"
+  ],
+  "agent_seconds": 57,
+  "exit_code": 0,
+  "steps": 13,
+  "model_calls": 13,
+  "tool_calls": 13,
+  "tool_errors": 0,
+  "ask_user_calls": 0,
+  "input_tokens": 84879,
+  "output_tokens": 742,
+  "cache_read_input_tokens": 47229,
+  "cache_write_input_tokens": 0,
+  "reasoning_output_tokens": 303,
+  "model_seconds": 38.6,
+  "served_models": [
+    "gpt-6.1-sol"
+  ],
+  "ended": "completed",
+  "agent": {
+    "release": "0.2.0",
+    "commit": "6c9035aba11ec8135b04bf25608110e407a6e3ab",
+    "dirty": false
+  },
+  "prompt_sha256": "12d07ca0cdb1",
+  "tools_sha256": "46616eec354e",
+  "cost_usd": 0.08744289999999999,
+  "status": "ok",
+  "error": null,
+  "total_seconds": 138
+}

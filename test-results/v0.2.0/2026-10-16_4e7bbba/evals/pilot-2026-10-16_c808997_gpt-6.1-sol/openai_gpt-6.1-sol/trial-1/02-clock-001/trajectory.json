@@ -1,0 +1,151 @@
+[
+  {
+    "step": 1,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/d07bcebf728396d0c78c1a6584f21b5ef916cdc765202f6d0d095ec55811f9c5.jpg",
+    "actions": [
+      {
+        "tool": "openApp",
+        "appName": "Clock"
+      }
+    ]
+  },
+  {
+    "step": 2,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/60f471f70a630953a0826381a4c5291e4beddfca4ae9298157d3d28a8b120e9a.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 39.5,
+        "y": 94.1
+      }
+    ]
+  },
+  {
+    "step": 3,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/63a645611a93b85260eea901e2f6c163c34e89122211357df4fd2d2211bb6908.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 90.5,
+        "y": 9.6
+      }
+    ]
+  },
+  {
+    "step": 4,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/cb55d63250db9dacd6cfd158c55c3863976f246accfeaf192adb54cd85fd5d80.jpg",
+    "actions": [
+      {
+        "tool": "swipe",
+        "startX": 34.5,
+        "startY": 35,
+        "endX": 34.5,
+        "endY": 17
+      }
+    ]
+  },
+  {
+    "step": 5,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/390b6822bb70352a9526ec3a80a20d7cb844d6166e0e9196a256fc0df8cb068a.jpg",
+    "actions": [
+      {
+        "tool": "drag",
+        "startX": 34.5,
+        "startY": 25,
+        "endX": 34.5,
+        "endY": 35.8,
+        "holdDuration": 0.1,
+        "dragDuration": 1.5
+      }
+    ]
+  },
+  {
+    "step": 6,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/ca62967f7a069ae7628c1110d156791bb771a82d0d1942b42a8b4f5f94285e09.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 34.5,
+        "y": 24.8
+      }
+    ]
+  },
+  {
+    "step": 7,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/df88a0c570c0fd7b8262dca6b273a35a03d514743ddefb1f70aa582b8659e64e.jpg",
+    "actions": [
+      {
+        "tool": "drag",
+        "startX": 48.8,
+        "startY": 37,
+        "endX": 48.8,
+        "endY": 11,
+        "holdDuration": 0.1,
+        "dragDuration": 1.8
+      }
+    ]
+  },
+  {
+    "step": 8,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/7920d21fc5d1a5fad7329391777c07c1a72c75395b366372745d2fa5834bc0eb.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 48.8,
+        "y": 32
+      }
+    ]
+  },
+  {
+    "step": 9,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/eda6b9978b6db8043447e51657c982a02a40e2fbddbae88b833fae09c65daa58.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 50,
+        "y": 48.7
+      }
+    ]
+  },
+  {
+    "step": 10,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/c124b11ea09d5f9bd444851f62b868d02eeab72ccbe7351d096741a1a453c129.jpg",
+    "actions": [
+      {
+        "tool": "inputText",
+        "text": "Gym"
+      }
+    ]
+  },
+  {
+    "step": 11,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/7d5599eddd32827d34ff7857fc6b764aed5ce623d8f3d74d567dc8729cf8a410.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 87.3,
+        "y": 11.4
+      }
+    ]
+  },
+  {
+    "step": 12,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/353abbf78713cad32fd4b5a78dedef8320d7f8192d6b3e2e3a5c2057b6362123.jpg",
+    "actions": [
+      {
+        "tool": "takeScreenshot"
+      }
+    ]
+  },
+  {
+    "step": 13,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/agent-trace/blobs/sha256/de729ecc0b3577a7487063f780093b980c315e95c85fa4a70ae58edfa17fe8ad.jpg",
+    "actions": [
+      {
+        "tool": "taskComplete",
+        "summary": "Set and confirmed: the “Gym” alarm is enabled for 6:45 AM."
+      }
+    ],
+    "post_action_screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/02-clock-001/final.png"
+  }
+]

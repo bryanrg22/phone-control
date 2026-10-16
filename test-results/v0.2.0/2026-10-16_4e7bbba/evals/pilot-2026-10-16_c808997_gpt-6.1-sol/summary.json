@@ -1,0 +1,45 @@
+[
+  {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "trials": 1,
+    "runs": 2,
+    "judged": 2,
+    "test_errors": 0,
+    "pass_rate": 0.5,
+    "pass_ci95": {
+      "low": 0.09452865480086614,
+      "high": 0.9054713451991339
+    },
+    "pass_hat_k": null,
+    "by_category": {
+      "single_app": {
+        "n": 2,
+        "pass_rate": 0.5,
+        "avg_steps": 15
+      }
+    },
+    "rubric_score": 0.75,
+    "avg_steps": 15,
+    "avg_agent_seconds": 69,
+    "avg_model_seconds": 47.7,
+    "ended": {
+      "completed": 1,
+      "no_progress": 1
+    },
+    "tool_calls": 30,
+    "tool_error_rate": 0,
+    "ask_user_calls": 0,
+    "tokens": {
+      "input": 203887,
+      "cache_read": 105357,
+      "output": 1743,
+      "reasoning": 719
+    },
+    "cost_usd": 0.23,
+    "cost_per_task_usd": 0.113,
+    "served_models": [
+      "gpt-6.1-sol"
+    ]
+  }
+]

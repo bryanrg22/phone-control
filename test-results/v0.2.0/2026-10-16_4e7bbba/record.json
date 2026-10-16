@@ -1,0 +1,124 @@
+{
+  "release": "0.2.0",
+  "commit": "4e7bbbaad20c4291d1bed336ebae484acc68a98d",
+  "dirty": false,
+  "recorded_at": "2026-10-16T08:50:59.035Z",
+  "note": "Audit of every test layer against the standards (2026-10-16): five defects fixed with tests, the iOSWorld harness brought in line with the paper's judging inputs and its deviations documented, the connector judge's reliability measured (756 judgments, 100% agreement, kappa 1.00), and a committed-tree pilot of the phone-agent evals (GPT-6.1 Sol, clock-001 pass, caltrack-001 fail).",
+  "tools_fingerprint": "87d59cb607e1",
+  "environment": {
+    "node": "v23.9.0",
+    "platform": "darwin 25.6.0 arm64",
+    "xcode": "Xcode 26.4"
+  },
+  "suites": [
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 1,
+      "counts": null,
+      "not_verified": []
+    },
+    {
+      "name": "unit",
+      "command": "npm test",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 11,
+      "counts": {
+        "passed": 24,
+        "failed": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "lifecycle",
+      "command": "npm run test:lifecycle",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 229,
+      "counts": {
+        "passed": 26,
+        "failed": 0,
+        "skipped": 2
+      },
+      "not_verified": [
+        "suspend on one phone leaves another phone's session alone",
+        "network label: Wi-Fi, cellular and UNREACHABLE are three different answers"
+      ]
+    },
+    {
+      "name": "e2e",
+      "command": "npm run test:e2e",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 33,
+      "counts": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "conformance",
+      "command": "npm run test:conformance",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 52,
+      "counts": {
+        "passed": 5,
+        "failed": 0,
+        "expected_failures": 25
+      },
+      "not_verified": []
+    },
+    {
+      "name": "eval-harness-self-test",
+      "command": "npm run test:evals:self",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 187,
+      "counts": {
+        "oracle assistant": "100% of 19 trials passed",
+        "null assistant": "0% of 19 trials passed"
+      },
+      "not_verified": []
+    }
+  ],
+  "evals": [
+    {
+      "run": "pilot-2026-10-16_c808997_gpt-6.1-sol",
+      "judge": "openai gpt-5.4-mini",
+      "commit": "c808997",
+      "differs_from_record": true,
+      "changed_since_eval": "10 files changed, 21944 insertions(+), 3 deletions(-)",
+      "assistant": "phone agent on iOSWorld: openai:gpt-6.1-sol",
+      "pass_at_1": "50% (9%–91%)",
+      "pass_hat_k": "n/a",
+      "regraded": null,
+      "trials": "2 judged of 2 (2 tasks × 1), 0 test errors"
+    }
+  ],
+  "changes": {
+    "previous": {
+      "release": "0.2.0",
+      "commit": "89692a9c0f895cfd9ce43524ad32b1910c0adbd9",
+      "recorded_at": "2026-10-16T07:41:48.815Z"
+    },
+    "commits": [
+      "4e7bbba test record: describe phone-agent runs too, and never leave a half-written record",
+      "b5695aa evals: the judge's reliability measured, and the pilot's findings written down",
+      "6c9035a judge-agreement: an absent flag no longer drops the first run folder",
+      "c808997 evals: judge agreement (a second judge, Cohen's kappa) and a labelling sheet",
+      "f22f182 phone-agent evals: what the judge sees matches iOSWorld, and the deviations are written down",
+      "e21565e Fix five defects found by auditing the tests against the code",
+      "dd44746 docs: handoff brief for the decision-model trial (Jev, OpenAI Decisions API)",
+      "867a9b4 test record 2026-10-16 at 89692a9: every suite, and the seven-model baseline with caching"
+    ],
+    "tools_changed": false
+  },
+  "complete": true,
+  "all_passed": true
+}

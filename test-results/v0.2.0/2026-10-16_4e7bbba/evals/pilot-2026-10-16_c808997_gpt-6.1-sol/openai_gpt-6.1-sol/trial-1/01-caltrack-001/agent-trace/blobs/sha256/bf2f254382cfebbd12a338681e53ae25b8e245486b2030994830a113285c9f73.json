@@ -1,0 +1,735 @@
+{
+ "model": "gpt-6.1-sol",
+ "input": [
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Task: Log today's breakfast in CalTrack — search the food database for 'oatmeal', add a serving, and give me the calories and macros.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+   "name": "tap",
+   "arguments": "{\"x\":15.4,\"y\":49.7,\"description\":\"Open CalTrack\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+   "output": "Tapped (15.4%, 49.7%) - Open CalTrack"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_057ef9e8a30ccade016ad1e18904c487d08123e8160c09bcc8",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eGKuRWJQuDTYHQqaskWGz9g5CjGE6H41Fuswd9lsgxqDR0hy5e8RVCUu60qMqvEsXJA8IQp5zMdNkwg9L8ayJejj0f8caf9Y2p9f44r23upR3WusIhRTj18qsazjKwWjE6DTVz77XqxVoc8p0G7wx1xjzWUXY9s_Xb1NtQfMhjBdf9gF1hf4tC2ImZ8UmRTI3XpiaD_IuuVoqUYdPecjlLtUzfexdtOnBRB5WITfLqLUTkdZSwy2KcyIrRpkl54RbXpzGqeQNifdmCqMkBolGfcwebxLH8mOkiE6v_SUmZrX4IHSzRb9Wt3hZROoBJ7psC2OHwy9hrmRKQ835o7xYQf2mfWNVwCDTG3aTLeY1ZB1ONJ-NCLyp5PRvrBxd-OOkOieHL2ox0LALKnx-EeeXwhScQHhvwQSgaEchHsf5YfctJTL5dQ6mhH7WIaNCCwALiupUbtEgSeTNPBM2cWboXga_N_zsLV9JzByJ65km1SjZCuOTrrTfzUVywqvHTilCfGE5T2XYbwV_kh2V4ub9Rg7FnZgbFRTx0x-oIi4Hl3RZpCdR9CMSRnue1aSQJuFZveA3IY7Bjrm-R1lvHaXA-DHCyv7wYiwQ5Y0VJ6KmP8knP-O8C_VVG9GSK1BPDqt5C_yjQH-74cSgOq55yOv8KBwmB2YICCszpr6bYtUWUBjWGZ9-NRR-graxoVOvP863Z27b9WKuInaltLGqp7-GHOIalnvvyZ9QErs-fUZfeYrt1_ADg5mD2Mqw1jhDV4NmKNxRZaBPpsBhbcT8iKJQW-QjIr-yFds8RgIS0VKu1esjTyVZ1vtEJcrkG-wU-Pa1ERQq6Lo7HmJS1VByEhJe0eLd4IM1AXVDOXRpg1HoIhvyIRnOC6kpBNCuAQxCFMy2HUJOG7OJ-WUAkZzWuXf1m8_DeOL9NLaZBNQ0N_UzvkjKS2dlimPP1Fm3gaI6rleGFAzL8qn_zEWbEaeeD7C7h3rEdD8Oido5T_JpJ9U2n8POn8nB6lg5SVb19Az5XBAGsvs9pymM9IkxLR_fdopwgLm35Nei2OECK7_qSFG6cV1q9eqPlLGcnlGXaC_h6RANIk_w_w3LGRmtcuxg1WRfowPCPZwSDBjETD2z-rap_Ljlg3EUaMNn2LOztlev12XBvs3CJP4AhN-EPLWRz9soUklasxADg5vF05eNfsPJTCr-7wfweFGzWiHSTgqOO6lEqriWVLJDuiL8HobpMdw_bj5mGfcqLTaAlZ-keWvHshcnNzcjpZxmxF1mRCI5DkxyJmnDIMo7YIUMy7lQmnwRtDrijLxqeiSwp5knoUz4eDfLjrOEtssTMd5h6Lv1-cqx1F-4cvO8VQguny6N3hG3jvTsFdItiQsF9ETvtJwiB32g5BnGFL2aU4mUJ_TMRzdc6slbHS7jIZ9pvgim470RP76dF61RM2bJKTSLs1gI_KFQ7oe3EF3LjliJ8m9L5VTmSr6cG7nHpeqsx6uF8HqBBgVhpJuAwYa1j2RV5BuTDLTbYI2N-5AOw9Hgra6R9gDIef3vnIbdJYYNfLzMWRlmIpbnfeOvvucoftV_BU5WGF1qJ7Y62IUEnucZg9pdrzYawIIkX0IpDyUN5ITs4G737ylQXjzXDgGuLS600TQfOfkiafQXzGSSzfG4Mmq2O6OhVn7RLPx0PwFMLA5NFZRStmn3v-pI8WT1UECBV-Tkczxjo=",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+   "name": "tap",
+   "arguments": "{\"x\":92.0,\"y\":60.0,\"description\":\"Add food to today's breakfast\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+   "output": "Tapped (92%, 60%) - Add food to today's breakfast"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_Z6tBOdSEZSanLCcQrm0ClU9u",
+   "name": "typeAndSubmit",
+   "arguments": "{\"elementText\":\"Search foods\",\"text\":\"oatmeal\",\"submitKey\":\"enter\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_Z6tBOdSEZSanLCcQrm0ClU9u",
+   "output": "Typed \"oatmeal\" into \"Search foods\" and submitted via enter"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_G6qWCZM5JolcuV1O7hHt81UN",
+   "name": "tap",
+   "arguments": "{\"x\":50.0,\"y\":38.8,\"description\":\"Select oatmeal, one cup cooked\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_G6qWCZM5JolcuV1O7hHt81UN",
+   "output": "Tapped (50%, 38.8%) - Select oatmeal, one cup cooked"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_057ef9e8a30ccade016ad1e1983c8087d08438a3481ee6102c",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eGZS4CG3X2T1KH82ykdryo4HvbTIE3mHiOBufM0sIB1GZZmd991aVcXgy6xdARRJW4qu9mZ2u6a1LO0DewCWmGFs0_C3VtHCY2kGqad5ShIw51tAVUcIl5A3c5euY0JCgvRIyI8HR7W0nnOsQI4LlC0Q2jhqBuAdob4nU0H4GlYgx1dqo14Emuz20V00jCHsMuHQG8ASyO3uSLsD5E8zV1JOJ5OmLrQTNFEq7dctdZTTwN_XfKdHltUCGhzV05m6ZyCDU6gfhqdam7H50tdnJrlfR5H5MGYnUSB_5CXsmuvASYBlWijH5hR5CZH1U7KfWA74WJfjTzLMuj-eU4jmE_ycV3YuzquIRtPGbccywWb7OaUD9lZ0Fql-nDGh0Jip2eD58vZ_M-gHl4-RTjQ4dfPRmmhx38OOoutU_XJ0P4Qmn1vcicY7QFQiqB_DqxCW1aUioUpESWkdULqNd99H1ycjrnTDSMBHq8IsYsvvVd0IxtY-ODzni2UBs4edzO4-Q43JWnt2C--A0BfX6EbS26MWsu96uZvJTlEqj9zIYl0irS0ZcLl5AePRvwd55c6WrXlFq-iJzCWJ27S4URqarBS3te03iBv7A0p1n46AS-IP_DLXb9NledPHHTOPcpnqp5SznT24OxtEH9PxhX9wAErl5T1tSvEMme3XmzIq6VsPT-GiRKQGhRw6FLp3f2oqmalhCfSVzOMic0rao2vpOw4b-vFNLjUpTQKqT4wmOa6-eg3UBMvSLfSX_suu1jo9jzguESrSezSYyA52SEYTDMYz8V7Al2gaLpgAO7eS0zHK94cAR64SVBrTw8sKGy11tzfVnyVWyDV0kG80V4Pvce3lcg2_2TgxqrOBXiNDUf5JlS2_xbUtmTMB9hptIEFEIyiwR46lwSN2tsRm3tAwGSba4N10bp9UxelDlRaMy-yO1J8Mu64VsxiafL-H2WX6835FRSKbozMHjx_flpi6waRdkVo5Z6EmmPfDj6tW8EURtwi7c9UEA9zZW89KBlJJVRDOgmTOktX3eD3wrCG1XTs6kl-ocfyrdsEDZ2j09_F3MyaxhhTHgXkOz-kNYtW-IdOGTcslZ51p-GEyux8-5Id5a-hX4UzF7RHeuQqNJe_p_DlSpMkCczWYwH9yURKhLorlnHupr0SO0cj0LB3Q9NE5G-Jcz3yDggYiLD6ZbqACqzvxK-9RoimHR5CHp29vTSjNHXZ-pMlWgVphxuPNlVw_eFKprHpPP_NagAYrGzAngo2VU0kf26dzYi_bSEcRXRXP3sbjS20Jd4DhcRU0fA8P3IIeOBiCmSEEbf8XKT2C036TgXkrGrpVyYRJdQCegcBT6AftI0LUSTPE2fKBiCfc-tHv0pVDCUZE7oyeEyJ7fMvdzNBm9BJxnuGOy1HJqQqlHREbOZm9GdU-61KqnbCDnPiT_d0I-sIJ2pVAZIh-Dn6YgK16DvyQJaA1XaAtfppBIwdg5US-krC7b929rD0pflewOG6V2jHv4EO1ptoTlQK9gV8VCsV-eo5It7AaqaznEyTTRZxLC0LvtNsvLpoh1qxmIDiTC6v-2fkE49fmw9qrge5tWogPdypS8CP6XCR",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_fU5jiJbxWBVJfQc1zOWyt4uX",
+   "name": "tap",
+   "arguments": "{\"x\":50.0,\"y\":92.8,\"description\":\"Add one serving of oatmeal to breakfast\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_fU5jiJbxWBVJfQc1zOWyt4uX",
+   "output": "Tapped (50%, 92.8%) - Add one serving of oatmeal to breakfast"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_057ef9e8a30ccade016ad1e19c8d4487d0946a3053317e90e9",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eGdWuKAFYk0gi4Ts84_HEWcSSkjfXRwquAPT_OMpgpxWWAOybqvHnIXuAboOFVt2Q3aJpYXofxByWFWO4zN8YrnEYsMXpKRNF-lJQR0CKvF_aun6X2t5QEFdM4aa8T3KsL-JuGHQR32d3UNbkGpE8lZAdASE0Vd97tP1YAReoAeLJnCKveecogttqKzpG-Ve9F46qJcU1HzIE0TVp1CXf8bFTdXiO51GXo8pKST-Sttyri7ETi0-pJBdH_D-0f08131o-WoYvhs9KhR_W4Ml2B5QK2NANRMr-37zZ8K6SthDS90eIO4OjMENqqMQ25clj0SbvyqV2Fma-7fNdl8U8kCYhhi_JNH4Mr13KHyzpoPtkxHJC_JijxJUGbHmaR0gcQHL835p_5Auh5J_GtsOxuY_pd6byeNFKcNq7p-wekBnIiVLXcwyHKm7GidQShmxnosyvoQzUocMD122ZQGGABmAnrXqhO295x_5UnujTdOi-qXMY4TymSEWNL4NsLktAhaX0RWZAi7iKbdVWPjPZS9NlpovmhXNbGX2HJ4t1r_2H4SLQCFpVRqlMXR5_pokHlK7dAgYDpvHGie6QCb0xHzghIcEqT9AvR4WN-N2iTkhgxFj1YEBqjQlO0xLY7QTBd8VAfYlt3eajrsifqKFQNhFiMQc_9HtyW9fH_MLWwysuMG2BO7CgwxMgI23iyjG2EiulSHszcI7xYTA3lAUG_NOcqmXV4hVY6RKYHx_4Hc_dNzuQ2Or8T-tUhwmhPM3bmB07R-EA-go4YYOYzHo9B6UzwMlTPeARmJ2ef5FXtHK_iS5Q1M_ns4kXMDjh6HkQUJOsvOrQQTbwjDW3py0JYaA-yJLN7G7g3tP8NypkmFIPFgrTfz_i4dIpVxK0DOS_2Mpg3vwvpgOYX2sTWwOWLNoCH28NDLIJPI7t_DsuSGtT-TUw2Cz4udL348U24S0Oi2xfDNH8ceESyxAFB3ip9Mye5l2Go0h_GhZSJRCHTcSaH6WtP-sjck5KbnOPBv7hAe3WvB0voC6QKGFolaEGxcIdr4l7C1QOJO7ch-ixMdrAQ4KokdEbxzCyA_ZZ5mCgBgzq3_2w02yrUze8_apir6DYwEdPqe6hYzOiM5Cy-p09oF2sCcc22u3oAz7vIrUUDFO2ygwkyqSkmjf7HBiXzGSH5zrmavOQHXBNv6tsdRSCVxxR0i9nXaxdJosA5AaP-UtnBWXtNlNQXDvBdUW0URRag-_2kSWRXtPatuLI25s3H1_emP0T2Bi9FLYxvCLc3L9ZJDqQ_7FEDD_Ziy4AHflaFD222AyiT2a_Qj6XXRXspjwTqvcTO8YeXRdks5CGIaEIPeGNTl3TybfG0cZw9f1Y4Tvwt7-4MAkQR8ieS3mnQ507etOdeBk4qFN7yqmKDggD7V9trlGyNXlWEufO0pQDy-iva5QBmmqhaB6mQqAjgi_ea4O9dCt1F6IoB6k9cesL4Vb4q28_SxWBdND70r0WApu2yhzpPxrvQtBjCo-_DvyjxHNaOSoVkxlPn2Cn0QxoC0cO8gNunuCov73XDtGviQ7Bl209olgZQ8B3T5lSE6l4E9Me0ZI3K-4I83d0QsuA_OzkT_ovy_MI0DJNT7EAyWss-zBdIEODrb4GRas4Vh69KKkDRzGhZiuvRmss2rnYccT8ZxR-80kyN5Fo8TqK9UjqJVGKs5j1yCLsHaVeesm1OYRT46ld85YsX6LrSS8BsEQZux3ah8Ym_9-8jAmA==",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_ZjdXgfJDToyVfdSNH09ZijfY",
+   "name": "hideKeyboard",
+   "arguments": "{}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_ZjdXgfJDToyVfdSNH09ZijfY",
+   "output": "Keyboard hidden"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_TT8ZOaP059fiSNbUzeIuM2ii",
+   "name": "tap",
+   "arguments": "{\"x\":50.0,\"y\":94.9,\"description\":\"Dismiss keyboard typing tutorial\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_TT8ZOaP059fiSNbUzeIuM2ii",
+   "output": "Tapped (50%, 94.9%) - Dismiss keyboard typing tutorial"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_ERjIDYj5OyRJAFuygd40wpQq",
+   "name": "tap",
+   "arguments": "{\"x\":50.0,\"y\":38.8,\"description\":\"Open oatmeal serving details\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_ERjIDYj5OyRJAFuygd40wpQq",
+   "output": "Tapped (50%, 38.8%) - Open oatmeal serving details"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_a0vUZo8E5lKmlNlMM5AFwvn7",
+   "name": "tap",
+   "arguments": "{\"x\":50.0,\"y\":92.8,\"description\":\"Log one cup cooked oatmeal to breakfast\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_a0vUZo8E5lKmlNlMM5AFwvn7",
+   "output": "Tapped (50%, 92.8%) - Log one cup cooked oatmeal to breakfast"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "Note: you have used a very similar action 3 times recently. If it is not producing the result you expect, check the UI element list for exact coordinates before trying again."
+    }
+   ]
+  },
+  {
+   "id": "rs_057ef9e8a30ccade016ad1e1acbd0887d086b160439a4dc601",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eGuDi54DFKRVYzrGtHSylhtYyqOJbFef0Kk6c4W5L6AmD8O9eLt8llRpMmcRsvNhmojaJ1vdfCCL77gaifjKt7mSn7WF6lOZC7AvOmrLEZ9XhM8_uSn0iCRPK0J1MF5I0ai_9YwMQXQW3cgXxYzIsKECBf7BFguYewPwarQaUVLRChie-vfh0EcYmKy01m8Kz69jhI7AP3cVLzERKxuT8qKhVoLVz5JU29LP6WegtvOCFTiXg0rp6Gr7oKo2Jjlqy3psGElZdj5eaUsbDlPkHlFRKHLiG-es7rl-oaJpVT75eRuN7ztF1RNGkmsrrsL6fo2aVVgIzF07x3xsJkVC53Qn4In6Vk_G_IpG6N10RQAFV9qT0I9Rb85C0CUQ5Jd38Czxa8UKCZg-LNmQi7NJ8HieNMw41LsJUjhyUzNnEW-nZ5vW4-ThtntOvge_M5SgmnLD53WuAvGn3KWkwqU2uBicq4aq5Y7Zinqlbe-eyjvaUqNjOk5zonYelsB9NBq3H7Qqsr0sbT-9TyxQZtpcDGorUTVdtcZicUjLr-w2QWbIjdkz4A94jvW0mDSGKAMZfoPsSX9zJzThX68WRuE8Pt567L5NHOY4NUsKRd5cOUs7LG6TN-z5pxV46P28ahr2jS0hVGmzr5nAP8AVtsXDLRcQ5Y65oNvosBeq0mxGhiNA2oJS1CCj8AKwmKqmLoDmQQtb3rXeBtZ_iiijUXMnLt4B5i8Nm9N2ZuQggQv2ZuQjtjxGIhKDoM33AO2IllMXHK5iKFLYedanzs7tV04a3jLwM6DLQV3b6VUyER4p9SpJtAXtf3K3MiUkOg9fYjCAzlR8lwwKlQW0x0GW8B9Oh3DBFuoF8zthMJgwuQDOTBF-RAFMwAmjtq5IBT-qV4VNVaXYEhT3XTNWLpw1YjOJo_yFyImjFgZjheuUnPqLCFtHn4SLozQ1z-uJSkssAgbGXCikOvUN3CE1IxyyOjOPeZPxVFV__BNtjZLAt5tnYAlhjK9T9CztbkHzfSTJZHeFlmg4dk4ihRf_qwDU_-23SUHFzWFfv8I-D4VxTwhViH5c64Ts2PjNV5J5bLBoUsjBBYqszX8FwdEPveyYhTPRG_YmxSlMUpNgpKuh-1qLm6Rr_Ooa-dN_eiYxslw75A4s1PFraa90HtDH53z-OV2YtwoOBLKBv1rFTstPiFjlZ-28wPtnnQvtZGZeIQIx5HdPu316zw8K2uNcS7a4hHgW0UdtiNACbb90e4k61btBCAdtn7uvSKsmhyiLHttqy8-MP-voXttQQhMQsB6pWpeo1PXQmKT48wE9NN7vV7iMcmcpkoe7txIhjyN-38T980sd1DcsI_0pVhBCMJrAmq8FBxMGHX5p0GGu4tWFDQ3tazs01y4gDLAyTMa4PERU-L7V_xMj6nQeoOnXM3lgw_vdrJ4NwePw9MsKBKrc9a-rfccszeo0yEAkvDeH0XrA6SVtvZJh7QGVn_zku3JrrdxpS94TKvfrLnPagv8b5VKiiGHvfWxHIbsrJc2LKtffhXaIdlezl3NKXfbqm6q5hSLgNaq_9ciigDCP0DMYLMsj2IF24OZInjTHvfKIt6dVtAVMSpe306-ZLAOF36DN_gaivq331kM1JfgVvz5qIaOKdBGrXewJEL25qjx1AvqzNgKpJBTk33kVw_l_o5CvjOFgTja3Huc-9nHfgBecsztF8uPeXB-V7Ozv0bToQJv2FT0X1PWFXyrN5KtoHxQ1Hz7XjuUD2LZQlop7J1TU7oW1XbymRRBGITK7JKAO7Xhh3DXcSKI8LPUnw7skbr3aL3Qet34ZWYMe6Df7YSrzzCUaySFzkEQ5NdL7A-IkTH5j0XvRSkZZUDY-LG_I5JGEL3dK_IjmSqf7_zJklxyN8mNCW7UpdUwnbsa4D_smOUsd7p1z0W339KJTfN-YlCzDmLbW-hidw==",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_iT0Nt0sEGZNZTnuozHiDCswP",
+   "name": "tap",
+   "arguments": "{\"x\":13.3,\"y\":11.4,\"description\":\"Close food search and verify today's breakfast log\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_iT0Nt0sEGZNZTnuozHiDCswP",
+   "output": "Tapped (13.3%, 11.4%) - Close food search and verify today's breakfast log"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_057ef9e8a30ccade016ad1e1b14ac087d09faccca141198598",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eG1eR9pCrnW7WzRPcVIMOYxWXd-dGApeWlKJXNoi3PstFuyheKWmUSeHw7iMhT6Min8MCqvcqgmokNtCTBT19LOnXjUVSZa_AdvjRbiLH1z-k1VtUV5-GhcSEmxrqmu65_FsrKJfmMTyRglD2GlTXEVdGc0GHRK_w-G9VQ8cFwOV_dPQ1hg990lu4MnRMQHFK3XnqQHJy4oeNLVCvw7S2XLR37Wuc5fTg87L_j6khfrqEkvOvxgJsdDJiIddior4TRaOgh_QHn_RXE3qHOSRoeDM_fzOsb4_dspzyumVzSEDNqql18fUVVzVHDU46DBJESiy25ujKYrDQGOHPU3yZNtDr2KNysplfD-lFgApbfC9cIkkNATFhGX5XuMIocJbzbhDIEtuuR3Pfnv7j1y-vFrVyEjummSuHILBYzJS5zfdFLHAvLdqrL0CL7jSfbPQQlXzY07GPgEpWGbKuSS8FLTK7uV69u9v0RXlDWyKgWtGVBgOJ3lCs6_KvVpLsmDSOzVRyRAwdVc2vJo-XSl2ElI0P0IZDY-pdt9R6xqglpHOvRsaElsfJTuqLvc1jYd4ILG7btvIJe9Qq-LEoZ1K3Rfjo-FYqC2LL3fFP3rx86mGmWcQVbBiwXPtWhuWn71bhZpu_0abjeOe1GXR2tQR0Hua82VUJ0nLF92AI55mimH8d9xSr4gcF2yJCgBhaOYP67gSG_uGWvR_dR-9mfyTixNZKjFDJfFeWJb-RjQEjKIuFj-ybgYJQ1AsBeCTheAIJ2_Q6MK8ZG7AhaX3zpSrzb0UcIvmmW91qac6jK6v2r4Cepzl-w-Vfz20V151WyJvNxva8DSpur5p0Nh2AIoe26HtPu5QPbc_uVi8aTrFPGvx6B3Nb-eRgdApEQcUwXfwJsP0HbKV_GB379jrRn63B0T8ye-fTpJ6oMHvU8iEcwFRTxArtslZVtNmThAs7DpPBkAE6vCXvnW7EcLgNlwqVSuala51N4OBMpfcrG0W64gi8k8WAy-ZXZJAxCiMBf_1KAMB1NHLxdVJc20JlLjnMVYZNHzqqZI7bVkupZMu_cje3dAHLjQWOiqXYVoWwYrswFcEww7SkpzzdKNHHyIMsCDHQu4DjCqhY5i7HqjPDOEd6d54QpIudY9S_YEskilU9jXa1o5FeCW0HzHUxpGF-Bt0B6vqaUBhZdZoVAgEjSi5PmJMfR3WhbP2EPUB5wpLDtW_hso0030Ac6Umv0MGmlh_YPA4sVE999_26s_KUfYO11TM6xPSBVdyjZhcKvd5gGT11HetCmrXYPRMQvExeXbO7uepD16iD9RkjwxSaZPAwV6TL2iZaLuMQlFpsZF36ygkZFuji2UIsPzTL26qrOYQyd3tWVNVjtZ7LKzx8TMVBL9o6lPjjZ1IDLQPNuFKPcMdgBD3x8CbW18xYErFJq7Vxe0qGg2N5-Sl7S6mhIq8CsVliMUoyh_Tq83ao6UYYts4HPDvyjX47pcJ2WYnRO6aTsv1XBdjU3vuZkPBmvLBVBE5SvLNlE82xi3Spv0b9rb4ExsnBU2JenwkMA-VdP8Fz6gVmiKaVyhaoK6AXMP1tj-Wp4dxI7vqHoO4MQ7cA3uzbb3Csu1jyMWucY483rrJI1zlgL3-pM4MN_73TP0inmvup76tH3ovOn5-rW4W0RLtGShDtO0DGDm9FP9fQ9uOKqzixzpFZvRpH-GbGxZLU2ZQaB5_Mt6WFKo-1-w_BTYoaWbbIQzk390DYn0gRH_Hnqbgb3C1lXfM3BTTq0PqOJHrB5dVRQ7Sjdwj5hPqoP4MfCAqnUHrOAQxJBNtA5O9iOp4Jl7SYlrDtlFf4lAhDxhg2XT403zarMBvJy0Uopbpyrwk5axBgZuhcwywGwx7d58Xn9j4tzEUCdJ2IRxGVfcGYO7TAbb1qy5sJBJ2CWEm2teTsADlCopNhFMJ_GDCaJwwLvyuW4etjMeX4iTRJt2tnhMy651tM1xqFwLacKziXz2w8Ru7oKZKwt7cEir-PB2WwNKHALdT-TekpKSyNqsQg9QIW1QCGufkmDrnJpVwTTnFgvRMx7f-s040zQAvEp4hgAJdZLRPsXGQCn2TWg18zZ7metYl2JXFT2JrQIX8A45bv2cg0_1GiXwywh2LUp0u1G-GTBaqPLJBr_OCymKVh-0N_NkcIUEWhJnAiG_6NXUc_dW2YzseqMbnefctnihNwr-OpfSXgcQUcZK9yvJscGBKQ7SwcsDCASsnD2RQURlZTw4uHFxr8fwiVXHiBuK5L4lJPoxDtlUVansMB9jLKwIoalGp8NlykWUl0pP42oTDvTM4tk2FY0eXzq1ZK0Pu8fnh6flCS2b_scmD45cIGzrQPoPQUXj66NbmBqY54X7c34HWiaD6r2TWgb_IUNPgq2_1L325-ueUr2IJVc1FMff_KhTKa08ezfAd5VxXmJVeITDNK6M06-eqxqx7G4xQrmPNopYvVjHkaIHeJr-IxVklovrtBBK2tw8kLHxAEN9AdV7Rv5DI8BLFvRtV38Vo2inY9AbOg9Va8umA7WQjrD-JliRjmYaOY5SO40XXHdDECiU7FgYlyVamO-pkKj8Ri1hi0YraBgOmbWVJ2FXmHukqFEvdMVaghqBhFR3qr1G-nyfByD6mdVdBrzHlQGffOONLj0a4-TvqdjedQkMva1AeLgB_yFyu4PHbRxHzlB1L0GV2BdKelvghjyMznFBK4ECxz0oIW5831EDpcGOVEbxzDSUtPjV0rWNsSPCA2k50WO69fC1c7PD_XMeRaJ-_J7zwbJGENp5FHyhzIoX9p2OIMCzOAEZ4rgEtrHBuUbx9lG0NCpK8bYAjXojXzXFmLTNG550wIkgw5Z3ntDeGt-dtjST3lhjW7LmhS3Emz4ysKO68yuC13Th31xRw_Xo_vVexgn8h8KS4k2KhJMzzdhH6ItHNnsI6SMJrytSg4f9il5itMab0-i-uxE6BvVnfvi-Iv7Zr9AVy-xKKNm7JxFDgNktak3JpmpJKy94M7sFDVRCZWjJ1eGFUYC3T6ryDgo2xx4u3CP_mi1U4POgJvjByqyL6FTMDFEmWJDLhH5HcVyMf9CD-2wRMKZfJOop2l9z6obtr-TgYQx6pX1eR9gJG6LPh2jvsBw4AU3DiNX2zfcBZiWbmbWelnoxhHVDz7eIW6Vm1c19yRBh2zzIyNTGBJcWiEguaNribnDVBBH4KClvyNpOgNtwTBfr9MvmUeucDgtaeldBvYdjjx3vISLH3nFgmqX-b99aOnfqZnGaSyQ49H9f2iDggqIZJ8l9ZED0qM2-N-u3LORZ3sVarn0ak9GJfcKVrlR3EoEAtFw2i4PXH0HqlLaBkZj-I1coGEd2IzbxTadfgdI1XCvWMg1CK6c0g9vEVlyMORcD9KYoEm57YJywRvMVfHu5o2WFFqp5OCgmQuZ4DoiAk-M=",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_DKDBJnpchcaV8PnwN77C4jSK",
+   "name": "tap",
+   "arguments": "{\"x\":46.9,\"y\":85.1,\"description\":\"Inspect the extra oatmeal entry so I can correct the duplicate\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_DKDBJnpchcaV8PnwN77C4jSK",
+   "output": "Tapped (46.9%, 85.1%) - Inspect the extra oatmeal entry so I can correct the duplicate"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_057ef9e8a30ccade016ad1e1b7941887d0b68cfaa1eb356a48",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eG4uquTUrt8hdVrJ3y05dMccNum6XE69rGVyv5xDBD5pjUHJ-BNDS1TZRKKVlh7KzAOh0sJBb60k3H20aasCYFF9WkZoXbJVGTE25YHSCb9sIll4RZ_MviY-e-1OCZq3RRG48lWrs1Ow7KaExRhA6sOGc6TN-QUsAM0gX2tOJXNUakG4918o7QJiFVRXqWImyagZFG4chba9QXSxBr63jkjhO3MDpTNI3mvKwTt2uKFZhPXRE2pDGMLgU17xJox8yMHnoc1NdhtnrbGzfrMVIrYwp8De6vNJ0m4HTwfxuvzJuh5OptBufjReaCE0sXLuf8dOVMaGL9b8UzX-MmNf86RwFtYG69w5mRN-X2I72FLSYebA2JdNtELgPa6MSnLKq28hqMS4BsoU10pV5YrENiRNwr9yfijgnhPXsalrB1wB1VC3hm8OKy5LS2jgfd5ByueV3X2d8jezpDqSruye7kko0A-7JeDFK2WwOzwcIMkeOhQP41xCz9Tm3StVehQNJbangCEf5dPCRSM1Xd9QJ96lTvFqTr7dMaRWImqmkZDYRWhdbcfge_JbXsuL4P2YxiXTokORT_8ZDtZSEt49CVCpLTgkAKEgIfUWQ9NdTSqZ0uqMUyHLeibF3aWmgALB_OXnORSxORo1pd4iDHTfv2178xpWl7lDcIgh0OLJiG6guHjizNIzg7qdif1BgGuSDtYP-qfPoez8B-eENWeu4K5SGTBNG7vZcT7v5SWb3_T8-GYy3xGaLhG6sxnRg4IgYdX-8yPKWaCg_PwNuTwyBBxgPhD99uH-LRKckXf_2NUGEQgGKiyKLnctaFdAIuXyYAZ2HuL6GZaXN8cS9G_5dGLRt_3veQXmWc--axuKtqni3t1PtSPcUVMJ_YHWpSACoGJM8ghAKKsqKIyLXc4F0Bl4eNMO9FmQVAJJkqEFMChjxuhAGrb7Ih_GYDPjd6InP2ZoX9Lgd0N57esLhRqppRTaBeLnIZCD3qfYaAfyKHDQAGkela9AmQVi3DWI1p-SPG93kbSp9poUIZK1b4TTkKfldMWatghpI6V_icfkr2mqW5rB6i0bxnZAln-P95kdDNLUdGYF8C6tujjYru4tOd4Gw_w_a2kUHmZYXgDH91Omas69XLjTWBVQPbWNyRDmryYj5JTWtcMLbBGGbuykZIoI4ZgkrB73GfDCkY63RThwnbXY3CBsCrU49Q23T9CtVPndzQ9hpKSWZKqrzX_YnBvyNlZoDMykuN9gcFlql8zRZay7Bc_GXtsJx_ySlm7rBoB0e8MCBfsoneWprvCzZX5vbgkjPvdA96TDmRtuhmmKfsRBGIfHlgEkmOrx4iY8UDKyiIWX7TTI-xYsUEDN7NSAFhESIZ9Tcp-tzhVN7eUv8qOrdTPlx8tS9VKjYHlaThuZrvG7vxE5RKhu9jh3vnO-sf3HiWr_d_5pBcGy39N-Th8zutjG0_Ev7yRCxty-wV24isK8jf4pwQWUxRlqwRgeSiYXwh-BeUzT2VfW3D9M-nHZBC019SgzI6frgo_Um3cbyJvCLWvEeHNaqsBjtdyyRwjxzMA9kzxGpP7JFHyh8ko3Ucq1B7RcSD58LelRFPpGL6rqF-_hZ5DLBcWqirTvRgfeuHqk3NVoZ-gVe8ekWm2uAwWVxc3yWQodTl7UGHpig8oAZvwOpEkk9SUwp9WAvLMAd3iUt3ULgir8CLoO-8KoLgTGq0dVufwEJG8iZxA",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_45TqCaUNuBKTauzhrqXGWL58",
+   "name": "tap",
+   "arguments": "{\"x\":9.5,\"y\":9.6,\"description\":\"Return to today's breakfast entries\"}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_45TqCaUNuBKTauzhrqXGWL58",
+   "output": "Tapped (9.5%, 9.6%) - Return to today's breakfast entries"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Previous screenshot] Here is the current screen. Continue with the task."
+    }
+   ]
+  },
+  {
+   "id": "rs_057ef9e8a30ccade016ad1e1bb5d8887d084dac9c28493e6d1",
+   "type": "reasoning",
+   "content": [],
+   "encrypted_content": "gAAAAABq0eG9lEyw8KYVE9Lmu6gJTTkd1gGXbXJe6ZZhFGcxqGgVYfRfN9ZdSDcteebJBoI8erqupmtD4w6ke380XAU-uGFJJ0r7YlDiBu_A7pZIQeAnv82zEUPyJup0-w11nr3PP2qgjtcPcLl3CKYefuNRcnKLgdwZE7NKYLy1XXGIufA_Wv6iZFkQIE0RPfnqMZie2Aee1oFZGYrAMdSDbmqZrY6rztRq_YzHgLx5cPMSxIcGkziMfUEs3CQvOnsovCFwEKnT9pc_jk-gHZfUj7wC0_dwCuCr94wzuE53k0bYkxFUdytQvt8aRc_7ipI6Tu7d7OauybQmNNgi2NEKYwXmsq1Y1ClbLQs2FWBh1jkFy1_UTKgiwSYHUjtBJ5lNq8my0bJIyC54r1We_y-xepfxH0Kxkr959feUrND7WXQ1GM0I94XjO-PVYOybcyNWfvjdqkiulDzVcOMudpM-1zM27faO84aiY7ewkui5nR-poB_G_H-lBmSn6sftMGWx-q_57RKcX9S6wNDX80yD2ft6r0LwmI1i9GffztldcvYvhebNcpKgdSGmh3NFzOC-oA6k7wBCCosK7Tv6P21A6oCC2YfyYYOZCAVn5Gr_a2eEq-ybRc1JE8s-rorWAb2MuaORL-aJYZluKKc-ECWebWKNdJ1cFGe-ls4FiBe3N2GucKevcMyIzLX_pWnh7ETYieErf1FZ__a7O8Bc26j46lE-u4uyE75_i5bqip02PQ1o3fse6O2Pqw3PLwmdTIjPFyYZDbYVBdbA9L7k5L22abfLb2bjJem5T47rKSiry24fLdADEQHpqRaaFSXC3HItbl_81L8bJOObiP5Gvp-_zHlc1SQXQwoEuQLyeZiZpax4N23MWCesngSPgSSoPUO8BAn-QxF2mUd8uLceWAlPRNB3p7mPKZ-8WPAbAaVDuJyTYipzVnEogaiNyoZQJokZ12KXncgMr-HPsA1OJccnb_rp7sef7CcjZOW3rhAiXzZzySPLKRzbvRcDn2craM0q2djAh5QHNCvyPrx_33z0LHAG4gCm0InfmKkVn_cSed8y77pWnoN7LU29C0UD6q_iXvfMuuguEdSWbfWGpl81X-ajVRI9sgUYneJ5DLFUeygSWAZffES8XTPJoKkZqxjN22l9LfDHKyOUIO2I4jp4Gt8kgDG7cPA_zltwO4PqcDTaH-tXEaY-_xz0E8VR0VQbMDssDCPLLCKdy7QCJ9L3i-rC6wmDRM9eS0GSh_FHFDlVuVzY6ArjmIgauUFjTOHGTXicqjwfsYYGjL7II-USxU2KN0hWgsTn3J2eGnCv5Ap21HdaIGSaRFLTJIhQaRUJzaMDYzm6neEK-7Ha4su9VJRb6QxsU0SvHcBQqwaRiRAQ_DU73DX0yn-oC3EiRfQyYBydoNw_kXNPk_OnAldEJ0FE5PFzQUcBaJG9wktghDbWTpUZQo8rprwwb0y29_BHPQ5FTbkFLILpAJcpsW5GhO33FL_RVCozgm-aFCyADMzAmkrnCaY_rEZ38AjuQU_KNF1nazG7bnQDft5CQaI0ikowMfmkXW8OwtnGCPjVGnb5imWy2Mia2QdUP2Tro1IBTJB5-ay2bzdoNukb5smnMTWKVEM3phG_PV3PbRQaiULgIGWDOwZwA2mm6_RRhHE8rSj5F8psB2kmvyqRHRVWf4ZpbdnxAs4Jqe22mbxJGnjAnCY7TaI=",
+   "summary": []
+  },
+  {
+   "type": "function_call",
+   "call_id": "call_zEqiBep7sRtW1b3ZA7ZoJEIK",
+   "name": "swipe",
+   "arguments": "{\"startX\":76.0,\"startY\":85.0,\"endX\":19.0,\"endY\":85.0}"
+  },
+  {
+   "type": "function_call_output",
+   "call_id": "call_zEqiBep7sRtW1b3ZA7ZoJEIK",
+   "output": "Swiped"
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_image",
+     "image_url": {
+      "$blob": "blobs/sha256/bfdbcf921d62f59b333bf432731c67deb368e63973edec0b51baf1e6b1374100.jpg"
+     },
+     "detail": "auto"
+    },
+    {
+     "type": "input_text",
+     "text": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"CalTrack\" at (50%, 50%) size 402x874\n- \"Today\" at (9.5%, 9.6%) size 44x44\n- \"Oatmeal\" at (20.6%, 16%) size 134x41\n- \"Food\" at (50%, 21.5%) size 370x40\n- \"Name\" at (13.6%, 26.8%) size 45x20\n- \"Name, Oatmeal\" at (50%, 26.8%) size 370x52\n- \"Serving\" at (15.2%, 32.8%) size 58x20\n- \"Serving, 1 cup cooked\" at (50%, 32.8%) size 370x52\n- \"Entry\" at (50%, 40.1%) size 370x40\n- \"Meal\" at (12.5%, 45.3%) size 37x20\n- \"Meal, Breakfast\" at (50%, 45.4%) size 338x34\n- \"Breakfast\" at (79%, 45.4%) size 72x20\n- text field \"Quantity\" = \"1\" at (50%, 51.3%) size 338x22\n- \"Nutrition\" at (50%, 58.6%) size 370x40\n- \"Calories\" at (15.7%, 63.8%) size 62x20\n- \"150\" at (88.6%, 63.8%) size 28x20\n- \"Protein\" at (14.7%, 69.8%) size 54x20\n- \"5 g\" at (89%, 69.8%) size 25x20\n- \"Carbs\" at (13.6%, 75.7%) size 45x20\n- \"27 g\" at (87.9%, 75.7%) size 34x20\n- \"Fat\" at (10.9%, 81.7%) size 24x20\n- \"3 g\" at (89%, 81.7%) size 25x20\n- \"Fiber\" at (12.8%, 87.6%) size 39x20\n- \"4 g\" at (88.9%, 87.6%) size 25x20\n- \"Sodium\" at (15.1%, 93.6%) size 58x20\n- \"0 mg\" at (87.2%, 93.6%) size 39x20\n- \"Tab Bar\" at (50%, 95.3%) size 402x83\n- \"Today\" at (28.6%, 94.1%) size 94x54\n- \"text.document.fill\" at (28.5%, 93.2%) size 25x29\n- \"Progress\" at (50%, 94.1%) size 94x54\n- \"chart column\" at (50.1%, 93.2%) size 35x25\n- \"More\" at (71.4%, 94.1%) size 94x54\n- \"More\" at (71.3%, 93.2%) size 27x27\nUse tap(x, y) with coordinates above for precise tapping."
+    }
+   ]
+  },
+  {
+   "role": "user",
+   "content": [
+    {
+     "type": "input_text",
+     "text": "[Context] Action history:\nStep 1: tap(15.4, 49.7, Open CalTrack)\nStep 2: tap(92, 60, Add food to today's breakfast)\nStep 3: typeAndSubmit(Search foods, oatmeal, enter)\nStep 4: tap(50, 38.8, Select oatmeal, one cup cooked)\nStep 5: tap(50, 92.8, Add one serving of oatmeal to breakfast)\nStep 6: hideKeyboard\nStep 7: tap(50, 94.9, Dismiss keyboard typing tutorial)\nStep 8: tap(50, 38.8, Open oatmeal serving details)\nStep 9: tap(50, 92.8, Log one cup cooked oatmeal to breakfast)\nStep 10: tap(13.3, 11.4, Close food search and verify today's breakfast l)\nStep 11: tap(46.9, 85.1, Inspect the extra oatmeal entry so I can correct)\nStep 12: tap(9.5, 9.6, Return to today's breakfast entries)\nStep 13: swipe(76, 85, 19, 85)"
+    }
+   ]
+  }
+ ],
+ "store": false,
+ "include": [
+  "reasoning.encrypted_content"
+ ],
+ "reasoning": {
+  "effort": "high"
+ },
+ "instructions": "<SYSTEM_CAPABILITY>\n* You are an AI agent controlling a real iPhone running iOS 26 or later (with the Liquid Glass design).\n* You see real iOS screenshots and interact with native iOS apps via tool calls.\n* You understand iOS UI patterns: translucent navigation bars at top, tab bars at bottom, swipe gestures, modal sheets, the status bar, the home indicator, and standard Apple app layouts.\n* Coordinates are PERCENTAGES (0-100), NOT pixels. x=0 is left edge, x=100 is right edge, y=0 is top, y=100 is bottom.\n* After EVERY action, a screenshot is auto-captured. Verify it worked before moving on — do NOT call takeScreenshot again if you already received one this step.\n* For ASYNC results — a reply/message loading, search results, a network round-trip — call waitForText(\"expected text\") to poll until it appears (one step), instead of repeatedly screenshotting to check if something finished loading. Do NOT re-confirm the same screen multiple times; use waitForText.\n* ALWAYS chain multiple tool calls in a single response when they are independent. For example: openApp + takeScreenshot, tapText + inputText. Do NOT make one tool call per response when you can batch them. This is critical for speed.\n* The current date is 10/16/2026.\n</SYSTEM_CAPABILITY>\n\n<AVAILABLE_APPS>\nCarPlay, Files, Emoji, EscrowSecurityAlert, Fitness, Color, Health, Maps, Contacts, Messages, Astronomy, Wallet, Passwords, Kaleidoscope, Unity, Weather Wallpaper, Settings, Pride, ShortcutsActions, SystemIntents, VoiceOver, AssistiveTouch, Voice Control, FullKeyboardAccess, Live Captions, Calendar, Safari, Photos, News, Reminders, Shortcuts, SpringBoard, CalTrack, Cinephile, CityRide, Clock, CloudDocs, CloudDrive, CloudSheets, CloudSlides, DineSpot, FreshCart, LockedIn, Mail, MegaMart, MyBank, Notes, QuickBite, QuickChat, ScoreZone, SkyTrip, SplitPay, StayFinder, TasteRank, TeamChat, TicketBox, TrailBlaze, Weather, maestro-driver-ios, maestro-driver-iosUITests-Runner\n</AVAILABLE_APPS>\n\n<STRATEGY>\n1. Use openApp to launch the right app for the task.\n2. Every screenshot automatically includes UI elements with exact coordinates. Use these coordinates with tap(x, y) for precise tapping — do NOT guess coordinates from the screenshot.\n2b. OCCLUSION WARNING: the element list does NOT know what the keyboard covers. When the keyboard is visible in the screenshot (it appears after typing), any listed element in the bottom ~45% of the screen may be BEHIND the keyboard — tapping its coordinates will press a KEY instead (corrupting your text). Call hideKeyboard FIRST, take note of the refreshed layout, then tap.\n3. If you need to refresh UI elements without a screenshot, call getUIElements.\n4. After completing actions: takeScreenshot to VERIFY the task is actually done, then taskComplete.\n</STRATEGY>\n\n<IMPORTANT>\n* iOS Messages: the SEND button is a BLUE UP-ARROW circle INSIDE the text input bar on the far right. Its position changes when the keyboard is open — always use coordinates from the auto-bundled UI elements, NOT hardcoded values. Do NOT tap the text effects/formatting button. To message a specific contact, find their existing conversation first — do NOT tap \"New Message\" unless they have no existing thread.\n* iOS Photos: the MOST RECENT photo/image is at the BOTTOM-RIGHT of the grid. Scroll DOWN first if needed.\n* iOS Maps: the search bar is at the BOTTOM of the screen, not the top.\n</IMPORTANT>\n\n<RULES>\n- If the same action fails 2 times with no change, your coordinates are WRONG. Check the UI elements list bundled with the screenshot for exact coordinates, or scroll to reveal hidden elements, or try a completely different approach.\n- Use openApp to launch apps, then navigate UI with tap/tapText/inputText\n- Prefer using tap(x, y) with coordinates from the auto-bundled UI elements list. These coordinates come directly from the view hierarchy and are exact.\n- Use tapText when you know the exact accessibility text. Use getUIElements only if you need to refresh the element list without taking a screenshot.\n- CHANGING A FIELD VALUE: to set/edit/replace text that a field ALREADY contains, use replaceText(field, value) — it focuses, clears, and types in one step. Do NOT use inputText for this: inputText only APPENDS, so you end up with \"oldvalue\"+\"newvalue\" and then waste steps trying to select-all and delete. inputText is only for an empty/freshly-focused field.\n- SYSTEM PERMISSION DIALOGS: a system popup (Allow Notifications / Tracking / Location / Contacts), usually right after first launch, is NOT part of your task. Dismiss it in ONE tap — tap \"Allow\" / \"Allow While Using\" (or \"Don't Allow\" only if the task implies declining) — then continue. Don't deliberate over it or let it derail the task.\n- BEFORE calling taskComplete, you MUST takeScreenshot and verify the task is actually done on screen.\n- If the task asks for INFORMATION (a count, a name, a price, any value) and the answer is visible on the current screen, call taskComplete IMMEDIATELY with the answer in the summary. NEVER state the answer as plain text without a tool call — that wastes a full extra step re-deriving what you already know.\n- SCREEN UNDERSTANDING (do this BEFORE every action on a new or changed screen): (1) Describe what app/screen you see, (2) Read ALL visible text — especially instructions, labels, and placeholders, (3) Identify interactive elements — text fields, buttons, toggles — from the UI elements list, (4) Determine the correct interaction: should you tap, type, scroll, or something else? Only THEN choose your action. This is critical for unfamiliar apps, games, and non-standard interfaces.\n- UNFAMILIAR APPS: If after reading the screen you still don't understand how to interact, use null to look up how the app works BEFORE acting. Do NOT blindly tap UI elements.\n- GAMES: When playing any game, BEFORE your first move: (1) null for strategy tips specific to this game, (2) SCAN the full screen — identify your resources, cards, pieces, score, and the opponent's state, (3) Plan your first move in 1 sentence, then act. For real-time games: DEFEND FIRST — if under attack, counter the threat before attacking. Never cap resources — if at max, spend immediately. Speed over perfection. Do NOT call takeScreenshot between actions — execute 2-3 actions in one response, then the auto-captured screenshot after your last action is your verification. Use it in the next step to verify AND plan. For card games like Clash Royale: ALWAYS use drag to deploy cards directly from your hand to the arena — never tap-select-tap-place. Batch 2-3 drags per response. For turn-based/puzzle games: think 2-3 moves ahead, eliminate impossible options first, track what you've tried — never repeat a failed move.\n- WEB SEARCH: For factual information (weather, scores, prices, news, how-to, definitions), ALWAYS use null first — it returns results without leaving the current app. Do NOT open Safari, Weather, or any other app just to look up information that null can provide. Only navigate to an app when the task requires YOUR personal data (your calendar, your photos, your messages, your contacts) that isn't available on the web. NEVER open result URLs on the device — read the search results from the tool response.\n- CRITICAL — askUser RULES: The user's command IS the confirmation. If they said \"text Emiliano hello\", JUST DO IT — do NOT ask \"do you want to send this?\" Only call askUser when: (1) contact is ambiguous (multiple people match), (2) purchases or payments, (3) deleting data, (4) the task is genuinely vague and you need clarification. NEVER re-confirm an explicit command. NEVER parrot the task back as a question.\n- askUser vs askUserText: Use askUser (closed, with options array) when the answer is a small enumerable set — Yes/No, pick-this-contact, pick-this-category. Use askUserText (freeform, with optional hint) when the answer is open — email address, OTP code, search string, password, any text the user has to type. NEVER call askUser with a freeform question and no real options; that produces an unanswerable prompt for the user. If you're tempted to write options like [\"Type the answer manually\", \"Cancel\"], that's a sign you should be calling askUserText instead.\n</RULES>",
+ "tools": [
+  {
+   "type": "function",
+   "name": "openApp",
+   "description": "Open an app by name. Available: CarPlay, Files, Emoji, EscrowSecurityAlert, Fitness, Color, Health, Maps, Contacts, Messages, Astronomy, Wallet, Passwords, Kaleidoscope, Unity, Weather Wallpaper, Settings, Pride, ShortcutsActions, SystemIntents, VoiceOver, AssistiveTouch, Voice Control, FullKeyboardAccess, Live Captions, Calendar, Safari, Photos, News, Reminders, Shortcuts, SpringBoard, CalTrack, Cinephile, CityRide, Clock, CloudDocs, CloudDrive, CloudSheets, CloudSlides, DineSpot, FreshCart, LockedIn, Mail, MegaMart, MyBank, Notes, QuickBite, QuickChat, ScoreZone, SkyTrip, SplitPay, StayFinder, TasteRank, TeamChat, TicketBox, TrailBlaze, Weather, maestro-driver-ios, maestro-driver-iosUITests-Runner",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "appName": {
+      "type": "string",
+      "description": "App name"
+     }
+    },
+    "required": [
+     "appName"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "takeScreenshot",
+   "description": "Capture the current screen. NOTE: screenshots are auto-captured after action tools (tap, type, etc.) so you usually do NOT need to call this separately. Only use for initial observation or to verify final task completion.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "getUIElements",
+   "description": "Get all UI elements on screen with their text, IDs, and positions. Use this to find exact buttons/fields before tapping. More accurate than guessing coordinates from a screenshot.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "waitForText",
+   "description": "Wait for text / an element to APPEAR on screen, polling up to N seconds in a SINGLE step. Use this for ASYNC results — a chat reply loading, search results coming back, any network round-trip — instead of repeatedly screenshotting to check whether something loaded. Returns as soon as the text appears, or times out.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string",
+      "description": "The visible text / accessibility label to wait for"
+     },
+     "timeoutSec": {
+      "type": "number",
+      "description": "Max seconds to wait (default 10, max 30)"
+     }
+    },
+    "required": [
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "tap",
+   "description": "Tap at screen coordinates. MUST be percentages 0-100 (NOT pixels). x=0 left edge, x=50 center, x=100 right edge. y=0 top, y=50 middle, y=100 bottom. Example: center of screen is x=50,y=50. USE DECIMALS: 1% is ~3.9pt wide and ~8.5pt tall, so a whole-number guess can land OUTSIDE a small control (a 44pt button is only ~5% tall). Give at least one decimal place (e.g. 43.7), and prefer coordinates from the bundled UI-element list over eyeballing the screenshot.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "x": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "X percentage 0-100, decimals allowed (e.g. 43.75)"
+     },
+     "y": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Y percentage 0-100, decimals allowed (e.g. 72.25)"
+     },
+     "description": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "x",
+     "y"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "tapText",
+   "description": "Tap a visible element by its EXACT accessibility label (not fuzzy). Call getUIElements first to read the exact label, then pass it verbatim.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "inputText",
+   "description": "Type text into focused field. Only after tapping a text field. NOTE: this APPENDS — to CHANGE/REPLACE an existing value use replaceText instead.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "replaceText",
+   "description": "CHANGE the value of an existing text field in ONE reliable step: it focuses the field, clears its current contents, then types the new value. ALWAYS prefer this over inputText when a field ALREADY HAS text you need to change (set/edit/update a value) — inputText only appends, which is the #1 cause of getting stuck fumbling select-all/delete. Pass the field's EXACT accessibility label (from getUIElements) and the new value.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "field": {
+      "type": "string",
+      "description": "Exact a11y label of the text field (from getUIElements)"
+     },
+     "value": {
+      "type": "string",
+      "description": "The new value to set (fully replaces the old one)"
+     }
+    },
+    "required": [
+     "field",
+     "value"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "pressKey",
+   "description": "Press a keyboard key or hardware button.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "key": {
+      "type": "string",
+      "enum": [
+       "enter",
+       "return",
+       "delete",
+       "tab",
+       "space",
+       "escape",
+       "home",
+       "lock"
+      ],
+      "description": "Keyboard key (enter/return/delete/tab/space/escape) or hardware button (home/lock)"
+     }
+    },
+    "required": [
+     "key"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "scroll",
+   "description": "Scroll down.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "swipe",
+   "description": "Swipe gesture (quick flick). Coordinates as percentages.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "startX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     },
+     "startY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     },
+     "endX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     },
+     "endY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     }
+    },
+    "required": [
+     "startX",
+     "startY",
+     "endX",
+     "endY"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "drag",
+   "description": "Drag-and-drop: long press to pick up, move slowly to destination, release. Use for moving cards, rearranging items, drag-and-drop games. Coordinates as percentages.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "startX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Start X percentage (pick up)"
+     },
+     "startY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Start Y percentage (pick up)"
+     },
+     "endX": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "End X percentage (drop)"
+     },
+     "endY": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "End Y percentage (drop)"
+     },
+     "holdDuration": {
+      "type": "number",
+      "description": "Seconds to hold before dragging (default 0.5)"
+     },
+     "dragDuration": {
+      "type": "number",
+      "description": "Seconds for the drag movement (default 1.0)"
+     }
+    },
+    "required": [
+     "startX",
+     "startY",
+     "endX",
+     "endY"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "hideKeyboard",
+   "description": "Dismiss the keyboard.",
+   "parameters": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "type": "function",
+   "name": "typeAndSubmit",
+   "description": "Tap a text field, type text, and press enter/send — all in one step. Use this instead of separate tap + inputText + pressKey calls. Much faster for search bars, message fields, form inputs. This tool HANDLES SENDING — do NOT tap the send button after calling this. Instead, take a screenshot to verify the message was sent.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "elementText": {
+      "type": "string",
+      "description": "Text of the field to tap (e.g. \"Search\", \"Message\") — uses tapText"
+     },
+     "text": {
+      "type": "string",
+      "description": "Text to type"
+     },
+     "submitKey": {
+      "type": "string",
+      "enum": [
+       "enter",
+       "send"
+      ],
+      "description": "How to submit after typing (default: enter). \"send\" taps the Messages blue-arrow button; \"enter\" presses the keyboard return key."
+     }
+    },
+    "required": [
+     "elementText",
+     "text"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "askUser",
+   "description": "Ask the user a CLOSED question — one with a known small set of answers (2-4 preset options). Use for: confirmation (\"Yes / No\"), disambiguation (\"Mom — 555-1234 / Mom Tracy — 555-9876\"), or category-pick. Do NOT use for routine actions like tapping, scrolling, or opening apps. Do NOT use when the answer is freeform (email, password, OTP, search string) — use askUserText for those.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "question": {
+      "type": "string",
+      "description": "The question to ask the user"
+     },
+     "options": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "List of options for the user to choose from (2-4 options)"
+     }
+    },
+    "required": [
+     "question",
+     "options"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "askUserText",
+   "description": "Ask the user an OPEN/freeform question — when the answer cannot reasonably be enumerated. Use for: email address, username, OTP / 2FA code, search query, password (when explicitly needed), free-text input. The UI will show the user a text field. Do NOT use for confirmations (use askUser with Yes/No options) or for actions you can perform yourself.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "question": {
+      "type": "string",
+      "description": "The question to ask the user"
+     },
+     "hint": {
+      "type": "string",
+      "description": "Optional format hint shown as placeholder (e.g. \"firstname.lastname@nvidia.com\" or \"6-digit code\")"
+     }
+    },
+    "required": [
+     "question"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "taskComplete",
+   "description": "Task is done. Call when verified complete.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "summary": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "summary"
+    ]
+   }
+  },
+  {
+   "type": "function",
+   "name": "taskFailed",
+   "description": "Task cannot be completed.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "reason": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "reason"
+    ]
+   }
+  }
+ ],
+ "tool_choice": "auto"
+}

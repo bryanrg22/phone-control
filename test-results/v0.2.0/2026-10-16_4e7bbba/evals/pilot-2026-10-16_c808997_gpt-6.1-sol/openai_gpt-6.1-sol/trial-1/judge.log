@@ -1,0 +1,13 @@
+[judge] run-dir: /Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1
+[judge] tasks: 2 | provider: openai | model: gpt-5.4-mini
+[judge] re-judge: False | workers: 4
+
+  [PASS] clock-001                      score=1.00
+  [PART] caltrack-001                   score=0.50
+
+───── Run summary ─────────────────────────────────────
+  Judged tasks:      2
+  Pass rate:         50.0%  (1/2)
+  Rubric score:      0.750
+
+  → wrote /Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/summary.json

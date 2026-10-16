@@ -1,0 +1,17 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/2aa79470c1ad4be8160a6b9d915dcb23da5429e4d88ac991866f7171a98985e9.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Task: Log today's breakfast in CalTrack — search the food database for 'oatmeal', add a serving, and give me the calories and macros.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed.\n\nUI elements on screen:\n- \"Calendar\" at (15.4%, 15.3%) size 72x91\n- \"Photos\" at (38.5%, 15.3%) size 68x91\n- \"Reminders\" at (61.6%, 15.3%) size 82x91\n- \"News\" at (84.6%, 15.3%) size 68x91\n- \"Maps\" at (15.5%, 26.7%) size 68x91\n- \"Health\" at (38.5%, 26.7%) size 68x91\n- \"Wallet\" at (61.6%, 26.7%) size 68x91\n- \"Settings\" at (84.5%, 26.7%) size 68x91\n- \"CloudDocs\" at (15.4%, 38.2%) size 83x91\n- \"CloudSheets\" at (38.4%, 38.2%) size 94x91\n- \"CloudSlides\" at (61.6%, 38.2%) size 89x91\n- \"TrailBlaze\" at (84.5%, 38.2%) size 76x91\n- \"CalTrack\" at (15.4%, 49.7%) size 71x91\n- \"FreshCart\" at (38.4%, 49.7%) size 77x91\n- \"MegaMart\" at (61.5%, 49.7%) size 79x91\n- \"LockedIn\" at (84.5%, 49.7%) size 72x91\n- \"Search\" at (50%, 82.2%) size 78x30\n- \"Search\" at (44.6%, 82.2%) size 11x11\n- \"Search\" at (51.8%, 82.2%) size 40x14\n- \"Dock\" at (50%, 92.1%) size 402x103\n- \"Safari\" at (39.1%, 92.1%) size 68x68\n- \"Messages\" at (60.9%, 92.1%) size 68x68\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ }
+]

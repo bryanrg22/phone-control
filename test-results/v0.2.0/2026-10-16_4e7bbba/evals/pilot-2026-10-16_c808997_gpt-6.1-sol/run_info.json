@@ -1,0 +1,70 @@
+{
+  "harness_version": "0.1.0",
+  "run": "pilot-2026-10-16_c808997_gpt-6.1-sol",
+  "started": "2026-10-16T08:32:42.447Z",
+  "protocol": {
+    "max_steps": 50,
+    "time_limit": "none",
+    "start": "home screen, every app reset and reseeded",
+    "judge_default": "gpt-5.4-mini"
+  },
+  "phone_control": {
+    "release": "0.2.0",
+    "commit": "c808997a8e36e60f12352bc6941402c3b261934b",
+    "dirty": false
+  },
+  "iosworld": {
+    "commit": "c59287b6ec9a9d0d7269613ad873f6aa9db0f42c",
+    "dirty": false,
+    "tasks_sha256": "42c0b5558fde0e71",
+    "scripts_sha256": {
+      "scripts/judge_trajectories.py": "5ae8a8c129230526",
+      "scripts/llm_action_generator.py": "c7526c9195f75a29",
+      "phone-control evals/phone-agent/iosworld_reset.py": "4ec794de2dec6b84"
+    }
+  },
+  "device": {
+    "udid": "DF68C5E8-9704-4D31-A0CA-8DC9B32BA001",
+    "name": "iOSWorld iPhone 17 Pro",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
+    "xcode": "Xcode 26.4"
+  },
+  "judge": {
+    "script": "iOSWorld scripts/judge_trajectories.py",
+    "provider": "openai",
+    "model": "gpt-5.4-mini"
+  },
+  "agent": {
+    "entry": "agent/agent.mjs",
+    "device": "simulator through the runner",
+    "ask_user": "unanswered (1 s timeout)",
+    "web_search": false,
+    "reasoning": "high",
+    "no_progress_abort": 8,
+    "observation": "768 px wide JPEG + element list (≤150), newest screen only in context",
+    "final_step": "forced taskComplete/taskFailed at the budget"
+  },
+  "models": [
+    {
+      "provider": "openai",
+      "model": "gpt-6.1-sol"
+    }
+  ],
+  "trials": 1,
+  "tasks": [
+    "caltrack-001",
+    "clock-001"
+  ],
+  "cells": [
+    {
+      "model": {
+        "provider": "openai",
+        "model": "gpt-6.1-sol"
+      },
+      "trial": 1,
+      "dir": "openai_gpt-6.1-sol/trial-1"
+    }
+  ],
+  "node": "v23.9.0",
+  "finished": "2026-10-16T08:37:59.039Z"
+}

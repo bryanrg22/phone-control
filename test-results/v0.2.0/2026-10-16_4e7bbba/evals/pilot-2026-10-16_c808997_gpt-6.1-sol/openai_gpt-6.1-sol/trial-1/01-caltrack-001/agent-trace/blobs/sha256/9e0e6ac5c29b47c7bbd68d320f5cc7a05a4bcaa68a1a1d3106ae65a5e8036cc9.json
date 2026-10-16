@@ -1,0 +1,162 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Log today's breakfast in CalTrack — search the food database for 'oatmeal', add a serving, and give me the calories and macros.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "name": "tap",
+    "arguments": {
+     "x": 15.4,
+     "y": 49.7,
+     "description": "Open CalTrack"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_DVH6tRxyPdsSWVCCDOdwx471",
+    "response": "Tapped (15.4%, 49.7%) - Open CalTrack"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+    "name": "tap",
+    "arguments": {
+     "x": 92,
+     "y": 60,
+     "description": "Add food to today's breakfast"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_VV3V1n85VP8fXGAdfO9YqHIW",
+    "response": "Tapped (92%, 60%) - Add food to today's breakfast"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_Z6tBOdSEZSanLCcQrm0ClU9u",
+    "name": "typeAndSubmit",
+    "arguments": {
+     "elementText": "Search foods",
+     "text": "oatmeal",
+     "submitKey": "enter"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_Z6tBOdSEZSanLCcQrm0ClU9u",
+    "response": "Typed \"oatmeal\" into \"Search foods\" and submitted via enter"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_G6qWCZM5JolcuV1O7hHt81UN",
+    "name": "tap",
+    "arguments": {
+     "x": 50,
+     "y": 38.8,
+     "description": "Select oatmeal, one cup cooked"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_G6qWCZM5JolcuV1O7hHt81UN",
+    "response": "Tapped (50%, 38.8%) - Select oatmeal, one cup cooked"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/1e74d9d21860abda35dbf3cf288fcc7f02e1a5dca288c0c845b53ad6995fe36a.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"CalTrack\" at (50%, 50%) size 402x874\n- \"Search Food\" at (9.5%, 11.4%) size 44x44\n- \"Cancel\" at (28.4%, 11.4%) size 77x36\n- \"Oatmeal\" at (20.6%, 17.8%) size 134x41\n- \"Serving Size\" at (50%, 23.4%) size 370x40\n- \"Food\" at (12.8%, 28.6%) size 39x20\n- \"Food, Oatmeal\" at (50%, 28.6%) size 370x52\n- \"Serving\" at (15.2%, 34.6%) size 58x20\n- \"Serving, 1 cup cooked\" at (50%, 34.6%) size 370x52\n- text field \"Quantity\" = \"1.0\" at (50%, 40.5%) size 338x22\n- \"Nutrition\" at (50%, 47.8%) size 370x40\n- \"Calories\" at (15.7%, 53.1%) size 62x20\n- \"150\" at (88.6%, 53.1%) size 28x20\n- \"Protein\" at (14.7%, 59.1%) size 54x20\n- \"5 g\" at (89%, 59.1%) size 25x20\n- \"Carbs\" at (13.6%, 65%) size 45x20\n- \"27 g\" at (87.9%, 65%) size 34x20\n- \"Fat\" at (10.9%, 71%) size 24x20\n- \"3 g\" at (89%, 71%) size 25x20\n- \"Fiber\" at (12.8%, 76.9%) size 39x20\n- \"4 g\" at (88.9%, 76.9%) size 25x20\n- \"Sodium\" at (15.1%, 82.9%) size 58x20\n- \"0 mg\" at (87.2%, 82.9%) size 39x20\n- \"Add Food\" at (50%, 92.8%) size 370x52\nUse tap(x, y) with coordinates above for precise tapping.\n⚠️ KEYBOARD LIKELY OPEN (you typed recently): listed elements below ~55% of the screen may be BEHIND the keyboard — tapping their coordinates presses a KEY instead and corrupts your text. Call hideKeyboard first, then tap."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: tap(15.4, 49.7, Open CalTrack)\nStep 2: tap(92, 60, Add food to today's breakfast)\nStep 3: typeAndSubmit(Search foods, oatmeal, enter)\nStep 4: tap(50, 38.8, Select oatmeal, one cup cooked)"
+   }
+  ]
+ }
+]

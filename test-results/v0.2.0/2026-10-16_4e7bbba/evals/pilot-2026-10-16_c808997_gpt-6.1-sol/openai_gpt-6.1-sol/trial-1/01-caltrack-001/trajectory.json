@@ -1,0 +1,194 @@
+[
+  {
+    "step": 1,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/2aa79470c1ad4be8160a6b9d915dcb23da5429e4d88ac991866f7171a98985e9.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 15.4,
+        "y": 49.7
+      }
+    ]
+  },
+  {
+    "step": 2,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/cf7e7a1fd0e94bea51d923fe44f8af86d8296aaee03ffb84ae41f38fc0cf0270.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 92,
+        "y": 60
+      }
+    ]
+  },
+  {
+    "step": 3,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/9223667dc41f4a8da82146654df688f474d17876259c1c84acf979a7a5c9e90e.jpg",
+    "actions": [
+      {
+        "tool": "typeAndSubmit",
+        "elementText": "Search foods",
+        "text": "oatmeal",
+        "submitKey": "enter"
+      }
+    ]
+  },
+  {
+    "step": 4,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/8471395821335fbfab3faa7ebfafbb8aa7a7adb5af0272ec9ecb573fe4b72f17.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 50,
+        "y": 38.8
+      }
+    ]
+  },
+  {
+    "step": 5,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/1e74d9d21860abda35dbf3cf288fcc7f02e1a5dca288c0c845b53ad6995fe36a.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 50,
+        "y": 92.8
+      }
+    ]
+  },
+  {
+    "step": 6,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/1f1b56ae234531ad8ee4d19a1d27fdd632881c0c8ab40fd6f34e3e40a4974611.jpg",
+    "actions": [
+      {
+        "tool": "hideKeyboard"
+      }
+    ]
+  },
+  {
+    "step": 7,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/edf854ce957e611193829ba43edcb0e3a1b46d7eeddcb64907bfb28a9ccbff3c.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 50,
+        "y": 94.9
+      }
+    ]
+  },
+  {
+    "step": 8,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/90f32a255d084b38861092c2688fa66b0094f7a7b6a6a71c1c4b2798710f92f9.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 50,
+        "y": 38.8
+      }
+    ]
+  },
+  {
+    "step": 9,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/7de8205a86d2058e3d3d8149ac72c490f1d83f374f4b40934fca443c3f627d5f.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 50,
+        "y": 92.8
+      }
+    ]
+  },
+  {
+    "step": 10,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/40a2350ed33b1d3a3aca5fbdd57f594487391613f7eb796c472beba61412c383.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 13.3,
+        "y": 11.4
+      }
+    ]
+  },
+  {
+    "step": 11,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/29b2a50835a9d46f4be0898fd1bb8325c3727eca9d473ecd44d97214c6e1fe45.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 46.9,
+        "y": 85.1
+      }
+    ]
+  },
+  {
+    "step": 12,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/992f74186d4ce9bbc727b3c5194a0fa644adefdc0fc36367b8811c3bc609afa2.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 9.5,
+        "y": 9.6
+      }
+    ]
+  },
+  {
+    "step": 13,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/06a5f2d81ad951835c6ec898335e3a247f693ead55de5b8d623bfdf51b0921f2.jpg",
+    "actions": [
+      {
+        "tool": "swipe",
+        "startX": 76,
+        "startY": 85,
+        "endX": 19,
+        "endY": 85
+      }
+    ]
+  },
+  {
+    "step": 14,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/bfdbcf921d62f59b333bf432731c67deb368e63973edec0b51baf1e6b1374100.jpg",
+    "actions": [
+      {
+        "tool": "tap",
+        "x": 9.5,
+        "y": 9.6
+      }
+    ]
+  },
+  {
+    "step": 15,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/06a5f2d81ad951835c6ec898335e3a247f693ead55de5b8d623bfdf51b0921f2.jpg",
+    "actions": [
+      {
+        "tool": "swipe",
+        "startX": 76,
+        "startY": 85.1,
+        "endX": 25,
+        "endY": 85.1
+      }
+    ]
+  },
+  {
+    "step": 16,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/12890f0363949630cbd4409ad6eaf0989fa82d11e5bd6ed69a57b8e43b9ac59d.jpg",
+    "actions": [
+      {
+        "tool": "tapText",
+        "text": "Today"
+      }
+    ]
+  },
+  {
+    "step": 17,
+    "screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/agent-trace/blobs/sha256/06a5f2d81ad951835c6ec898335e3a247f693ead55de5b8d623bfdf51b0921f2.jpg",
+    "actions": [
+      {
+        "tool": "swipe",
+        "startX": 60,
+        "startY": 78.8,
+        "endX": 10,
+        "endY": 78.8
+      }
+    ],
+    "post_action_screenshot": "/Users/bryanramirez-gonzalez/dev/GitHub/phone-control/evals/results/phone-agent/pilot-2026-10-16_c808997_gpt-6.1-sol/openai_gpt-6.1-sol/trial-1/01-caltrack-001/final.png"
+  }
+]

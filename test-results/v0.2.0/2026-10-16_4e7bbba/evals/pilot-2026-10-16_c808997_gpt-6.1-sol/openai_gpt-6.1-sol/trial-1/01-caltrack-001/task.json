@@ -1,0 +1,59 @@
+{
+  "index": 1,
+  "task": "caltrack-001",
+  "goal": "Log today's breakfast in CalTrack \u2014 search the food database for 'oatmeal', add a serving, and give me the calories and macros.",
+  "apps": [
+    "caltrack"
+  ],
+  "category": "single_app",
+  "status": "ok",
+  "error": null,
+  "agent_answer": null,
+  "evaluation": {
+    "success": false,
+    "score": 0.5,
+    "reasoning": "The agent did search for oatmeal and reached the oatmeal detail screen, but the flow appears incomplete and inconsistent: there is no clear confirmation that the entry was saved, and the final state still shows the oatmeal detail page rather than a completed log confirmation. The task also required reporting calories and macros, which the agent did not provide as a final answer.",
+    "rubric_results": [
+      {
+        "criterion": "Open CalTrack app and navigate to food logging section",
+        "satisfied": true,
+        "reasoning": "The trajectory starts from the home screen and enters CalTrack, reaching the Today/food logging area."
+      },
+      {
+        "criterion": "Tap the log food / add food button",
+        "satisfied": true,
+        "reasoning": "The agent opened the food logging flow and reached the Search Food screen via the add food action."
+      },
+      {
+        "criterion": "Search for 'oatmeal' in the food database",
+        "satisfied": true,
+        "reasoning": "The search field contains 'oatmeal' and the Food Database Results section is shown."
+      },
+      {
+        "criterion": "Select oatmeal from search results",
+        "satisfied": true,
+        "reasoning": "The oatmeal result was selected, leading to the oatmeal detail/serving screen."
+      },
+      {
+        "criterion": "Set serving size to 1 serving",
+        "satisfied": false,
+        "reasoning": "The oatmeal detail screen shows serving information, but there is no clear evidence the serving size was changed to 1 serving; it already appears as 1.0/1 cup cooked and no adjustment is visible."
+      },
+      {
+        "criterion": "Confirm and save the food log entry",
+        "satisfied": false,
+        "reasoning": "There is no clear confirmation or saved-state evidence; the final screen remains on the oatmeal detail page rather than a completed log confirmation."
+      },
+      {
+        "criterion": "Report the calorie count for the logged serving",
+        "satisfied": false,
+        "reasoning": "No final textual report was given by the agent, even though the screen shows 150 calories."
+      },
+      {
+        "criterion": "Report macros (protein, carbs, fat)",
+        "satisfied": false,
+        "reasoning": "No final textual report was given by the agent, even though the screen shows P 5g, C 27g, F 3g."
+      }
+    ]
+  }
+}

@@ -1,0 +1,303 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Set a new alarm for 6:45 AM labeled 'Gym' in the Clock app and confirm it's set.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "name": "openApp",
+    "arguments": {
+     "appName": "Clock"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "response": "Opened Clock"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+    "name": "tap",
+    "arguments": {
+     "x": 39.5,
+     "y": 94.1,
+     "description": "Open Alarm tab"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_ItgmEVv8vP4N0CvoIWodcFRQ",
+    "response": "Tapped (39.5%, 94.1%) - Open Alarm tab"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_5T9eanVBQp6c8fnR2GR2S90F",
+    "name": "tap",
+    "arguments": {
+     "x": 90.5,
+     "y": 9.6,
+     "description": "Add a new alarm"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_5T9eanVBQp6c8fnR2GR2S90F",
+    "response": "Tapped (90.5%, 9.6%) - Add a new alarm"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_lBPhheVs8igKhZ0iRdUSDFij",
+    "name": "swipe",
+    "arguments": {
+     "startX": 34.5,
+     "startY": 35,
+     "endX": 34.5,
+     "endY": 17
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_lBPhheVs8igKhZ0iRdUSDFij",
+    "response": "Swiped"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_8X07nEj16BtN4Hu8ZOpZie9K",
+    "name": "drag",
+    "arguments": {
+     "startX": 34.5,
+     "startY": 25,
+     "endX": 34.5,
+     "endY": 35.8,
+     "holdDuration": 0.1,
+     "dragDuration": 1.5
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_8X07nEj16BtN4Hu8ZOpZie9K",
+    "response": "Dragged from (34.5%, 25%) to (34.5%, 35.8%) — hold 0.1s, drag 1.5s"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_P63ZtETuNXkLl7n304WSVBlG",
+    "name": "tap",
+    "arguments": {
+     "x": 34.5,
+     "y": 24.8,
+     "description": "Select hour 6"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_P63ZtETuNXkLl7n304WSVBlG",
+    "response": "Tapped (34.5%, 24.8%) - Select hour 6"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_UDDhJlzg4adtcUDTHXrrN0Sq",
+    "name": "drag",
+    "arguments": {
+     "startX": 48.8,
+     "startY": 37,
+     "endX": 48.8,
+     "endY": 11,
+     "holdDuration": 0.1,
+     "dragDuration": 1.8
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_UDDhJlzg4adtcUDTHXrrN0Sq",
+    "response": "Dragged from (48.8%, 37%) to (48.8%, 11%) — hold 0.1s, drag 1.8s"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Here is the current screen. Continue with the task."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_3FL48ASj0nQ4vih8kGO2okoe",
+    "name": "tap",
+    "arguments": {
+     "x": 48.8,
+     "y": 32,
+     "description": "Select 45 minutes"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_3FL48ASj0nQ4vih8kGO2okoe",
+    "response": "Tapped (48.8%, 32%) - Select 45 minutes"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/eda6b9978b6db8043447e51657c982a02a40e2fbddbae88b833fae09c65daa58.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"Clock\" at (50%, 50%) size 402x874\n- \"Cancel\" at (14.7%, 11.4%) size 78x36\n- \"Add Alarm\" at (50%, 11.4%) size 83x21\n- \"Save\" at (87.3%, 11.4%) size 62x36\n- picker wheel = \"6 o’clock\" at (34.5%, 28.4%) size 55x291\n- picker wheel = \"45 minutes\" at (48.8%, 28.4%) size 50x291\n- picker wheel = \"AM\" at (64.3%, 28.4%) size 65x291\n- \"Label\" at (9.1%, 44.4%) size 33x16\n- text field \"Label\" (empty) at (50%, 48.7%) size 362x44\n- \"Repeat\" at (10.3%, 54.4%) size 43x16\n- \"Never\" at (50%, 58.7%) size 362x44\n- \"Never\" at (13.3%, 58.7%) size 43x20\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: openApp(Clock)\nStep 2: tap(39.5, 94.1, Open Alarm tab)\nStep 3: tap(90.5, 9.6, Add a new alarm)\nStep 4: swipe(34.5, 35, 34.5, 17)\nStep 5: drag(34.5, 25, 34.5, 35.8, 0.1, 1.5)\nStep 6: tap(34.5, 24.8, Select hour 6)\nStep 7: drag(48.8, 37, 48.8, 11, 0.1, 1.8)\nStep 8: tap(48.8, 32, Select 45 minutes)"
+   }
+  ]
+ }
+]

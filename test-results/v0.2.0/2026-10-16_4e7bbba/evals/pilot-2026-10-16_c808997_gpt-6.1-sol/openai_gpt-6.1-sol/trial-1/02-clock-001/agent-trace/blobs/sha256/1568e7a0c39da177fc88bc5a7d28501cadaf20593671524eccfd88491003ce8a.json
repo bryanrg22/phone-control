@@ -1,0 +1,58 @@
+[
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Previous screenshot] Task: Set a new alarm for 6:45 AM labeled 'Gym' in the Clock app and confirm it's set.\n\nThis is what is currently on my screen. If the task can be completed from here, do it directly — do NOT open another app unless needed."
+   }
+  ]
+ },
+ {
+  "role": "assistant",
+  "parts": [
+   {
+    "type": "tool_call",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "name": "openApp",
+    "arguments": {
+     "appName": "Clock"
+    }
+   }
+  ]
+ },
+ {
+  "role": "tool",
+  "parts": [
+   {
+    "type": "tool_call_response",
+    "id": "call_R7GyAZEPnkaNRAZ7Mw6JyC81",
+    "response": "Opened Clock"
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "uri",
+    "modality": "image",
+    "mime_type": "image/jpeg",
+    "uri": "blobs/sha256/60f471f70a630953a0826381a4c5291e4beddfca4ae9298157d3d28a8b120e9a.jpg"
+   },
+   {
+    "type": "text",
+    "content": "Here is the current screen. Continue with the task.\n\nUI elements on screen:\n- \"Clock\" at (50%, 50%) size 402x874\n- \"Edit\" at (11.7%, 9.6%) size 54x36\n- \"Add\" at (90.5%, 9.6%) size 36x36\n- \"World Clock\" at (27.7%, 16%) size 191x41\n- \"Tehran\" at (12.6%, 22%) size 62x24\n- \"Today, +10:30HRS\" at (18.8%, 24.7%) size 111x16\n- \"12:06 PM\" at (80.8%, 23.2%) size 114x34\n- \"New York\" at (15.6%, 30%) size 86x24\n- \"Today, +3HRS\" at (15.6%, 32.7%) size 85x16\n- \"4:36 AM\" at (82.1%, 31.2%) size 104x34\n- \"London\" at (13.4%, 38%) size 68x24\n- \"Today, +8HRS\" at (15.6%, 40.7%) size 85x16\n- \"9:36 AM\" at (82%, 39.2%) size 104x34\n- \"Tokyo\" at (11.7%, 46%) size 54x24\n- \"Today, +16HRS\" at (16.3%, 48.7%) size 91x16\n- \"5:36 PM\" at (82.3%, 47.2%) size 102x34\n- \"Tab Bar\" at (50%, 95.3%) size 402x83\n- \"World Clock\" at (18.6%, 94.1%) size 100x54\n- \"Globe\" at (18.6%, 93.2%) size 27x27\n- \"Alarm\" at (39.5%, 94.1%) size 100x54\n- \"alarm\" at (39.6%, 93.1%) size 26x28\n- \"Stopwatch\" at (60.5%, 94.1%) size 100x54\n- \"stopwatch\" at (60.4%, 93.1%) size 27x30\n- \"Timer\" at (81.4%, 94.1%) size 100x54\n- \"Timer\" at (81.3%, 93.2%) size 27x27\nUse tap(x, y) with coordinates above for precise tapping."
+   }
+  ]
+ },
+ {
+  "role": "user",
+  "parts": [
+   {
+    "type": "text",
+    "content": "[Context] Action history:\nStep 1: openApp(Clock)"
+   }
+  ]
+ }
+]
