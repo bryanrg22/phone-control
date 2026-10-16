@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // run.mjs — connector evals: does an assistant use phone-control's tools correctly?
 //
-//   node evals/connector/run.mjs                              Claude Opus 5.5, 3 trials, OpenAI judge
+//   node evals/connector/run.mjs                              Claude Opus 5.5, 3 trials, OpenAI judge (GPT-6.1 Sol)
 //   node evals/connector/run.mjs --model claude-sonnet-5-5 --trials 5
 //   node evals/connector/run.mjs --assistant openai --model gpt-6-astra    an OpenAI model, Claude judge
 //   node evals/connector/run.mjs --cases hitl,stop            only cases whose id contains these
@@ -59,7 +59,11 @@ const filter = (opt('cases', '') || '').split(',').filter(Boolean);
 const expect = opt('expect', null);              // all-pass | all-fail: for harness self-tests
 // A judge from another family than the assistant: Claude is judged by an OpenAI model, and the reverse.
 const judgeProvider = opt('judge', isModel ? MODEL_ASSISTANTS[assistantKind].judge : 'none');
-const judgeModel = opt('judge-model', judgeProvider === 'openai' ? 'gpt-6-luna' : judgeProvider === 'anthropic' ? 'claude-opus-5-5' : null);
+// Judges of comparable strength for both families: GPT-6.1 Sol judges Claude,
+// Claude Opus 5.5 judges OpenAI models. (GPT-6 Luna, the cheapest, judged Claude
+// until 2026-10-15 and failed an exemplary partial-success answer with a reason
+// that contradicted itself.)
+const judgeModel = opt('judge-model', judgeProvider === 'openai' ? 'gpt-6.1-sol' : judgeProvider === 'anthropic' ? 'claude-opus-5-5' : null);
 const runName = opt('run', `${new Date().toISOString().replace(/[:.]/g, '-')}_${isModel ? `${model}_${effort}` : assistantKind}`);
 const outRoot = join(opt('out', join(REPO, 'evals', 'results')), 'connector', runName);
 
