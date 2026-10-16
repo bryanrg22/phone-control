@@ -44,3 +44,18 @@ export function summarize(verdictsByCase) {
     per_case: perCase,
   };
 }
+
+/**
+ * Cohen's kappa: agreement between two raters over the same items, corrected
+ * for the agreement chance alone would give. pairs: [[raterA, raterB], ...].
+ * 1 is perfect, 0 is chance; Landis & Koch call 0.61-0.80 substantial and
+ * 0.81-1 almost perfect. null when there are no items.
+ */
+export function kappa(pairs) {
+  const n = pairs.length;
+  if (!n) return null;
+  const cats = [...new Set(pairs.flat())];
+  const po = pairs.filter(([a, b]) => a === b).length / n;
+  const pe = cats.reduce((s, c) => s + (pairs.filter(([a]) => a === c).length / n) * (pairs.filter(([, b]) => b === c).length / n), 0);
+  return pe === 1 ? 1 : (po - pe) / (1 - pe);
+}

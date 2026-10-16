@@ -3,7 +3,7 @@
 
 import assert from 'node:assert/strict';
 import { costOf, PRICES } from '../prices.mjs';
-import { wilson, summarize } from '../stats.mjs';
+import { wilson, summarize, kappa } from '../stats.mjs';
 
 let passed = 0;
 function ok(name, fn) {
@@ -40,5 +40,18 @@ ok('pass^k counts only cases where every trial passed; test errors are left out'
   close(s.pass_at_1, 7 / 8);
   close(s.pass_hat_k, 2 / 3);
 });
+
+
+console.log('kappa');
+ok('perfect agreement is 1', () => close(kappa([['a', 'a'], ['b', 'b'], ['c', 'c']]), 1));
+ok('chance-level agreement is about 0 (half agree, two balanced categories)', () => close(kappa([['a', 'a'], ['a', 'b'], ['b', 'a'], ['b', 'b']]), 0));
+ok('the textbook case: 50 items, 35 agreed, kappa 0.4', () => {
+  // Wikipedia's worked example: both yes 20, A yes/B no 5, A no/B yes 10, both no 15.
+  // Observed agreement 0.7; expected by chance 0.5 (A says yes half the time, B 60%); (0.7-0.5)/(1-0.5) = 0.4.
+  const pairs = [...Array(20).fill(['yes', 'yes']), ...Array(5).fill(['yes', 'no']), ...Array(10).fill(['no', 'yes']), ...Array(15).fill(['no', 'no'])];
+  close(kappa(pairs), 0.4);
+});
+ok('one category everywhere is 1, not a division by zero', () => close(kappa([['a', 'a'], ['a', 'a']]), 1));
+ok('no items is null', () => assert.equal(kappa([]), null));
 
 console.log(`\n${passed} passed`);
