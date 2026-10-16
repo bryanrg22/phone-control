@@ -47,7 +47,7 @@ Still to do before trusting judged scores to steer changes: hand-label a set of 
 
 Near 100% the cases are a **regression** set: a drop means something broke. Measuring which model or wording is *better* needs harder cases.
 
-`node evals/connector/compare.mjs <run>...` puts finished runs side by side: pass rates, steps, time, cache use and cost per task, overall and per case.
+`node evals/connector/matrix.mjs` runs the newest model of every family in parallel from a committed tree (one tiny request per provider first, so a dead key or an empty balance stops everything before anything is spent), then writes the comparison. `node evals/connector/compare.mjs <run>...` puts finished runs side by side: pass rates, steps, time, cache use and cost per task, overall and per case.
 
 ### What a run leaves behind
 

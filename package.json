@@ -23,6 +23,7 @@
     "test:conformance": "node e2e/conformance.mjs",
     "snapshots:update": "UPDATE_SNAPSHOTS=1 node server/test/tool-snapshots.test.mjs",
     "evals:connector": "node evals/connector/run.mjs",
+    "evals:connector:matrix": "node evals/connector/matrix.mjs",
     "test:evals:self": "node evals/connector/run.mjs --assistant oracle --expect all-pass && node evals/connector/run.mjs --assistant null --expect all-fail",
     "test:record": "node scripts/record-tests.mjs",
     "evals:phone-agent": "node evals/phone-agent/run.mjs",
