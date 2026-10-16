@@ -36,7 +36,15 @@ const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
 const all = (name) => argv.flatMap((a, i) => (a === `--${name}` ? [argv[i + 1]] : []));
 const skip = new Set((all('skip')[0] || '').split(',').filter(Boolean));
+// Every argument must be a known flag or its value: an unknown one used to be
+// ignored, so "--evals a --evals b" passed as one word filed a record without
+// its evals and still reported success (2026-10-16).
+const FLAGS = new Set(['--skip', '--evals', '--note']);
+for (let i = 0; i < argv.length; i += 2) {
+  if (!FLAGS.has(argv[i]) || argv[i + 1] === undefined) { console.error(`unknown or incomplete argument: ${JSON.stringify(argv[i])} (expected ${[...FLAGS].join(', ')}, each with a value)`); process.exit(2); }
+}
 const evalRuns = all('evals').map((p) => resolve(p));
+for (const run of evalRuns) if (!existsSync(join(run, 'run_info.json'))) { console.error(`not an eval run folder (no run_info.json): ${run}`); process.exit(2); }
 const note = all('note')[0] || '';
 
 const git = (...args) => { try { return execFileSync('git', args, { cwd: REPO, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch { return null; } };
