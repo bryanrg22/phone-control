@@ -13,10 +13,14 @@
 // default, the judge they validated against human labels). A task passes when
 // every rubric criterion holds; that and the rubric score are their metrics.
 //
-// What is ours: the agent, run exactly as the server runs it on a phone
-// (agent/agent.mjs, the same tools, the same prompt, through the same runner),
-// except that the simulator is the device and nobody answers its questions
-// (--askuser-timeout 1: an unanswered question returns "no answer").
+// What is ours: the agent, run as the server runs it on a phone (agent/agent.mjs,
+// the same tools, the same prompt, through the same runner), with three
+// differences, all recorded in run_info.json: the simulator is the device;
+// nobody answers its questions (--askuser-timeout 1: an unanswered question
+// returns "no answer"); and web search is off (--no-web-search), because
+// iOSWorld's weather and sports apps hold fictional data that the open web
+// would contradict, and the paper's agents had no search. Reasoning effort is
+// high (--effort high), as the paper's runs (effort high; max for Opus).
 //
 // Output (never overwritten): evals/results/phone-agent/<run>/
 //   run_info.json                              versions, protocol, models, judge
@@ -88,8 +92,11 @@ function selectTasks(spec) {
 }
 
 // ─── the judge: iOSWorld's own script ────────────────────────────────────────
-function judge(runDir) {
-  const out = run(PY, [join(IOSWORLD, 'scripts', 'judge_trajectories.py'), '--run-dir', runDir, '--tasks', TASKS_FILE, '--judge-model', judgeModel, '--judge-provider', 'openai'],
+const JUDGE_SCRIPTS = ['scripts/judge_trajectories.py', 'scripts/llm_action_generator.py'];
+const sha = (p) => createHash('sha256').update(readFileSync(p)).digest('hex').slice(0, 16);
+/** @param {boolean} rejudge  score again even where an evaluation exists (their script skips those by default) */
+function judge(runDir, { rejudge = false } = {}) {
+  const out = run(PY, [join(IOSWORLD, 'scripts', 'judge_trajectories.py'), '--run-dir', runDir, '--tasks', TASKS_FILE, '--judge-model', judgeModel, '--judge-provider', 'openai', ...(rejudge ? ['--re-judge'] : [])],
     { cwd: IOSWORLD, maxBuffer: 64 * 1024 * 1024 });
   writeFileSync(join(runDir, 'judge.log'), `${out}\n`);
   return JSON.parse(readFileSync(join(runDir, 'summary.json'), 'utf8'));
@@ -138,7 +145,7 @@ async function runTask({ task, index, model, taskDir }) {
   const args = [join(REPO, 'agent', 'agent.mjs'), task.goal,
     '--provider', model.provider, '--model', model.model,
     '--simulator', udid, '--driver-port', driverPort,
-    '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', '1',
+    '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', '1', '--no-web-search', '--effort', 'high',
     '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`];
   record.agent_args = args.slice(1).map((a) => (a === task.goal ? '<goal>' : a));
   const agentStart = Date.now();
@@ -208,7 +215,7 @@ function summarize(outRoot, cells) {
 // ─── main ────────────────────────────────────────────────────────────────────
 if (judgeOnly) {
   const cells = JSON.parse(readFileSync(join(judgeOnly, 'run_info.json'), 'utf8')).cells.map((c) => ({ ...c, dir: join(judgeOnly, c.dir) }));
-  for (const c of cells) judge(c.dir);
+  for (const c of cells) judge(c.dir, { rejudge: true });
   summarize(judgeOnly, cells);
   process.exit(0);
 }
@@ -229,10 +236,15 @@ const cells = models.flatMap((model) => Array.from({ length: trials }, (_, i) =>
 const runInfo = {
   harness_version: HARNESS_VERSION, run: runName, started: new Date().toISOString(), protocol: PROTOCOL,
   phone_control: { release: JSON.parse(readFileSync(join(REPO, 'package.json'), 'utf8')).version, commit: git(REPO, 'rev-parse', 'HEAD'), dirty: (git(REPO, 'status', '--porcelain') || '').length > 0 },
-  iosworld: { commit: git(IOSWORLD, 'rev-parse', 'HEAD'), dirty: (git(IOSWORLD, 'status', '--porcelain', '--untracked-files=no') || '').length > 0, tasks_sha256: createHash('sha256').update(readFileSync(TASKS_FILE)).digest('hex').slice(0, 16) },
+  iosworld: {
+    commit: git(IOSWORLD, 'rev-parse', 'HEAD'), dirty: (git(IOSWORLD, 'status', '--porcelain', '--untracked-files=no') || '').length > 0,
+    tasks_sha256: sha(TASKS_FILE),
+    // The judge as run: their two scripts, unmodified, and our reset wrapper that calls their functions.
+    scripts_sha256: Object.fromEntries([...JUDGE_SCRIPTS.map((p) => [p, sha(join(IOSWORLD, p))]), ['phone-control evals/phone-agent/iosworld_reset.py', sha(join(HERE, 'iosworld_reset.py'))]]),
+  },
   device: { udid, name: simInfo?.name ?? null, runtime: simInfo?.runtime ?? null, xcode: run('xcodebuild', ['-version']).split('\n')[0] },
   judge: { script: 'iOSWorld scripts/judge_trajectories.py', provider: 'openai', model: judgeModel },
-  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', reasoning: 'provider default', no_progress_abort: 8 },
+  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', web_search: false, reasoning: 'high', no_progress_abort: 8, observation: '768 px wide JPEG + element list (≤150), newest screen only in context', final_step: 'forced taskComplete/taskFailed at the budget' },
   models, trials, tasks: tasks.map((t) => t.name), cells: cells.map(({ model, trial, dir }) => ({ model, trial, dir })),
   node: process.version,
 };

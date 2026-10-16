@@ -10,13 +10,18 @@
 // iOSWorld's judge (scripts/llm_action_generator.py evaluate_trajectory) reads
 // one entry per step: the screenshot taken BEFORE that step's actions, the
 // actions, and on the last step `post_action_screenshot` for the end state; the
-// agent's final answer comes from task.json. So step k gets the screen shown
-// after step k-1, when one was taken (no new screen, no image: never a stale one).
+// agent's final answer comes from task.json. Step k gets the screen shown
+// after step k-1; when none was taken (the step's tools did not change the
+// screen: getUIElements, askUser, a text-only reply), the latest screen stands
+// in, marked `screenshot_reused`, so the judge sees one screen per step as in
+// iOSWorld's own trajectories (appium_agent.py takes one every step).
 //
-// Actions carry the tool name and arguments only, like iOSWorld's own
-// trajectories: not the tool's reply, which would hand the judge the agent's
-// own claims ("Task complete") as if they were observations. Calls the agent
-// did not run (after a failure or a conclusion in the same step) are left out.
+// Actions carry the tool name and arguments, and for a call that failed its
+// error, as iOSWorld's do (`status: recoverable_error`): a failed tapText("Save")
+// must not read as a tap on Save. Not the tool's reply, which would hand the
+// judge the agent's own claims ("Task complete") as if they were observations,
+// and not the model's free-text `description` of a tap. Calls the agent did
+// not run (after a failure or a conclusion in the same step) are left out.
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -41,7 +46,7 @@ function actionsByStep(trace) {
     if (op(r) !== 'execute_tool' || r.eval?.skipped) continue;
     const step = r.eval.step;
     if (!by.has(step)) by.set(step, []);
-    by.get(step).push({ name: r.attributes['gen_ai.tool.name'], args: r.attributes['gen_ai.tool.call.arguments'] });
+    by.get(step).push({ name: r.attributes['gen_ai.tool.name'], args: r.attributes['gen_ai.tool.call.arguments'], error: r.status === 'ERROR' ? String(r.attributes['gen_ai.tool.call.result'] ?? 'failed') : null });
   }
   return by;
 }
@@ -65,11 +70,21 @@ export function toTrajectory(traceDir, finalScreenshot) {
   const shown = new Map(trace.filter((r) => r.name === 'observation').map((r) => [r.eval.step, join(traceDir, r.eval.image)]));
   const actions = actionsByStep(trace);
   const steps = trace.filter((r) => op(r) === 'chat').map((r) => r.eval.step);
-  const traj = [...new Set(steps)].map((step) => ({
-    step,
-    screenshot: shown.get(step - 1) ?? null,
-    actions: (actions.get(step) || []).map(({ name, args }) => (args && typeof args === 'object' ? { tool: name, ...args } : { tool: name, invalid_arguments: args })),
-  }));
+  let last = null;
+  const traj = [...new Set(steps)].map((step) => {
+    const fresh = shown.get(step - 1) ?? null;
+    if (fresh) last = fresh;
+    return {
+      step,
+      screenshot: fresh ?? last,
+      ...(fresh || !last ? {} : { screenshot_reused: true }),
+      actions: (actions.get(step) || []).map(({ name, args, error }) => {
+        const a = args && typeof args === 'object' ? { tool: name, ...args } : { tool: name, invalid_arguments: args };
+        delete a.description;
+        return error ? { ...a, error } : a;
+      }),
+    };
+  });
   if (traj.length && finalScreenshot) traj[traj.length - 1].post_action_screenshot = finalScreenshot;
   return traj;
 }

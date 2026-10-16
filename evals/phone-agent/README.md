@@ -14,14 +14,24 @@ Does the agent that operates the phone complete real tasks? Measured on [iOSWorl
 
 ## What is ours
 
-The agent, `agent/agent.mjs`, run as the server runs it on a real iPhone: the same tools, prompt and loop, every action through the same XCTest runner, a screenshot plus the on-screen element list each step, the model's default reasoning setting. Two things differ from a run on a phone, both forced by the benchmark:
+The agent, `agent/agent.mjs`, run as the server runs it on a real iPhone: the same tools, prompt and loop, every action through the same XCTest runner. Four things differ from a run on a phone, each recorded in `run_info.json`:
 
 - **The device is a simulator**, driven through the same runner the phone uses.
 - **Nobody answers the agent's questions.** iOSWorld has no user, so `askUser` returns "no answer" after a second (`--askuser-timeout 1`), as in an unattended run. Each result counts how often a model asked.
+- **No web search** (`--no-web-search`). On a phone the agent has the provider's own web search; iOSWorld's weather and sports apps hold a fictional user's data that the open web would contradict, and the paper's agents had no search.
+- **Reasoning effort high** (`--effort high`), as the paper's runs (effort high; max for Opus 4.6). On a phone the product uses the provider's default.
 
-The agent's observation is closest to the paper's **vision + XML** mode (a screenshot plus the accessibility elements, and launching apps by name), so that is the row of the paper's table to compare with.
+The agent's observation is closest to the paper's **vision + XML** mode (a screenshot plus the accessibility elements, and launching apps by name), so that is the row of the paper's table to compare with. The models differ anyway (the paper: Opus 4.6, Sonnet 4.6, GPT-5.4; here the 2026-10 models), so the comparison is of harnesses on the same benchmark, not a leaderboard entry.
 
-Our agent stops on its own after 8 steps without progress (its no-progress stop, a product feature kept as shipped); iOSWorld's agent always runs to 50 steps. Both count as an unsuccessful ending only if the judge says so.
+### What the judge sees, and how it differs from the paper's trajectories
+
+iOSWorld's judge reads one screenshot per step, the actions of each step, a final screenshot and the agent's answer. `trajectory.mjs` builds that from the agent's record:
+
+- **One screen per step.** The agent observes the screen only after an action that can change it; a step that only read the element list or asked the user gets the latest screen again, marked `screenshot_reused` (the screen did not change). iOSWorld captures a fresh one every step.
+- **Failed actions carry their error**, as iOSWorld's `recoverable_error` entries do: a failed `tapText("Save")` is not a tap on Save.
+- **Arguments only, no narrative.** The model's free-text `description` of a tap is dropped; what it typed, asked or waited for stays, as iOSWorld keeps the `type` text and `stop` answer.
+- **Screenshots are the 768-pixel-wide JPEGs the model saw** (the judge script resizes to 706×1536 again); the paper's judge got one resize from a full-resolution PNG. The final screenshot is a full-resolution PNG captured after the run.
+- **The answer** is the `taskComplete` summary, or the `taskFailed` reason when the agent gave up; iOSWorld's is the `stop` answer. At the 50th step our agent is forced to conclude with one of the two, so a budget run always has an answer; iOSWorld's may have none.
 
 ## Setting up
 
@@ -65,7 +75,27 @@ A run the infrastructure broke (the model API failing for good, the runner dying
 
 ## Known differences from the paper's setup
 
+Each item is from reading iOSWorld's `scripts/appium_agent.py` and `llm_action_generator.py` beside ours (2026-10-16), not from the paper alone. The κ = 0.77 judge validation and the 50-step protocol are the paper's statements; the repository itself says only "paper's pass-rate definition" and "paper uses 50 steps".
+
+**Observation and context**
+- **768 px wide JPEG** per step (the paper: longest edge 1536 px), with our element list: label, value, placeholder, centre in percent, size in points, on-screen elements only, at most 150 (the paper's tree: type, name, label, value, identifier, hidden and disabled flags, centre in 0–1000, at most 200). Only the newest screen stays in the model's context; the paper's harness keeps every screenshot.
+- The system prompt lists **every installed app** and the real date; iOSWorld's first turn lists only the task's apps' bundle IDs and no date.
+
+**Reset and timing**
+- **No simulator reboot between tasks.** iOSWorld's `reset_device` shuts the simulator down and boots it before every task; our runner session would not survive that. We run their app-data wipe, reseed and status-bar pin, then press Home. State a reboot clears that we do not: the app switcher, the pasteboard, keyboard suggestions, delivered notifications, and anything changed in Apple's Settings.
+- Waits: 1 s after Home before the first observation (theirs 2 s); 350 ms after a tap, swipe, scroll or drag and none after typing (theirs 2 s after every action).
+
+**Actions**
+- Ours adds `tapText`, `replaceText`, `typeAndSubmit`, `waitForText`, `hideKeyboard`, `drag`, keyboard keys and `askUser`; theirs has an explicit long press (`hover`), `terminate_app` and `open_url`, which ours lacks (a long press is approximated by `drag` with the same start and end).
+- A reply with text and no tool call is nudged to use a tool; iOSWorld's computer-use path treats it as `stop`.
+
+**Endings**
+- Our agent stops on its own after 8 steps without progress (a product feature kept as shipped) and after 4 consecutive device failures (a test error); iOSWorld's runs to `stop` or step 50. A hang past 45 minutes is a test error.
+- A first-launch "Would Like to Send You Notifications" prompt during steps 1–4 is answered Allow by the harness without a model step (iOSWorld pre-grants them with `applesimutils`, which we did not install); a prompt from an app opened later costs the model a step.
+
+**Environment**
 - **iOS 26.4** simulator runtime (the paper: iOS 26).
 - **Widgets.** iOSWorld's bootstrap removes the home-screen widgets while the simulator runs; on iOS 26.4 the home screen writes its layout back, so the widgets stayed. `prepare-simulator.sh` applies the same removal with the simulator shut down.
-- **Notification permission prompts.** iOSWorld pre-approves notifications with `applesimutils` from the `wix/brew` Homebrew tap; we did not trust that tap on the evaluation machine. All other permissions are granted, and our agent dismisses a notification prompt on its own if one appears.
 - **Same-family judging.** GPT-5.4 Mini judges every model, as in the paper, including the OpenAI models. Kept for comparability with the paper's table.
+
+**Status.** The three result folders on disk predate the agent's restructure (they ran an older command line on an uncommitted tree); the current harness has not yet produced a run from a committed tree. Until one exists, nothing above is a result.

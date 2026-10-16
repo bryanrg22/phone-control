@@ -12,9 +12,10 @@ export const VALUE_FLAGS = new Set([
   '--provider', '--model', '--temperature',
   '--driver-host', '--driver-port', '--simulator',
   '--max-steps', '--askuser-timeout', '--no-progress-abort',
-  '--trace-dir', '--run-id',
+  '--trace-dir', '--run-id', '--effort',
 ]);
-export const BOOLEAN_FLAGS = new Set(['--help']);
+export const BOOLEAN_FLAGS = new Set(['--help', '--no-web-search']);
+export const EFFORTS = ['low', 'medium', 'high', 'max'];
 const PROVIDERS = ['anthropic', 'openai', 'gemini'];
 
 export function parseAgentArgs(argv) {
@@ -64,6 +65,9 @@ export function parseAgentArgs(argv) {
     temperature = t;
   }
 
+  const effort = flags['--effort'] ?? null;
+  if (effort !== null && !EFFORTS.includes(effort)) return fail(`--effort must be one of ${EFFORTS.join(', ')} (got "${effort}").`);
+
   const simulator = flags['--simulator'] || null;
   const driverHost = flags['--driver-host'] || (simulator ? '127.0.0.1' : null);
   if (!driverHost) return fail('--driver-host is required: the address of the phone\'s runner (or pass --simulator <udid>).');
@@ -71,7 +75,8 @@ export function parseAgentArgs(argv) {
   return {
     help: false, error: null,
     config: {
-      task, provider, model, temperature,
+      task, provider, model, temperature, effort,
+      webSearch: !bools.has('--no-web-search'),
       driverHost, driverPort, simulator,
       maxSteps, askUserTimeoutSec, noProgressAbort,
       traceDir: flags['--trace-dir'] || null,
@@ -91,6 +96,8 @@ Model:
   --provider P           anthropic | openai | gemini (default: anthropic)
   --model M              model ID (default: the provider's default in models.mjs)
   --temperature T        0-2; only for models that accept it
+  --effort E             reasoning effort: low | medium | high | max (default: the provider's default)
+  --no-web-search        offer the model no web search (for benchmarks whose apps hold fictional data)
 
 Device:
   --driver-host H        the phone's runner address (required for a phone)

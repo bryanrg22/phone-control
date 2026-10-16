@@ -32,6 +32,8 @@ console.log('parsing:');
   check('--simulator drives a local simulator: the runner is on 127.0.0.1', c.simulator === 'ABC-123' && c.driverHost === '127.0.0.1');
 }
 check('--max-steps is capped at 300', ok(['t', '--driver-host', 'h', '--max-steps', '999999']).maxSteps === 300);
+check('web search is on unless --no-web-search', ok(['t', '--simulator', 'u']).webSearch === true && ok(['t', '--simulator', 'u', '--no-web-search']).webSearch === false);
+check('--effort takes the four levels and nothing else', ok(['t', '--simulator', 'u', '--effort', 'high']).effort === 'high' && ok(['t', '--simulator', 'u']).effort === null && /--effort must be one of/.test(err(['t', '--simulator', 'u', '--effort', 'ultra'])?.message || ''));
 check('a phone needs --driver-host', /driver-host/.test(err(['t'])?.message || ''));
 check('an unknown flag is an error, not ignored', /unknown flag/.test(err(['t', '--driver-host', 'h', '--backend', 'x'])?.message || ''));
 check('a flag with no value is an error', /needs a value/.test(err(['t', '--driver-host'])?.message || ''));

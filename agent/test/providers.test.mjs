@@ -97,6 +97,7 @@ console.log('the request path:');
   check('input tokens include the cached ones (OTel GenAI)', r.usage.input_tokens === 1050 && r.usage.cache_read_input_tokens === 900 && r.usage.cache_write_input_tokens === 50);
   check('the model that answered is kept', r.responseModel === 'claude-opus-5-5-20261001' && r.responseId === 'msg_1');
   check('the exact request and response are returned for the record', r.raw.request.model === 'claude-opus-5-5' && r.raw.response.id === 'msg_1');
+  check('no effort is sent unless asked for', !('output_config' in seen.body));
   check('the system prompt, the last tool and the newest message are cache breakpoints', seen.body.system[0].cache_control && seen.body.tools.at(-1).cache_control && seen.body.messages.at(-1).content.at(-1).cache_control);
   check('native web search is offered', seen.body.tools.some((t) => t.type === 'web_search_20250305'));
   await srv.close();
@@ -115,6 +116,30 @@ console.log('the request path:');
   check('nothing is stored at OpenAI, and encrypted reasoning is requested', seen.store === false && seen.include?.includes('reasoning.encrypted_content'));
   check('on a final step only the named tools are offered, and no search', seen.tools.length === 1 && seen.tools[0].name === 'taskComplete');
   check('cached and reasoning tokens are kept; input already includes the cached part', r.usage.input_tokens === 1000 && r.usage.cache_read_input_tokens === 800 && r.usage.reasoning_output_tokens === 3);
+  await srv.close();
+}
+
+
+console.log('reasoning effort and web search switches:');
+{
+  let seen = null;
+  const srv = await server((req, res, body) => {
+    seen = body;
+    res.writeHead(200, { 'content-type': 'application/json' });
+    if (req.url.includes('/responses')) res.end(JSON.stringify({ id: 'resp_1', model: 'gpt-6.1-sol', status: 'completed', output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: 'ok' }] }], usage: { input_tokens: 1, output_tokens: 1 } }));
+    else res.end(JSON.stringify({ id: 'msg_2', model: 'claude-opus-5-5', stop_reason: 'end_turn', content: [{ type: 'text', text: 'ok' }], usage: { input_tokens: 1, output_tokens: 1 } }));
+  });
+  process.env.ANTHROPIC_BASE_URL = srv.url; process.env.OPENAI_BASE_URL = `${srv.url}/v1`;
+  const tools = [{ name: 'tap', description: 'Tap', parameters: { type: 'object', properties: {} } }];
+  await createAnthropic({ model: 'claude-opus-5-5', apiKey: 'k', effort: 'high' }).complete({ messages: CONVO, tools });
+  check('Anthropic: --effort becomes output_config.effort', seen?.output_config?.effort === 'high', JSON.stringify(seen?.output_config));
+  await createAnthropic({ model: 'claude-opus-5-5', apiKey: 'k', nativeWebSearch: false }).complete({ messages: CONVO, tools });
+  check('Anthropic: no web search tool when switched off', !seen.tools.some((t) => t.type === 'web_search_20250305'));
+  await createOpenAI({ model: 'gpt-6.1-sol', apiKey: 'k', effort: 'high' }).complete({ messages: CONVO, tools });
+  check('OpenAI: --effort becomes reasoning.effort', seen?.reasoning?.effort === 'high', JSON.stringify(seen?.reasoning));
+  await createOpenAI({ model: 'gpt-6.1-sol', apiKey: 'k', nativeWebSearch: false }).complete({ messages: CONVO, tools });
+  check('OpenAI: no web search tool when switched off', !seen.tools.some((t) => t.type === 'web_search'));
+  delete process.env.ANTHROPIC_BASE_URL; delete process.env.OPENAI_BASE_URL;
   await srv.close();
 }
 

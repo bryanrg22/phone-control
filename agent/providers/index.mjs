@@ -15,9 +15,9 @@ import { createGemini } from './gemini.mjs';
 
 export const KEY_ENV = { anthropic: 'ANTHROPIC_API_KEY', openai: 'OPENAI_API_KEY', gemini: 'GEMINI_API_KEY' };
 
-export function createModel({ provider, model, apiKey, temperature = null, log = () => {} }) {
-  if (provider === 'anthropic') return createAnthropic({ model, apiKey, temperature, log });
-  if (provider === 'openai') return createOpenAI({ model, apiKey, temperature, log });
+export function createModel({ provider, model, apiKey, temperature = null, effort = null, nativeWebSearch = true, log = () => {} }) {
+  if (provider === 'anthropic') return createAnthropic({ model, apiKey, temperature, effort, nativeWebSearch, log });
+  if (provider === 'openai') return createOpenAI({ model, apiKey, temperature, effort, nativeWebSearch, log });
   if (provider === 'gemini') return createGemini({ model, apiKey, temperature, log });
   throw new Error(`unknown provider "${provider}" (anthropic, openai, gemini)`);
 }

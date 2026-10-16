@@ -39,9 +39,24 @@ ok('each step gets the screen the model was shown before it acted', () => {
   rmSync(dir, { recursive: true });
 });
 
-ok('a step after which the screen was not observed again gets no image, not a stale one', () => {
+ok('a step after which the screen was not observed again reuses the last screen, and says so (one screen per step, as iOSWorld)', () => {
   const dir = trace(TRACE);
-  assert.equal(toTrajectory(dir, null)[2].screenshot, null);
+  const t = toTrajectory(dir, '/final.png');
+  assert.equal(t[2].screenshot, join(dir, 'blobs/sha256/1.jpg'));
+  assert.equal(t[2].screenshot_reused, true);
+  assert.equal(t[1].screenshot_reused, undefined);
+  rmSync(dir, { recursive: true });
+});
+ok('a failed call carries its error, so a failed tap on Save does not read as a tap on Save', () => {
+  const dir = trace([shown(0), chat(1), { ...tool(1, 'tapText', { text: 'Save' }, { error: true }), attributes: { ...tool(1, 'tapText', {}).attributes, 'gen_ai.tool.call.arguments': { text: 'Save' }, 'gen_ai.tool.call.result': 'ERROR: Element "Save" not found in view hierarchy.' } }]);
+  const [step] = toTrajectory(dir, null);
+  assert.deepEqual(step.actions, [{ tool: 'tapText', text: 'Save', error: 'ERROR: Element "Save" not found in view hierarchy.' }]);
+  rmSync(dir, { recursive: true });
+});
+ok('the model\'s free-text description of a tap is not an action and is left out', () => {
+  const dir = trace([shown(0), chat(1), tool(1, 'tap', { x: 10, y: 20, description: 'tap the Save button to save the alarm' })]);
+  const [step] = toTrajectory(dir, null);
+  assert.deepEqual(step.actions, [{ tool: 'tap', x: 10, y: 20 }]);
   rmSync(dir, { recursive: true });
 });
 

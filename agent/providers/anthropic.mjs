@@ -60,7 +60,7 @@ export function fromAnthropic(data) {
   return message;
 }
 
-export function createAnthropic({ model, apiKey, nativeWebSearch = true, maxTokens = 8096, temperature = null, log }) {
+export function createAnthropic({ model, apiKey, nativeWebSearch = true, maxTokens = 8096, temperature = null, effort = null, log }) {
   const url = `${base()}/v1/messages`;
   return {
     provider: 'anthropic',
@@ -81,6 +81,7 @@ export function createAnthropic({ model, apiKey, nativeWebSearch = true, maxToke
         model, max_tokens: maxTokens, messages: msgs,
         ...(system ? { system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }] } : {}),
         ...(temperature !== null ? { temperature } : {}),
+        ...(effort !== null ? { output_config: { effort } } : {}),
         tools: defs, tool_choice: { type: 'auto' },
       };
       const r = await postJSON(url, { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'Content-Type': 'application/json' }, body, { provider: 'anthropic', log });

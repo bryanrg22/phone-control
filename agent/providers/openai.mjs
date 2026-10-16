@@ -46,7 +46,7 @@ export function fromResponses(data) {
   return message;
 }
 
-export function createOpenAI({ model, apiKey, nativeWebSearch = true, temperature = null, log }) {
+export function createOpenAI({ model, apiKey, nativeWebSearch = true, temperature = null, effort = null, log }) {
   const url = `${base()}/responses`;
   return {
     provider: 'openai',
@@ -58,6 +58,7 @@ export function createOpenAI({ model, apiKey, nativeWebSearch = true, temperatur
       if (nativeWebSearch && !onlyTools) defs.push({ type: 'web_search' });
       const body = {
         model, input, store: false, include: ['reasoning.encrypted_content'],
+        ...(effort !== null ? { reasoning: { effort } } : {}),
         ...(instructions ? { instructions } : {}),
         ...(temperature !== null ? { temperature } : {}),
         tools: defs, tool_choice: 'auto',

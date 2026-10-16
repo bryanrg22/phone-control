@@ -48,10 +48,11 @@ try { screenInfo = await device.info(); } catch (e) {
 log(`[setup] runner ${device.address} · screen ${screenInfo.widthPoints}x${screenInfo.heightPoints} pt · ${Object.keys(apps).length} apps (${appsSource})`);
 
 // ─── the model, the tools, the prompt ───
-const model = createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, log });
-const nativeSearch = cfg.provider !== 'gemini';
-const toolDefs = toolDefinitions({ apps, braveSearch: !nativeSearch });
-const system = systemPrompt({ apps: Object.keys(apps), searchTool: nativeSearch ? 'web_search' : 'webSearch' });
+// Web search: the provider's own for Anthropic and OpenAI, Brave for Gemini; none with --no-web-search.
+const nativeSearch = cfg.webSearch && cfg.provider !== 'gemini';
+const model = createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, effort: cfg.effort, nativeWebSearch: nativeSearch, log });
+const toolDefs = toolDefinitions({ apps, braveSearch: cfg.webSearch && cfg.provider === 'gemini' });
+const system = systemPrompt({ apps: Object.keys(apps), searchTool: !cfg.webSearch ? null : nativeSearch ? 'web_search' : 'webSearch' });
 const context = createContext({ system });
 const state = { keyboardUp: false, screen: () => screenInfo };
 const runTool = createToolRunner({ device, apps, screen: () => state.screen(), protocol, state });
@@ -63,7 +64,7 @@ const recorder = createRecorder({
   manifest: {
     task: cfg.task, run_id: cfg.runId, provider: cfg.provider, model: cfg.model,
     agent: { release: releaseOf(REPO), commit: commit.commit, dirty: commit.dirty },
-    settings: { max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768 },
+    settings: { max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: cfg.effort ?? 'provider default', web_search: cfg.webSearch, image_width: 768 },
     prompt_sha256: sha(system), tools_sha256: sha(JSON.stringify(toolDefs)),
     device: { address: device.address, simulator: cfg.simulator, screen: screenInfo, apps: Object.keys(apps).length, apps_source: appsSource },
     node: process.version,
