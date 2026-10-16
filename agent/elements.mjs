@@ -61,11 +61,24 @@ export function describeElement(node) {
 /** On screen: a real frame whose centre is inside the screen. */
 const onScreen = (f, W, H) => f.Width > 0 && f.Height > 0 && f.X + f.Width / 2 >= 0 && f.X + f.Width / 2 <= W && f.Y + f.Height / 2 >= 0 && f.Y + f.Height / 2 <= H;
 
-/** @returns {string[]} one line per element, in tree order */
-export function formatElements(hierarchyText, screenW, screenH) {
+// XCUIElement.ElementType raw values, named for a reader (the decision mode
+// shows the kind beside each candidate). Unlisted types read as "element".
+const KINDS = {
+  9: 'button', 20: 'key', 27: 'row', 30: 'row', 33: 'slider', 37: 'segmented control', 39: 'picker wheel', 40: 'switch', 41: 'toggle', 42: 'link',
+  43: 'image', 45: 'search field', 48: 'text', 49: 'text field', 50: 'secure text field', 51: 'date picker', 52: 'text view', 75: 'cell', 79: 'stepper', 80: 'tab',
+};
+const EDITABLE = new Set([45, 49, 50, 52]);   // search field, text field, secure text field, text view
+
+/**
+ * The on-screen elements, one entry each, in tree order, with the line the
+ * model reads and what a program needs: the centre in percent, the size in
+ * points, the kind, and whether it takes typing.
+ * @returns {Array<{ line: string, desc: string, text: string, kind: string, type: number|undefined, editable: boolean, focused: boolean, x: number|null, y: number|null, w: number|null, h: number|null }>}
+ */
+export function listElements(hierarchyText, screenW, screenH) {
   let root;
   try { root = JSON.parse(hierarchyText); } catch { return []; }
-  const lines = [];
+  const out = [];
   const seen = new Set();
   (function walk(node) {
     if (!node) return;
@@ -76,16 +89,26 @@ export function formatElements(hierarchyText, screenW, screenH) {
       const cx = f ? f.X + f.Width / 2 : null;
       const cy = f ? f.Y + f.Height / 2 : null;
       if (!isNoise(text, cy, screenH)) {
-        const line = f
-          ? `- ${desc} at (${pct(cx, screenW)}%, ${pct(cy, screenH)}%) size ${Math.round(f.Width)}x${Math.round(f.Height)}`
-          : `- ${desc}`;
+        const x = f ? pct(cx, screenW) : null;
+        const y = f ? pct(cy, screenH) : null;
+        const w = f ? Math.round(f.Width) : null;
+        const h = f ? Math.round(f.Height) : null;
+        const line = f ? `- ${desc} at (${x}%, ${y}%) size ${w}x${h}` : `- ${desc}`;
         const key = f ? `${desc}@${Math.round(cx)},${Math.round(cy)}` : desc;
-        if (!seen.has(key)) { seen.add(key); lines.push(line); }
+        if (!seen.has(key)) {
+          seen.add(key);
+          out.push({ line, desc, text, kind: KINDS[node.elementType] || 'element', type: node.elementType, editable: EDITABLE.has(node.elementType), focused: node.hasFocus === true, x, y, w, h });
+        }
       }
     }
     for (const c of node.children || []) walk(c);
   })(root?.axElement || root);
-  return lines;
+  return out;
+}
+
+/** @returns {string[]} one line per element, in tree order */
+export function formatElements(hierarchyText, screenW, screenH) {
+  return listElements(hierarchyText, screenW, screenH).map((e) => e.line);
 }
 
 // A content-heavy screen (a long settings page, a feed) can carry hundreds of
@@ -105,8 +128,6 @@ export function capElements(lines, max = MAX_ELEMENTS) {
 export function screenSignature(lines) {
   return lines.map((l) => l.replace(/^- /, '').replace(/ at \(.*$/, '')).filter((l) => !l.startsWith('(… ')).sort().join('|');
 }
-
-const EDITABLE = new Set([45, 49, 50, 52]);   // search field, text field, secure text field, text view
 
 /**
  * The element a tool names: the first whose label, title or identifier is
@@ -132,4 +153,17 @@ export function findElement(hierarchyText, text, { editable = false } = {}) {
     for (const c of n.children || []) walk(c);
   })(root?.axElement || root);
   return (editable && field) || byName || byHint;
+}
+
+/** The app whose window is on screen: the label of the first application node (SpringBoard on the home screen). Null when unknown. */
+export function appOnScreen(hierarchyText) {
+  let root;
+  try { root = JSON.parse(hierarchyText); } catch { return null; }
+  let found = null;
+  (function walk(n) {
+    if (!n || found) return;
+    if (n.elementType === 2 && (n.label || n.title)) { found = (n.label || n.title).trim(); return; }
+    for (const c of n.children || []) walk(c);
+  })(root?.axElement || root);
+  return found;
 }

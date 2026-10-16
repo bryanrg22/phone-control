@@ -14,13 +14,15 @@ import { fileURLToPath } from 'node:url';
 import { parseAgentArgs, helpText } from './cli-args.mjs';
 import { createProtocol } from './protocol.mjs';
 import { createDevice, installedApps } from './device.mjs';
-import { createModel, KEY_ENV } from './providers/index.mjs';
+import { createModel, createDecider, isDecisionProvider, KEY_ENV } from './providers/index.mjs';
 import { toolDefinitions, createToolRunner } from './tools.mjs';
 import { systemPrompt } from './prompt.mjs';
 import { createContext } from './context.mjs';
 import { createStuckDetector, createProgressMonitor } from './stuck.mjs';
 import { createRecorder } from './record.mjs';
 import { runLoop } from './loop.mjs';
+import { runDecisionLoop } from './decision/loop.mjs';
+import { INSTRUCTIONS as DECISION_INSTRUCTIONS } from './decision/question.mjs';
 import { releaseOf, commitOf } from '../server/src/version.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -48,10 +50,15 @@ try { screenInfo = await device.info(); } catch (e) {
 log(`[setup] runner ${device.address} · screen ${screenInfo.widthPoints}x${screenInfo.heightPoints} pt · ${Object.keys(apps).length} apps (${appsSource})`);
 
 // ─── the model, the tools, the prompt ───
-const model = createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, log });
+// Two modes: an LLM converses with the tools (loop.mjs); a decision model
+// picks one of the actions the harness enumerates from the screen (decision/).
+const decision = isDecisionProvider(cfg.provider);
+const model = decision
+  ? createDecider({ provider: cfg.provider, model: cfg.model, apiKey, log })
+  : createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, log });
 const nativeSearch = cfg.provider !== 'gemini';
 const toolDefs = toolDefinitions({ apps, braveSearch: !nativeSearch });
-const system = systemPrompt({ apps: Object.keys(apps), searchTool: nativeSearch ? 'web_search' : 'webSearch' });
+const system = decision ? DECISION_INSTRUCTIONS : systemPrompt({ apps: Object.keys(apps), searchTool: nativeSearch ? 'web_search' : 'webSearch' });
 const context = createContext({ system });
 const state = { keyboardUp: false, screen: () => screenInfo };
 const runTool = createToolRunner({ device, apps, screen: () => state.screen(), protocol, state });
@@ -63,7 +70,11 @@ const recorder = createRecorder({
   manifest: {
     task: cfg.task, run_id: cfg.runId, provider: cfg.provider, model: cfg.model,
     agent: { release: releaseOf(REPO), commit: commit.commit, dirty: commit.dirty },
-    settings: { max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768 },
+    settings: {
+      mode: decision ? 'decision' : 'llm', max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768,
+      // The decision APIs are previews whose formats may change: what was used is recorded.
+      ...(decision ? { decision: { ...model.api, screenshot_sent: false } } : {}),
+    },
     prompt_sha256: sha(system), tools_sha256: sha(JSON.stringify(toolDefs)),
     device: { address: device.address, simulator: cfg.simulator, screen: screenInfo, apps: Object.keys(apps).length, apps_source: appsSource },
     node: process.version,
@@ -106,9 +117,12 @@ function finish(outcome) {
 }
 for (const sig of ['SIGTERM', 'SIGINT']) process.on(sig, () => { finish({ status: 'stopped', reason: `stopped (${sig})` }); process.exit(EXIT.stopped); });
 
-const outcome = await runLoop({
-  task: cfg.task, maxSteps: cfg.maxSteps, model, device, runTool, toolDefs, context, protocol, recorder, state,
-  stuck: createStuckDetector(), progress: createProgressMonitor({ abortAfter: cfg.noProgressAbort }), autoAllowNotifications,
-});
+const progress = createProgressMonitor({ abortAfter: cfg.noProgressAbort });
+const outcome = decision
+  ? await runDecisionLoop({ task: cfg.task, maxSteps: cfg.maxSteps, decider: model, device, runTool, apps: Object.keys(apps), protocol, recorder, progress, state, autoAllowNotifications })
+  : await runLoop({
+    task: cfg.task, maxSteps: cfg.maxSteps, model, device, runTool, toolDefs, context, protocol, recorder, state,
+    stuck: createStuckDetector(), progress, autoAllowNotifications,
+  });
 finish(outcome);
 process.exit(EXIT[outcome.status] ?? 1);

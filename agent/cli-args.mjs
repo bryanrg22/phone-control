@@ -7,6 +7,7 @@
 // error (exit 2), so a typo cannot silently change a run.
 
 import { defaultModelFor, supportsTemperature } from './models.mjs';
+import { LLM_PROVIDERS, DECISION_PROVIDERS } from './providers/index.mjs';
 
 export const VALUE_FLAGS = new Set([
   '--provider', '--model', '--temperature',
@@ -15,7 +16,7 @@ export const VALUE_FLAGS = new Set([
   '--trace-dir', '--run-id',
 ]);
 export const BOOLEAN_FLAGS = new Set(['--help']);
-const PROVIDERS = ['anthropic', 'openai', 'gemini'];
+const PROVIDERS = [...LLM_PROVIDERS, ...DECISION_PROVIDERS];
 
 export function parseAgentArgs(argv) {
   const flags = {};
@@ -60,6 +61,7 @@ export function parseAgentArgs(argv) {
   if (flags['--temperature'] !== undefined) {
     const t = Number(flags['--temperature']);
     if (!Number.isFinite(t) || t < 0 || t > 2) return fail(`--temperature must be a number from 0 to 2 (got "${flags['--temperature']}").`);
+    if (DECISION_PROVIDERS.includes(provider)) return fail(`--provider ${provider} is a decision model: it takes no --temperature.`);
     if (!supportsTemperature(provider, model, t)) return fail(`${model} does not accept --temperature (reasoning models use their default).`);
     temperature = t;
   }
@@ -88,7 +90,8 @@ export function helpText() {
 Operates an iPhone through the XCTest runner on it until the task is done.
 
 Model:
-  --provider P           anthropic | openai | gemini (default: anthropic)
+  --provider P           anthropic | openai | gemini (default: anthropic), or a decision model:
+                         openai-decisions (the Decisions API) | typesafe (Jev); see agent/decision/
   --model M              model ID (default: the provider's default in models.mjs)
   --temperature T        0-2; only for models that accept it
 

@@ -92,5 +92,27 @@ export function usageOf(trace) {
     reasoning_output_tokens: sum('gen_ai.usage.reasoning.output_tokens'),
     model_seconds: Math.round(chats.reduce((a, r) => a + (r.eval.latency_ms || 0), 0) / 100) / 10,
     served_models: [...new Set(chats.map((r) => r.attributes['gen_ai.response.model']).filter(Boolean))],
+    ...decisionStats(chats),
+  };
+}
+
+/**
+ * Decision mode only (agent/decision/): the probabilities the model put on the
+ * actions it chose, for calibration against the judge. Absent for LLM runs.
+ *   decision_mean_probability    mean over the steps
+ *   decision_min_probability     the least sure step
+ *   decision_done_probability    the probability on "done" when the run ended with it, else null
+ */
+function decisionStats(chats) {
+  const ds = chats.map((r) => r.eval?.decision).filter((d) => d && typeof d.probability === 'number');
+  if (!ds.length) return {};
+  const ps = ds.map((d) => d.probability);
+  const last = ds.at(-1);
+  const round = (x) => Math.round(x * 1000) / 1000;
+  return {
+    decision_steps: ds.length,
+    decision_mean_probability: round(ps.reduce((a, b) => a + b, 0) / ps.length),
+    decision_min_probability: round(Math.min(...ps)),
+    decision_done_probability: last.choice === 'done' ? round(last.probability) : null,
   };
 }

@@ -28,10 +28,22 @@ One **step** is one model request. The model may call several tools in one step;
 | `context.mjs` | The conversation: what is kept, what older screenshots become, the action history |
 | `prompt.mjs` | The system prompt |
 | `stuck.mjs` | Repeated actions (nudges) and no progress (stop) |
-| `providers/` | One file per model provider: request shape, response shape, retries |
+| `providers/` | One file per model provider: request shape, response shape, retries. `openai-decisions.mjs` and `typesafe.mjs` are decision models (below) |
+| `decision/` | The decision mode: the candidate actions, the question, its own loop |
 | `protocol.mjs` | What the server reads: one JSON event per line, and the answer file for questions |
 | `record.mjs` | The full record of a run (see below) |
 | `models.mjs` | Default model per provider |
+
+## The decision mode (a trial)
+
+`--provider openai-decisions` (OpenAI's Decisions API, `gpt-6-luna`) or `--provider typesafe` (TypeSafe's Jev, `jev-latest`) replaces the LLM with a **decision model**: one that answers a choice question with a probability per option and writes no text. The loop is `decision/loop.mjs`:
+
+```
+observe ──► enumerate candidates ──► one choice question ──► run the chosen tool ──► observe ──► …
+             decision/candidates.mjs    decision/question.mjs      tools.mjs (unchanged)
+```
+
+The harness lists every action it could take (tap each on-screen element, type each phrase lifted from the task, Return, scroll, Home, open an app the task names, `done`, `blocked`) and the model picks one; the state it sees is the task, the actions so far, and the element list, as text (the Decisions API) or as an object (Jev). No screenshot is sent. `done` ends the run as `taskComplete` with a fixed summary, so a task that asks for information cannot be answered: a weakness to measure, not a bug. The record has the same spans as the LLM mode, with the answer's probabilities under `eval.decision`, so the evals judge and report both modes alike. Keys: `OPENAI_API_KEY`, `TYPESAFE_API_KEY`. Background and plan: `docs/research/decision-models-jev-handoff-2026-10-16.md`.
 
 ## What the server sees
 

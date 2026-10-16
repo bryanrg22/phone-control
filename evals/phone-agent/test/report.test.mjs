@@ -63,3 +63,26 @@ ok('the Markdown carries outcomes, efficiency and endings', () => {
 });
 
 console.log(`\n${passed} passed`);
+
+console.log('calibration (decision models)');
+{
+  const dec = (task, doneP, meanP) => rec(task, 'single_app', { decision_steps: 5, decision_mean_probability: meanP, decision_min_probability: 0.3, decision_done_probability: doneP });
+  const D = { model: { provider: 'typesafe', model: 'jev-latest' }, trials: [{ trial: 1,
+    records: [dec('a', 0.97, 0.8), dec('b', 0.6, 0.7), dec('c', null, 0.5), dec('d', 0.99, 0.9)],
+    evaluations: { a: pass, b: half, c: half, d: pass } }] };
+  const [d, l] = buildReport([D, MODEL]);
+  ok('an LLM run has no calibration', () => { assert.equal(l.calibration, undefined); });
+  ok('decision runs: pass rate by the probability on done, runs without done apart', () => {
+    assert.equal(d.calibration.find((b) => b.bucket === 'done p 0.95–1').n, 2);
+    assert.equal(d.calibration.find((b) => b.bucket === 'done p 0.95–1').pass_rate, 1);
+    assert.equal(d.calibration.find((b) => b.bucket === 'done p 0.5–0.8').pass_rate, 0);
+    assert.equal(d.calibration.find((b) => b.bucket === 'did not end with done').n, 1);
+    assert.equal(d.avg_decision_probability, 0.725);
+  });
+  ok('the markdown gets a calibration section only when a decision model ran', () => {
+    const md = reportMarkdown([d, l], { judgeModel: 'j', maxSteps: 50, pricesAsOf: 'd' });
+    assert.ok(md.includes('## Confidence calibration'));
+    assert.ok(md.includes('| typesafe:jev-latest | 0.725 | 0% of 0'.replace('0% of 0', '–')));
+    assert.ok(!reportMarkdown([l], { judgeModel: 'j', maxSteps: 50, pricesAsOf: 'd' }).includes('calibration'));
+  });
+}

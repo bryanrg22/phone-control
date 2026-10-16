@@ -17,6 +17,13 @@ export const PRICES = {
   'gpt-6.1-sol': { input: 2, cache_read: 0.1, output: 10 },
   'gpt-6-luna': { input: 0.1, cache_read: 0.01, output: 0.5 },
   'gpt-5.4-mini': { input: 0.75, cache_read: 0.075, output: 4.5 },
+  // Decision models: input tokens only (output is free). The Decisions API uses
+  // gpt-6-luna at the same input rate; its responses report output_tokens 0.
+  // TypeSafe https://docs.typesafe.ai/models (2026-10-16)
+  'jev-latest': { input: 0.042, output: 0 },
+  'jev-preview': { input: 0.042, output: 0 },
+  'jev-1.13.0': { input: 0.042, output: 0 },
+  'jev-1.14.0': { input: 0.042, output: 0 },
 };
 
 /**

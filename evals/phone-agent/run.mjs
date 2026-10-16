@@ -44,6 +44,7 @@ import { createHash } from 'node:crypto';
 import { toTrajectory, readTrace, readManifest, outcomeOf, usageOf } from './trajectory.mjs';
 import { buildReport, reportMarkdown } from './report.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
+import { DECISION_APIS } from '../../agent/providers/index.mjs';
 
 export const HARNESS_VERSION = '0.1.0';
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -233,6 +234,8 @@ const runInfo = {
   device: { udid, name: simInfo?.name ?? null, runtime: simInfo?.runtime ?? null, xcode: run('xcodebuild', ['-version']).split('\n')[0] },
   judge: { script: 'iOSWorld scripts/judge_trajectories.py', provider: 'openai', model: judgeModel },
   agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', reasoning: 'provider default', no_progress_abort: 8 },
+  // Decision models (agent/decision/): both APIs are previews whose formats may change, so what was used is recorded.
+  ...(models.some((m) => DECISION_APIS[m.provider]) ? { decision_apis: Object.fromEntries(models.filter((m) => DECISION_APIS[m.provider]).map((m) => [m.provider, { ...DECISION_APIS[m.provider], screenshot_sent: false }])) } : {}),
   models, trials, tasks: tasks.map((t) => t.name), cells: cells.map(({ model, trial, dir }) => ({ model, trial, dir })),
   node: process.version,
 };

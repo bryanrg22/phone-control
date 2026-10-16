@@ -100,8 +100,8 @@ export function createRecorder({ dir, manifest = {} }) {
   return {
     traceId,
 
-    /** One model request, successful or not. */
-    modelCall({ step, start, end, provider, requestModel, messages, tools, result = null, error = null, costUsd = null }) {
+    /** One model request, successful or not. `decision` (decision mode): { choice, probability, confidence, candidates, probabilities }. */
+    modelCall({ step, start, end, provider, requestModel, messages, tools, result = null, error = null, costUsd = null, decision = null }) {
       guard(() => {
         totals.model_calls += 1;
         const u = result?.usage || {};
@@ -134,6 +134,8 @@ export function createRecorder({ dir, manifest = {} }) {
               headers_logged: false,
             },
             error: error ? String(error.message).slice(0, 500) : null,
+            // A decision model's answer: the choice, its probability and the model's confidence, every option's probability.
+            ...(decision ? { decision } : {}),
           },
         });
         lines.push(`### Step ${step} — model (${((end - start) / 1000).toFixed(1)} s, ${u.input_tokens ?? '?'} in / ${u.output_tokens ?? '?'} out${u.cache_read_input_tokens ? `, ${u.cache_read_input_tokens} cached` : ''})`);
