@@ -51,7 +51,9 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   check('keyboard keys are not candidates (29 keys would drown the rest)', !c.some((x) => /^Tap "[A-Z]" \(key/.test(x.description)) && !c.some((x) => x.description.includes('(key at')), c.filter((x) => x.description.includes('key')).map((x) => x.description).join('; '));
   check('the field being typed into is still a candidate', c.some((x) => x.description.includes('text field "Label" = "Gym"')));
   const gym = by('type_0_0');
-  check('a single-line field that already has text is replaced, by the name a tool can find it by', gym && gym.description === 'Replace the text in text field "Label" = "Gym" with "Gym"' && gym.actions.length === 1 && gym.actions[0].tool === 'replaceText' && gym.actions[0].args.field === 'Label' && gym.actions[0].args.value === 'Gym', JSON.stringify(gym));
+  const label = elements.find((e) => e.desc.startsWith('text field "Label"'));
+  check('a single-line field that already has text is replaced, by position (two fields may share a label)', gym && gym.description === 'Replace the text in text field "Label" = "Gym" with "Gym"' && gym.actions.length === 1 && gym.actions[0].tool === 'replaceTextAt' && gym.actions[0].args.x === label.x && gym.actions[0].args.y === label.y && gym.actions[0].args.value === 'Gym', JSON.stringify(gym));
+  check('a plain field gets no search option', !c.some((x) => x.value.startsWith('search_')));
   const hour = elements.find((e) => e.desc.includes('6 o’clock'));
   const setHour = c.find((x) => x.description === 'Set picker wheel = "6 o’clock" by tapping it and typing "6:45 AM"');
   check('a phrase starting with a digit is also offered into each picker wheel (iOS wheels take typed digits)', setHour && setHour.actions[0].args.x === hour.x && setHour.actions[1].args.text === '6:45 AM' && !c.some((x) => /^Set picker wheel .* typing "Gym"/.test(x.description)), c.filter((x) => x.value.startsWith('type_')).map((x) => x.description).join('\n'));
@@ -76,7 +78,12 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   const view = candidateActions({ elements: [field('text view "Body" = "Standup notes"', 'text view', 'Body')], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
   check('a text view with text is appended to, not replaced', view.description === 'Type "Gym" into text view "Body" = "Standup notes" (after its current text)' && view.actions.map((a) => a.tool).join() === 'tap,inputText', JSON.stringify(view));
   const nameless = candidateActions({ elements: [field('text field = "Work"', 'text field', null)], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
-  check('a field with text but no name cannot be found by a tool: appended to', nameless.actions.map((a) => a.tool).join() === 'tap,inputText');
+  check('a field with text but no name is still replaced, since replacing is by position', nameless.actions[0].tool === 'replaceTextAt');
+  const search = candidateActions({ elements: [field('search field "Search MegaMart" (empty)', 'search field', 'Search MegaMart')], task: "Search for 'PS5 Controller' on MegaMart", apps: ['MegaMart'] });
+  const s0 = search.find((x) => x.value === 'search_0_0');
+  check('a search field also gets "search for X": type, then Return', s0 && s0.description === 'Search for "PS5 Controller": type it into search field "Search MegaMart" (empty) and press Return' && s0.actions.map((a) => a.tool).join() === 'tap,inputText,pressKey' && s0.actions[2].args.key === 'enter', JSON.stringify(s0));
+  const s1 = candidateActions({ elements: [field('text field "Search any movies or person" = "The"', 'text field', 'Search any movies or person')], task: "Search for 'The Godfather' in Cinephile", apps: ['Cinephile'] }).find((x) => x.value === 'search_0_0');
+  check('a field whose name says Search counts, and with text it replaces, then Return', s1 && s1.actions.map((a) => a.tool).join() === 'replaceTextAt,pressKey', JSON.stringify(s1));
 }
 {
   // The keyboard covers the bottom of the screen: keys from 70%, a predictions row from 62%.
@@ -115,8 +122,9 @@ console.log('phrases lifted from a task:');
 
 console.log('the state each model is asked about:');
 {
-  const st = decisionState({ task: TASK, history: [{ n: 1, description: 'Tap "Add"', changed: true }, { n: 2, description: 'Tap "Save"', changed: false }], elements: ['- "Save" at (87.3%, 10.9%) size 72x44'], currentApp: 'Clock', keyboardUp: true });
+  const st = decisionState({ task: TASK, history: [{ n: 1, description: 'Tap "Add"', changed: true }, { n: 2, description: 'Tap "Save"', changed: false }, { n: 3, description: 'Hide the keyboard', changed: false, result: 'Keyboard is still up' }], elements: ['- "Save" at (87.3%, 10.9%) size 72x44'], currentApp: 'Clock', keyboardUp: true });
   check('the object carries the task, the history, the app, the keyboard and the elements', st.object.task === TASK && st.object.actions_so_far[1] === '2. Tap "Save" (the screen did not change)' && st.object.app_on_screen === 'Clock' && st.object.keyboard === 'open' && st.object.elements_on_screen[0] === '"Save" at (87.3%, 10.9%) size 72x44', JSON.stringify(st.object));
+  check('a tool\'s answer is shown when the step changed nothing', st.object.actions_so_far[2] === '3. Hide the keyboard → Keyboard is still up (the screen did not change)', st.object.actions_so_far[2]);
   check('the text says the same', st.text.includes(`Task: ${TASK}`) && st.text.includes('2. Tap "Save" (the screen did not change)') && st.text.includes('Keyboard: open') && st.text.includes('- "Save" at (87.3%'));
   const long = decisionState({ task: 't', history: Array.from({ length: 25 }, (_, i) => ({ n: i + 1, description: `a${i + 1}`, changed: true })), elements: [], currentApp: null, keyboardUp: false });
   check('a long history keeps the last 20 and says so', long.object.actions_so_far[0] === '(5 earlier steps omitted)' && long.object.actions_so_far.length === 21 && long.object.elements_on_screen[0] === '(no elements read)');
@@ -240,7 +248,7 @@ console.log('the loop:');
   const { outcome, runner, asked, logs } = await loopRun({ script: ['open_clock', (c) => c.find((x) => x.description.startsWith('Tap "Add"')).value, 'done'], screen, traceDir });
   check('open, tap, done: the run completes with the fixed summary', outcome.status === 'completed' && outcome.summary === DONE_SUMMARY && outcome.steps === 3, JSON.stringify(outcome));
   check('the app was launched and the tap landed on the element\'s centre in points', runner.callsTo('/launchApp')[0]?.body.bundleId === 'com.apple.mobiletimer' && runner.callsTo('/touch').some((c) => c.body.x === 360 && c.body.y === 102), JSON.stringify(runner.callsTo('/touch').map((c) => c.body)));
-  check('the second question saw the new screen and the first action in its history', asked[1].candidates.some((c) => c.description.startsWith('Tap "Add"')) && asked[1].state.object.actions_so_far[0] === '1. Open the Clock app');
+  check('the second question saw the new screen and the first action in its history, without the tool\'s answer since the screen changed', asked[1].candidates.some((c) => c.description.startsWith('Tap "Add"')) && asked[1].state.object.actions_so_far[0] === '1. Open the Clock app', asked[1].state.object.actions_so_far[0]);
   check('the third question records that the tap changed nothing (the fake screen stayed)', asked[2].state.object.actions_so_far[1].startsWith('2. Tap "Add"') && asked[2].state.object.actions_so_far[1].includes('did not change'), JSON.stringify(asked[2].state.object.actions_so_far));
   check('the server sees step, thinking, action and the tools by their real names', logs.filter((e) => e.type === 'action').map((e) => e.tool).join(',') === 'openApp,tap,taskComplete');
   const trace = readFileSync(join(traceDir, 'trace.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
@@ -264,7 +272,7 @@ console.log('the loop:');
   const trace = readFileSync(join(traceDir, 'trace.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
   const step1 = trace.filter((r) => r.attributes?.['gen_ai.operation.name'] === 'execute_tool' && r.eval.step === 1);
   check('both calls are recorded under the step, with their own ids', step1.length === 2 && step1[0].attributes['gen_ai.tool.name'] === 'tap' && step1[1].attributes['gen_ai.tool.name'] === 'inputText' && step1[0].attributes['gen_ai.tool.call.id'] !== step1[1].attributes['gen_ai.tool.call.id']);
-  check('the history line is the option, not two tool calls', asked[1].state.object.actions_so_far[0] === '1. Type "Gym" into text field "Label" (empty) (the screen did not change)', asked[1].state.object.actions_so_far[0]);
+  check('the history line is the option with the tool\'s answer, since the screen did not change', asked[1].state.object.actions_so_far[0] === '1. Type "Gym" into text field "Label" (empty) → Typed "Gym" (the screen did not change)', asked[1].state.object.actions_so_far[0]);
   rmSync(traceDir, { recursive: true, force: true });
 }
 {

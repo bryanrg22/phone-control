@@ -58,6 +58,15 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     const s = screen();
     return [Math.round((pctX / 100) * s.widthPoints), Math.round((pctY / 100) * s.heightPoints)];
   };
+  /** Focus the field at a point, triple-tap to select everything, then type over it. */
+  async function selectAllAndType(cx, cy, value) {
+    await device.tap(cx, cy);
+    await sleep(250);
+    await device.tap(cx, cy); await device.tap(cx, cy); await device.tap(cx, cy);
+    await sleep(200);
+    await device.type(String(value ?? ''));
+    state.keyboardUp = true;
+  }
   const elementsNow = async () => {
     const s = screen();
     return formatElements(await device.hierarchy(), s.widthPoints, s.heightPoints);
@@ -128,16 +137,16 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     async replaceText({ field, value }) {
       const el = findElement(await device.hierarchy(), field, { editable: true });
       if (!el) return { error: true, text: `ERROR: field "${field}" not found in view hierarchy. Call getUIElements to read the exact field label, then retry replaceText.` };
-      const cx = Math.round(el.frame.X + el.frame.Width / 2);
-      const cy = Math.round(el.frame.Y + el.frame.Height / 2);
-      // Focus, then triple-tap to select everything, then type over it.
-      await device.tap(cx, cy);
-      await sleep(250);
-      await device.tap(cx, cy); await device.tap(cx, cy); await device.tap(cx, cy);
-      await sleep(200);
-      await device.type(String(value ?? ''));
-      state.keyboardUp = true;
+      await selectAllAndType(Math.round(el.frame.X + el.frame.Width / 2), Math.round(el.frame.Y + el.frame.Height / 2), value);
       return { text: `Replaced "${field}" → "${value}" (selected all + typed). Take a screenshot to verify the field shows the new value.`, changesScreen: true };
+    },
+
+    // Not in toolDefinitions: the decision mode's replace, by position, since
+    // two fields may share a label (SkyTrip's two "Airport" fields, 2026-10-16).
+    async replaceTextAt({ x, y, value }) {
+      if (!(x >= 0 && x <= 100 && y >= 0 && y <= 100)) return { error: true, text: `ERROR: coordinates must be percentages 0-100 (got ${x}, ${y}).` };
+      await selectAllAndType(...pt(x, y), value);
+      return { text: `Replaced the text of the field at (${x}%, ${y}%) → "${value}" (selected all + typed).`, changesScreen: true };
     },
 
     async pressKey({ key }) {

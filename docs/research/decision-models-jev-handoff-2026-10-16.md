@@ -177,3 +177,26 @@ text view is appended to. Not fixed: keypad entry, free text, answers.
 this harness is clock-001 ×7 and the two-task pilot on main). iOSWorld's paper
 reports vision+XML LLM agents far above 15% on single-app tasks; the number to
 beat is the same-commit run of one LLM.
+
+## Re-run of the four harness-affected tasks, commit 541a83a
+
+`2026-10-16_541a83a_decisions-luna_four-fixed`: 0 of 4 passed, but the two fixes
+did what they were for (no stray letters typed; "ATL" was replaced by "SFO"),
+and the screens showed the next layer:
+
+- **Result rows under the keyboard.** With the keyboard up only a row's title
+  text was reachable; tapping it did nothing (cinephile, megamart). The LLM's
+  `typeAndSubmit` presses Return after typing, which closes the keyboard and
+  runs the search. Fixed: a search field also gets "Search for X: type it and
+  press Return" (tap, type, Return in one option).
+- **The model never saw a tool's answer.** `hideKeyboard` reported "Keyboard is
+  still up" and was chosen five times in a row. Fixed: when a step changed
+  nothing or a tool reported a problem, its first line is shown in the history.
+- **Two fields with one label.** SkyTrip's from/to fields are both "Airport";
+  replace-by-label hit the first one twice ("SFOJFK"). Fixed: replacing is by
+  position, through `replaceTextAt`, a tool the LLM is not offered (its tool
+  list and hash are unchanged).
+- cityride-001 ended with `done` at p 0.21 after 3 steps; trailblaze-004 did the
+  same at p 0.15 in the 27. A rule "a conclusion needs p ≥ 0.5, otherwise the
+  best other option runs" is how TypeSafe says to use calibrated answers; not
+  applied yet, since it is a policy, to be measured as a variant.

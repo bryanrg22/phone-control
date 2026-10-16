@@ -16,9 +16,13 @@
 //                 Fields are the on-screen elements that take typing; for a phrase
 //                 that starts with a digit, picker wheels too: iOS time pickers
 //                 take typed digits once tapped (seen on clock-001, 2026-10-16).
-//                 A single-line field that already has text and a name is
-//                 REPLACED (replaceText: skytrip-002 typed "ATL" into "ATLSFOSFO");
+//                 A single-line field that already has text is REPLACED, by
+//                 position (replaceTextAt: skytrip-002 typed "ATL" into
+//                 "ATLSFOSFO", and its two fields share the label "Airport");
 //                 a text view (a note, a document) is appended to.
+//   search_<n>_<k> phrase n into search field k, then Return: the submit closes
+//                 the keyboard, which covered the result rows (cinephile-001,
+//                 megamart-001 tapped a row's title text under it, to no effect)
 //   press_return  when the keyboard is open (submits a field, closes most keyboards)
 //   hide_keyboard when the keyboard is open (to reach what it covers)
 //   scroll_down, scroll_up, home
@@ -111,10 +115,14 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
         const hasText = / = "/.test(f.desc);
         if (f.kind === 'picker wheel') {
           out.push({ value: `type_${i}_${k}`, description: `Set ${sliceDesc(f.desc, 60)} by tapping it and typing "${p}"`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
-        } else if (hasText && f.name && f.kind !== 'text view') {
-          out.push({ value: `type_${i}_${k}`, description: `Replace the text in ${sliceDesc(f.desc, 60)} with "${p}"`, actions: [{ tool: 'replaceText', args: { field: f.name, value: p } }] });
+        } else if (hasText && f.kind !== 'text view') {
+          out.push({ value: `type_${i}_${k}`, description: `Replace the text in ${sliceDesc(f.desc, 60)} with "${p}"`, actions: [{ tool: 'replaceTextAt', args: { x: f.x, y: f.y, value: p } }] });
         } else {
           out.push({ value: `type_${i}_${k}`, description: `Type "${p}" into ${sliceDesc(f.desc, 60)}${hasText ? ' (after its current text)' : ''}`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
+        }
+        if (f.kind === 'search field' || /search/i.test(f.desc)) {
+          const put = hasText ? [{ tool: 'replaceTextAt', args: { x: f.x, y: f.y, value: p } }] : [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }];
+          out.push({ value: `search_${i}_${k}`, description: `Search for "${p}": ${hasText ? 'replace the text in' : 'type it into'} ${sliceDesc(f.desc, 60)} and press Return`, actions: [...put, { tool: 'pressKey', args: { key: 'enter' } }] });
         }
       });
     });

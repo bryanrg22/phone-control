@@ -117,6 +117,8 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     let concluded = null;
     let changes = false;
     let settle = false;
+    let lastResult = null;
+    let failed = false;
     for (let k = 0; k < chosen.actions.length; k++) {
       const { tool: name, args } = chosen.actions[k];
       emit('action', { tool: name, args });
@@ -131,8 +133,10 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
       recorder.toolCall({ step, id: callId(k), name, args, start: tStart, end: Date.now(), result: r.text, error: r.error ? (thrown ? thrown.message : r.text) : null, layer: thrown ? 'device' : (r.error ? 'model' : null) });
       changes = changes || !!r.changesScreen;
       settle = settle || !!r.settle;
+      lastResult = String(r.text ?? '').split('\n')[0].slice(0, 120);
       if (r.done || r.failed) { concluded = r; break; }
       if (r.error) {
+        failed = true;
         for (let j = k + 1; j < chosen.actions.length; j++) {
           const rest = chosen.actions[j];
           recorder.toolCall({ step, id: callId(j), name: rest.tool, args: rest.args, start: Date.now(), end: Date.now(), result: 'Not run: an earlier action in this step failed.', skipped: true });
@@ -141,7 +145,7 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
       }
       if (k < chosen.actions.length - 1) await sleep(SETTLE_MS);   // a tapped field takes focus before typing
     }
-    const entry = { n: step, description: chosen.description, changed: null };
+    const entry = { n: step, description: chosen.description, changed: null, result: failed ? lastResult : null };
     history.push(entry);
 
     if (concluded?.done) return { status: 'completed', summary: concluded.done.summary, steps: step };
@@ -161,11 +165,12 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
       try {
         const stop = await look(step);
         entry.changed = seen.signature !== before;
+        if (!entry.changed) entry.result = lastResult;
         if (stop) return { status: 'no_progress', reason: `no progress: ${stop}`, steps: step };
       } catch (e) {
         log(`[observe] screenshot failed: ${e.message}`);
       }
-    } else entry.changed = false;
+    } else { entry.changed = false; entry.result = lastResult; }
   }
   return { status: 'step_budget', reason: 'Reached the step limit without finishing.', steps: maxSteps };
 }
