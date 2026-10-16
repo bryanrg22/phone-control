@@ -1,0 +1,22 @@
+[2026-10-16T02:00:48.160Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T02:00:48.161Z] token: issued connector credential lnk_a7f32083347e3191 for owner@example.com
+[2026-10-16T02:00:48.161Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T02:00:49.827Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T02:00:50.085Z] run run_mvabmi7801 started for owner@example.com: Turn on Bluetooth
+[2026-10-16T02:00:50.167Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T02:00:51.009Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:00:53.431Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T02:00:54.585Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:00:55.985Z] run run_mvabmi7801: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T02:00:56.314Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T02:00:56.451Z] run run_mvabmn4302 started for owner@example.com: Open the Settings app, tap Bluetooth, and switch the Bluetooth toggle on
+[2026-10-16T02:00:58.034Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:00:58.140Z] run run_mvabmi7801: automation put down
+[2026-10-16T02:00:58.257Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T02:00:59.886Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:01:00.361Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T02:01:03.067Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:01:04.074Z] run run_mvabmn4302: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T02:01:06.230Z] run run_mvabmn4302: automation put down
+[2026-10-16T02:01:08.233Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:01:08.234Z] mcp: tools/call get_phone_status from owner@example.com (claude)

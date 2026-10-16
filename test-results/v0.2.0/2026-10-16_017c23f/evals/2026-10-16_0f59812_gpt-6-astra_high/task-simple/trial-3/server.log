@@ -1,0 +1,12 @@
+[2026-10-16T02:03:29.572Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T02:03:29.572Z] token: issued connector credential lnk_2516d3bb04b10821 for owner@example.com
+[2026-10-16T02:03:29.573Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T02:03:31.512Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T02:03:31.744Z] run run_mvabpyxq01 started for owner@example.com: Open Settings on my phone, find the installed iOS version in General > About, an
+[2026-10-16T02:03:31.820Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T02:03:33.231Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:03:35.112Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T02:03:38.157Z] run run_mvabpyxq01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T02:03:38.453Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:03:40.082Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T02:03:40.084Z] mcp: tools/call get_phone_status from owner@example.com (claude)

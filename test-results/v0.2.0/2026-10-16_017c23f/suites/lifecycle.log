@@ -1,0 +1,39 @@
+
+> phone-control@0.2.0 test:lifecycle
+> node device/test/lifecycle.test.mjs
+
+phone lifecycle — darwin (single phone; two-phone and unreachable-phone scenarios skipped)
+  code under test (sha256/12): supervisor.mjs 53ffd3762cd7 · screen-state.mjs e75008a8bedb
+  phone A 127.0.0.1 · VPN grace 6000ms · unreachable = refusals (no timeout support here)
+
+  ✓ a command that does not name a phone is refused  (0.1s)
+  ✓ cold arm on Wi-Fi: tunnel built, runner up, stamped with the caller's slot  (3.6s)
+  ✓ re-arm while armed is idempotent: no second tunnel, no second runner  (3.3s)
+  ✓ suspend: runner down (banner clears), tunnel stays warm  (5.5s)
+  – suspend on one phone leaves another phone's session alone  (SKIPPED: needs twoPhones)
+  ✓ roam to cellular while suspended → arm REATTACHES over the warm tunnel  (7.8s)
+  ✓ roam to cellular mid-session: the armed runner keeps answering  (4.1s)
+  ✓ a VPN blip shorter than the grace window: session and runner survive  (4.5s)
+  ✓ cold arm on cellular is refused, quickly, with the Wi-Fi explanation  (3.3s)
+  ✓ app closed (VPN down past the grace window) → ghost tunnel → next Wi-Fi arm reaps and rebuilds  (17.9s)
+  ✓ ghost while still on cellular: arm is refused and leaves no helper behind  (17.8s)
+  ✓ tunnel helper SIGKILLed (orphan interface) → next arm rebuilds  (7.8s)
+  ✓ restart: unreachable until the first unlock, then needs an unlocked phone to mount, then arms  (10.5s)
+  ✓ power-off while armed: the anchor is left behind, and the next start clears it  (11.3s)
+  ✓ first start after a restart: reports "waiting on the phone" until the passcode is entered  (9.4s)
+  ✓ passcode never entered: the arm fails saying the phone needs its owner, and leaves nothing running  (21.6s)
+  ✓ a locked phone cannot START a session: the arm says the phone needs its owner, either way it shows up  (27.8s)
+  ✓ another program's tunnel to the same phone is not ours: never counted, never stopped  (9.0s)
+  ✓ a failed start is still on record after the clean-up suspend that follows it  (26.0s)
+  ✓ runner crash on the phone → arm reattaches over the warm tunnel  (5.6s)
+  – network label: Wi-Fi, cellular and UNREACHABLE are three different answers  (SKIPPED: needs timeouts)
+  ✓ a refused cold start on cellular records WHY  (0.3s)
+  ✓ a phone that was never paired: the status says so, without touching the phone  (0.2s)
+  ✓ the phone does not recognise this host: one refused handshake, a clear reason, nothing left running  (2.3s)
+  ✓ session ended ON THE PHONE is told apart from one the host put down  (7.8s)
+  ✓ locking the phone does not end the session; the screen state says it is locked  (5.7s)
+  ✓ before a task: another app's banner over the top is swiped away, deterministically  (9.8s)
+  ✓ after a task: an app can be brought to the front through the runner  (4.8s)
+
+26 passed · 0 failed · 2 skipped
+skipped (NOT verified here): suspend on one phone leaves another phone's session alone | network label: Wi-Fi, cellular and UNREACHABLE are three different answers

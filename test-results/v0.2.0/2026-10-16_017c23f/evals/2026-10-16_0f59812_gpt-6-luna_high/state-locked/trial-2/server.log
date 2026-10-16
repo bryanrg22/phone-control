@@ -1,0 +1,12 @@
+[2026-10-16T01:54:54.362Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T01:54:54.363Z] token: issued connector credential lnk_173e54193681c722 for owner@example.com
+[2026-10-16T01:54:54.364Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T01:54:55.629Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T01:54:55.806Z] run run_mvabewu501 started for owner@example.com: Open Settings and tell me the iPhone's current battery percentage.
+[2026-10-16T01:54:55.882Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T01:54:56.803Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:55:03.160Z] preflight: bring-up for 127.0.0.1 ended (code 43)
+[2026-10-16T01:55:06.543Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T01:55:07.387Z] run run_mvabewu501: automation put down
+[2026-10-16T01:55:07.695Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:55:07.697Z] mcp: tools/call get_phone_status from owner@example.com (claude)

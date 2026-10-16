@@ -1,0 +1,22 @@
+[2026-10-16T01:58:19.725Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T01:58:19.726Z] token: issued connector credential lnk_bdf8b611d064b6f2 for owner@example.com
+[2026-10-16T01:58:19.727Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T01:58:21.769Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T01:58:22.026Z] run run_mvabjbyh01 started for owner@example.com: Open the Mail app, look at the inbox, and tell me who sent the newest (most rece
+[2026-10-16T01:58:22.106Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T01:58:23.590Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:58:25.359Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T01:58:26.829Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:58:27.896Z] run run_mvabjbyh01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T01:58:28.479Z] mcp: tools/call get_phone_status from owner@example.com (claude)
+[2026-10-16T01:58:30.048Z] run run_mvabjbyh01: automation put down
+[2026-10-16T01:58:31.043Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T01:58:31.165Z] run run_mvabjj0c02 started for owner@example.com: Open the Mail app, look at the inbox, and tell me who sent the newest (most rece
+[2026-10-16T01:58:31.281Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T01:58:32.533Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:58:33.389Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T01:58:35.719Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:58:37.080Z] run run_mvabjj0c02: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T01:58:39.215Z] run run_mvabjj0c02: automation put down
+[2026-10-16T01:58:39.633Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:58:39.635Z] mcp: tools/call get_phone_status from owner@example.com (claude)

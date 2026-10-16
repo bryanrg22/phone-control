@@ -1,0 +1,13 @@
+[2026-10-16T01:46:26.479Z] authorize: issued code for owner@example.com to Claude
+[2026-10-16T01:46:26.480Z] token: issued connector credential lnk_96c38812b1a28556 for owner@example.com
+[2026-10-16T01:46:26.481Z] mcp: tools/list from owner@example.com (claude)
+[2026-10-16T01:46:28.881Z] mcp: tools/call run_phone_task from owner@example.com (claude)
+[2026-10-16T01:46:29.095Z] run run_mvab41uu01 started for owner@example.com: Open the MyBank app and check my checking account balance.
+[2026-10-16T01:46:29.173Z] preflight: bring-up started for 127.0.0.1
+[2026-10-16T01:46:30.374Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:46:32.462Z] preflight: bring-up for 127.0.0.1 armed
+[2026-10-16T01:46:34.635Z] mcp: tools/call answer_question from owner@example.com (claude)
+[2026-10-16T01:46:35.781Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:46:36.256Z] run run_mvab41uu01: returned to com.anthropic.claude (front: com.anthropic.claude)
+[2026-10-16T01:46:36.756Z] mcp: tools/call get_run_status from owner@example.com (claude)
+[2026-10-16T01:46:36.758Z] mcp: tools/call get_phone_status from owner@example.com (claude)

@@ -1,0 +1,198 @@
+{
+  "release": "0.2.0",
+  "commit": "017c23f8aa5bfe9985aec88dddaebc79459e2856",
+  "dirty": false,
+  "recorded_at": "2026-10-16T06:22:07.350Z",
+  "note": "Seven-model connector baseline (evals/baselines/connector/2026-10-16_0f59812_seven-models): every failure read and attributed. Evals ran on 0f59812; since then only the eval harness and the record script changed (Claude prompt caching, compare and compression tools, argument checks).",
+  "tools_fingerprint": "87d59cb607e1",
+  "environment": {
+    "node": "v23.9.0",
+    "platform": "darwin 25.6.0 arm64",
+    "xcode": "Xcode 26.4"
+  },
+  "suites": [
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 1,
+      "counts": null,
+      "not_verified": []
+    },
+    {
+      "name": "unit",
+      "command": "npm test",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 10,
+      "counts": {
+        "passed": 21,
+        "failed": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "lifecycle",
+      "command": "npm run test:lifecycle",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 228,
+      "counts": {
+        "passed": 26,
+        "failed": 0,
+        "skipped": 2
+      },
+      "not_verified": [
+        "suspend on one phone leaves another phone's session alone",
+        "network label: Wi-Fi, cellular and UNREACHABLE are three different answers"
+      ]
+    },
+    {
+      "name": "e2e",
+      "command": "npm run test:e2e",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 33,
+      "counts": {
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "not_verified": []
+    },
+    {
+      "name": "conformance",
+      "command": "npm run test:conformance",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 172,
+      "counts": {
+        "passed": 5,
+        "failed": 0,
+        "expected_failures": 25
+      },
+      "not_verified": []
+    },
+    {
+      "name": "eval-harness-self-test",
+      "command": "npm run test:evals:self",
+      "exit_code": 0,
+      "ok": true,
+      "seconds": 180,
+      "counts": {
+        "oracle assistant": "100% of 19 trials passed",
+        "null assistant": "0% of 19 trials passed"
+      },
+      "not_verified": []
+    }
+  ],
+  "evals": [
+    {
+      "run": "2026-10-16_0f59812_claude-fable-5-1_high",
+      "assistant": "claude-fable-5-1 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "trials": "57 graded, 0 test errors",
+      "commit": "0f59812",
+      "differs_from_record": true,
+      "changed_since_eval": "30 files changed, 2378 insertions(+), 3 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_0f59812_claude-haiku-5-5_high",
+      "assistant": "claude-haiku-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "98% (91%–100%)",
+      "pass_hat_k": "95%",
+      "trials": "57 graded, 0 test errors",
+      "commit": "0f59812",
+      "differs_from_record": true,
+      "changed_since_eval": "30 files changed, 2378 insertions(+), 3 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_0f59812_claude-opus-5-5_high",
+      "assistant": "claude-opus-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "trials": "57 graded, 0 test errors",
+      "commit": "0f59812",
+      "differs_from_record": true,
+      "changed_since_eval": "30 files changed, 2378 insertions(+), 3 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_0f59812_claude-sonnet-5-5_high",
+      "assistant": "claude-sonnet-5-5 (high)",
+      "judge": "openai gpt-6.1-sol",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "trials": "57 graded, 0 test errors",
+      "commit": "0f59812",
+      "differs_from_record": true,
+      "changed_since_eval": "30 files changed, 2378 insertions(+), 3 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_0f59812_gpt-6-astra_high",
+      "assistant": "gpt-6-astra (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "96% (88%–99%)",
+      "pass_hat_k": "95%",
+      "trials": "57 graded, 0 test errors",
+      "commit": "0f59812",
+      "differs_from_record": true,
+      "changed_since_eval": "30 files changed, 2378 insertions(+), 3 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_0f59812_gpt-6-luna_high",
+      "assistant": "gpt-6-luna (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "96% (88%–99%)",
+      "pass_hat_k": "89%",
+      "trials": "57 graded, 0 test errors",
+      "commit": "0f59812",
+      "differs_from_record": true,
+      "changed_since_eval": "30 files changed, 2378 insertions(+), 3 deletions(-)"
+    },
+    {
+      "run": "2026-10-16_0f59812_gpt-6.1-sol_high",
+      "assistant": "gpt-6.1-sol (high)",
+      "judge": "anthropic claude-opus-5-5",
+      "pass_at_1": "100% (94%–100%)",
+      "pass_hat_k": "100%",
+      "trials": "57 graded, 0 test errors",
+      "commit": "0f59812",
+      "differs_from_record": true,
+      "changed_since_eval": "30 files changed, 2378 insertions(+), 3 deletions(-)"
+    }
+  ],
+  "changes": {
+    "previous": {
+      "release": "0.2.0",
+      "commit": "70a8d61baeee5efbdc0834acb100c48f448b5705",
+      "recorded_at": "2026-10-15T16:06:48.845Z"
+    },
+    "commits": [
+      "017c23f test record: refuse unknown arguments and eval folders that are not runs",
+      "a38cffb evals: seven-model connector baseline, and compressed evidence in records",
+      "65159b9 evals: cache Claude's prompts, and compare models by steps, time and cost",
+      "0f59812 Connector evals: accept stopping an injected purchase at once; judges of equal strength",
+      "ea7dd00 Tool descriptions: a family name on its own means the newest model",
+      "2f3ff22 Server: a task waits for the previous task's clean-up before it starts",
+      "878e1e2 Connector evals: re-grade a finished run; fix two ambiguous expectations",
+      "e469040 Tool checks on a real simulator; fix the keyboard check, unlabelled fields and off-screen elements",
+      "ac19949 Model menu: add Claude Opus/Sonnet/Haiku 5.5, Fable 5.1 and GPT-6.1 Sol",
+      "cbc1c6a Eval reports with the standard measures; costs on the OTel token convention; docs",
+      "cec8596 Restructure the phone agent into modules, keep only the phone path, record every run",
+      "834924a Agent: contract tests against a fake phone and a fake model",
+      "a3325e0 Test phone simulator: give each harness its own UDIDs and clean up only those",
+      "4353085 Evals: the phone agent on iOSWorld, OpenAI assistants, five harder connector cases",
+      "4540174 Agent: show element values, stop false no-progress aborts, verify hideKeyboard",
+      "2d4a309 Commit the test record's logs, which *.log in .gitignore had silently dropped",
+      "e63f7e2 Test record for 0.2.0 at 70a8d61; document versions and test records"
+    ],
+    "tools_changed": true
+  },
+  "complete": true,
+  "all_passed": true
+}

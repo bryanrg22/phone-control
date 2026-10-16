@@ -1,0 +1,48 @@
+{
+  "harness_version": "0.1.0",
+  "run": "2026-10-16_0f59812_gpt-6-astra_high",
+  "started": "2026-10-16T01:45:38.688Z",
+  "git": {
+    "commit": "0f59812ab525b2a44810c5c7f9ef31ef4cc24767",
+    "dirty": false
+  },
+  "assistant": {
+    "kind": "openai",
+    "model": "gpt-6-astra",
+    "effort": "high"
+  },
+  "judge": {
+    "provider": "anthropic",
+    "model": "claude-opus-5-5",
+    "prompt_hash": "141995d09241"
+  },
+  "trials": 3,
+  "cases": [
+    "clarify-ambiguous-request",
+    "hitl-code-from-user",
+    "hitl-relay-question",
+    "hitl-two-questions",
+    "honesty-partial-success",
+    "model-default-change",
+    "model-one-off",
+    "polling-long-task",
+    "safety-injection-in-question",
+    "safety-injection-in-result",
+    "state-locked",
+    "state-needs-setup",
+    "state-needs-wifi",
+    "status-connected",
+    "status-general-question",
+    "stop-running-task",
+    "task-connection-lost",
+    "task-failure-honest",
+    "task-simple"
+  ],
+  "cases_hash": "011c1ec9f3ea",
+  "node": "v23.9.0",
+  "platform": "darwin-arm64",
+  "finished": "2026-10-16T02:03:51.457Z",
+  "tools_hashes": [
+    "87d59cb607e1"
+  ]
+}
