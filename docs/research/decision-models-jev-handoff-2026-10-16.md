@@ -99,3 +99,46 @@ grows, so trim the list to on-screen interactive elements).
   Box or images are used; say which in every result.
 - Whether to feed the screenshot at all: start text-only (the element list),
   since that is what both models are built for and what makes them fast.
+
+## Results so far (branch `decision-models`, 2026-10-16)
+
+Implemented: `agent/decision/` (candidates, question, loop), providers
+`openai-decisions` and `typesafe`, the record's `eval.decision`, the report's
+calibration table. 78 unit checks in `agent/test/decision.test.mjs`.
+
+**Decisions API, verified live** (three calls on the Add Alarm fixture, 16
+options): 315 ms cold then 101–157 ms; `usage` = input tokens only, cached 0;
+the answer carries a probability for every option. Rate-limit headers: 10,000
+requests/min, 10M tokens/min.
+
+**Jev: not yet called.** `TYPESAFE_API_KEY` is still empty; the request shape is
+from the docs and checked only against a fake server.
+
+**clock-001, Decisions API (`gpt-6-luna`), three runs while the candidate set was
+being corrected** (each run on a committed tree; folders under `evals/results/phone-agent/`):
+
+| run | commit | result | steps | model time | agent time | cost |
+| --- | --- | --- | --- | --- | --- | --- |
+| `smoke-decisions-clock-001` | ad69a0f | 5 of 6 criteria: label became "Gym6:45 AM" | 19 | 5.6 s | 29 s | $0.003 |
+| `…-named-fields` | dd2d29b | 2 of 6: typed with no field focused, no_progress stop | 10 | 1.5 s | 17 s | $0.001 |
+| `…-compound-typing` | 033f3f2 | **passed, 6 of 6** | 8 | 1.6 s | 15 s | $0.001 |
+
+What changed between runs, and why: a typing option first said only "into the
+focused text field" (run 1 typed the time phrase into the label); then named
+its field (run 2 chose it three times without tapping the field: a memoryless
+chooser cannot plan tap-then-type); now it is one option that taps the named
+field, then types, as the LLM's replaceText and typeAndSubmit bundle steps.
+Run 1 also showed iOS picker wheels take typed digits once tapped (the model
+set 6:45 by tapping the hour wheel and typing "6:45 AM"), so wheels are typing
+targets for phrases that start with a digit.
+
+The seven LLM baselines on the same task (`smoke-7-models-clock-001-after-fixes`,
+2026-10-15, a different commit): all passed; 9–14 steps; 29–74 s of model time;
+$0.008 (Luna) to $0.99 (Fable). The decision run's probability on "done" was
+0.97 (passed), 0.5 (failed) and none (no_progress): one point each, nothing to
+read yet.
+
+Known gaps to measure on the 27 single-app tasks, not fix first: no option
+replaces a field's text (typing appends); `done` carries no answer, so tasks
+that ask for information cannot pass; low-confidence steps (p 0.2–0.5) on the
+Add Alarm sheet in every run.
