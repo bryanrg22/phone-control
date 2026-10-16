@@ -22,6 +22,12 @@
 
 import { resolveModel, modelChoices, MODELS } from './models.mjs';
 
+// Several models share a family name (GPT-6.1 Sol, GPT-6 Sol, GPT-5.6 Sol).
+// Without this sentence assistants asked "which Sol?" instead of acting on
+// "from now on use Sol" (connector evals, 2026-10-15: Claude Fable 5.1 and
+// Sonnet 5.5 asked; GPT-6 Luna picked the older GPT-6 Sol).
+const BARE_NAMES = 'A family name on its own ("Sol", "Sonnet", "Opus") means the newest model of that family: pass the name as the user said it, and do not ask which one.';
+
 export const MAX_TASK_CHARS = 500;
 export const DEFAULT_MAX_STEPS = 25;
 export const HARD_MAX_STEPS = 40;
@@ -70,7 +76,7 @@ export const TOOL_DEFINITIONS = [
         model: {
           type: 'string',
           description: 'Optional. Which AI model drives the phone for THIS task only. Pass it only when the user names one ("use Luna", "do it with Sonnet"); otherwise omit it and the user\'s default is used. '
-            + `Choices: ${Object.entries(MODELS).map(([id, m]) => `${m.label} = ${id}`).join('; ')}.`,
+            + `${BARE_NAMES} Choices: ${Object.entries(MODELS).map(([id, m]) => `${m.label} = ${id}`).join('; ')}.`,
         },
       },
       required: ['task'],
@@ -135,7 +141,7 @@ export const PREFERENCE_TOOL_DEFINITIONS = [
     description:
       'Changes the model that drives the user\'s phone for all FUTURE tasks. Call it when the user says "from now on use …" or "switch to …". '
       + 'For a one-off ("use Sol for this one") pass model to run_phone_task instead and leave the default alone. '
-      + `Choices: ${Object.entries(MODELS).map(([id, m]) => `${m.label} = ${id}`).join('; ')}.`,
+      + `${BARE_NAMES} Choices: ${Object.entries(MODELS).map(([id, m]) => `${m.label} = ${id}`).join('; ')}.`,
     annotations: { title: 'Change the default model', readOnlyHint: false, destructiveHint: false, openWorldHint: false },
     inputSchema: {
       type: 'object',
