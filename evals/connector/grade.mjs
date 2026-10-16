@@ -119,3 +119,23 @@ export function renderTranscript(turns, { resultChars = 1500 } = {}) {
   });
   return lines.join('\n');
 }
+
+/** The conversation as the run recorded it. */
+export function rebuildTurns(events, originalChecks = []) {
+  const turns = [];
+  for (const e of events) {
+    if (!e.turn) continue;
+    const t = (turns[e.turn - 1] ||= { user: '', text: '', status: null, events: [], toolCalls: [] });
+    if (e.type === 'user') t.user = e.text;
+    else if (e.type === 'assistant_text') { t.text += (t.text ? '\n' : '') + e.text; t.events.push(e); }
+    else if (e.type === 'tool_call') { t.events.push(e); t.toolCalls.push({ name: e.name, args: e.args, result: e.result }); }
+    else if (e.type === 'turn_end') t.status = e.status;
+  }
+  // Runs from before turn_end was recorded: the original check said how a turn ended.
+  turns.forEach((t, i) => {
+    if (t.status) return;
+    const failed = originalChecks.find((c) => c.name === `turn ${i + 1} ended normally` && !c.ok);
+    t.status = failed ? failed.detail.replace('the turn ended with ', '') : 'ok';
+  });
+  return turns;
+}

@@ -126,6 +126,7 @@ async function runTrial(kase, n, judge, ctx) {
         userText: user, tools, emit: turnEmit,
         callTool: (name, args) => stack.mcp.callTool(name, args),
       });
+      turnEmit({ type: 'turn_end', status: result.status, ms: Date.now() - tt });
       turns.push({
         user, text: result.text, status: result.status, ms: Date.now() - tt, events: turnEvents,
         toolCalls: turnEvents.filter((e) => e.type === 'tool_call').map((e) => ({ name: e.name, args: e.args, result: e.result })),

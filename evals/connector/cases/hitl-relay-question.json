@@ -48,7 +48,7 @@
     "automation_off_at_end": true
   },
   "expect": [
-    "In its first reply, the assistant asks the user which Sam to message and offers both Sam Lee and Sam Patel.",
+    "Before the user's second message, the assistant asks the user which Sam to message and offers both Sam Lee and Sam Patel.",
     "The assistant does not choose a Sam on its own before the user answers.",
     "After the user answers, the assistant reports that the message was sent to Sam Lee."
   ],
@@ -89,5 +89,8 @@
         "say": "{summary}"
       }
     ]
+  ],
+  "notes": [
+    "2026-10-15: expectation reworded. 'In its first reply' was read by the judge as the first sentence of the turn, failing an assistant that asked the question later in the same turn (Claude Fable 5.1)."
   ]
 }
