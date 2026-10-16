@@ -144,7 +144,7 @@ ${r.note ? `<div class="sub">${esc(r.note)}</div>` : ''}
 ${r.suites.map((s) => row([esc(s.name), s.skipped ? 'skipped' : badge(s.ok), esc(counts(s.counts)), s.skipped ? '' : `${s.seconds}s`, `<code>${esc(s.command || '')}</code>`])).join('')}</table>
 ${notVerifiedOf(r.suites).length ? `<h2>Not verified by this record</h2><table>${notVerifiedOf(r.suites).map((t) => row([esc(t)])).join('')}</table>` : ''}
 ${r.evals.length ? `<h2>Evals</h2><table><tr><th>run</th><th>assistant</th><th>judge</th><th>pass@1 (95%)</th><th>pass^k</th><th>trials</th><th>ran on</th></tr>
-${r.evals.map((e) => row([esc(e.run), esc(e.assistant), esc(e.judge), esc(e.pass_at_1), esc(e.pass_hat_k), esc(e.trials), `<code>${esc(e.commit)}</code>${e.differs_from_record ? ' (earlier commit)' : ''}`])).join('')}</table>` : ''}
+${r.evals.map((e) => row([esc(e.run), esc(e.assistant), esc(e.judge), esc(`${e.pass_at_1}${e.regraded ? ` → ${e.regraded.pass_at_1} re-graded` : ''}`), esc(`${e.pass_hat_k}${e.regraded ? ` → ${e.regraded.pass_hat_k}` : ''}`), esc(e.trials), `<code>${esc(e.commit)}</code>${e.differs_from_record ? ' (earlier commit)' : ''}`])).join('')}</table>` : ''}
 <h2>Changed since the previous record</h2>
 <div class="sub">${r.changes.previous ? `previous: ${esc(r.changes.previous.release)} at <code>${esc(r.changes.previous.commit)}</code>` : 'first record'}</div>
 <table>${(r.changes.commits.length ? r.changes.commits : ['(no commits listed)']).map((c) => row([`<code>${esc(c)}</code>`])).join('')}</table>`;
@@ -187,12 +187,17 @@ for (const run of evalRuns) {
   compressEvents(join(dir, 'evals', basename(run)));
   const pct = (x) => (x === null || x === undefined ? 'n/a' : `${Math.round(x * 100)}%`);
   const ranOn = info.git?.commit || null;
+  // A run re-graded after a case was corrected (evals/connector/regrade.mjs)
+  // is shown with its latest re-grade beside the original, never instead of it.
+  const latestRegrade = readdirSync(run).filter((d) => d.startsWith('regrade-') && existsSync(join(run, d, 'summary.json'))).sort().at(-1);
+  const regraded = latestRegrade ? JSON.parse(readFileSync(join(run, latestRegrade, 'summary.json'), 'utf8')) : null;
   evals.push({
     run: basename(run),
     assistant: info.assistant.model ? `${info.assistant.model}${info.assistant.effort ? ` (${info.assistant.effort})` : ''}` : info.assistant.kind,
     judge: info.judge.model ? `${info.judge.provider} ${info.judge.model}` : info.judge.provider,
     pass_at_1: `${pct(summary.pass_at_1)} (${pct(summary.pass_at_1_ci95.low)}–${pct(summary.pass_at_1_ci95.high)})`,
     pass_hat_k: pct(summary.pass_hat_k),
+    regraded: regraded ? { folder: latestRegrade, pass_at_1: `${pct(regraded.pass_at_1)} (${pct(regraded.pass_at_1_ci95.low)}–${pct(regraded.pass_at_1_ci95.high)})`, pass_hat_k: pct(regraded.pass_hat_k), cases: regraded.regraded_cases ?? 'all' } : null,
     trials: `${summary.trials} graded, ${summary.test_errors} test errors`,
     commit: ranOn ? `${ranOn.slice(0, 7)}${info.git.dirty ? '+dirty' : ''}` : 'unknown',
     differs_from_record: ranOn !== commit,
@@ -225,7 +230,7 @@ const md = [
   ...suites.map((s) => `| ${s.name} | ${s.skipped ? 'skipped' : s.ok ? 'PASS' : 'FAIL'} | ${countText(s.counts).join(', ')} | ${s.skipped ? '' : `${s.seconds}s`} | ${s.skipped ? '' : `[suites/${s.name}.log](suites/${s.name}.log)`} |`), '',
   ...(notVerifiedOf(suites).length ? ['## Not verified by this record', '', 'These scenarios were skipped on this machine, so nothing here vouches for them:', '', ...notVerifiedOf(suites).map((t) => `- ${t}`), ''] : []),
   ...(evals.length ? ['## Evals', '', '| run | assistant | judge | pass@1 (95% interval) | pass^k | trials | ran on commit |', '| --- | --- | --- | --- | --- | --- | --- |',
-    ...evals.map((e) => `| [${e.run}](evals/${e.run}/summary.md) | ${e.assistant} | ${e.judge} | ${e.pass_at_1} | ${e.pass_hat_k} | ${e.trials} | \`${e.commit}\`${e.differs_from_record ? ` (earlier; since then: ${e.changed_since_eval || 'no changes in server, device, agent or evals'})` : ''} |`), ''] : []),
+    ...evals.map((e) => `| [${e.run}](evals/${e.run}/summary.md) | ${e.assistant} | ${e.judge} | ${e.pass_at_1}${e.regraded ? ` → **${e.regraded.pass_at_1}** re-graded` : ''} | ${e.pass_hat_k}${e.regraded ? ` → **${e.regraded.pass_hat_k}**` : ''} | ${e.trials} | \`${e.commit}\`${e.differs_from_record ? ` (earlier; since then: ${e.changed_since_eval || 'no changes in server, device, agent or evals'})` : ''} |`), ''] : []),
   '## Changed since the previous record', '',
   changes.previous ? `Previous record: ${changes.previous.release} at \`${changes.previous.commit.slice(0, 12)}\` (${changes.previous.recorded_at}).` : 'This is the first record; the most recent commits are listed.', '',
   ...changes.commits.map((c) => `- \`${c.slice(0, 7)}\` ${c.slice(8)}`), '',
