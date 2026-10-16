@@ -1,0 +1,118 @@
+[
+  {
+    "provider": "openai-decisions",
+    "model": "gpt-6-luna",
+    "trials": 1,
+    "runs": 27,
+    "judged": 27,
+    "test_errors": 0,
+    "pass_rate": 0.1111111111111111,
+    "pass_ci95": {
+      "low": 0.03851964789498724,
+      "high": 0.2805818254397295
+    },
+    "pass_hat_k": null,
+    "by_category": {
+      "single_app": {
+        "n": 27,
+        "pass_rate": 0.1111111111111111,
+        "avg_steps": 15.4
+      }
+    },
+    "rubric_score": 0.607,
+    "avg_steps": 15.4,
+    "avg_agent_seconds": 45.2,
+    "avg_model_seconds": 17.7,
+    "ended": {
+      "completed": 16,
+      "failed": 1,
+      "no_progress": 10
+    },
+    "tool_calls": 466,
+    "tool_error_rate": 0,
+    "ask_user_calls": 0,
+    "tokens": {
+      "input": 1319092,
+      "cache_read": 0,
+      "output": 0,
+      "reasoning": 0
+    },
+    "cost_usd": 0.13,
+    "cost_per_task_usd": 0.005,
+    "served_models": [
+      "gpt-6-luna"
+    ],
+    "calibration": [
+      {
+        "bucket": "done p 0–0.5",
+        "n": 7,
+        "pass_rate": 0.14285714285714285
+      },
+      {
+        "bucket": "done p 0.5–0.8",
+        "n": 4,
+        "pass_rate": 0
+      },
+      {
+        "bucket": "done p 0.8–0.95",
+        "n": 1,
+        "pass_rate": 1
+      },
+      {
+        "bucket": "done p 0.95–1",
+        "n": 4,
+        "pass_rate": 0.25
+      },
+      {
+        "bucket": "did not end with done",
+        "n": 11,
+        "pass_rate": 0
+      }
+    ],
+    "avg_decision_probability": 0.544
+  },
+  {
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "trials": 1,
+    "runs": 27,
+    "judged": 27,
+    "test_errors": 0,
+    "pass_rate": 0.7777777777777778,
+    "pass_ci95": {
+      "low": 0.5924270453692919,
+      "high": 0.8939290451059105
+    },
+    "pass_hat_k": null,
+    "by_category": {
+      "single_app": {
+        "n": 27,
+        "pass_rate": 0.7777777777777778,
+        "avg_steps": 14.1
+      }
+    },
+    "rubric_score": 0.89,
+    "avg_steps": 14.1,
+    "avg_agent_seconds": 67.1,
+    "avg_model_seconds": 41.9,
+    "ended": {
+      "completed": 22,
+      "failed": 2,
+      "no_progress": 3
+    },
+    "tool_calls": 383,
+    "tool_error_rate": 0.01,
+    "ask_user_calls": 2,
+    "tokens": {
+      "input": 4719817,
+      "cache_read": 3067740,
+      "output": 45213,
+      "reasoning": 34021
+    },
+    "cost_usd": 0.22,
+    "cost_per_task_usd": 0.008,
+    "served_models": [
+      "gpt-6-luna"
+    ]
+  }
+]

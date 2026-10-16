@@ -223,3 +223,28 @@ needs p ≥ 0.5), and a date-picker option that enters a date in one step.
 Next, in order: add `TYPESAFE_API_KEY`; the 27 single-app tasks again on this
 harness with both decision models beside one LLM (GPT-6 Luna, $0.008 a task on
 clock-001) on the same commit; then the policies above as variants.
+
+## Result: the 27 single-app tasks, both modes, one commit (4888b67)
+
+Baseline: `evals/baselines/phone-agent/2026-10-16_4888b67_decisions-vs-luna_single-app/`.
+
+| agent | pass rate | rubric | steps | model time / task | cost / task |
+| --- | --- | --- | --- | --- | --- |
+| Decisions API, gpt-6-luna (decision mode, harness fixed) | **3 of 27 (11%)** | 0.61 | 15.4 | 17.7 s | $0.005 |
+| gpt-6-luna as an LLM (the product's loop) | **21 of 27 (78%)** | 0.89 | 14.1 | 41.9 s | $0.008 |
+
+The harness fixes moved which tasks pass, not how many (4, then 3 of 27). Read
+per failure: 3 runs did every action and only lacked an answer; 7 needed
+written text; 14 were the model's judgment (conclusions at p 0.15–0.5, controls
+that need a goal value, long lists with every option near p 0.2). The decision
+mode's own promise held: input tokens only, no text, 0.1–0.3 s a call when
+the API is quick (it was 3–9 s on 49 of 417 calls this afternoon). It did not
+make the agent cheaper in practice: Luna as an LLM, with caching, costs about
+the same per task and passes seven times as many.
+
+What would be worth measuring next, if anything: (1) an answer step, one LLM
+call over the final screen when the decision model says `done` (+3 here);
+(2) a conclusion threshold (`done` needs p ≥ 0.5) and goal-valued options for
+pickers and keypads; (3) Jev, once `TYPESAFE_API_KEY` exists, on the same 27
+with the same harness (the provider is built and unit-tested; nothing else
+changes). The free-text class (7 of 27 here) stays out of reach by design.
