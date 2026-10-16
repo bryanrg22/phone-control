@@ -4,8 +4,8 @@
 //
 //   node evals/connector/compare.mjs evals/results/connector/2026-10-16_0f59812_*_high [--out report.md]
 //
-// Reads only what the runs recorded (state.json and events.jsonl of each
-// trial); nothing is re-run or re-graded. Per model:
+// Reads only what the runs recorded (state.json and events.jsonl, or
+// events.jsonl.gz in a test record, of each trial); nothing is re-run or re-graded. Per model:
 //   pass@1 (Wilson 95% interval), pass^k        how often, and how reliably
 //   model calls, tool calls per task            steps: requests to the model, and
 //                                               connector tools it called
@@ -26,6 +26,7 @@ import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { summarize } from '../lib/stats.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
+import { readEvents } from '../lib/events.mjs';
 
 const argv = process.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -62,7 +63,7 @@ for (const dir of runs) {
       const state = JSON.parse(readFileSync(join(dir, kase, t, 'state.json'), 'utf8'));
       verdicts[kase].push(state.error ? 'TEST_ERROR' : state.verdict);
       if (state.error) continue;
-      const calls = readFileSync(join(dir, kase, t, 'events.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((e) => e.type === 'model_call').map((e) => e.usage);
+      const calls = readEvents(join(dir, kase, t)).filter((e) => e.type === 'model_call').map((e) => e.usage);
       trials.push({ kase, pass: state.verdict === 'PASS', u: state.usage, calls });
       const c = ((perCase[kase] ||= {})[model] ||= { tools: [], seconds: [], passes: 0, n: 0 });
       c.tools.push(state.usage.tool_calls); c.seconds.push(state.usage.model_ms / 1000); c.n += 1; if (state.verdict === 'PASS') c.passes += 1;

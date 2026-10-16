@@ -22,6 +22,7 @@ import { codeChecks, verdictFor, renderTranscript, rebuildTurns } from './grade.
 import { createJudge, JUDGE_PROMPT_HASH } from '../lib/judges.mjs';
 import { summarize } from '../lib/stats.mjs';
 import { scrub } from '../../agent/record.mjs';
+import { readEvents } from '../lib/events.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const argv = process.argv.slice(2);
@@ -46,7 +47,7 @@ for (const caseId of readdirSync(runDir).filter((d) => cases[d]).sort()) {
     const dir = join(runDir, caseId, t);
     const state = JSON.parse(readFileSync(join(dir, 'state.json'), 'utf8'));
     if (state.error) { verdicts[caseId].push('TEST_ERROR'); continue; }  // nothing to grade: the harness broke
-    const events = readFileSync(join(dir, 'events.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+    const events = readEvents(dir);
     const turns = rebuildTurns(events, state.checks);
     const trial = { turns, starts: state.starts, finalRun: state.final_run, phone: state.phone, defaultModel: state.default_model };
     const checks = codeChecks(kase, trial);

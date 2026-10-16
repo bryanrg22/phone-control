@@ -40,7 +40,14 @@ Still to do before trusting judged scores to steer changes: hand-label a set of 
 
 ### Baselines
 
-`evals/baselines/connector/` keeps the summary and provenance of runs worth comparing against. The first, Claude Opus 5.5 at effort high on 2026-10-15, passed every trial (42 of 42). That makes the current cases a **regression** set: anything below 100% means something broke. Measuring which model or wording is *better* needs harder cases.
+`evals/baselines/connector/` keeps the summary and provenance of runs worth comparing against.
+
+- **[2026-10-16, seven models](baselines/connector/2026-10-16_0f59812_seven-models/README.md)** (current): the newest models of each company, 19 cases × 3 trials. GPT-6.1 Sol, Claude Sonnet 5.5, Opus 5.5 and Fable 5.1 passed every trial; Haiku 5.5 98%, GPT-6 Luna and Astra 96.5%. Every failure is read and attributed there: two are the model's (both Luna's), three are a case that cannot follow an assistant that clarifies first. The intervals overlap, so this set separates models on cost and speed, not on passing.
+- [2026-10-15, Claude Opus 5.5](baselines/connector/2026-10-15_claude-opus-5-5_high/README.md): the first full run, 14 cases, 42 of 42.
+
+Near 100% the cases are a **regression** set: a drop means something broke. Measuring which model or wording is *better* needs harder cases.
+
+`node evals/connector/compare.mjs <run>...` puts finished runs side by side: pass rates, steps, time, cache use and cost per task, overall and per case.
 
 ### What a run leaves behind
 

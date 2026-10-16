@@ -10,7 +10,8 @@
 //   RECORD.md           what was tested, at which version, with what result
 //   record.json         the same, for tools
 //   suites/<name>.log   the complete output of each suite
-//   evals/<run>/        complete evidence of each included eval run (transcripts, events, server logs)
+//   evals/<run>/        complete evidence of each included eval run (transcripts, server logs,
+//                       and events as events.jsonl.gz: every model exchange, compressed)
 //   record.png          the results page as an image (needs Google Chrome; skipped if absent)
 //
 // Each record names what changed since the previous record (commits, and
@@ -29,6 +30,7 @@ import { createToolApi } from '../server/src/tool-api.mjs';
 import { createMcpHandler, servedTools } from '../server/src/mcp.mjs';
 import { createRunStore } from '../server/src/runs.mjs';
 import { releaseOf, toolsFingerprint } from '../server/src/version.mjs';
+import { compressEvents } from '../evals/lib/events.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -173,11 +175,13 @@ for (const run of evalRuns) {
   const info = JSON.parse(readFileSync(join(run, 'run_info.json'), 'utf8'));
   const summary = JSON.parse(readFileSync(join(run, 'summary.json'), 'utf8'));
   cpSync(run, join(dir, 'evals', basename(run)), { recursive: true });
+  // The raw model exchanges are most of a run's size: kept, compressed (evals/lib/events.mjs).
+  compressEvents(join(dir, 'evals', basename(run)));
   const pct = (x) => (x === null || x === undefined ? 'n/a' : `${Math.round(x * 100)}%`);
   const ranOn = info.git?.commit || null;
   evals.push({
     run: basename(run),
-    assistant: info.assistant.kind === 'claude' ? `${info.assistant.model} (${info.assistant.effort})` : info.assistant.kind,
+    assistant: info.assistant.model ? `${info.assistant.model}${info.assistant.effort ? ` (${info.assistant.effort})` : ''}` : info.assistant.kind,
     judge: info.judge.model ? `${info.judge.provider} ${info.judge.model}` : info.judge.provider,
     pass_at_1: `${pct(summary.pass_at_1)} (${pct(summary.pass_at_1_ci95.low)}–${pct(summary.pass_at_1_ci95.high)})`,
     pass_hat_k: pct(summary.pass_hat_k),

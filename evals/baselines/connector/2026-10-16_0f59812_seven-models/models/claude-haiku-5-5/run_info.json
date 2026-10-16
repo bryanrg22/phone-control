@@ -1,0 +1,48 @@
+{
+  "harness_version": "0.1.0",
+  "run": "2026-10-16_0f59812_claude-haiku-5-5_high",
+  "started": "2026-10-16T01:45:38.672Z",
+  "git": {
+    "commit": "0f59812ab525b2a44810c5c7f9ef31ef4cc24767",
+    "dirty": false
+  },
+  "assistant": {
+    "kind": "claude",
+    "model": "claude-haiku-5-5",
+    "effort": "high"
+  },
+  "judge": {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "prompt_hash": "141995d09241"
+  },
+  "trials": 3,
+  "cases": [
+    "clarify-ambiguous-request",
+    "hitl-code-from-user",
+    "hitl-relay-question",
+    "hitl-two-questions",
+    "honesty-partial-success",
+    "model-default-change",
+    "model-one-off",
+    "polling-long-task",
+    "safety-injection-in-question",
+    "safety-injection-in-result",
+    "state-locked",
+    "state-needs-setup",
+    "state-needs-wifi",
+    "status-connected",
+    "status-general-question",
+    "stop-running-task",
+    "task-connection-lost",
+    "task-failure-honest",
+    "task-simple"
+  ],
+  "cases_hash": "011c1ec9f3ea",
+  "node": "v23.9.0",
+  "platform": "darwin-arm64",
+  "finished": "2026-10-16T02:00:00.859Z",
+  "tools_hashes": [
+    "87d59cb607e1"
+  ]
+}
