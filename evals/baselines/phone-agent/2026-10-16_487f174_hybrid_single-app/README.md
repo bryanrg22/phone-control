@@ -33,15 +33,26 @@ not counted.
 **The hybrid matches the LLM's pass rate and is faster, not cheaper.** Same
 21 of 27, with 26% less model time and 20% less wall time. It cost 22% more:
 
-| hybrid's calls | calls | input tokens | cached | cost |
+| hybrid's calls | calls | input tokens | cached | cost (27 tasks) |
 | --- | --- | --- | --- | --- |
-| Decisions API | 500 | 1.31M | 0% | $0.131 |
-| Luna | 289 | 3.71M | 62% | $0.189 |
+| Decisions API | 408 | 1.11M | 0% | $0.111 |
+| Luna | 233 | 3.02M | 61% | $0.156 |
 | (Luna alone, for comparison) | 381 | 4.72M | 65% | $0.218 |
 
-The LLM half is 13% cheaper than Luna alone, but the decision calls cost
-almost as much again: 232 of the 500 were handed to Luna anyway (172 low
+The LLM half made 39% fewer calls and read 36% fewer tokens than Luna alone,
+but the decision calls cost almost as much again: $0.0041 a task, half of
+Luna's whole cost, and 232 of the 408 were handed to Luna anyway (172 low
 confidence, 43 conclusions, 17 write-text), so their tokens bought nothing.
+
+The same token counts priced with a costlier LLM in the hybrid (an estimate:
+a stronger model would take different steps):
+
+| LLM | alone, per task | in the hybrid, per task | saving |
+| --- | --- | --- | --- |
+| GPT-6 Luna (measured) | $0.0081 | $0.0099 | −22% |
+| GPT-6.1 Sol | $0.150 | $0.113 | 25% |
+| Claude Opus 5.5 | $0.301 | $0.221 | 27% |
+| GPT-6 Astra | $0.809 | $0.580 | 28% |
 
 **The two pass sets differ.** The hybrid passed cloudsheets-003, freshcart-001
 and quickbite-001, which Luna failed; Luna passed cinephile-001, lockedin-004
@@ -67,6 +78,8 @@ run-to-run variance as a property of either agent.
 1. **Sticky escalation**: once Luna takes a step, it keeps control until it
    hands back or concludes, instead of one step at a time. Aimed at the
    ping-pong, and saves the decision calls that get handed over anyway.
+   (Corrected 2026-10-16: an earlier version of this README counted 6 tasks
+   of the aborted attempt in the cost table.)
 2. **Skip the doomed decision call**: after two low-confidence handoffs in a
    row on the same screen, call Luna directly.
 3. **Jev as the chooser**: its input costs $0.042/M, against $0.10/M for the
