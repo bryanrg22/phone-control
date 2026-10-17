@@ -1,0 +1,74 @@
+[
+  {
+    "provider": "typesafe",
+    "model": "jev-latest",
+    "trials": 1,
+    "runs": 27,
+    "judged": 27,
+    "test_errors": 0,
+    "pass_rate": 0.07407407407407407,
+    "pass_ci95": {
+      "low": 0.020554221697383523,
+      "high": 0.2336997729073062
+    },
+    "pass_hat_k": null,
+    "by_category": {
+      "single_app": {
+        "n": 27,
+        "pass_rate": 0.07407407407407407,
+        "avg_steps": 15.4
+      }
+    },
+    "rubric_score": 0.528,
+    "avg_steps": 15.4,
+    "avg_agent_seconds": 25.4,
+    "avg_model_seconds": 2.2,
+    "ended": {
+      "completed": 11,
+      "failed": 3,
+      "no_progress": 13
+    },
+    "tool_calls": 468,
+    "tool_error_rate": 0,
+    "ask_user_calls": 0,
+    "tokens": {
+      "input": 1578852,
+      "cache_read": 0,
+      "output": 176981,
+      "reasoning": 0
+    },
+    "cost_usd": 0.07,
+    "cost_per_task_usd": 0.002,
+    "served_models": [
+      "jev-1.13.0"
+    ],
+    "calibration": [
+      {
+        "bucket": "done p 0–0.5",
+        "n": 1,
+        "pass_rate": 0
+      },
+      {
+        "bucket": "done p 0.5–0.8",
+        "n": 6,
+        "pass_rate": 0.16666666666666666
+      },
+      {
+        "bucket": "done p 0.8–0.95",
+        "n": 2,
+        "pass_rate": 0
+      },
+      {
+        "bucket": "done p 0.95–1",
+        "n": 2,
+        "pass_rate": 0.5
+      },
+      {
+        "bucket": "did not end with done",
+        "n": 16,
+        "pass_rate": 0
+      }
+    ],
+    "avg_decision_probability": 0.519
+  }
+]

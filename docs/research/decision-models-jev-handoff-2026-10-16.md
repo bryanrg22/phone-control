@@ -258,3 +258,44 @@ call over the final screen when the decision model says `done` (+3 here);
 pickers and keypads; (3) Jev, once `TYPESAFE_API_KEY` exists, on the same 27
 with the same harness (the provider is built and unit-tested; nothing else
 changes). The free-text class (7 of 27 here) stays out of reach by design.
+
+## Result: Jev on the same 27 (c4d73d2, 2026-10-16 evening)
+
+Baseline: `evals/baselines/phone-agent/2026-10-16_c4d73d2_jev_single-app/`
+(the three agents side by side in its `per-task.md`).
+
+| agent | pass rate | rubric | steps | model time / task | cost / task |
+| --- | --- | --- | --- | --- | --- |
+| Jev 1.13 (decision mode, same harness + the header fix) | **2 of 27 (7%)** | 0.53 | 15.4 | 2.2 s | $0.002 |
+| Decisions API, gpt-6-luna (decision mode, 4888b67) | 3 of 27 (11%) | 0.61 | 15.4 | 17.7 s | $0.005 |
+| gpt-6-luna as an LLM (4888b67) | 21 of 27 (78%) | 0.89 | 14.1 | 41.9 s | $0.008 |
+
+Jev is what it says it is: 0.14 s a call, every call 200, $0.07 for the run,
+and the same picture as the Decisions API (26 of 27 verdicts agree, 99 vs 113
+criteria of 193). Read per failure: 2 lacked only the answer, 7 needed written
+text (and Jev wrote the wrong thing into four of them: the search phrase into
+the document, "safety" over the agenda, "Brooklyn Half" and "Follow" as
+replies), 3 needed a control the element list does not carry (SplitPay's
+confirm sheet is empty in the tree; DineSpot's confirm button is at the left of
+a full-width frame so the centre tap misses; Mail's selection toolbar never
+appears), 13 were judgment: `done` at p 0.47–0.80 with the next step offered
+(5), the same no-op tap six to ten times despite "(the screen did not change)"
+in the history (4), pickers, lists and a wrong field (4).
+
+Two things only Jev showed: it ignores the history more than Luna does (clock-001:
+the hour wheel ten times with the type-the-time option at ≤ 0.04; Luna's
+decision run reached 5 of 6 on the same screen), and its `confidence` is the
+chosen option's probability to within 0.06 on 415 of 417 steps, so it adds
+nothing to the calibration table.
+
+The ranking the handoff asked for is settled for the text-only decision mode:
+LLM 21 ≫ Decisions API 3 ≈ Jev 2, at $0.008 vs $0.005 vs $0.002 a task. The
+cheap modes are seven to ten times faster per task and pass a tenth as often.
+What is still worth measuring, unchanged from above: an answer step (+2 here),
+a conclusion threshold, goal-valued options for pickers. New from this run:
+the three element-list gaps (a tap at a wide frame's leading edge; sheets and
+toolbars missing from the tree) are harness work that would help both decision
+models and cost nothing to the LLM mode; and Jev 1.14 with the screenshot
+(`TypeSafe-Danger-Zone-Images`) is the only way to test whether the picture
+closes the gap the tree leaves, at a price the docs call not production-ready.
+
