@@ -35,7 +35,7 @@ Apple's UI automation (XCUITest) is built for a phone plugged into a Mac running
 4. Claude calls `get_run_status` repeatedly. Each call waits on the server for up to ten seconds for something to change, so progress arrives promptly without polling noise.
 5. When the agent finishes, the server brings the Claude app back to the front, ends the automation session, and the answer appears in your chat.
 
-Step 5's clean-up runs however the task ended: finished, failed, stopped from the chat, stopped on the phone, connection lost, or the chat going quiet for a minute.
+Step 5's clean-up runs however the task ended: finished, failed, stopped from the chat, stopped on the phone, connection lost, or the chat going quiet for half a minute.
 
 ## How a session reaches an unplugged phone
 

@@ -32,8 +32,11 @@ export const TASK_LIMITS = {
   // "Is the chat still following this task?" The assistant checks status
   // back-to-back (each check waits ~10 s on the server), so silence is rare.
   // 16–19 s gaps were the norm even when it slept between checks (measured
-  // 2026-10-12), so a minute of nothing means it has stopped.
-  abandonMs: 60 * 1000,
+  // 2026-10-12); the longest gap in a real run on 2026-10-17 was 13.5 s. Half
+  // a minute of nothing means it has stopped. It was 60 s until a Stop
+  // pressed between two checks (no check cut off, so no dropGraceMs) let an
+  // Instagram task run on for 35 s and finish (run_mvcvrrv701, 2026-10-17).
+  abandonMs: 30 * 1000,
   // A status check that was CUT OFF mid-wait (the Stop button) and not followed
   // by another one is a much stronger sign, so it gets a much shorter leash.
   dropGraceMs: 15 * 1000,

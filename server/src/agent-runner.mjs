@@ -143,6 +143,24 @@ export function buildAgentArgs({
   ];
 }
 
+/** One line of a run's agent log, as it goes into the server's log: tagged with the run, at most 400 characters. */
+export function agentLogLine(runId, line) {
+  return `run ${runId} | ${line.length > 400 ? `${line.slice(0, 400)}…` : line}`;
+}
+
+/** Calls onLine with each complete line of a stream that arrives in chunks; end() flushes a final unterminated line. */
+export function createLineSplitter(onLine) {
+  let buf = '';
+  return {
+    feed(chunk) {
+      buf += String(chunk);
+      let i;
+      while ((i = buf.indexOf('\n')) >= 0) { onLine(buf.slice(0, i).replace(/\r$/, '')); buf = buf.slice(i + 1); }
+    },
+    end() { if (buf) { onLine(buf); buf = ''; } },
+  };
+}
+
 /**
  * Spawns the agent for an existing run record and wires stdout → registry.
  * Returns { proc, tmpDir }.
@@ -150,6 +168,7 @@ export function buildAgentArgs({
 export function startAgentProcess({
   run, store, repoRoot, driverHost, driverPort = 22087, provider = 'anthropic', model = null,
   askUserTimeoutSec = 300, spawnFn = nodeSpawn, env = process.env, onLine = null, extraArgs = [],
+  onLog = null,
 }) {
   const tmpDir = join(tmpdir(), `connector-run-${run.id}`);
   mkdirSync(tmpDir, { recursive: true, mode: 0o700 });
@@ -187,7 +206,14 @@ export function startAgentProcess({
   // error is the agent's log for people, which quotes the model's text and is
   // never parsed for events.
   proc.stdout?.on('data', feed);
-  proc.stderr?.on('data', (chunk) => { if (onLine) { try { onLine(String(chunk)); } catch { /* logging must not kill a run */ } } });
+  // onLog gets the agent's log one whole line at a time (a chunk can end
+  // mid-line): what it chose each step, by which model, with what probability,
+  // and what happened. No screenshots ever reach standard error.
+  const logLines = createLineSplitter((line) => { if (onLog && line.trim()) { try { onLog(line); } catch { /* logging must not kill a run */ } } });
+  proc.stderr?.on('data', (chunk) => {
+    if (onLine) { try { onLine(String(chunk)); } catch { /* logging must not kill a run */ } }
+    logLines.feed(chunk);
+  });
 
   proc.on('error', (e) => {
     store.finish(run.id, { success: false, summary: 'The agent could not be started.', error: e.message });
@@ -195,6 +221,7 @@ export function startAgentProcess({
   });
   proc.on('close', (code) => {
     parser.end();
+    logLines.end();
     // The parser reports the outcome for every normal ending. Anything left
     // un-finished here died without saying so — report that honestly rather
     // than inventing a verdict.

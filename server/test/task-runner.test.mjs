@@ -14,11 +14,11 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createRunStore } from '../src/runs.mjs';
-import { createTaskRunner } from '../src/task-runner.mjs';
+import { createTaskRunner, TASK_LIMITS } from '../src/task-runner.mjs';
 import { createToolApi } from '../src/tool-api.mjs';
 import { createPrefs } from '../src/prefs.mjs';
 import { resolveModel, MODELS, providerKeyPresent, missingProviderKey } from '../src/models.mjs';
-import { buildAgentArgs, startAgentProcess } from '../src/agent-runner.mjs';
+import { buildAgentArgs, startAgentProcess, createLineSplitter, agentLogLine } from '../src/agent-runner.mjs';
 import { parseAgentArgs } from '../../agent/cli-args.mjs';
 
 let passed = 0;
@@ -342,6 +342,51 @@ await ok('a dropped check followed by a fresh one is forgiven', async () => {
   w.store.clientDropped(w.run.id);                 // dropped…
   for (let i = 0; i < 30; i++) await tick();       // …but the chat keeps checking (listening is on)
   assert.equal(w.view().status === 'stopped', false, 'one dropped request killed a task that was still being followed');
+  w.store.finish(w.run.id, { success: true, summary: 'done' }); w.proc.emit('close', 0);
+  await done;
+  assert.equal(w.view().status, 'completed');
+});
+
+await ok('the default leash is 30 s: a Stop pressed between two checks ends the task at 30 s of silence, not 60 (run_mvcvrrv701)', async () => {
+  assert.equal(TASK_LIMITS.abandonMs, 30 * 1000);
+  // A clock the test sets by hand: the world() clock adds up the waits of loops
+  // that run side by side, so it cannot time a threshold.
+  let t = 1_000_000;
+  const store = createRunStore({ now: () => t });
+  const proc = new EventEmitter(); proc.kill = (sig) => { killed.push(sig); }; const killed = [];
+  const runner = createTaskRunner({
+    store, now: () => t, sleep: async () => { await tick(); },
+    devices: { status: async () => ({ ...WHERE, ...READY }), resolve: () => ({ state: 'enrolled', ...WHERE }) },
+    supervisor: { inspect: async () => ({ runnerHealthy: true }), screenState: async () => ({ locked: false }), prepareScreen: async () => null, launchApp: async () => ({ launched: true }), cancelArm: async () => false, suspend: async () => ({ suspended: true }) },
+    startAgent: () => ({ proc }),
+  });
+  const run = store.create({ uid: UID, task: 'open Instagram', meta: { model: LUNA.id } });
+  store.polled(run.id);
+  const last = t;
+  const done = runner.start({ run, uid: UID, model: LUNA });
+  for (let i = 0; i < 200; i++) await tick();
+  t = last + 29_000;                                  // 29 s of silence: still followed
+  for (let i = 0; i < 200; i++) await tick();
+  assert.notEqual(store._raw(run.id).status, 'stopped', 'stopped before 30 s of silence');
+  t = last + 30_500;                                  // past 30 s
+  for (let i = 0; i < 200; i++) await tick();
+  assert.equal(store._raw(run.id).status, 'stopped', 'still running after 30 s of silence');
+  assert.match(store._raw(run.id).summary, /chat stopped following/);
+  assert.deepEqual(killed, ['SIGTERM']);
+  proc.emit('close', null);
+  await settled(done);
+});
+
+await ok('a 20 s gap between checks, longer than any measured, does not end a followed task', async () => {
+  const w = world({ statuses: [READY], limits: { abandonMs: TASK_LIMITS.abandonMs } });
+  const done = w.start();
+  while (w.calls.agent.length === 0) await tick();
+  w.state.listening = false;
+  const at = w.clock();
+  while (w.clock() - at < 20000) await tick();
+  w.state.listening = true;                         // the chat checks again
+  for (let i = 0; i < 20; i++) await tick();
+  assert.notEqual(w.view().status, 'stopped', 'a 20 s pause between checks was taken for a Stop');
   w.store.finish(w.run.id, { success: true, summary: 'done' }); w.proc.emit('close', 0);
   await done;
   assert.equal(w.view().status, 'completed');
@@ -682,6 +727,48 @@ await ok('a hybrid run spawns the agent with the hybrid spec and sticky escalati
     assert.ok(!parsed.error, parsed.error?.message);
     assert.deepEqual([parsed.config.provider, parsed.config.model, parsed.config.escalationMode, parsed.config.driverHost], ['hybrid', m.agentModel, 'sticky', '100.1.2.3']);
   }
+});
+
+// ─── the agent's log, into the server's log ──────────────────────────────────
+
+await ok('the line splitter gives whole lines, however the stream is chunked, and flushes the last one', () => {
+  const got = [];
+  const sp = createLineSplitter((l) => got.push(l));
+  sp.feed('[model] tap_2: Tap "Ad'); sp.feed('d" (p=0.99)\r\n[tool] tap('); sp.feed('{"x":1})\n\n--- Step 2/25 ---\n[outc'); sp.end();
+  assert.deepEqual(got, ['[model] tap_2: Tap "Add" (p=0.99)', '[tool] tap({"x":1})', '', '--- Step 2/25 ---', '[outc']);
+  sp.end();
+  assert.equal(got.length, 5, 'end() flushed twice');
+});
+
+await ok('a journal line is tagged with its run and cut at 400 characters', () => {
+  assert.equal(agentLogLine('run_x', '[tool] openApp({"appName":"Instagram"})'), 'run run_x | [tool] openApp({"appName":"Instagram"})');
+  const long = agentLogLine('run_x', 'a'.repeat(1000));
+  assert.equal(long, `run run_x | ${'a'.repeat(400)}…`);
+});
+
+await ok('onLog gets the agent\'s standard error line by line, never its events, including a last unterminated line', () => {
+  const lines = [];
+  const proc = new EventEmitter(); proc.stdout = new EventEmitter(); proc.stderr = new EventEmitter(); proc.pid = 1;
+  const store = createRunStore({});
+  const run = store.create({ uid: UID, task: 'open Instagram', maxSteps: 25 });
+  startAgentProcess({ run, store, repoRoot: '/repo', driverHost: '100.1.2.3', spawnFn: () => proc, env: {}, onLog: (l) => lines.push(l) });
+  proc.stdout.emit('data', '@agent-event {"type":"step","step":1,"total":25}\n');
+  proc.stderr.emit('data', '\n--- Step 1/25 ---\n[model] open_instagram: Open the Instagram app (p=1, confidence 1)\n[tool] openApp({"appNa');
+  proc.stderr.emit('data', 'me":"Instagram"})\n[hybrid] → LLM: the decision model chose "done" (p=0.4)');
+  proc.emit('close', 0);
+  assert.deepEqual(lines, ['--- Step 1/25 ---', '[model] open_instagram: Open the Instagram app (p=1, confidence 1)', '[tool] openApp({"appName":"Instagram"})', '[hybrid] → LLM: the decision model chose "done" (p=0.4)']);
+  assert.ok(!lines.some((l) => l.includes('@agent-event')), 'an event line was logged as text');
+  assert.equal(store._raw(run.id).step, 1, 'events no longer reach the run record');
+});
+
+await ok('without onLog nothing changes: events still update the run', () => {
+  const proc = new EventEmitter(); proc.stdout = new EventEmitter(); proc.stderr = new EventEmitter(); proc.pid = 1;
+  const store = createRunStore({});
+  const run = store.create({ uid: UID, task: 't', maxSteps: 25 });
+  startAgentProcess({ run, store, repoRoot: '/repo', driverHost: '100.1.2.3', spawnFn: () => proc, env: {} });
+  proc.stderr.emit('data', '[model] x\n');
+  proc.stdout.emit('data', '@agent-event {"type":"step","step":3,"total":25}\n');
+  assert.equal(store._raw(run.id).step, 3);
 });
 
 rmSync(dir, { recursive: true, force: true });

@@ -52,7 +52,7 @@ import { createRunStore } from './runs.mjs';
 import { createDeviceResolver } from './device-resolver.mjs';
 import { createToolApi } from './tool-api.mjs';
 import { createMcpHandler, servedTools } from './mcp.mjs';
-import { startAgentProcess } from './agent-runner.mjs';
+import { startAgentProcess, agentLogLine } from './agent-runner.mjs';
 import { createSupervisorClient, parseDeviceOverrides } from './preflight.mjs';
 import { createVersionInfo, toolsFingerprint } from './version.mjs';
 import { createTaskRunner } from './task-runner.mjs';
@@ -577,6 +577,11 @@ export function buildProductionApp(env = process.env) {
     model: model.agentModel || model.id,
     extraArgs: model.agentArgs || [],
     askUserTimeoutSec: Number(env.CONNECTOR_ASKUSER_TIMEOUT || 300),
+    // Every step into the journal (journalctl -u phone-control), so a run can
+    // be explained afterwards: which model chose what, and how long each step
+    // took. Text only: the agent's log carries what it read and typed, never
+    // a screenshot. CONNECTOR_AGENT_LOG=0 turns it off.
+    onLog: env.CONNECTOR_AGENT_LOG === '0' ? null : (line) => log(agentLogLine(run.id, line)),
   });
   // A task owns the whole cycle: start automation, run, put it down again.
   const taskRunner = createTaskRunner({

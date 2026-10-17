@@ -41,7 +41,8 @@ The last two need a real phone to pin down, so they do not yet have their own me
 - **After a restart** the phone is unreachable until it is unlocked once, and the first start asks for the passcode.
 - **Switching the phone off** during a task is noticed because the runner stops answering; the server then cleans up its own side.
 - **One task at a time per phone.**
-- **If the chat stops asking** about a running task for a minute, the server ends the task. This is what makes the Stop button in the Claude app work.
+- **If the chat stops asking** about a running task for 30 seconds (15 if a check was cut off mid-wait), the server ends the task. This is what makes the Stop button in the Claude app work; holding both volume buttons on the phone stops it at once.
+- **Every agent step goes to the journal**: `journalctl -u phone-control | grep 'run <run id> |'` shows what each step chose, by which model, and what happened, with a timestamp per line. Text only, never a screenshot; it does include what the agent read on screen and typed. `CONNECTOR_AGENT_LOG=0` in `phone-control.env` turns it off.
 
 ## Day to day
 

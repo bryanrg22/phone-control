@@ -133,7 +133,7 @@ Then, in the Claude app: *"Is my phone connected?"*
 - **The phone must be unlocked** when a task starts. After a restart, iOS asks once for the passcode to allow automation (right).
 - **Wi-Fi to start, not to continue.** The first task after the phone has been idle for a while needs Wi-Fi. While the connection stays warm, later tasks also work on cellular.
 - **Asking never touches the phone.** "Is my phone connected?" only looks.
-- **Stopping**: say *stop* in the chat, or hold both volume buttons on the phone.
+- **Stopping**: say *stop* in the chat, or hold both volume buttons on the phone (instant). The Stop button in the Claude app also ends the task, within 30 seconds.
 - **Every state has its own answer.** Locked, on cellular, unreachable, restarted, waiting for the passcode: the server tells Claude which, and what to do. [docs/operations.md](docs/operations.md) lists them.
 - **The connector's icon will be Tailscale's** if your server uses a Tailscale address. [Why, and how to change it](docs/connect-claude.md#the-connectors-icon).
 

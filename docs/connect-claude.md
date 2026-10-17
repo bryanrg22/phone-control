@@ -49,7 +49,7 @@ A model can be used only if its provider's API key is in `/etc/phone-control/key
 
 - Say *stop* in the chat.
 - Or hold both volume buttons on the phone until the banner goes away.
-- If the chat simply stops following the task (you close it, or press Stop in the app), the server ends the task after about a minute.
+- If the chat simply stops following the task (you close it, or press Stop in the app), the server ends the task within about 15 seconds if a status check was cut off, and otherwise after 30 seconds of silence. To stop at once, hold both volume buttons on the phone.
 
 ## The connector's icon
 
