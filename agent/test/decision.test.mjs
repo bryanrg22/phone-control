@@ -12,6 +12,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { listElements } from '../elements.mjs';
 import { candidateActions, phrasesOf, DONE_SUMMARY, MAX_TAP_CANDIDATES } from '../decision/candidates.mjs';
+import { writerMessages, fieldSituation, WRITE_TEXT_INSTRUCTIONS } from '../decision/writer.mjs';
+import { startFakeModel, text as fakeText } from './rig/fake-model.mjs';
 import { decisionState, INSTRUCTIONS } from '../decision/question.mjs';
 import { runDecisionLoop } from '../decision/loop.mjs';
 import { buildDecisionsRequest, parseDecisionsAnswer, createOpenAIDecisions } from '../providers/openai-decisions.mjs';
@@ -213,7 +215,7 @@ console.log('the request path of each provider:');
 }
 
 // ── the loop, in process, against the fake phone and a scripted decider ──
-async function loopRun({ script, screen, maxSteps = 10, abortAfter = 8, traceDir = null, task = TASK }) {
+async function loopRun({ script, screen, maxSteps = 10, abortAfter = 8, traceDir = null, task = TASK, writer = null }) {
   const runner = await startFakeRunner({ screen });
   const device = createDevice({ host: '127.0.0.1', port: runner.port, knownApps: ['com.apple.mobiletimer'] });
   const state = { keyboardUp: false, screen: () => SCREEN };
@@ -234,7 +236,7 @@ async function loopRun({ script, screen, maxSteps = 10, abortAfter = 8, traceDir
     },
   };
   const recorder = createRecorder({ dir: traceDir, manifest: { task: 't', provider: 'test', model: 'test-decider' } });
-  const outcome = await runDecisionLoop({ task, maxSteps, decider, device, runTool, apps: ['Clock'], protocol, recorder, progress: createProgressMonitor({ abortAfter }), state, autoAllowNotifications: async () => {} });
+  const outcome = await runDecisionLoop({ task, maxSteps, decider, device, runTool, apps: ['Clock'], protocol, recorder, progress: createProgressMonitor({ abortAfter }), state, autoAllowNotifications: async () => {}, writer });
   recorder.finish(outcome);
   await runner.close();
   return { outcome, runner, asked, logs };
@@ -305,10 +307,10 @@ console.log('the loop:');
 }
 
 // ── the agent process end to end: the real agent.mjs, a fake phone, a fake API ──
-async function runAgentProcess({ provider, model, env, task = TASK, maxSteps = 8, runner }) {
+async function runAgentProcess({ provider, model, env, task = TASK, maxSteps = 8, runner, extraArgs = [] }) {
   const tmp = mkdtempSync(join(tmpdir(), 'decision-agent-'));
   const traceDir = join(tmp, 'trace');
-  const args = [join(HERE, '..', 'agent.mjs'), task, '--provider', provider, '--model', model, '--driver-host', '127.0.0.1', '--driver-port', String(runner.port), '--max-steps', String(maxSteps), '--trace-dir', traceDir, '--run-id', 'decision-test'];
+  const args = [join(HERE, '..', 'agent.mjs'), task, '--provider', provider, '--model', model, '--driver-host', '127.0.0.1', '--driver-port', String(runner.port), '--max-steps', String(maxSteps), '--trace-dir', traceDir, '--run-id', 'decision-test', ...extraArgs];
   const events = [];
   const parser = createAgentOutputParser((e) => events.push(e));
   let output = '';
@@ -350,6 +352,99 @@ console.log('the agent process with --provider typesafe:');
   const runner = await startFakeRunner({ screen: () => tree(el('Clock')) });
   const r = await runAgentProcess({ provider: 'typesafe', model: 'jev-latest', env: {}, runner });
   check('no TYPESAFE_API_KEY: exits 1 before touching the phone', r.code === 1 && /TYPESAFE_API_KEY/.test(r.output) && runner.calls.length === 0, `exit ${r.code}`);
+  await runner.close();
+}
+
+// ── the hybrid: a writer LLM for free text and the answer (decision/writer.mjs) ──
+console.log('the hybrid: candidates with a writer:');
+{
+  const elements = listElements(ADD_ALARM, W, H);
+  const without = candidateActions({ elements, task: TASK, apps: APPS, currentApp: 'Clock', keyboardUp: true });
+  const c = candidateActions({ elements, task: TASK, apps: APPS, currentApp: 'Clock', keyboardUp: true, writer: true });
+  check('without a writer there is no write option and done has the fixed wording', !without.some((x) => x.value.startsWith('write_')) && !without.find((x) => x.value === 'done').description.includes('assistant'));
+  const w = c.filter((x) => x.value.startsWith('write_'));
+  check('with a writer, one write option per field: the Label field, a rewrite since it has text, carrying its current value', w.length === 1 && w[0].description.startsWith('Rewrite text field "Label" = "Gym"') && w[0].actions.length === 1 && w[0].actions[0].tool === 'writeText' && w[0].actions[0].args.replace === true && w[0].actions[0].args.current === 'Gym' && typeof w[0].actions[0].args.x === 'number', JSON.stringify(w));
+  check('the phrase options are still there beside it', c.some((x) => x.value === 'type_0_0'));
+  check('done says the assistant writes the answer', c.find((x) => x.value === 'done').description.includes('writes the answer'));
+  const sheet = (s) => tree(el('Search', { type: 45, x: 20, y: 60, w: 300 }), el('Message', { type: 49, x: 20, y: 700, w: 300 }), el('Send', { x: 340, y: 700 }));
+  const c2 = candidateActions({ elements: listElements(JSON.stringify(sheet()), W, H), task: 'Reply to Sam', writer: true });
+  check('a search field gets no write option; an empty field gets "Write into"', c2.filter((x) => x.value.startsWith('write_')).length === 1 && c2.find((x) => x.value === 'write_0').description.startsWith('Write into "Message"') && c2.find((x) => x.value === 'write_0').actions[0].args.replace === false, c2.filter((x) => x.value.startsWith('write_')).map((x) => x.description).join('\n'));
+  const m = writerMessages({ instructions: WRITE_TEXT_INSTRUCTIONS, task: 'T', history: [{ n: 1, description: 'Open Mail', changed: false }], elements: ['- "Send"'], currentApp: 'Mail', keyboardUp: true, image: Buffer.from('img'), mime: 'image/jpeg', situation: fieldSituation({ field: 'text field "Message" (empty)', current: '', replace: false }) });
+  check('the writer\'s messages: the instruction, then the screenshot with the task, history, field and elements', m[0].role === 'system' && m[0].content === WRITE_TEXT_INSTRUCTIONS && m[1].content[0].type === 'image_url' && m[1].content[0].image_url.url.startsWith('data:image/jpeg;base64,') && /Task: T\n/.test(m[1].content[1].text) && /1\. Open Mail \(the screen did not change\)/.test(m[1].content[1].text) && /Field to write: text field "Message" \(empty\)\nIt is empty/.test(m[1].content[1].text) && /- "Send"/.test(m[1].content[1].text), m[1].content[1]?.text);
+  check('a rewrite shows the current text and says the reply replaces it', /It currently contains:\nOld\n\nYour reply REPLACES/.test(fieldSituation({ field: 'f', current: 'Old', replace: true })));
+}
+
+console.log('the hybrid: the loop with a scripted writer:');
+function scriptedWriter(replies) {
+  const calls = [];
+  let j = 0;
+  return {
+    provider: 'test', model: 'test-writer', calls,
+    async complete({ messages, tools, onlyTools }) {
+      calls.push({ messages, tools, onlyTools });
+      const r = replies[Math.min(j++, replies.length - 1)];
+      if (r instanceof Error) throw r;
+      return { message: { role: 'assistant', content: r }, usage: { input_tokens: 50, output_tokens: 5, cache_read_input_tokens: 0, cache_write_input_tokens: null, reasoning_output_tokens: null }, finishReasons: ['stop'], responseId: null, responseModel: 'test-writer', raw: {} };
+    },
+  };
+}
+{
+  const screen = () => tree(el('Message', { type: 49, x: 20, y: 700, w: 300 }), el('Send', { x: 340, y: 700 }));
+  const writer = scriptedWriter(['"Hi Sam, I am in."', 'Replied to Sam: I am in.']);
+  const traceDir = mkdtempSync(join(tmpdir(), 'hybrid-trace-'));
+  const { outcome, runner, asked, logs } = await loopRun({ task: 'Reply to Sam saying I am in', script: ['write_0', (c) => c.find((x) => x.description.startsWith('Tap "Send"')).value, 'done'], screen, writer, traceDir });
+  check('write_0 was offered, the writer composed the text (quotes stripped) and it was typed into the tapped field', runner.callsTo('/inputText')[0]?.body.text === 'Hi Sam, I am in.' && runner.callsTo('/touch')[0]?.body.y === 722, JSON.stringify(runner.callsTo('/inputText').map((c) => c.body)));
+  check('the writer saw the screenshot, the task, the field, and no tools', writer.calls[0].messages[1].content[0].type === 'image_url' && /Task: Reply to Sam/.test(writer.calls[0].messages[1].content[1].text) && /Field to write: "Message"/.test(writer.calls[0].messages[1].content[1].text) && writer.calls[0].tools.length === 0 && Array.isArray(writer.calls[0].onlyTools) && writer.calls[0].onlyTools.length === 0);
+  check('done got the composed answer as the summary', outcome.status === 'completed' && outcome.summary === 'Replied to Sam: I am in.' && outcome.steps === 3, JSON.stringify(outcome));
+  check('the second question\'s history names the write step', /^1\. Write into "Message"/.test(asked[1].state.object.actions_so_far[0]), asked[1].state.object.actions_so_far[0]);
+  check('the server saw the real tools: tap, inputText, tap, taskComplete', logs.filter((e) => e.type === 'action').map((e) => e.tool).join(',') === 'tap,inputText,tap,taskComplete', logs.filter((e) => e.type === 'action').map((e) => e.tool).join(','));
+  const trace = readFileSync(join(traceDir, 'trace.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const chats = trace.filter((r) => r.attributes?.['gen_ai.operation.name'] === 'chat');
+  check('the record has the decider\'s three chat spans and the writer\'s two, under their own models', chats.filter((r) => r.attributes['gen_ai.request.model'] === 'test-decider').length === 3 && chats.filter((r) => r.attributes['gen_ai.request.model'] === 'test-writer').length === 2 && chats.filter((r) => r.attributes['gen_ai.request.model'] === 'test-writer').every((r) => !r.eval.decision && r.attributes['gen_ai.usage.input_tokens'] === 50), chats.map((r) => r.attributes['gen_ai.request.model']).join(','));
+  const tools = trace.filter((r) => r.attributes?.['gen_ai.operation.name'] === 'execute_tool');
+  check('the typed text is in the tool span the judge will read', tools.some((r) => r.attributes['gen_ai.tool.name'] === 'inputText' && r.attributes['gen_ai.tool.call.arguments'].text === 'Hi Sam, I am in.') && tools.some((r) => r.attributes['gen_ai.tool.name'] === 'taskComplete' && r.attributes['gen_ai.tool.call.arguments'].summary === 'Replied to Sam: I am in.'));
+  rmSync(traceDir, { recursive: true, force: true });
+}
+{
+  const screen = () => tree(el('Note', { type: 52, x: 20, y: 200, w: 300, h: 300, value: 'Old text' }));
+  const writer = scriptedWriter(['Old text\n- New bullet']);
+  const { runner, asked } = await loopRun({ task: 'Add a bullet', script: ['write_0', 'blocked'], screen, writer });
+  check('a field with text is rewritten: the writer saw the current text and the whole value was replaced in place', /It currently contains:\nOld text/.test(writer.calls[0].messages[1].content[1].text) && runner.callsTo('/inputText')[0]?.body.text === 'Old text\n- New bullet' && runner.callsTo('/touch').length >= 4, JSON.stringify(runner.callsTo('/inputText').map((c) => c.body)));
+  check('the history calls it a rewrite', /^1\. Rewrite "Note" = "Old text"/.test(asked[1].state.object.actions_so_far[0]), asked[1].state.object.actions_so_far[0]);
+}
+{
+  const screen = () => tree(el('Message', { type: 49, x: 20, y: 700, w: 300 }));
+  const writer = scriptedWriter(['', 'x']);
+  const { runner, asked, outcome } = await loopRun({ task: 'Reply', script: ['write_0', 'blocked'], screen, writer });
+  check('an empty reply from the writer is a failed step, nothing typed, and the run goes on', runner.callsTo('/inputText').length === 0 && /the writer returned no text/.test(asked[1].state.object.actions_so_far[0]) && outcome.status === 'failed', asked[1]?.state.object.actions_so_far[0]);
+  const hard = Object.assign(new Error('API error 401: bad key'), { nonRecoverable: true });
+  const { outcome: o2 } = await loopRun({ task: 'Reply', script: ['write_0'], screen, writer: scriptedWriter([hard]) });
+  check('a non-recoverable writer error ends the run as errored', o2.status === 'errored' && /401/.test(o2.reason), JSON.stringify(o2));
+  const soft = new Error('API error 500: boom');
+  const { outcome: o3, asked: a3 } = await loopRun({ task: 'Reply', script: ['write_0', 'blocked'], screen, writer: scriptedWriter([soft]) });
+  check('a transient writer error loses the step and the run goes on', o3.status === 'failed' && /the writer's request failed/.test(a3[1].state.object.actions_so_far[0]), a3[1]?.state.object.actions_so_far[0]);
+  const { outcome: o4 } = await loopRun({ task: 'Reply', script: ['done'], screen, writer: scriptedWriter(['']) });
+  check('an empty answer falls back to the fixed summary', o4.status === 'completed' && o4.summary === DONE_SUMMARY);
+}
+
+console.log('the hybrid: the agent process with --writer:');
+{
+  const runner = await startFakeRunner({ screen: () => tree(el('Clock', { x: 40, y: 300 })) });
+  const api = await fakeApi(jevReply((options, body) => (body.state.actions_so_far[0] !== '(none yet)' ? 'done' : 'open_clock')));
+  const llm = await startFakeModel([fakeText('The alarm is set for 6:45 AM, labeled Gym.')]);
+  const r = await runAgentProcess({ provider: 'typesafe', model: 'jev-latest', env: { TYPESAFE_API_KEY: 'ts-test', TYPESAFE_BASE_URL: api.url, ANTHROPIC_API_KEY: 'test-key', ANTHROPIC_BASE_URL: llm.url }, runner, extraArgs: ['--writer', 'anthropic:claude-test-model'] });
+  check('exits 0 with the writer\'s answer', r.code === 0 && r.events.some((e) => e.type === 'done' && e.summary === 'The alarm is set for 6:45 AM, labeled Gym.'), `exit ${r.code}; ${r.output.slice(-800)}`);
+  check('the writer was called once, with an image, and the decision model picked both steps', llm.requests.length === 1 && JSON.stringify(llm.requests[0].body).includes('"image"') && api.requests.length === 2, `llm ${llm.requests.length}, jev ${api.requests.length}`);
+  check('the manifest says hybrid and names the writer', r.manifest?.settings.mode === 'hybrid' && r.manifest.settings.writer.provider === 'anthropic' && r.manifest.settings.writer.model === 'claude-test-model' && r.manifest.settings.writer.screenshot_sent === true && r.manifest.provider === 'typesafe', JSON.stringify(r.manifest?.settings));
+  check('the keys are never in the record', !JSON.stringify(r.manifest).includes('ts-test') && !JSON.stringify(r.manifest).includes('test-key'));
+  await api.close(); await llm.close(); await runner.close();
+}
+{
+  const runner = await startFakeRunner({ screen: () => tree(el('Clock')) });
+  const r = await runAgentProcess({ provider: 'typesafe', model: 'jev-latest', env: { TYPESAFE_API_KEY: 'ts-test' }, runner, extraArgs: ['--writer', 'anthropic:claude-test-model'] });
+  check('no key for the writer: exits 1 before touching the phone', r.code === 1 && /ANTHROPIC_API_KEY/.test(r.output) && runner.calls.length === 0, `exit ${r.code}`);
+  const r2 = await runAgentProcess({ provider: 'openai', model: 'gpt-6-luna', env: { OPENAI_API_KEY: 'sk' }, runner, extraArgs: ['--writer', 'anthropic:claude-test-model'] });
+  check('--writer with an LLM provider is a usage error (exit 2)', r2.code === 2 && /decision model/.test(r2.output), `exit ${r2.code}: ${r2.output.slice(0, 200)}`);
   await runner.close();
 }
 

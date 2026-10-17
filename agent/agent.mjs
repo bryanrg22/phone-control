@@ -38,6 +38,8 @@ const protocol = createProtocol({ askUserTimeoutSec: cfg.askUserTimeoutSec });
 const { emit, log } = protocol;
 const apiKey = process.env[KEY_ENV[cfg.provider]];
 if (!apiKey) { log(`ERROR: set ${KEY_ENV[cfg.provider]} for --provider ${cfg.provider}`); process.exit(1); }
+const writerKey = cfg.writer ? process.env[KEY_ENV[cfg.writer.provider]] : null;
+if (cfg.writer && !writerKey) { log(`ERROR: set ${KEY_ENV[cfg.writer.provider]} for --writer ${cfg.writer.provider}:${cfg.writer.model}`); process.exit(1); }
 
 // ─── the phone ───
 const { apps, source: appsSource } = await installedApps({ simulatorUdid: cfg.simulator });
@@ -51,11 +53,13 @@ log(`[setup] runner ${device.address} · screen ${screenInfo.widthPoints}x${scre
 
 // ─── the model, the tools, the prompt ───
 // Two modes: an LLM converses with the tools (loop.mjs); a decision model
-// picks one of the actions the harness enumerates from the screen (decision/).
+// picks one of the actions the harness enumerates from the screen (decision/),
+// with, in the hybrid, an LLM that only writes (decision/writer.mjs).
 const decision = isDecisionProvider(cfg.provider);
 const model = decision
   ? createDecider({ provider: cfg.provider, model: cfg.model, apiKey, log })
   : createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, log });
+const writer = cfg.writer ? createModel({ provider: cfg.writer.provider, model: cfg.writer.model, apiKey: writerKey, log }) : null;
 const nativeSearch = cfg.provider !== 'gemini';
 const toolDefs = toolDefinitions({ apps, braveSearch: !nativeSearch });
 const system = decision ? DECISION_INSTRUCTIONS : systemPrompt({ apps: Object.keys(apps), searchTool: nativeSearch ? 'web_search' : 'webSearch' });
@@ -71,9 +75,10 @@ const recorder = createRecorder({
     task: cfg.task, run_id: cfg.runId, provider: cfg.provider, model: cfg.model,
     agent: { release: releaseOf(REPO), commit: commit.commit, dirty: commit.dirty },
     settings: {
-      mode: decision ? 'decision' : 'llm', max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768,
+      mode: writer ? 'hybrid' : decision ? 'decision' : 'llm', max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768,
       // The decision APIs are previews whose formats may change: what was used is recorded.
       ...(decision ? { decision: { ...model.api, screenshot_sent: false } } : {}),
+      ...(writer ? { writer: { provider: cfg.writer.provider, model: cfg.writer.model, screenshot_sent: true, writes: ['the answer at done', 'free text into a field'] } } : {}),
     },
     prompt_sha256: sha(system), tools_sha256: sha(JSON.stringify(toolDefs)),
     device: { address: device.address, simulator: cfg.simulator, screen: screenInfo, apps: Object.keys(apps).length, apps_source: appsSource },
@@ -119,7 +124,7 @@ for (const sig of ['SIGTERM', 'SIGINT']) process.on(sig, () => { finish({ status
 
 const progress = createProgressMonitor({ abortAfter: cfg.noProgressAbort });
 const outcome = decision
-  ? await runDecisionLoop({ task: cfg.task, maxSteps: cfg.maxSteps, decider: model, device, runTool, apps: Object.keys(apps), protocol, recorder, progress, state, autoAllowNotifications })
+  ? await runDecisionLoop({ task: cfg.task, maxSteps: cfg.maxSteps, decider: model, device, runTool, apps: Object.keys(apps), protocol, recorder, progress, state, autoAllowNotifications, writer })
   : await runLoop({
     task: cfg.task, maxSteps: cfg.maxSteps, model, device, runTool, toolDefs, context, protocol, recorder, state,
     stuck: createStuckDetector(), progress, autoAllowNotifications,

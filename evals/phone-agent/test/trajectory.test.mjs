@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { toTrajectory, outcomeOf, usageOf, readTrace } from '../trajectory.mjs';
+import { toTrajectory, outcomeOf, usageOf, readTrace, parseModelSpec, costOfTrace } from '../trajectory.mjs';
 
 let passed = 0;
 function ok(name, fn) {
@@ -84,3 +84,27 @@ ok('a run with no record yields no trajectory, so it is a test error', () => {
 });
 
 console.log(`\n${passed} passed`);
+
+// ── the hybrid on the eval side: the --models entry and the cost per model ──
+ok('a plain entry: provider:model', () => {
+  const m = parseModelSpec('typesafe:jev-latest');
+  assert.deepEqual(m, { provider: 'typesafe', model: 'jev-latest', writer: null, display: 'jev-latest', dir: 'typesafe_jev-latest' });
+});
+ok('a hybrid entry: provider:model+writerProvider:writerModel', () => {
+  const m = parseModelSpec('openai-decisions:gpt-6-luna+openai:gpt-6-luna');
+  assert.deepEqual(m, { provider: 'openai-decisions', model: 'gpt-6-luna', writer: { provider: 'openai', model: 'gpt-6-luna' }, display: 'gpt-6-luna+openai:gpt-6-luna', dir: 'openai-decisions_gpt-6-luna+openai_gpt-6-luna' });
+});
+ok('a malformed entry is refused', () => {
+  for (const bad of ['typesafe', 'typesafe:jev+openai', 'a:b+c:d+e:f']) assert.throws(() => parseModelSpec(bad), /must be provider:model/);
+});
+ok('the cost of a trace is each chat span at its own model\'s price', () => {
+  const span = (model, usage) => ({ record: 'span', attributes: { 'gen_ai.operation.name': 'chat', 'gen_ai.request.model': model, ...usage }, eval: { step: 1 } });
+  const t = [
+    span('jev-latest', { 'gen_ai.usage.input_tokens': 1000, 'gen_ai.usage.output_tokens': 100 }),
+    span('gpt-6-luna', { 'gen_ai.usage.input_tokens': 1000, 'gen_ai.usage.cache_read.input_tokens': 800, 'gen_ai.usage.output_tokens': 20 }),
+  ];
+  const want = (1000 * 0.042 + 100 * 0) / 1e6 + (200 * 0.1 + 800 * 0.01 + 20 * 0.5) / 1e6;
+  assert.ok(Math.abs(costOfTrace(t) - want) < 1e-12, `${costOfTrace(t)} vs ${want}`);
+  assert.equal(costOfTrace([...t, span('some-new-model', { 'gen_ai.usage.input_tokens': 5 })]), null);
+  assert.equal(costOfTrace([]), null);
+});

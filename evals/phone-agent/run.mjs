@@ -4,6 +4,7 @@
 //   node evals/phone-agent/run.mjs --models anthropic:claude-opus-5-5 --tasks clock-001 --udid <sim> --driver-port 22187
 //   node evals/phone-agent/run.mjs --models anthropic:claude-opus-5-5,openai:gpt-6-astra --tasks all
 //   node evals/phone-agent/run.mjs --tasks single_app --trials 3 ...       a category: single_app | multi_app | memory
+//   node evals/phone-agent/run.mjs --models typesafe:jev-latest+openai:gpt-6-luna ...   the hybrid: Jev picks, Luna writes
 //   node evals/phone-agent/run.mjs --judge-only <run folder>               re-score without re-running
 //
 // What is iOSWorld's, used unchanged (github.com/ljang0/iOSWorld, Apache-2.0):
@@ -41,7 +42,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir, homedir } from 'node:os';
 import { createHash } from 'node:crypto';
 
-import { toTrajectory, readTrace, readManifest, outcomeOf, usageOf } from './trajectory.mjs';
+import { toTrajectory, readTrace, readManifest, outcomeOf, usageOf, parseModelSpec, costOfTrace } from './trajectory.mjs';
 import { buildReport, reportMarkdown } from './report.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
 import { DECISION_APIS } from '../../agent/providers/index.mjs';
@@ -65,10 +66,9 @@ const judgeModel = opt('judge-model', PROTOCOL.judge_default);
 // A run that hangs is an infrastructure fault, not a slow agent: generous, and
 // recorded as a test error, never as a failure.
 const hangLimitMin = Number(opt('hang-limit-min', '45'));
-const models = (opt('models', '') || '').split(',').filter(Boolean).map((m) => {
-  const [provider, ...rest] = m.split(':');
-  return { provider, model: rest.join(':') };
-});
+// provider:model, or provider:model+writerProvider:writerModel (the hybrid: a
+// decision model picks, an LLM writes; agent/decision/writer.mjs).
+const models = (opt('models', '') || '').split(',').filter(Boolean).map(parseModelSpec);
 const judgeOnly = opt('judge-only', null);
 
 const run = (cmd, args, o = {}) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...o }).trim();
@@ -119,7 +119,7 @@ function saveAppState(dest) {
 
 async function runTask({ task, index, model, taskDir }) {
   mkdirSync(taskDir, { recursive: true });
-  const record = { task: task.name, category: task.category, difficulty: task.difficulty, apps: task.apps, provider: model.provider, model: model.model };
+  const record = { task: task.name, category: task.category, difficulty: task.difficulty, apps: task.apps, provider: model.provider, model: model.model, writer: model.writer ?? null };
   const t0 = Date.now();
 
   // 1. iOSWorld's start state.
@@ -138,6 +138,7 @@ async function runTask({ task, index, model, taskDir }) {
   const stateDir = mkdtempSync(join(tmpdir(), 'phone-agent-eval-state-'));
   const args = [join(REPO, 'agent', 'agent.mjs'), task.goal,
     '--provider', model.provider, '--model', model.model,
+    ...(model.writer ? ['--writer', `${model.writer.provider}:${model.writer.model}`] : []),
     '--simulator', udid, '--driver-port', driverPort,
     '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', '1',
     '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`];
@@ -166,7 +167,7 @@ async function runTask({ task, index, model, taskDir }) {
   // How the run ended, as the agent recorded it: completed, failed, step_budget,
   // no_progress (its own stop, a product feature kept as the server runs it)…
   Object.assign(record, usageOf(trace), { ended: manifest?.outcome?.status ?? outcome.ended, agent: manifest?.agent ?? null, prompt_sha256: manifest?.prompt_sha256 ?? null, tools_sha256: manifest?.tools_sha256 ?? null });
-  record.cost_usd = costOf(model.model, record);
+  record.cost_usd = costOfTrace(trace) ?? costOf(model.model, record);   // per chat span, at each model's own price (a hybrid has two)
   writeFileSync(join(taskDir, 'trajectory.json'), JSON.stringify(toTrajectory(traceDir, existsSync(finalShot) ? finalShot : null), null, 2));
 
   // Exit 42: the model API failed for good; 43: the device connection died; a
@@ -195,8 +196,8 @@ function summarize(outRoot, cells) {
     const s = JSON.parse(readFileSync(join(dir, 'summary.json'), 'utf8'));
     const records = readdirSync(dir).filter((d) => existsSync(join(dir, d, 'record.json'))).map((d) => JSON.parse(readFileSync(join(dir, d, 'record.json'), 'utf8')));
     const evaluations = Object.fromEntries((s.tasks || []).map((t) => [t.task, t.evaluation]));
-    const key = `${model.provider}:${model.model}`;
-    if (!byModel.has(key)) byModel.set(key, { model, trials: [] });
+    const key = `${model.provider}:${model.display ?? model.model}`;
+    if (!byModel.has(key)) byModel.set(key, { model: { provider: model.provider, model: model.display ?? model.model }, trials: [] });
     byModel.get(key).trials.push({ trial, records, evaluations });
   }
   const rows = buildReport([...byModel.values()]);
@@ -219,14 +220,14 @@ for (const k of ['OPENAI_API_KEY']) if (!process.env[k]) { console.error(`${k} i
 try { await runner('/deviceInfo'); } catch (e) { console.error(`our runner is not answering on port ${driverPort}: ${e.message}. See evals/phone-agent/README.md`); process.exit(2); }
 
 const tasks = selectTasks(opt('tasks', 'all'));
-const runName = opt('run', `${new Date().toISOString().replace(/[:.]/g, '-')}_${models.map((m) => slug(m.model)).join('+')}`);
+const runName = opt('run', `${new Date().toISOString().replace(/[:.]/g, '-')}_${models.map((m) => slug(m.display)).join('+')}`);
 const outRoot = join(opt('out', join(REPO, 'evals', 'results')), 'phone-agent', runName);
 if (existsSync(outRoot)) { console.error(`${outRoot} exists; runs are never overwritten`); process.exit(2); }
 mkdirSync(outRoot, { recursive: true });
 
 const sim = JSON.parse(run('xcrun', ['simctl', 'list', 'devices', '-j'])).devices;
 const simInfo = Object.entries(sim).flatMap(([rt, ds]) => ds.map((d) => ({ ...d, runtime: rt }))).find((d) => d.udid === udid);
-const cells = models.flatMap((model) => Array.from({ length: trials }, (_, i) => ({ model, trial: i + 1, dir: join(`${model.provider}_${slug(model.model)}`, `trial-${i + 1}`) })));
+const cells = models.flatMap((model) => Array.from({ length: trials }, (_, i) => ({ model, trial: i + 1, dir: join(model.dir, `trial-${i + 1}`) })));
 const runInfo = {
   harness_version: HARNESS_VERSION, run: runName, started: new Date().toISOString(), protocol: PROTOCOL,
   phone_control: { release: JSON.parse(readFileSync(join(REPO, 'package.json'), 'utf8')).version, commit: git(REPO, 'rev-parse', 'HEAD'), dirty: (git(REPO, 'status', '--porcelain') || '').length > 0 },
@@ -240,11 +241,11 @@ const runInfo = {
   node: process.version,
 };
 writeFileSync(join(outRoot, 'run_info.json'), `${JSON.stringify(runInfo, null, 2)}\n`);
-console.log(`phone agent on iOSWorld — ${models.map((m) => `${m.provider}:${m.model}`).join(', ')}; ${tasks.length} task(s) × ${trials} trial(s); judge ${judgeModel}\n  ${outRoot}\n`);
+console.log(`phone agent on iOSWorld — ${models.map((m) => `${m.provider}:${m.display}`).join(', ')}; ${tasks.length} task(s) × ${trials} trial(s); judge ${judgeModel}\n  ${outRoot}\n`);
 
 for (const cell of cells) {
   const dir = join(outRoot, cell.dir);
-  console.log(`${cell.model.provider}:${cell.model.model}, trial ${cell.trial}`);
+  console.log(`${cell.model.provider}:${cell.model.display}, trial ${cell.trial}`);
   for (let i = 0; i < tasks.length; i++) {
     const taskDir = join(dir, `${String(i + 1).padStart(2, '0')}-${tasks[i].name}`);
     await runTask({ task: tasks[i], index: i + 1, model: cell.model, taskDir });

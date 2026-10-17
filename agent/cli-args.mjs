@@ -10,7 +10,7 @@ import { defaultModelFor, supportsTemperature } from './models.mjs';
 import { LLM_PROVIDERS, DECISION_PROVIDERS } from './providers/index.mjs';
 
 export const VALUE_FLAGS = new Set([
-  '--provider', '--model', '--temperature',
+  '--provider', '--model', '--temperature', '--writer',
   '--driver-host', '--driver-port', '--simulator',
   '--max-steps', '--askuser-timeout', '--no-progress-abort',
   '--trace-dir', '--run-id',
@@ -66,6 +66,15 @@ export function parseAgentArgs(argv) {
     temperature = t;
   }
 
+  // The hybrid: a decision model picks, an LLM writes (agent/decision/writer.mjs).
+  let writer = null;
+  if (flags['--writer'] !== undefined) {
+    if (!DECISION_PROVIDERS.includes(provider)) return fail(`--writer goes with a decision model (--provider ${DECISION_PROVIDERS.join(' | ')}); an LLM writes for itself.`);
+    const [wp, ...rest] = flags['--writer'].split(':');
+    if (!LLM_PROVIDERS.includes(wp)) return fail(`--writer must be <llm provider>:<model> with the provider one of ${LLM_PROVIDERS.join(', ')} (got "${flags['--writer']}").`);
+    writer = { provider: wp, model: rest.join(':') || defaultModelFor(wp) };
+  }
+
   const simulator = flags['--simulator'] || null;
   const driverHost = flags['--driver-host'] || (simulator ? '127.0.0.1' : null);
   if (!driverHost) return fail('--driver-host is required: the address of the phone\'s runner (or pass --simulator <udid>).');
@@ -73,7 +82,7 @@ export function parseAgentArgs(argv) {
   return {
     help: false, error: null,
     config: {
-      task, provider, model, temperature,
+      task, provider, model, temperature, writer,
       driverHost, driverPort, simulator,
       maxSteps, askUserTimeoutSec, noProgressAbort,
       traceDir: flags['--trace-dir'] || null,
@@ -94,6 +103,8 @@ Model:
                          openai-decisions (the Decisions API) | typesafe (Jev); see agent/decision/
   --model M              model ID (default: the provider's default in models.mjs)
   --temperature T        0-2; only for models that accept it
+  --writer P:M           with a decision model: an LLM (anthropic | openai | gemini, and its model)
+                         that writes free text and the final answer (the hybrid, agent/decision/writer.mjs)
 
 Device:
   --driver-host H        the phone's runner address (required for a phone)
