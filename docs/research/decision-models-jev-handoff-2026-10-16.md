@@ -348,9 +348,30 @@ picks every step, and an LLM with no tools is called only to compose text for a
 "write into field F" option or the answer when `done` is chosen. It costs less
 per LLM call (no tools, a short prompt) but cannot help with the judgment
 failures, which were 13–14 of the 24 decision-only failures and where the kept
-hybrid gains most. Its 27-task run with both choosers,
-`2026-10-16_75c3f2c_writer-hybrids_single-app`, was in progress from a separate
-checkout at 75c3f2c when this was written; check out that commit to reproduce it.
+hybrid gains most. Its 27-task run with both choosers is filed under
+`evals/baselines/phone-agent/2026-10-16_75c3f2c_writer-hybrids_single-app/`
+(check out 75c3f2c to reproduce it):
+
+| agent | judged passes | passes that hold up | model time / task | cost / task |
+| --- | --- | --- | --- | --- |
+| Jev + Luna writer | 8 | 5 | 7.3 s | $0.0029 |
+| Decisions API + Luna writer | 10 | 7 | 9.6 s | $0.0052 |
+
+Every judged pass was checked in the log, the screens and, where the app keeps
+one, its saved state. Five did not hold up. Two were invented by the writer's
+answer at `done`: caltrack-001 logged nothing, and clouddrive-001's star tap
+changed nothing, yet the answers said "Logged" and "I starred". cloudslides-002
+overwrote an agenda item instead of adding one. caltrack-001 (Decisions) logged
+two entries. Writing added 3 to 4 real passes, the tasks that needed only text
+or an answer; the chooser's loops (11 of Jev's 19 failures) are untouched,
+which the sticky hybrid fixes at 1.6 to 2.8 times the cost per task.
+
+Found on that run, affecting every run on this harness: trailblaze-004's post is
+liked in the seed, so a no-op tap or an unlike is judged a pass (Jev alone and
+Luna alone included); `candidates.mjs` treats any field whose text contains
+"search" as a search field ("Research gaps" matched); the first tap after a
+scroll is swallowed; and the writer's rewrite of a multi-line text view replaces
+one paragraph, because select-all there is a triple tap.
 
 **Disk:** the XCTest runner kept every screenshot and snapshot as a test
 attachment inside the simulator (testmanagerd's Attachments, 24 GB), because
