@@ -21,7 +21,7 @@ The layout was chosen by reading how four established projects with a similar sh
 | User and operator documentation | `docs/` by topic | `docs/` | `docs/` | external site | `docs/` by task |
 | Patches to third-party code kept as patch files | — | — | `patches/` | — | `device/patches/` |
 | Third-party code attributed | `third-party/`, licence files | — | `NOTICE`, `third_party/` | — | `runner/LICENSE`, `runner/README.md` |
-| Root files | README, LICENSE, CONTRIBUTING, SECURITY | README, LICENSE, CONTRIBUTING | README, LICENSE, NOTICE, SECURITY, CHANGELOG | README, LICENSE, CONTRIBUTING, CHANGELOG | README, LICENSE, CONTRIBUTING, SECURITY, CHANGELOG |
+| Root files | README, LICENSE, CONTRIBUTING, SECURITY | README, LICENSE, CONTRIBUTING | README, LICENSE, NOTICE, SECURITY, CHANGELOG | README, LICENSE, CONTRIBUTING, CHANGELOG | README, LICENSE, SECURITY, CHANGELOG |
 | Editor and lint settings at the root | `.golangci.yml` | `.editorconfig`, `.prettierrc` | `.prettierrc.toml`, `.codespellrc` | `.editorconfig`, `detekt.yml` | `.editorconfig`, `eslint.config.js` |
 | CI in `.github/workflows/` | yes | yes | yes | yes | yes |
 
