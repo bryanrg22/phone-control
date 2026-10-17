@@ -69,7 +69,9 @@ const models = (opt('models', '') || '').split(',').filter(Boolean).map((m) => {
   const [provider, ...rest] = m.split(':');
   return { provider, model: rest.join(':') };
 });
-const judgeOnly = opt('judge-only', null);
+// Resolved here: the judge runs with iOSWorld's checkout as its working directory,
+// so a relative path would point inside it (2026-10-16).
+const judgeOnly = opt('judge-only', null) ? resolve(opt('judge-only', null)) : null;
 
 const run = (cmd, args, o = {}) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...o }).trim();
 const git = (dir, ...a) => { try { return run('git', ['-C', dir, ...a]); } catch { return null; } };
