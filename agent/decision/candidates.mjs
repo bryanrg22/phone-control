@@ -87,12 +87,11 @@ export function phrasesOf(task, { apps = [] } = {}) {
  * @param {string|null} [o.currentApp]  the app on screen, if known
  * @param {boolean} [o.keyboardUp]
  * @param {boolean} [o.final]           the last step of the budget: conclude only
- * @param {boolean} [o.writer]          the hybrid (decision/writer.mjs): an LLM writes free text and the answer
  * @returns {Array<{ value: string, description: string, actions: Array<{ tool: string, args: object }> }>}
  */
-export function candidateActions({ elements, task, apps = [], currentApp = null, keyboardUp = false, final = false, writer = false }) {
+export function candidateActions({ elements, task, apps = [], currentApp = null, keyboardUp = false, final = false }) {
   const conclude = [
-    { value: 'done', description: writer ? 'The task is complete: the current screen shows it done; the assistant then writes the answer from this screen. Choose this only then.' : 'The task is complete: the current screen shows it done. Choose this only then.', actions: [{ tool: 'taskComplete', args: { summary: DONE_SUMMARY } }] },
+    { value: 'done', description: 'The task is complete: the current screen shows it done. Choose this only then.', actions: [{ tool: 'taskComplete', args: { summary: DONE_SUMMARY } }] },
     { value: 'blocked', description: 'The task cannot be completed on this device (the app, item or setting does not exist). Choose this only then.', actions: [{ tool: 'taskFailed', args: { reason: BLOCKED_REASON } }] },
   ];
   if (final) return conclude;
@@ -125,21 +124,6 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
           const put = hasText ? [{ tool: 'replaceTextAt', args: { x: f.x, y: f.y, value: p } }] : [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }];
           out.push({ value: `search_${i}_${k}`, description: `Search for "${p}": ${hasText ? 'replace the text in' : 'type it into'} ${sliceDesc(f.desc, 60)} and press Return`, actions: [...put, { tool: 'pressKey', args: { key: 'enter' } }] });
         }
-      });
-    });
-  }
-  // The hybrid: an LLM composes free text for a field (a message, a note, a
-  // reply), which the loop then types or puts in place of the field's text.
-  // Search fields are left to the phrase options: a composed text is no query.
-  if (writer) {
-    fields.filter((f) => f.kind !== 'search field' && !/search/i.test(f.desc)).forEach((f, k) => {
-      const hasText = / = "/.test(f.desc);
-      out.push({
-        value: `write_${k}`,
-        description: hasText
-          ? `Rewrite ${sliceDesc(f.desc, 60)}: the assistant composes its new full text (what the task asks for, added to what should stay) and it replaces the current text`
-          : `Write into ${sliceDesc(f.desc, 60)}: the assistant composes the text the task asks for (a message, a note, a reply) and it is typed there`,
-        actions: [{ tool: 'writeText', args: { x: f.x, y: f.y, field: f.desc, current: f.value ?? '', replace: hasText } }],
       });
     });
   }

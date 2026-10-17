@@ -20,44 +20,6 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { costOf } from '../lib/prices.mjs';
-
-const slug = (s) => s.replace(/[^a-zA-Z0-9.-]+/g, '-');
-
-/**
- * A --models entry: provider:model, or provider:model+writerProvider:writerModel
- * for the hybrid (agent/decision/writer.mjs: a decision model picks, an LLM writes).
- * @returns {{ provider: string, model: string, writer: {provider: string, model: string}|null, display: string, dir: string }}
- */
-export function parseModelSpec(spec) {
-  const part = (x) => { const [provider, ...rest] = String(x).split(':'); return { provider, model: rest.join(':') }; };
-  const [main, ...more] = String(spec).split('+');
-  const m = part(main);
-  const writer = more.length ? part(more[0]) : null;
-  if (!m.provider || !m.model || more.length > 1 || (writer && (!writer.provider || !writer.model))) throw new Error(`--models entry "${spec}" must be provider:model, or provider:model+writerProvider:writerModel for the hybrid`);
-  return {
-    provider: m.provider, model: m.model, writer,
-    display: writer ? `${m.model}+${writer.provider}:${writer.model}` : m.model,
-    dir: `${m.provider}_${slug(m.model)}${writer ? `+${writer.provider}_${slug(writer.model)}` : ''}`,
-  };
-}
-
-/**
- * Dollars for the run, each chat span at its own model's list price (a hybrid
- * run has two models). Null when there is no chat span or a model has no price.
- */
-export function costOfTrace(trace) {
-  const chats = trace.filter((r) => op(r) === 'chat');
-  if (!chats.length) return null;
-  let total = 0;
-  for (const r of chats) {
-    const a = r.attributes || {};
-    const c = costOf(a['gen_ai.request.model'], { input_tokens: a['gen_ai.usage.input_tokens'], output_tokens: a['gen_ai.usage.output_tokens'], cache_read_input_tokens: a['gen_ai.usage.cache_read.input_tokens'], cache_write_input_tokens: a['gen_ai.usage.cache_write.input_tokens'] });
-    if (c === null) return null;
-    total += c;
-  }
-  return total;
-}
 
 export function readTrace(traceDir) {
   const f = join(traceDir, 'trace.jsonl');

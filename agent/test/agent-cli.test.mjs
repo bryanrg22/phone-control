@@ -41,12 +41,6 @@ check('a bad --max-steps is an error', !!err(['t', '--driver-host', 'h', '--max-
 check('a temperature the model rejects is an error', /temperature/.test(err(['t', '--driver-host', 'h', '--provider', 'openai', '--model', 'gpt-6-luna', '--temperature', '0'])?.message || ''));
 check('every error exits 2', [err(['t']), err(['t', '--bogus', 'x'])].every((e) => e.exitCode === 2));
 check('--help lists every flag', [...VALUE_FLAGS].every((f) => helpText().includes(f)));
-// The hybrid: --writer <llm provider>:<model> beside a decision provider.
-check('--writer with a decision provider is parsed', JSON.stringify(ok(['t', '--driver-host', 'h', '--provider', 'typesafe', '--writer', 'openai:gpt-6-luna'])?.writer) === JSON.stringify({ provider: 'openai', model: 'gpt-6-luna' }));
-check('--writer without a model takes the provider\'s default', ok(['t', '--driver-host', 'h', '--provider', 'openai-decisions', '--writer', 'anthropic'])?.writer.model === ok(['t', '--driver-host', 'h', '--provider', 'anthropic'])?.model);
-check('no --writer: null', ok(['t', '--driver-host', 'h', '--provider', 'typesafe'])?.writer === null);
-check('--writer with an LLM provider is an error', /decision model/.test(err(['t', '--driver-host', 'h', '--provider', 'openai', '--writer', 'anthropic'])?.message || ''));
-check('--writer naming a decision provider is an error', /llm provider/.test(err(['t', '--driver-host', 'h', '--provider', 'typesafe', '--writer', 'typesafe:jev-latest'])?.message || ''));
 
 console.log('what the server passes:');
 {
