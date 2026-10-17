@@ -14,13 +14,16 @@ import { fileURLToPath } from 'node:url';
 import { parseAgentArgs, helpText } from './cli-args.mjs';
 import { createProtocol } from './protocol.mjs';
 import { createDevice, installedApps } from './device.mjs';
-import { createModel, KEY_ENV } from './providers/index.mjs';
+import { createModel, createDecider, isDecisionProvider, parseHybridModel, HYBRID_PROVIDER, KEY_ENV } from './providers/index.mjs';
 import { toolDefinitions, createToolRunner } from './tools.mjs';
 import { systemPrompt } from './prompt.mjs';
 import { createContext } from './context.mjs';
 import { createStuckDetector, createProgressMonitor } from './stuck.mjs';
 import { createRecorder } from './record.mjs';
 import { runLoop } from './loop.mjs';
+import { runDecisionLoop } from './decision/loop.mjs';
+import { INSTRUCTIONS as DECISION_INSTRUCTIONS } from './decision/question.mjs';
+import { STICKY_MAX } from './decision/escalate.mjs';
 import { releaseOf, commitOf } from '../server/src/version.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -34,8 +37,15 @@ const cfg = parsed.config;
 
 const protocol = createProtocol({ askUserTimeoutSec: cfg.askUserTimeoutSec });
 const { emit, log } = protocol;
-const apiKey = process.env[KEY_ENV[cfg.provider]];
-if (!apiKey) { log(`ERROR: set ${KEY_ENV[cfg.provider]} for --provider ${cfg.provider}`); process.exit(1); }
+// Hybrid: a decision model (the chooser) and an LLM, each with its own key.
+const hybrid = cfg.provider === HYBRID_PROVIDER ? parseHybridModel(cfg.model) : null;
+const keyFor = (provider) => {
+  const key = process.env[KEY_ENV[provider]];
+  if (!key) { log(`ERROR: set ${KEY_ENV[provider]} for --provider ${cfg.provider}`); process.exit(1); }
+  return key;
+};
+const apiKey = hybrid ? null : keyFor(cfg.provider);
+const hybridKeys = hybrid ? { chooser: keyFor(hybrid.chooser.provider), llm: keyFor(hybrid.llm.provider) } : null;
 
 // ─── the phone ───
 const { apps, source: appsSource } = await installedApps({ simulatorUdid: cfg.simulator });
@@ -48,11 +58,23 @@ try { screenInfo = await device.info(); } catch (e) {
 log(`[setup] runner ${device.address} · screen ${screenInfo.widthPoints}x${screenInfo.heightPoints} pt · ${Object.keys(apps).length} apps (${appsSource})`);
 
 // ─── the model, the tools, the prompt ───
-// Web search: the provider's own for Anthropic and OpenAI, Brave for Gemini; none with --no-web-search.
-const nativeSearch = cfg.webSearch && cfg.provider !== 'gemini';
-const model = createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, effort: cfg.effort, nativeWebSearch: nativeSearch, log });
-const toolDefs = toolDefinitions({ apps, braveSearch: cfg.webSearch && cfg.provider === 'gemini' });
-const system = systemPrompt({ apps: Object.keys(apps), searchTool: !cfg.webSearch ? null : nativeSearch ? 'web_search' : 'webSearch' });
+// Three modes: an LLM converses with the tools (loop.mjs); a decision model
+// picks one of the actions the harness enumerates from the screen (decision/);
+// hybrid: the decision model picks, and hands some steps to an LLM (decision/escalate.mjs).
+const decision = isDecisionProvider(cfg.provider) || !!hybrid;
+const llmSpec = hybrid ? hybrid.llm : (decision ? null : { provider: cfg.provider, model: cfg.model });
+// Web search, for the LLM only: the provider's own for Anthropic and OpenAI, Brave for Gemini; none with --no-web-search.
+const nativeSearch = !!llmSpec && cfg.webSearch && llmSpec.provider !== 'gemini';
+const model = hybrid
+  ? createDecider({ provider: hybrid.chooser.provider, model: hybrid.chooser.model, apiKey: hybridKeys.chooser, log })
+  : decision
+    ? createDecider({ provider: cfg.provider, model: cfg.model, apiKey, log })
+    : createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, effort: cfg.effort, nativeWebSearch: nativeSearch, log });
+const llmModel = hybrid ? createModel({ provider: hybrid.llm.provider, model: hybrid.llm.model, apiKey: hybridKeys.llm, effort: cfg.effort, nativeWebSearch: nativeSearch, log }) : null;
+const sticky = !!hybrid && cfg.escalationMode === 'sticky';
+const toolDefs = toolDefinitions({ apps, braveSearch: !!llmSpec && cfg.webSearch && llmSpec.provider === 'gemini', handBack: sticky });
+const llmSystem = llmSpec ? systemPrompt({ apps: Object.keys(apps), searchTool: !cfg.webSearch ? null : nativeSearch ? 'web_search' : 'webSearch' }) : null;
+const system = decision && !hybrid ? DECISION_INSTRUCTIONS : llmSystem;
 const context = createContext({ system });
 const state = { keyboardUp: false, screen: () => screenInfo };
 const runTool = createToolRunner({ device, apps, screen: () => state.screen(), protocol, state });
@@ -64,8 +86,13 @@ const recorder = createRecorder({
   manifest: {
     task: cfg.task, run_id: cfg.runId, provider: cfg.provider, model: cfg.model,
     agent: { release: releaseOf(REPO), commit: commit.commit, dirty: commit.dirty },
-    settings: { max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: cfg.effort ?? 'provider default', web_search: cfg.webSearch, image_width: 768 },
-    prompt_sha256: sha(system), tools_sha256: sha(JSON.stringify(toolDefs)),
+    settings: {
+      mode: hybrid ? 'hybrid' : (decision ? 'decision' : 'llm'), max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: cfg.effort ?? 'provider default', web_search: cfg.webSearch, image_width: 768,
+      // The decision APIs are previews whose formats may change: what was used is recorded.
+      ...(decision ? { decision: { ...model.api, screenshot_sent: false, instructions_sha256: sha(DECISION_INSTRUCTIONS) } } : {}),
+      ...(hybrid ? { hybrid: { chooser: hybrid.chooser, llm: hybrid.llm, escalation_threshold: cfg.escalationThreshold, escalation_mode: cfg.escalationMode, ...(sticky ? { sticky_max: STICKY_MAX } : {}), escalation: 'conclusion, free_text, low_confidence (below the threshold), stuck (3 unchanged screens), final' } } : {}),
+    },
+    prompt_sha256: system ? sha(system) : null, tools_sha256: sha(JSON.stringify(toolDefs)),
     device: { address: device.address, simulator: cfg.simulator, screen: screenInfo, apps: Object.keys(apps).length, apps_source: appsSource },
     node: process.version,
   },
@@ -107,9 +134,15 @@ function finish(outcome) {
 }
 for (const sig of ['SIGTERM', 'SIGINT']) process.on(sig, () => { finish({ status: 'stopped', reason: `stopped (${sig})` }); process.exit(EXIT.stopped); });
 
-const outcome = await runLoop({
-  task: cfg.task, maxSteps: cfg.maxSteps, model, device, runTool, toolDefs, context, protocol, recorder, state,
-  stuck: createStuckDetector(), progress: createProgressMonitor({ abortAfter: cfg.noProgressAbort }), autoAllowNotifications,
-});
+const progress = createProgressMonitor({ abortAfter: cfg.noProgressAbort });
+const outcome = decision
+  ? await runDecisionLoop({
+    task: cfg.task, maxSteps: cfg.maxSteps, decider: model, device, runTool, apps: Object.keys(apps), protocol, recorder, progress, state, autoAllowNotifications,
+    llm: hybrid ? { model: llmModel, context, toolDefs, threshold: cfg.escalationThreshold, sticky } : null,
+  })
+  : await runLoop({
+    task: cfg.task, maxSteps: cfg.maxSteps, model, device, runTool, toolDefs, context, protocol, recorder, state,
+    stuck: createStuckDetector(), progress, autoAllowNotifications,
+  });
 finish(outcome);
 process.exit(EXIT[outcome.status] ?? 1);

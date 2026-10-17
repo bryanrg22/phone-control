@@ -86,9 +86,17 @@ SIM_DEVICE_DIR=/tmp/device-broken npm run test:lifecycle
 - **stdout is data.** The supervisor prints exactly one JSON value, or one `RUNNER_URL=` line, on stdout. Everything for people goes to stderr.
 - **Messages for the person are written where the cause is known.** `server/src/preflight.mjs` and `server/src/task-runner.mjs` produce the sentences Claude relays; a new failure mode gets its own sentence rather than a generic one.
 
+## Making a change
+
+- **A test that fails without it.** For behaviour of the phone-facing code, add a scenario to `device/test/lifecycle.test.mjs`; if the simulated phone cannot express the situation, extend `device/test/sim/phone.mjs`.
+- **Simulated behaviour comes from measurement.** A rule added to the simulated phone says in the file what was observed on a real phone, and when.
+- **Say what was verified and how.** "Ran on an iPhone 15 Pro, iOS 27, on cellular" is useful; if something could not be tried on a real phone, say so.
+- **A change to how the agent behaves is measured** on iOSWorld before and after (`evals/phone-agent/`), and the run filed under `evals/baselines/`.
+- **One logical change per commit**, with a message that says what changed and why. ESLint decides formatting (`npm run lint:fix`); comments explain why, not what.
+
 ## Adding a model
 
-Add a line to `MODELS` in `server/src/models.mjs` with its provider. Mark it `verified` only after it has driven a real phone through a task. The provider's API key goes in `keys.env`.
+Add a line to `MODELS` in `server/src/models.mjs` with its provider. Mark it `verified` only after it has driven a real phone through a task. The provider's API key goes in `keys.env`. A hybrid entry also names the agent's model spec (`agentModel`), its extra flags (`agentArgs`) and every provider whose key it needs (`keys`); see `hybrid-decisions` and `hybrid-jev`.
 
 ## Building the runner and go-ios
 

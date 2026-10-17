@@ -12,10 +12,14 @@
 //                                                      a stop-reason breakdown, not one failure bucket
 //   tool errors per tool call; questions to the user   process measures
 //   test errors, apart                                 infrastructure failures are never scored as the model's
+//   calibration (decision models only)                 pass rate by the probability the model put on "done":
+//                                                      does its confidence predict the judge's verdict? (reliability by bucket)
 
 import { wilson } from '../lib/stats.mjs';
 
 const ENDINGS = ['completed', 'failed', 'step_budget', 'no_progress', 'errored', 'device_lost', 'stopped'];
+// Probability on "done" at the end of a run, bucketed; a run that did not end with "done" is its own row.
+export const CALIBRATION_BUCKETS = [[0, 0.5], [0.5, 0.8], [0.8, 0.95], [0.95, 1.0001]];
 const round = (x, d = 1) => (x === null || x === undefined || Number.isNaN(x) ? null : Math.round(x * 10 ** d) / 10 ** d);
 
 /** Did iOSWorld's judge pass this task? Every rubric criterion held (their definition). */
@@ -52,6 +56,7 @@ export function buildReport(models) {
     const mean = (k) => (n ? sum(k, judged) / n : null);
     const rubricScores = judged.map((r) => r.evaluation.score).filter((x) => typeof x === 'number');
     const ended = Object.fromEntries(ENDINGS.map((e) => [e, all.filter((r) => r.ended === e).length]).filter(([, v]) => v));
+    const calibration = calibrationOf(judged);
 
     return {
       provider: model.provider, model: model.model, trials: trials.length,
@@ -63,11 +68,27 @@ export function buildReport(models) {
       ended,
       tool_calls: sum('tool_calls'), tool_error_rate: sum('tool_calls') ? round(sum('tool_errors') / sum('tool_calls'), 3) : null,
       ask_user_calls: sum('ask_user_calls'),
+      // Hybrid runs: how many steps the LLM took, of all model steps.
+      ...(all.some((r) => typeof r.llm_steps === 'number' && r.llm_steps > 0) ? { llm_steps: sum('llm_steps'), llm_step_share: sum('model_calls') ? round(sum('llm_steps') / sum('model_calls'), 3) : null } : {}),
       tokens: { input: sum('input_tokens'), cache_read: sum('cache_read_input_tokens'), output: sum('output_tokens'), reasoning: sum('reasoning_output_tokens') },
       cost_usd: round(sum('cost_usd'), 2), cost_per_task_usd: all.length ? round(sum('cost_usd') / all.length, 3) : null,
       served_models: [...new Set(all.flatMap((r) => r.served_models || []))],
+      ...(calibration ? { calibration, avg_decision_probability: round(mean('decision_mean_probability'), 3) } : {}),
     };
   });
+}
+
+/** Decision runs: judged runs by the probability on "done", with the pass rate of each bucket. Null for LLM runs. */
+export function calibrationOf(judged) {
+  const dec = judged.filter((r) => typeof r.decision_mean_probability === 'number');
+  if (!dec.length) return null;
+  const rows = CALIBRATION_BUCKETS.map(([lo, hi]) => {
+    const inBucket = dec.filter((r) => typeof r.decision_done_probability === 'number' && r.decision_done_probability >= lo && r.decision_done_probability < hi);
+    return { bucket: `done p ${lo}–${Math.min(hi, 1)}`, n: inBucket.length, pass_rate: inBucket.length ? inBucket.filter((r) => passedBy(r.evaluation)).length / inBucket.length : null };
+  });
+  const noDone = dec.filter((r) => typeof r.decision_done_probability !== 'number');
+  rows.push({ bucket: 'did not end with done', n: noDone.length, pass_rate: noDone.length ? noDone.filter((r) => passedBy(r.evaluation)).length / noDone.length : null });
+  return rows;
 }
 
 /** The report as Markdown. */
@@ -87,9 +108,17 @@ export function reportMarkdown(rows, { judgeModel, maxSteps, pricesAsOf }) {
     '| --- | --- | --- | --- | --- | --- | --- | --- |',
     ...rows.map((r) => `| ${r.provider}:${r.model} | ${r.avg_steps ?? '–'} | ${r.avg_agent_seconds ?? '–'} | ${r.avg_model_seconds ?? '–'} | ${r.tokens.input.toLocaleString()} (${r.tokens.cache_read.toLocaleString()}) | ${r.tokens.output.toLocaleString()} (${r.tokens.reasoning.toLocaleString()}) | $${(r.cost_usd ?? 0).toFixed(2)} | $${(r.cost_per_task_usd ?? 0).toFixed(3)} |`),
     '', '## How runs ended, and behaviour', '',
-    '| model | endings | tool error rate | questions to the user | served by |',
-    '| --- | --- | --- | --- | --- |',
-    ...rows.map((r) => `| ${r.provider}:${r.model} | ${endingText(r.ended) || '–'} | ${pct(r.tool_error_rate)} of ${r.tool_calls} | ${r.ask_user_calls} | ${r.served_models.join(', ') || '–'} |`),
+    '| model | endings | tool error rate | questions to the user | steps by the LLM (hybrid) | served by |',
+    '| --- | --- | --- | --- | --- | --- |',
+    ...rows.map((r) => `| ${r.provider}:${r.model} | ${endingText(r.ended) || '–'} | ${pct(r.tool_error_rate)} of ${r.tool_calls} | ${r.ask_user_calls} | ${typeof r.llm_steps === 'number' ? `${pct(r.llm_step_share)} (${r.llm_steps})` : '–'} | ${r.served_models.join(', ') || '–'} |`),
     '',
+    ...(rows.some((r) => r.calibration) ? [
+      '## Confidence calibration (decision models)', '',
+      'Pass rate by the probability the model put on "done" when it ended the run; a well-calibrated model passes more often when it is surer.', '',
+      '| model | avg probability on the chosen action | ' + rows.find((r) => r.calibration).calibration.map((b) => b.bucket).join(' | ') + ' |',
+      '| --- | --- | ' + rows.find((r) => r.calibration).calibration.map(() => '---').join(' | ') + ' |',
+      ...rows.filter((r) => r.calibration).map((r) => `| ${r.provider}:${r.model} | ${r.avg_decision_probability ?? '–'} | ${r.calibration.map((b) => (b.n ? `${pct(b.pass_rate)} of ${b.n}` : '–')).join(' | ')} |`),
+      '',
+    ] : []),
   ].join('\n');
 }

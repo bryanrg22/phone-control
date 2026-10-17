@@ -49,7 +49,7 @@ export async function postJSON(url, headers, body, { provider, maxRetries = 8, l
       throw fail(`model request failed after ${maxRetries} retries: ${String(e.message).slice(0, 120)}`, { status: 0, nonRecoverable: true, attempts });
     }
     const text = await resp.text();
-    attempts.push({ status: resp.status, ms: Date.now() - t0, request_id: resp.headers.get('request-id') || resp.headers.get('x-request-id') || null });
+    attempts.push({ status: resp.status, ms: Date.now() - t0, request_id: resp.headers.get('request-id') || resp.headers.get('x-request-id') || resp.headers.get('x-typesafe-request-id') || null });
     if (resp.ok) {
       let json;
       try { json = JSON.parse(text); } catch { throw fail(`model returned non-JSON (${text.slice(0, 80)})`, { status: resp.status, attempts, body: text }); }

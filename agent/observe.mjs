@@ -19,7 +19,7 @@ const LANDSCAPE_ROTATION = 270;
 /**
  * @param {object} device   from device.mjs
  * @returns {Promise<{ image: Buffer, mime: string, width: number, height: number,
- *   elements: string[], signature: string, screen: { widthPoints: number, heightPoints: number } }>}
+ *   elements: string[], signature: string, screen: { widthPoints: number, heightPoints: number }, hierarchy: string }>}
  */
 export async function observe(device) {
   const screen = await device.info();
@@ -30,7 +30,7 @@ export async function observe(device) {
   const image = await img.resize(IMAGE_WIDTH, null, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 85 }).toBuffer();
   const sized = await sharp(image).metadata();
   const elements = capElements(formatElements(hierarchy, screen.widthPoints, screen.heightPoints));
-  return { image, mime: 'image/jpeg', width: sized.width, height: sized.height, elements, signature: screenSignature(elements), screen };
+  return { image, mime: 'image/jpeg', width: sized.width, height: sized.height, elements, signature: screenSignature(elements), screen, hierarchy };
 }
 
 /** The text sent with a screenshot. */

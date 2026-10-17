@@ -17,8 +17,9 @@ import { createRunStore } from '../src/runs.mjs';
 import { createTaskRunner } from '../src/task-runner.mjs';
 import { createToolApi } from '../src/tool-api.mjs';
 import { createPrefs } from '../src/prefs.mjs';
-import { resolveModel, MODELS, providerKeyPresent } from '../src/models.mjs';
-import { buildAgentArgs } from '../src/agent-runner.mjs';
+import { resolveModel, MODELS, providerKeyPresent, missingProviderKey } from '../src/models.mjs';
+import { buildAgentArgs, startAgentProcess } from '../src/agent-runner.mjs';
+import { parseAgentArgs } from '../../agent/cli-args.mjs';
 
 let passed = 0;
 async function ok(name, fn) {
@@ -600,6 +601,87 @@ await ok('the agent is launched with the chosen model, or with none to use its o
   assert.equal(withModel[withModel.indexOf('--model') + 1], 'gpt-6-luna');
   assert.equal(withModel[withModel.indexOf('--provider') + 1], 'openai');
   assert.equal(buildAgentArgs(base).includes('--model'), false);
+});
+
+// ─── the hybrids: "Jev" and "Decisions" ──────────────────────────────────────
+
+await ok('"Jev" and "Decisions" are the sticky hybrids, each naming the keys it needs', () => {
+  const jev = resolveModel('Jev'); const dec = resolveModel('decisions');
+  assert.deepEqual([jev.id, jev.provider, jev.agentModel], ['hybrid-jev', 'hybrid', 'typesafe:jev-latest+openai:gpt-6-luna']);
+  assert.deepEqual([dec.id, dec.provider, dec.agentModel], ['hybrid-decisions', 'hybrid', 'openai-decisions:gpt-6-luna+openai:gpt-6-luna']);
+  assert.deepEqual(jev.agentArgs, ['--escalation-mode', 'sticky']);
+  assert.deepEqual(dec.agentArgs, ['--escalation-mode', 'sticky']);
+  assert.deepEqual(jev.keys, ['openai', 'typesafe']);
+  assert.deepEqual(dec.keys, ['openai']);
+  assert.equal(resolveModel('Jev hybrid').id, 'hybrid-jev');
+  assert.equal(resolveModel('hybrid-decisions').id, 'hybrid-decisions');
+});
+
+await ok('an ordinary model is unchanged: its id is the agent\'s model, no extra flags, its own key', () => {
+  const luna = resolveModel('Luna');
+  assert.deepEqual([luna.agentModel, luna.agentArgs, luna.keys], ['gpt-6-luna', [], ['openai']]);
+  assert.equal(missingProviderKey(luna, (p) => p === 'openai'), null);
+});
+
+await ok('a hybrid with one of its two keys missing is refused, naming the missing one', async () => {
+  const jev = resolveModel('jev');
+  assert.equal(missingProviderKey(jev, (p) => p === 'openai'), 'typesafe');
+  assert.equal(missingProviderKey(jev, (p) => p === 'typesafe'), 'openai');
+  assert.equal(missingProviderKey(jev, () => true), null);
+  assert.equal(providerKeyPresent('typesafe', { TYPESAFE_API_KEY: 'k' }), true);
+  const { a, started, statusOpts, caller } = api({ keys: ['openai'] });
+  const r = await a.call('run_phone_task', { task: 'x', model: 'Jev' }, caller);
+  assert.deepEqual([r.ok, r.error], [false, 'model_unavailable']);
+  assert.match(r.message, /Jev hybrid .*no typesafe API key/);
+  assert.equal((await a.call('set_default_model', { model: 'jev' }, caller)).error, 'model_unavailable');
+  assert.equal(started.length, 0);
+  assert.equal(statusOpts.length, 0, 'the phone was probed for a task that could never run');
+});
+
+await ok('"switch to Jev" sets the default; "use Decisions for this one" changes that task only', async () => {
+  const { a, started, store, caller } = api({ keys: ['openai', 'typesafe'] });
+  const set = await a.call('set_default_model', { model: 'Jev' }, caller);
+  assert.deepEqual([set.ok, set.default_model], [true, 'hybrid-jev']);
+  assert.match(set.message, /Jev hybrid/);
+  const r = await a.call('run_phone_task', { task: 'open Notes' }, caller);
+  assert.equal(r.model, 'hybrid-jev');
+  assert.equal(started[0].model.agentModel, 'typesafe:jev-latest+openai:gpt-6-luna');
+  store.finish(r.run_id, { success: true, summary: 'x' });
+  const once = await a.call('run_phone_task', { task: 'open Maps', model: 'Decisions' }, caller);
+  assert.equal(once.model, 'hybrid-decisions');
+  store.finish(once.run_id, { success: true, summary: 'x' });
+  assert.equal((await a.call('run_phone_task', { task: 'open Mail' }, caller)).model, 'hybrid-jev', 'a one-off choice changed the default');
+});
+
+await ok('the tool descriptions list both hybrids and say what "Jev" and "Decisions" mean', () => {
+  const { a } = api();
+  const text = a.definitions.find((t) => t.name === 'run_phone_task').inputSchema.properties.model.description;
+  assert.match(text, /Jev hybrid = hybrid-jev/);
+  assert.match(text, /Decisions hybrid = hybrid-decisions/);
+  assert.match(text, /"Jev" and "Decisions" are hybrids/);
+});
+
+await ok('a hybrid run spawns the agent with the hybrid spec and sticky escalation, and the agent accepts it', () => {
+  for (const name of ['Jev', 'Decisions']) {
+    const m = resolveModel(name);
+    const spawned = [];
+    const fakeProc = new EventEmitter(); fakeProc.stdout = new EventEmitter(); fakeProc.stderr = new EventEmitter(); fakeProc.pid = 1;
+    const store = createRunStore({});
+    const run = store.create({ uid: UID, task: 'open Settings', maxSteps: 25 });
+    const { tmpDir } = startAgentProcess({
+      run, store, repoRoot: '/repo', driverHost: '100.1.2.3', provider: m.provider, model: m.agentModel, extraArgs: m.agentArgs,
+      spawnFn: (cmd, args) => { spawned.push(args); return fakeProc; }, env: {},
+    });
+    rmSync(tmpDir, { recursive: true, force: true });
+    const args = spawned[0];
+    assert.equal(args[args.indexOf('--provider') + 1], 'hybrid');
+    assert.equal(args[args.indexOf('--model') + 1], m.agentModel);
+    assert.equal(args[args.indexOf('--escalation-mode') + 1], 'sticky');
+    // The agent's own parser, on exactly that argv: what the server sends is what the agent runs.
+    const parsed = parseAgentArgs(args.slice(1));
+    assert.ok(!parsed.error, parsed.error?.message);
+    assert.deepEqual([parsed.config.provider, parsed.config.model, parsed.config.escalationMode, parsed.config.driverHost], ['hybrid', m.agentModel, 'sticky', '100.1.2.3']);
+  }
 });
 
 rmSync(dir, { recursive: true, force: true });

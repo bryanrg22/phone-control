@@ -1,0 +1,38 @@
+{
+  "typesafe:jev-latest+openai:gpt-6-luna": {
+    "typesafe:jev-latest": {
+      "calls": 373,
+      "input": 1461997,
+      "cached": 0,
+      "output": 169234,
+      "cost": 0.061403874000000004,
+      "seconds": 55.02799999999998
+    },
+    "openai:gpt-6-luna": {
+      "calls": 36,
+      "input": 116585,
+      "cached": 0,
+      "output": 10537,
+      "cost": 0.016927000000000005,
+      "seconds": 142.19300000000004
+    }
+  },
+  "openai-decisions:gpt-6-luna+openai:gpt-6-luna": {
+    "openai-decisions:gpt-6-luna": {
+      "calls": 462,
+      "input": 1228839,
+      "cached": 0,
+      "output": 0,
+      "cost": 0.12288389999999992,
+      "seconds": 119.78499999999998
+    },
+    "openai:gpt-6-luna": {
+      "calls": 37,
+      "input": 126853,
+      "cached": 0,
+      "output": 10920,
+      "cost": 0.0181453,
+      "seconds": 138.994
+    }
+  }
+}

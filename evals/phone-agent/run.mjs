@@ -48,6 +48,7 @@ import { createHash } from 'node:crypto';
 import { toTrajectory, readTrace, readManifest, outcomeOf, usageOf } from './trajectory.mjs';
 import { buildReport, reportMarkdown } from './report.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
+import { DECISION_APIS } from '../../agent/providers/index.mjs';
 
 export const HARNESS_VERSION = '0.1.0';
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -72,7 +73,11 @@ const models = (opt('models', '') || '').split(',').filter(Boolean).map((m) => {
   const [provider, ...rest] = m.split(':');
   return { provider, model: rest.join(':') };
 });
-const judgeOnly = opt('judge-only', null);
+// Resolved here: the judge runs with iOSWorld's checkout as its working directory,
+// so a relative path would point inside it (2026-10-16).
+const judgeOnly = opt('judge-only', null) ? resolve(opt('judge-only', null)) : null;
+// Hybrid models only: how the decision model hands steps to the LLM (agent --escalation-mode).
+const escalationMode = opt('escalation-mode', null);
 
 const run = (cmd, args, o = {}) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...o }).trim();
 const git = (dir, ...a) => { try { return run('git', ['-C', dir, ...a]); } catch { return null; } };
@@ -146,7 +151,8 @@ async function runTask({ task, index, model, taskDir }) {
     '--provider', model.provider, '--model', model.model,
     '--simulator', udid, '--driver-port', driverPort,
     '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', '1', '--no-web-search', '--effort', 'high',
-    '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`];
+    '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`,
+    ...(model.provider === 'hybrid' && escalationMode ? ['--escalation-mode', escalationMode] : [])];
   record.agent_args = args.slice(1).map((a) => (a === task.goal ? '<goal>' : a));
   const agentStart = Date.now();
   const log = createWriteStream(join(taskDir, 'agent.log'));
@@ -172,7 +178,9 @@ async function runTask({ task, index, model, taskDir }) {
   // How the run ended, as the agent recorded it: completed, failed, step_budget,
   // no_progress (its own stop, a product feature kept as the server runs it)…
   Object.assign(record, usageOf(trace), { ended: manifest?.outcome?.status ?? outcome.ended, agent: manifest?.agent ?? null, prompt_sha256: manifest?.prompt_sha256 ?? null, tools_sha256: manifest?.tools_sha256 ?? null });
-  record.cost_usd = costOf(model.model, record);
+  // The trace prices each call by its own model (a hybrid run has two); the
+  // run's model is the fallback for a trace without prices.
+  if (record.cost_usd === null || record.cost_usd === undefined) record.cost_usd = costOf(model.model, record);
   writeFileSync(join(taskDir, 'trajectory.json'), JSON.stringify(toTrajectory(traceDir, existsSync(finalShot) ? finalShot : null), null, 2));
 
   // Exit 42: the model API failed for good; 43: the device connection died; a
@@ -244,7 +252,9 @@ const runInfo = {
   },
   device: { udid, name: simInfo?.name ?? null, runtime: simInfo?.runtime ?? null, xcode: run('xcodebuild', ['-version']).split('\n')[0] },
   judge: { script: 'iOSWorld scripts/judge_trajectories.py', provider: 'openai', model: judgeModel },
-  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', web_search: false, reasoning: 'high', no_progress_abort: 8, observation: '768 px wide JPEG + element list (≤150), newest screen only in context', final_step: 'forced taskComplete/taskFailed at the budget' },
+  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', web_search: false, reasoning: 'high', no_progress_abort: 8, observation: '768 px wide JPEG + element list (≤150), newest screen only in context', final_step: 'forced taskComplete/taskFailed at the budget', ...(escalationMode ? { escalation_mode: escalationMode } : {}) },
+  // Decision models (agent/decision/): both APIs are previews whose formats may change, so what was used is recorded.
+  ...(models.some((m) => DECISION_APIS[m.provider]) ? { decision_apis: Object.fromEntries(models.filter((m) => DECISION_APIS[m.provider]).map((m) => [m.provider, { ...DECISION_APIS[m.provider], screenshot_sent: false }])) } : {}),
   models, trials, tasks: tasks.map((t) => t.name), cells: cells.map(({ model, trial, dir }) => ({ model, trial, dir })),
   node: process.version,
 };

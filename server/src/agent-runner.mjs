@@ -149,7 +149,7 @@ export function buildAgentArgs({
  */
 export function startAgentProcess({
   run, store, repoRoot, driverHost, driverPort = 22087, provider = 'anthropic', model = null,
-  askUserTimeoutSec = 300, spawnFn = nodeSpawn, env = process.env, onLine = null,
+  askUserTimeoutSec = 300, spawnFn = nodeSpawn, env = process.env, onLine = null, extraArgs = [],
 }) {
   const tmpDir = join(tmpdir(), `connector-run-${run.id}`);
   mkdirSync(tmpDir, { recursive: true, mode: 0o700 });
@@ -168,6 +168,7 @@ export function startAgentProcess({
     runId: run.id,
     askUserTimeoutSec,
     traceDir: traceRoot ? join(traceRoot, run.id) : null,
+    extraArgs,
   });
 
   const proc = spawnFn(process.execPath, args, {

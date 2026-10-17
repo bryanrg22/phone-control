@@ -20,13 +20,13 @@
 // Annotations (title + readOnlyHint/destructiveHint) are required by BOTH
 // directories, so they are part of the definition, not decoration.
 
-import { resolveModel, modelChoices, MODELS } from './models.mjs';
+import { resolveModel, modelChoices, missingProviderKey, MODELS } from './models.mjs';
 
 // Several models share a family name (GPT-6.1 Sol, GPT-6 Sol, GPT-5.6 Sol).
 // Without this sentence assistants asked "which Sol?" instead of acting on
 // "from now on use Sol" (connector evals, 2026-10-15: Claude Fable 5.1 and
 // Sonnet 5.5 asked; GPT-6 Luna picked the older GPT-6 Sol).
-const BARE_NAMES = 'A family name on its own ("Sol", "Sonnet", "Opus") means the newest model of that family: pass the name as the user said it, and do not ask which one.';
+const BARE_NAMES = 'A family name on its own ("Sol", "Sonnet", "Opus") means the newest model of that family: pass the name as the user said it, and do not ask which one. "Jev" and "Decisions" are hybrids: a fast decision model chooses most steps and GPT-6 Luna takes the hard ones.';
 
 export const MAX_TASK_CHARS = 500;
 export const DEFAULT_MAX_STEPS = 25;
@@ -234,8 +234,9 @@ export function createToolApi({
         if (!model) {
           return { ok: false, error: 'unknown_model', message: `I do not know a model called "${String(args?.model).slice(0, 60)}". The choices are: ${modelChoices()}.` };
         }
-        if (hasProviderKey && !hasProviderKey(model.provider)) {
-          return { ok: false, error: 'model_unavailable', message: `${model.label} cannot be used yet: there is no ${model.provider} API key set up on the server. Pick another model, or ask the owner to add the key.` };
+        const missing = hasProviderKey ? missingProviderKey(model, hasProviderKey) : null;
+        if (missing) {
+          return { ok: false, error: 'model_unavailable', message: `${model.label} cannot be used yet: there is no ${missing} API key set up on the server. Pick another model, or ask the owner to add the key.` };
         }
       }
 
@@ -351,8 +352,9 @@ export function createToolApi({
       async set_default_model(args, { uid }) {
         const m = resolveModel(args?.model);
         if (!m) return { ok: false, error: 'unknown_model', message: `I do not know a model called "${String(args?.model ?? '').slice(0, 60)}". The choices are: ${modelChoices()}.` };
-        if (hasProviderKey && !hasProviderKey(m.provider)) {
-          return { ok: false, error: 'model_unavailable', message: `${m.label} cannot be used yet: there is no ${m.provider} API key set up on the server.` };
+        const missing = hasProviderKey ? missingProviderKey(m, hasProviderKey) : null;
+        if (missing) {
+          return { ok: false, error: 'model_unavailable', message: `${m.label} cannot be used yet: there is no ${missing} API key set up on the server.` };
         }
         prefs.setModel(uid, m.id);
         return { ok: true, default_model: m.id, message: `From now on I will use ${m.label} on your phone.` };

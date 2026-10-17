@@ -1,60 +1,62 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 0 960 470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
-  <title>The four layers between the server and the iPhone</title>
-  <rect x="0.5" y="0.5" width="959" height="469" rx="16" fill="#FBFAF7" stroke="#E5E1D8"/>
-  <text x="32" y="44" font-size="17" font-weight="600" fill="#1F2328">Four layers, each resting on the one below</text>
-  <text x="32" y="68" font-size="13" fill="#57606A">Starting automation means building them bottom-up. Ending a task removes only the top two.</text>
-
-  <!-- column headers -->
-  <text x="132" y="104" font-size="11.5" font-weight="600" fill="#57606A" letter-spacing="0.4">LAYER</text>
-  <text x="372" y="104" font-size="11.5" font-weight="600" fill="#57606A" letter-spacing="0.4">WHAT IT GIVES YOU</text>
-  <text x="712" y="104" font-size="11.5" font-weight="600" fill="#57606A" letter-spacing="0.4">LIFETIME</text>
-
-  <!-- 4 runner -->
-  <rect x="32" y="116" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
-  <rect x="32" y="116" width="8" height="74" rx="4" fill="#8250DF"/>
-  <text x="60" y="146" font-size="22" font-weight="700" fill="#8250DF">4</text>
-  <text x="132" y="146" font-size="15" font-weight="600" fill="#1F2328">Runner</text>
-  <text x="132" y="167" font-size="12" fill="#57606A">runner/ · port 22087 on the phone</text>
-  <text x="372" y="146" font-size="13" fill="#1F2328">Tap here, type this, swipe, send a</text>
-  <text x="372" y="166" font-size="13" fill="#1F2328">screenshot, list what is on screen</text>
-  <text x="712" y="146" font-size="13" fill="#1F2328">One task.</text>
-  <text x="712" y="166" font-size="13" fill="#57606A">Banner shows while it runs</text>
-
-  <!-- 3 session -->
-  <rect x="32" y="200" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
-  <rect x="32" y="200" width="8" height="74" rx="4" fill="#BF3989"/>
-  <text x="60" y="230" font-size="22" font-weight="700" fill="#BF3989">3</text>
-  <text x="132" y="230" font-size="15" font-weight="600" fill="#1F2328">XCTest session</text>
-  <text x="132" y="251" font-size="12" fill="#57606A">go-ios runtest, patched</text>
-  <text x="372" y="230" font-size="13" fill="#1F2328">Apple's UI-testing session that launches</text>
-  <text x="372" y="250" font-size="13" fill="#1F2328">the runner and keeps it alive</text>
-  <text x="712" y="230" font-size="13" fill="#1F2328">One task.</text>
-  <text x="712" y="250" font-size="13" fill="#57606A">Needs the phone unlocked to start</text>
-
-  <!-- divider: what a task end removes -->
-  <line x1="32" y1="287" x2="928" y2="287" stroke="#CF222E" stroke-width="1.5" stroke-dasharray="6 5"/>
-  <rect x="640" y="277" width="288" height="20" rx="10" fill="#FBFAF7"/>
-  <text x="926" y="292" text-anchor="end" font-size="12" font-weight="600" fill="#CF222E">a task ends here · everything below stays</text>
-
-  <!-- 2 tunnel -->
-  <rect x="32" y="302" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
-  <rect x="32" y="302" width="8" height="74" rx="4" fill="#0969DA"/>
-  <text x="60" y="332" font-size="22" font-weight="700" fill="#0969DA">2</text>
-  <text x="132" y="332" font-size="15" font-weight="600" fill="#1F2328">CoreDevice tunnel</text>
-  <text x="132" y="353" font-size="12" fill="#57606A">device/tunnel.py · pymobiledevice3</text>
-  <text x="372" y="332" font-size="13" fill="#1F2328">The encrypted channel iOS offers its</text>
-  <text x="372" y="352" font-size="13" fill="#1F2328">developer services on</text>
-  <text x="712" y="332" font-size="13" fill="#1F2328">Born on Wi-Fi only.</text>
-  <text x="712" y="352" font-size="13" fill="#57606A">Then survives cellular ("warm")</text>
-
-  <!-- 1 reachability -->
-  <rect x="32" y="386" width="896" height="74" rx="12" fill="#FFFFFF" stroke="#D0D7DE"/>
-  <rect x="32" y="386" width="8" height="74" rx="4" fill="#1A7F37"/>
-  <text x="60" y="416" font-size="22" font-weight="700" fill="#1A7F37">1</text>
-  <text x="132" y="416" font-size="15" font-weight="600" fill="#1F2328">Reachability</text>
-  <text x="132" y="437" font-size="12" fill="#57606A">Tailscale on phone and server</text>
-  <text x="372" y="416" font-size="13" fill="#1F2328">The server can reach the phone at a fixed</text>
-  <text x="372" y="436" font-size="13" fill="#1F2328">address, on Wi-Fi or cellular, anywhere</text>
-  <text x="712" y="416" font-size="13" fill="#1F2328">Always on.</text>
-  <text x="712" y="436" font-size="13" fill="#57606A">Stays up with every app closed</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="396" viewBox="0 0 960 396">
+<title>The four layers that let a server drive an unplugged iPhone</title>
+<style>
+  text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  .frame { fill: #FFFFFF; stroke: #D0D7DE; }
+  .box   { fill: #FFFFFF; stroke: #D0D7DE; }
+  .h  { fill: #1F2328; font-weight: 600; }
+  .s  { fill: #59636E; }
+  .k  { fill: #59636E; font-weight: 600; letter-spacing: .06em; }
+  .ln { stroke: #8C959F; fill: none; }
+  .ah { fill: #8C959F; }
+  .blue   { fill: #0969DA; } .blueS   { stroke: #0969DA; }
+  .green  { fill: #1A7F37; } .greenS  { stroke: #1A7F37; }
+  .purple { fill: #8250DF; } .purpleS { stroke: #8250DF; }
+  .orange { fill: #BC4C00; } .orangeS { stroke: #BC4C00; }
+  .gray   { fill: #59636E; } .grayS   { stroke: #8C959F; }
+  .zone { fill-opacity: .06; stroke-opacity: .45; }
+  .chipT { fill: #FFFFFF; font-weight: 600; }
+  @media (prefers-color-scheme: dark) {
+    .frame { fill: #0D1117; stroke: #30363D; }
+    .box   { fill: #161B22; stroke: #3D444D; }
+    .h  { fill: #F0F6FC; } .s, .k { fill: #9198A1; }
+    .ln { stroke: #6E7681; } .ah { fill: #6E7681; }
+    .blue { fill: #4493F8; } .blueS { stroke: #4493F8; }
+    .green { fill: #3FB950; } .greenS { stroke: #3FB950; }
+    .purple { fill: #AB7DF8; } .purpleS { stroke: #AB7DF8; }
+    .orange { fill: #F0883E; } .orangeS { stroke: #F0883E; }
+    .gray { fill: #9198A1; } .grayS { stroke: #6E7681; }
+    .zone { fill-opacity: .10; }
+    .chipT { fill: #0D1117; }
+  }
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="frame" x="0.5" y="0.5" width="959" height="395" rx="16"/>
+<text x="40" y="46" class="h" font-size="20" text-anchor="start" >Four layers, each resting on the one below</text>
+<rect class="box" x="40" y="72" width="880" height="58" rx="12"/>
+<rect class="purple" x="40" y="72" width="6" height="58" rx="3"/>
+<text x="76" y="108" class="purple" font-size="22" text-anchor="middle" font-weight="700">4</text>
+<text x="118" y="108" class="h" font-size="17" text-anchor="start" >Runner</text>
+<text x="300" y="108" class="s" font-size="15" text-anchor="start" >XCTest app on the iPhone</text>
+<text x="560" y="108" class="s" font-size="15" text-anchor="start" >taps, types, screenshots</text>
+<rect class="box" x="40" y="142" width="880" height="58" rx="12"/>
+<rect class="purple" x="40" y="142" width="6" height="58" rx="3"/>
+<text x="76" y="178" class="purple" font-size="22" text-anchor="middle" font-weight="700">3</text>
+<text x="118" y="178" class="h" font-size="17" text-anchor="start" >Session</text>
+<text x="300" y="178" class="s" font-size="15" text-anchor="start" >go-ios, patched</text>
+<text x="560" y="178" class="s" font-size="15" text-anchor="start" >keeps the runner alive</text>
+<line class="orangeS" x1="40" y1="218" x2="680" y2="218" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="920" y="223" class="orange" font-size="13" text-anchor="end" font-weight="600">ended with each task ↑ · kept warm ↓</text>
+<rect class="box" x="40" y="236" width="880" height="58" rx="12"/>
+<rect class="blue" x="40" y="236" width="6" height="58" rx="3"/>
+<text x="76" y="272" class="blue" font-size="22" text-anchor="middle" font-weight="700">2</text>
+<text x="118" y="272" class="h" font-size="17" text-anchor="start" >Tunnel</text>
+<text x="300" y="272" class="s" font-size="15" text-anchor="start" >pymobiledevice3</text>
+<text x="560" y="272" class="s" font-size="15" text-anchor="start" >the encrypted channel to iOS</text>
+<rect class="box" x="40" y="306" width="880" height="58" rx="12"/>
+<rect class="green" x="40" y="306" width="6" height="58" rx="3"/>
+<text x="76" y="342" class="green" font-size="22" text-anchor="middle" font-weight="700">1</text>
+<text x="118" y="342" class="h" font-size="17" text-anchor="start" >Network</text>
+<text x="300" y="342" class="s" font-size="15" text-anchor="start" >Tailscale</text>
+<text x="560" y="342" class="s" font-size="15" text-anchor="start" >reaches the phone on any network</text>
 </svg>

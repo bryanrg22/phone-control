@@ -6,7 +6,8 @@
 //
 // A step's tool calls stop at the first that fails, at taskComplete and at
 // taskFailed; the rest are answered "not run" (every call gets a result, as
-// the providers require), so the model never acts on a screen it has not seen.
+// the providers require), so the model never acts on a screen it has not seen
+// (execute.mjs, shared with the hybrid mode).
 //
 // Outcomes and how they end the process (agent.mjs):
 //   completed      the model called taskComplete                         exit 0
@@ -19,6 +20,7 @@
 import { observe, describeScreen } from './observe.mjs';
 import { taskMessage, FINAL_STEP, NO_TOOL_CALL } from './prompt.mjs';
 import { historyLine } from './context.mjs';
+import { executeToolCalls } from './execute.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const DEVICE_ERRORS_TO_GIVE_UP = 4;     // consecutive steps in which the device itself failed
@@ -91,49 +93,7 @@ export async function runLoop({ task, maxSteps, model, device, runTool, toolDefs
     context.assistant(msg);
 
     // ── the tools ──
-    let stopRest = null;
-    let concluded = null;
-    let changes = false;
-    let settle = false;
-    let deviceFailed = false;
-    const done = [];
-    for (const tc of calls) {
-      const name = tc.function.name;
-      let args;
-      try { args = JSON.parse(tc.function.arguments || '{}'); } catch { args = null; }
-      const tStart = Date.now();
-      if (stopRest) {
-        const text = `Not run: ${stopRest}.`;
-        context.toolResult({ id: tc.id, name, text, isError: true });
-        recorder.toolCall({ step, id: tc.id, name, args, start: tStart, end: tStart, result: text, skipped: true });
-        continue;
-      }
-      if (args === null) {
-        const text = 'ERROR: your tool arguments were not valid JSON. Re-issue the call with valid JSON arguments.';
-        context.toolResult({ id: tc.id, name, text, isError: true });
-        recorder.toolCall({ step, id: tc.id, name, args: tc.function.arguments, start: tStart, end: Date.now(), result: text, error: 'invalid arguments', layer: 'model' });
-        stopRest = 'an earlier call in this step had invalid arguments';
-        continue;
-      }
-      emit('action', { tool: name, args });
-      log(`[tool] ${name}(${JSON.stringify(args)})`);
-      stuck.record(name, args);
-      let r;
-      let thrown = null;
-      try { r = await runTool(name, args); } catch (e) {
-        thrown = e;
-        deviceFailed = true;
-        r = { error: true, text: `Error: ${e.message}` };
-      }
-      log(`[tool] → ${String(r.text).split('\n')[0].slice(0, 200)}`);
-      context.toolResult({ id: tc.id, name, text: r.text, isError: !!r.error });
-      recorder.toolCall({ step, id: tc.id, name, args, start: tStart, end: Date.now(), result: r.text, error: r.error ? (thrown ? thrown.message : r.text) : null, layer: thrown ? 'device' : (r.error ? 'model' : null) });
-      done.push({ name, args });
-      changes = changes || !!r.changesScreen;
-      settle = settle || !!r.settle;
-      if (r.done || r.failed) { concluded = r; stopRest = 'the task was already concluded in this step'; }
-      else if (r.error) stopRest = 'an earlier action in this step failed, so the screen may not be what you expected';
-    }
+    const { done, concluded, changes, settle, deviceFailed } = await executeToolCalls({ calls, step, runTool, context, recorder, stuck, protocol });
     history.push(historyLine(step, done));
 
     if (concluded?.done) return { status: 'completed', summary: concluded.done.summary, steps: step };

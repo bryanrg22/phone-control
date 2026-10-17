@@ -10,12 +10,42 @@
 //   settle         wait for an iOS animation before observing (navigation)
 //   done / failed  the model concluded: { summary } / { reason }
 
-import { formatElements, capElements, findElement, screenTexts } from './elements.mjs';
+import { formatElements, capElements, findElement, screenTexts, listElements } from './elements.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// A scroll leaves the list decelerating long after the gesture. On TrailBlaze's
+// feed the runner's swipe returns at ~670 ms and the list moves for ~2 s more
+// (a "Like" from 86% to 60%; still 13% off at the loop's 350 ms settle). The
+// screen was read mid-flight, and the next tap went to where the button had
+// been, or stopped the scroll instead of pressing anything (trailblaze-004's
+// first Like never registered, every run; measured 2026-10-17). So scroll and
+// swipe return only once the screen is still, as Maestro does after every
+// swipe: poll the runner's /isScreenStatic, up to Maestro's 3000 ms. The first
+// still answer ends it (~2.7 s after the swipe began, the moment the element
+// tree stops changing). Waiting for a second one waits out the scroll bar's
+// fade, which moves nothing, into the cap; and a deceleration's last 300 ms,
+// where one answer could be fooled, move a row by 3 pt at most.
+export const STATIC_TIMEOUT_MS = 3000;
+async function untilStatic(device) {
+  if (typeof device.screenStatic !== 'function') return;
+  const end = Date.now() + STATIC_TIMEOUT_MS;
+  while (Date.now() < end) {
+    try { if (await device.screenStatic()) return; } catch { return; }
+  }
+}
 const num = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, ...(description ? { description } : {}) });
 
-export function toolDefinitions({ apps, braveSearch = false }) {
+// handBack exists only in the sticky hybrid mode (agent/decision/escalate.mjs):
+// the LLM gives control back to the decision model. The LLM mode never sees it,
+// so its tool list and hash are unchanged.
+const HAND_BACK = { name: 'handBack', description: 'Give control back to the fast decision model. Call this when the remaining steps are simple taps or scrolls on elements already listed on screen, and nothing needs writing or judging; the decision model then takes them, and hands back to you if it is unsure.', parameters: { type: 'object', properties: { reason: { type: 'string', description: 'What is left for the decision model to do' } }, required: ['reason'] } };
+
+export function toolDefinitions({ apps, braveSearch = false, handBack = false }) {
+  return [...baseTools({ apps, braveSearch }), ...(handBack ? [HAND_BACK] : [])];
+}
+
+function baseTools({ apps, braveSearch }) {
   return [
     { name: 'openApp', description: `Open an app by name. Available: ${Object.keys(apps).join(', ')}`, parameters: { type: 'object', properties: { appName: { type: 'string', description: 'App name' } }, required: ['appName'] } },
     { name: 'takeScreenshot', description: 'Capture the current screen. NOTE: screenshots are auto-captured after action tools (tap, type, etc.) so you usually do NOT need to call this separately. Only use for initial observation or to verify final task completion.', parameters: { type: 'object', properties: {} } },
@@ -59,6 +89,15 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     const s = screen();
     return [Math.round((pctX / 100) * s.widthPoints), Math.round((pctY / 100) * s.heightPoints)];
   };
+  /** Focus the field at a point, triple-tap to select everything, then type over it. */
+  async function selectAllAndType(cx, cy, value) {
+    await device.tap(cx, cy);
+    await sleep(250);
+    await device.tap(cx, cy); await device.tap(cx, cy); await device.tap(cx, cy);
+    await sleep(200);
+    await device.type(String(value ?? ''));
+    state.keyboardUp = true;
+  }
   const elementsNow = async () => {
     const s = screen();
     return formatElements(await device.hierarchy(), s.widthPoints, s.heightPoints);
@@ -132,16 +171,51 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
     async replaceText({ field, value }) {
       const el = findElement(await device.hierarchy(), field, { editable: true });
       if (!el) return { error: true, text: `ERROR: field "${field}" not found in view hierarchy. Call getUIElements to read the exact field label, then retry replaceText.` };
-      const cx = Math.round(el.frame.X + el.frame.Width / 2);
-      const cy = Math.round(el.frame.Y + el.frame.Height / 2);
-      // Focus, then triple-tap to select everything, then type over it.
-      await device.tap(cx, cy);
-      await sleep(250);
-      await device.tap(cx, cy); await device.tap(cx, cy); await device.tap(cx, cy);
-      await sleep(200);
-      await device.type(String(value ?? ''));
-      state.keyboardUp = true;
+      await selectAllAndType(Math.round(el.frame.X + el.frame.Width / 2), Math.round(el.frame.Y + el.frame.Height / 2), value);
       return { text: `Replaced "${field}" → "${value}" (selected all + typed). Take a screenshot to verify the field shows the new value.`, changesScreen: true };
+    },
+
+    // Not in toolDefinitions: the decision mode's replace, by position, since
+    // two fields may share a label (SkyTrip's two "Airport" fields, 2026-10-16).
+    async replaceTextAt({ x, y, value }) {
+      if (!(x >= 0 && x <= 100 && y >= 0 && y <= 100)) return { error: true, text: `ERROR: coordinates must be percentages 0-100 (got ${x}, ${y}).` };
+      await selectAllAndType(...pt(x, y), value);
+      return { text: `Replaced the text of the field at (${x}%, ${y}%) → "${value}" (selected all + typed).`, changesScreen: true };
+    },
+
+    // Not in toolDefinitions: the decision mode's append, for a field of
+    // several lines (a note, a slide's bullets). A tap puts the caret where it
+    // lands, so a tap at the centre types into the middle; the field's
+    // bottom-right corner, just inside, is on or below its last line, where
+    // iOS puts the caret at the end. The field is found again by position in a
+    // fresh element list, as the keyboard may have moved it. Its value is read
+    // back afterwards, as WebDriverAgent reads a field back after clearing it.
+    async appendTextAt({ x, y, text }) {
+      if (!(x >= 0 && x <= 100 && y >= 0 && y <= 100)) return { error: true, text: `ERROR: coordinates must be percentages 0-100 (got ${x}, ${y}).` };
+      const s = screen();
+      const [px, py] = pt(x, y);
+      const frameOf = (e) => ({ X: (e.x / 100) * s.widthPoints - e.w / 2, Y: (e.y / 100) * s.heightPoints - e.h / 2, W: e.w, H: e.h });
+      const holds = (f) => px >= f.X - 1 && px <= f.X + f.W + 1 && py >= f.Y - 1 && py <= f.Y + f.H + 1;
+      const fields = listElements(await device.hierarchy(), s.widthPoints, s.heightPoints).filter((e) => e.editable && e.x !== null && e.w > 0 && e.h > 0);
+      const field = fields.map((e) => ({ e, f: frameOf(e) })).filter(({ f }) => holds(f)).sort((a, b) => a.f.W * a.f.H - b.f.W * b.f.H)[0];
+      let where;
+      if (field) {
+        const { f } = field;
+        const inset = (n) => Math.min(6, n / 4);
+        await device.tap(Math.round(f.X + f.W - inset(f.W)), Math.round(f.Y + f.H - inset(f.H)));
+        where = 'at its end';
+      } else {
+        await device.tap(px, py);
+        where = 'at the given point (no field was found there to find its end)';
+      }
+      await sleep(250);
+      await device.type(String(text ?? ''));
+      state.keyboardUp = true;
+      await sleep(300);
+      const typed = String(text ?? '').trim().toLowerCase();
+      const after = listElements(await device.hierarchy().catch(() => ''), s.widthPoints, s.heightPoints).filter((e) => e.editable && e.value);
+      const ends = typed && after.find((e) => e.value.trimEnd().toLowerCase().endsWith(typed));
+      return { text: `Typed ${JSON.stringify(String(text ?? ''))} into the field at (${x}%, ${y}%), ${where}. ${ends ? `The field now ends with it: ${JSON.stringify(ends.value.slice(-80))}.` : 'No field\'s text ends with it now: check where it went.'}`, changesScreen: true };
     },
 
     async pressKey({ key }) {
@@ -157,12 +231,14 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
       const s = screen();
       const midX = Math.round(s.widthPoints / 2);
       await device.swipe(midX, Math.round(s.heightPoints * 0.7), midX, Math.round(s.heightPoints * 0.3));
+      await untilStatic(device);
       return { text: 'Scrolled down', changesScreen: true, settle: true };
     },
 
     async swipe({ startX, startY, endX, endY }) {
       if (![startX, startY, endX, endY].every(pctOK)) return { error: true, text: `ERROR: Coordinates must be percentages 0-100, not pixels. You sent (${startX}, ${startY}) → (${endX}, ${endY}).` };
       await device.swipe(...pt(startX, startY), ...pt(endX, endY));
+      await untilStatic(device);
       return { text: 'Swiped', changesScreen: true, settle: true };
     },
 
@@ -251,6 +327,7 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
 
     async taskComplete({ summary }) { return { text: String(summary ?? ''), done: { summary: String(summary ?? '') } }; },
     async taskFailed({ reason }) { return { text: String(reason ?? ''), failed: { reason: String(reason ?? '') } }; },
+    async handBack({ reason }) { return { text: `Control returned to the decision model${reason ? `: ${reason}` : ''}.`, handBack: true }; },
   };
 
   /** Run one tool call. Throws only when the device itself failed (the loop counts those). */

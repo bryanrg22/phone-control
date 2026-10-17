@@ -7,7 +7,7 @@ There are two agents in this system, and they are evaluated separately:
 | | The agent | The question | Where |
 | --- | --- | --- | --- |
 | **Connector evals** | The assistant (Claude) using phone-control's tools | Does it call the right tools, pass the phone's questions to you instead of answering them itself, stop when told, and report results honestly? | `evals/connector/` |
-| **Phone-agent evals** | The agent that drives the phone | Does it complete tasks on the phone, and ask before risky ones? | planned |
+| **Phone-agent evals** | The agent that drives the phone | Does it complete tasks on the phone, and ask before risky ones? | `evals/phone-agent/` (iOSWorld) |
 
 ## Connector evals
 
@@ -52,6 +52,11 @@ Two measurements, the ones a benchmark reports for an LLM judge (iOSWorld valida
 - [2026-10-15, Claude Opus 5.5](baselines/connector/2026-10-15_claude-opus-5-5_high/README.md): the first full run, 14 cases, 42 of 42.
 
 Near 100% the cases are a **regression** set: a drop means something broke. Measuring which model or wording is *better* needs harder cases.
+
+Phone-agent baselines live in `evals/baselines/phone-agent/`:
+
+- [2026-10-16, the 27 single-app tasks, TypeSafe's Jev in the decision mode](baselines/phone-agent/2026-10-16_c4d73d2_jev_single-app/README.md): Jev (jev-1.13.0) passed 2 of 27 at $0.002 and 2.2 s of model time a task, the same verdict as Luna through the Decisions API on 26 of 27; every failure read, three of them a control the element list does not carry.
+- [2026-10-16, the 27 single-app tasks, a decision model beside an LLM](baselines/phone-agent/2026-10-16_4888b67_decisions-vs-luna_single-app/README.md): GPT-6 Luna through OpenAI's Decisions API (the decision mode) passed 3 of 27; the same model as an LLM agent passed 21 of 27, on one commit, at about the same cost per task.
 
 `node evals/connector/matrix.mjs` runs the newest model of every family in parallel from a committed tree (one tiny request per provider first, so a dead key or an empty balance stops everything before anything is spent), then writes the comparison. `node evals/connector/compare.mjs <run>...` puts finished runs side by side: pass rates, steps, time, cache use and cost per task, overall and per case.
 

@@ -1,0 +1,110 @@
+{
+  "harness_version": "0.1.0",
+  "run": "2026-10-16_4888b67_decisions-vs-luna_single-app",
+  "started": "2026-10-16T20:07:00.488Z",
+  "protocol": {
+    "max_steps": 50,
+    "time_limit": "none",
+    "start": "home screen, every app reset and reseeded",
+    "judge_default": "gpt-5.4-mini"
+  },
+  "phone_control": {
+    "release": "0.2.0",
+    "commit": "4888b6779699d9cd81085578a101bfe646b4177f",
+    "dirty": false
+  },
+  "iosworld": {
+    "commit": "c59287b6ec9a9d0d7269613ad873f6aa9db0f42c",
+    "dirty": false,
+    "tasks_sha256": "42c0b5558fde0e71"
+  },
+  "device": {
+    "udid": "DF68C5E8-9704-4D31-A0CA-8DC9B32BA001",
+    "name": "iOSWorld iPhone 17 Pro",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
+    "xcode": "Xcode 26.4"
+  },
+  "judge": {
+    "script": "iOSWorld scripts/judge_trajectories.py",
+    "provider": "openai",
+    "model": "gpt-5.4-mini"
+  },
+  "agent": {
+    "entry": "agent/agent.mjs",
+    "device": "simulator through the runner",
+    "ask_user": "unanswered (1 s timeout)",
+    "reasoning": "provider default",
+    "no_progress_abort": 8
+  },
+  "decision_apis": {
+    "openai-decisions": {
+      "api": "OpenAI Decisions API",
+      "endpoint": "POST /v1/decisions",
+      "status": "public beta (2026-10-16)",
+      "question": "choice",
+      "input": "text",
+      "headers": [],
+      "screenshot_sent": false
+    }
+  },
+  "models": [
+    {
+      "provider": "openai-decisions",
+      "model": "gpt-6-luna"
+    },
+    {
+      "provider": "openai",
+      "model": "gpt-6-luna"
+    }
+  ],
+  "trials": 1,
+  "tasks": [
+    "caltrack-001",
+    "cinephile-001",
+    "cityride-001",
+    "clock-001",
+    "clouddocs-004",
+    "clouddrive-001",
+    "cloudsheets-003",
+    "cloudslides-002",
+    "dinespot-001",
+    "freshcart-001",
+    "lockedin-003",
+    "lockedin-004",
+    "mail-002",
+    "megamart-001",
+    "mybank-003",
+    "notes-001",
+    "quickbite-001",
+    "quickchat-003",
+    "scorezone-003",
+    "skytrip-002",
+    "splitpay-001",
+    "stayfinder-001",
+    "tasterank-001",
+    "teamchat-003",
+    "ticketbox-004",
+    "trailblaze-004",
+    "weather-004"
+  ],
+  "cells": [
+    {
+      "model": {
+        "provider": "openai-decisions",
+        "model": "gpt-6-luna"
+      },
+      "trial": 1,
+      "dir": "openai-decisions_gpt-6-luna/trial-1"
+    },
+    {
+      "model": {
+        "provider": "openai",
+        "model": "gpt-6-luna"
+      },
+      "trial": 1,
+      "dir": "openai_gpt-6-luna/trial-1"
+    }
+  ],
+  "node": "v23.9.0",
+  "finished": "2026-10-16T22:24:04.631Z"
+}

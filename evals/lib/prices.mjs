@@ -17,6 +17,13 @@ export const PRICES = {
   'gpt-6.1-sol': { input: 2, cache_read: 0.1, output: 10 },
   'gpt-6-luna': { input: 0.1, cache_read: 0.01, output: 0.5 },
   'gpt-5.4-mini': { input: 0.75, cache_read: 0.075, output: 4.5 },
+  // Decision models: input tokens only (output is free). The Decisions API uses
+  // gpt-6-luna at the same input rate; its responses report output_tokens 0.
+  // TypeSafe https://docs.typesafe.ai/models (2026-10-16)
+  'jev-latest': { input: 0.042, output: 0 },
+  'jev-preview': { input: 0.042, output: 0 },
+  'jev-1.13.0': { input: 0.042, output: 0 },
+  'jev-1.14.0': { input: 0.042, output: 0 },
 };
 
 /**
@@ -32,5 +39,7 @@ export function costOf(model, u) {
   const read = u.cache_read_input_tokens || 0;
   const write = u.cache_write_input_tokens || 0;
   const fresh = Math.max(0, (u.input_tokens || 0) - read - write);
-  return (fresh * p.input + read * p.cache_read + write * (p.cache_write ?? p.input) + (u.output_tokens || 0) * p.output) / 1e6;
+  // A model with no cache rate (the decision models) charges cached and
+  // cache-written tokens at the input rate: a missing rate must not make NaN.
+  return (fresh * p.input + read * (p.cache_read ?? p.input) + write * (p.cache_write ?? p.input) + (u.output_tokens || 0) * (p.output ?? 0)) / 1e6;
 }
