@@ -86,3 +86,27 @@ run-to-run variance as a property of either agent.
    Decisions API; on this run that is about $0.055 instead of $0.131. Jev chose
    worse than the Decisions API alone (2 of 27 vs 3), so this needs its own run.
 4. **More than one trial** before reading anything into per-task differences.
+
+## Note added 2026-10-17: trailblaze-004 is not a real pass for any agent here
+
+In iOSWorld's seed (`TrailBlaze/Persistence/SeedData.swift`, and the app
+state after a reset on the simulator) Ava Torres's run "Twin Peaks Sunrise
+Repeats" is already liked (`currentUserKudo: true`, 31), and Jordan Avery is the
+user (`athlete_001`, `isCurrentUser: true`). Giving a friend kudos means a
+friend's run not yet liked: Miles Chen's "Zwift Race - Crit City" (17) is next
+in the feed. The rubric ("tap the kudos button on the friend's activity",
+report the name and type) cannot tell giving from removing, and the judge does
+not know who the user is. Separately, the first tap after a scroll landed while
+the list was still moving and did nothing (fixed in 869132f: a scroll now waits
+for a still screen; see `docs/research/decision-models-jev-handoff-2026-10-16.md`).
+Each run below was read from its screens (the Like count and colour before and
+after every tap). The judge's numbers above are unchanged.
+
+- **Decisions API** (4888b67): the tap after the scroll changed nothing; `done`.
+- **Luna LLM** (4888b67): removed the seeded like (31 to 30).
+- **Hybrid** (487f174): the Like tap right after the scroll changed nothing (31,
+  orange, before and after); Luna then concluded "Gave kudos to Ava Torres's
+  workout".
+- **Jev** (c4d73d2) was judged a fail; its tap changed nothing too.
+
+Counted strictly: the Decisions API 2 of 27, Luna LLM 20, Hybrid 20.

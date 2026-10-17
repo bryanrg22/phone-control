@@ -379,3 +379,73 @@ its single test never "succeeds" and the lifetime was deleteOnSuccess.
 `evals/phone-agent/start-runner.sh` now sets keepNever (3fe4a7b); a runner
 started before that keeps filling the disk at about 60 MB a minute while it
 serves an eval.
+
+## Three harness defects, fixed or measured (2026-10-17, commit 869132f)
+
+**1. "Search" in a field's text.** `candidates.mjs` offered "Search for X"
+(type, then Return) on any field whose description matched `/search/i`, so
+CloudSlides' agenda field ("Threat models / Research gaps / ...") got them. Now
+a search field is one iOS calls so, or a field whose *name* (label or
+placeholder, never its text) has the word Search: CloudSlides' "Search in
+Slides" is a plain text field, so the kind alone would miss it. Unit test with
+the agenda field, a field named "Research notes" and the real search field; it
+fails on the old test (three search options) and passes on the new (one).
+
+**2. The first tap after a scroll.** Measured on the iOSWorld simulator
+(TrailBlaze's feed, the agent's scroll: a 0.3 s swipe from 70% to 30%): the
+runner's swipe call returns at ~670 ms, and the list keeps decelerating until
+~2.7 s after the swipe began. At the loop's 350 ms settle a Like is at 72-73%; it
+comes to rest at 60%. The runner's `/isScreenStatic` (two screenshots compared)
+turned true at 2.69-2.71 s in three trials, the same moment the element tree
+stopped changing. With the old timing, a tap at the observed Like 1 s later (a
+decision call's time) changed nothing, 3 of 3; with the fix it toggled the like,
+3 of 3 (read from the app's saved state).
+
+The fix is Maestro's: after every swipe its iOS driver polls `isScreenStatic`
+until true, up to 3000 ms (`IOSDriver.waitForAppToSettle`; its source names this
+very bug, MA-4124). `scroll` and `swipe` in `tools.mjs` now do the same before
+returning, so the decision loop, the LLM loop and the hybrids all get it. The
+first still answer ends the wait: requiring two in a row waited out the scroll
+bar's fade (~0.8 s, it moves nothing) into the cap. A scroll now takes 2.9-3.6 s
+instead of 0.7 s; a bounce at the top of Settings 1.3 s. The LLM's tool
+definitions and system prompt hash the same as before (checked against HEAD
+for plain, webSearch and handBack tool sets), and the result text is unchanged.
+
+**3. trailblaze-004 cannot be passed by tapping the first Like.** In the seed
+(`SeedData.swift`, and the app state after a reset) Ava Torres's "Twin Peaks
+Sunrise Repeats", the first post in the feed, is already liked (31), and Jordan
+Avery, the second, is the user (`isCurrentUser: true`). Giving a friend kudos
+means a friend's run not yet liked (Miles Chen's, 17, next). The rubric only
+asks for a tap on "the kudos button" and the judge knows neither fact. Every
+filed pass was read from its screens:
+
+| run | what happened | judged |
+| --- | --- | --- |
+| Decisions API alone (4888b67) | tap after the scroll changed nothing | pass |
+| Luna LLM alone (4888b67) | first tap nothing, `tapText("Like")` removed the like (31 to 30) | pass |
+| Jev alone (c4d73d2) | tap after the scroll changed nothing | fail (no answer) |
+| Hybrid, step (487f174) | tap after the scroll changed nothing | pass |
+| Hybrid, sticky, Decisions (dbc720b) | liked Jordan Avery's own run (18 to 19) | pass |
+| Hybrid, sticky, Jev (dbc720b) | two taps after a scroll/swipe nothing, then Jordan's own run | pass |
+| Writer hybrids (75c3f2c) | nothing; and an unlike | already not counted |
+
+No filed trailblaze-004 pass is real. Notes are in each affected baseline's
+README (judge numbers unchanged); counted strictly: Decisions alone 2 of 27,
+Luna 20, step hybrid 20, sticky hybrid 24, sticky with Jev 20. The 75c3f2c
+README said Jev alone was judged a pass; it was the Decisions API alone
+(corrected there). The c4d73d2 README's "kudos given" for Jev was wrong too.
+
+**Re-run on the simulator** (decision mode, `openai-decisions:gpt-6-luna`,
+run `2026-10-17_869132f_decisions_fix-check`, from a clean checkout of 869132f;
+run_info says dirty only for the `node_modules` symlink):
+
+- trailblaze-004, fail 3/5 (no answer, as before): after the scroll the Like
+  was listed at 60%, where it rests (66.7-67.3% in every earlier run), and the
+  one tap registered: it removed the seeded like (31 to 30, saved state). The
+  judge wrote "the like count changed, indicating kudos was given".
+- cloudslides-002, fail 4/7: "Search for" options were offered only for
+  "Search in Slides" (steps 2-6), none for the agenda field (steps 9-15). The
+  agenda still lost "Research gaps": the field is multi-line but iOS reports it
+  as a *text field*, so `type_1_1` was "Replace the text in ... with safety", and
+  `replaceTextAt`'s triple tap selected one paragraph. A separate defect, open:
+  a multi-line text field should be appended to, as a text view is.

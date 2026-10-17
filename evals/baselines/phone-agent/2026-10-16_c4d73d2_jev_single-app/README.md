@@ -92,3 +92,26 @@ option's probability within 0.06 on 415 of 417 steps (mean gap 0.02); the two
 outliers were the final `blocked` of the two 50-step runs (0.73 vs 0.46,
 0.86 vs 0.72). The mean probability on
 the chosen action was 0.52 (Luna's decision run: 0.54).
+
+## Note added 2026-10-17: trailblaze-004
+
+In iOSWorld's seed (`TrailBlaze/Persistence/SeedData.swift`, and the app
+state after a reset on the simulator) Ava Torres's run "Twin Peaks Sunrise
+Repeats" is already liked (`currentUserKudo: true`, 31), and Jordan Avery is the
+user (`athlete_001`, `isCurrentUser: true`). Giving a friend kudos means a
+friend's run not yet liked: Miles Chen's "Zwift Race - Crit City" (17) is next
+in the feed. The rubric ("tap the kudos button on the friend's activity",
+report the name and type) cannot tell giving from removing, and the judge does
+not know who the user is. Separately, the first tap after a scroll landed while
+the list was still moving and did nothing (fixed in 869132f: a scroll now waits
+for a still screen; see `docs/research/decision-models-jev-handoff-2026-10-16.md`).
+Each run below was read from its screens (the Like count and colour before and
+after every tap). The judge's numbers above are unchanged.
+
+- Jev's verdict here (fail, 3 of 5) stands, but "kudos given" above is wrong:
+  its one Like tap came right after the scroll and changed nothing (31, orange,
+  before and after). With an answer step it would not have passed: 3 of 27,
+  not 4.
+- The two Luna passes in the comparison table (4888b67) are not real either: the
+  Decisions API's tap changed nothing, and Luna LLM removed the seeded like
+  (31 to 30). See that baseline's note.

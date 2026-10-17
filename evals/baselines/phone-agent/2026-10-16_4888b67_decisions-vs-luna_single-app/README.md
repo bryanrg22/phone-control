@@ -44,3 +44,27 @@ The LLM's 6 failures, for the record: caltrack-001 and quickbite-001 (checkout
 and reporting), cloudsheets-003 (edited a cell already 'Pending'), freshcart-001
 (lost on the store screen), mybank-003 (gave up before sending), weather-004
 (never reached Dallas).
+
+## Note added 2026-10-17: trailblaze-004 is not a real pass in either run
+
+In iOSWorld's seed (`TrailBlaze/Persistence/SeedData.swift`, and the app
+state after a reset on the simulator) Ava Torres's run "Twin Peaks Sunrise
+Repeats" is already liked (`currentUserKudo: true`, 31), and Jordan Avery is the
+user (`athlete_001`, `isCurrentUser: true`). Giving a friend kudos means a
+friend's run not yet liked: Miles Chen's "Zwift Race - Crit City" (17) is next
+in the feed. The rubric ("tap the kudos button on the friend's activity",
+report the name and type) cannot tell giving from removing, and the judge does
+not know who the user is. Separately, the first tap after a scroll landed while
+the list was still moving and did nothing (fixed in 869132f: a scroll now waits
+for a still screen; see `docs/research/decision-models-jev-handoff-2026-10-16.md`).
+Each run below was read from its screens (the Like count and colour before and
+after every tap). The judge's numbers above are unchanged.
+
+- **Decisions API**: the Like tap right after the scroll changed nothing (31,
+  orange, before and after); it then opened Jordan Avery's profile, went back,
+  and said `done`. No kudos given.
+- **Luna LLM**: its tap right after the scroll changed nothing; its
+  `tapText("Like")` then removed the seeded like (31 to 30), and it answered
+  "Gave kudos to Ava Torres's Run".
+
+Counted strictly: the Decisions API 2 of 27, Luna 20 of 27.

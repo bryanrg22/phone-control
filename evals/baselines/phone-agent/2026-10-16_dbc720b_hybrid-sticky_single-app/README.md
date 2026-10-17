@@ -53,3 +53,31 @@ attachment inside the simulator (24 GB in testmanagerd's Attachments), which
 filled the disk twice. `start-runner.sh` now runs with both attachment
 lifetimes set to keepNever (commit 3fe4a7b); confirmed on a copy of the run
 file, not yet on a live runner.
+
+## Note added 2026-10-17: trailblaze-004 is not a real pass for any agent here
+
+In iOSWorld's seed (`TrailBlaze/Persistence/SeedData.swift`, and the app
+state after a reset on the simulator) Ava Torres's run "Twin Peaks Sunrise
+Repeats" is already liked (`currentUserKudo: true`, 31), and Jordan Avery is the
+user (`athlete_001`, `isCurrentUser: true`). Giving a friend kudos means a
+friend's run not yet liked: Miles Chen's "Zwift Race - Crit City" (17) is next
+in the feed. The rubric ("tap the kudos button on the friend's activity",
+report the name and type) cannot tell giving from removing, and the judge does
+not know who the user is. Separately, the first tap after a scroll landed while
+the list was still moving and did nothing (fixed in 869132f: a scroll now waits
+for a still screen; see `docs/research/decision-models-jev-handoff-2026-10-16.md`).
+Each run below was read from its screens (the Like count and colour before and
+after every tap). The judge's numbers above are unchanged.
+
+- **Hyb sticky (Decisions API)**: Luna's first Like tap, right after a scroll,
+  changed nothing; the next liked Jordan Avery's "Presidio Tempo Before Work"
+  (18 to 19), the user's own run; it answered "Gave kudos to Jordan Avery's
+  Run". Ava's run stayed liked (31).
+- **Hyb sticky Jev**: two taps right after a scroll and a swipe changed nothing;
+  the third liked Jordan Avery's run (18 to 19); same answer.
+- **Decisions, Luna, Hyb step** (4888b67, 4888b67, 487f174): a tap that changed
+  nothing, an unlike (31 to 30), and a tap that changed nothing; see those
+  baselines' notes. **Jev** was judged a fail.
+
+Counted strictly: Hyb sticky 24 of 27, Hyb sticky Jev 20, Luna 20, Hyb step 20,
+the Decisions API 2.

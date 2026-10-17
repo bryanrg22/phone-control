@@ -70,18 +70,25 @@ model's list price.
 - **trailblaze-004 is a pass the judge cannot check.** In the seed, Ava
   Torres's run is already liked (31, orange). The first Like tap after the
   scroll lands while the list is still moving and does nothing; a second tap
-  removes the like (31 to 30). Traced in the filed runs: Jev alone (c4d73d2)
-  tapped once and changed nothing, Luna alone (4888b67) went 31 to 30, and both
-  were judged passes. The sticky hybrids tapped Jordan Avery's run instead,
-  which was not checked. Not counted here.
+  removes the like (31 to 30). Traced in the filed runs (corrected
+  2026-10-17): the Decisions API alone (4888b67) tapped once and changed
+  nothing, and was judged a pass; Jev alone (c4d73d2) did the same and was
+  judged a fail (no answer); Luna alone (4888b67) went 31 to 30, judged a pass;
+  the step hybrid (487f174) tapped once and changed nothing, judged a pass. The
+  sticky hybrids (dbc720b) liked Jordan Avery's run, which is the user's own
+  (`isCurrentUser: true` in the seed), judged passes. Each of those baselines
+  now carries a note. Not counted here.
 - **The search-field test matches "Research".** `candidates.mjs` treats a field
   as a search field when its description contains "search", so the agenda field
   ("Threat models / Research gaps / …") got "Search for safety" options and lost
   its write option. That option overwrote "Research gaps" in cloudslides-002
-  (Decisions), which the judge passed. Still present on `decision-models`.
+  (Decisions), which the judge passed. Fixed in 869132f: the field's name
+  (label or placeholder) must have the word Search.
 - **The first tap after a scroll is swallowed** (trailblaze in every run, the
   list shifting about 4% between the screens): the 350 ms settle is shorter
-  than the scroll's deceleration.
+  than the scroll's deceleration (about 2 s after the swipe call returns,
+  measured 2026-10-17). Fixed in 869132f: scroll and swipe wait for the
+  runner's /isScreenStatic, as Maestro does.
 
 ## How it was run
 
