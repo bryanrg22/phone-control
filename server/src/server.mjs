@@ -574,7 +574,8 @@ export function buildProductionApp(env = process.env) {
     driverHost: device.address,
     driverPort: Number(env.CONNECTOR_RUNNER_PORT || 22087),
     provider: model.provider,
-    model: model.id,
+    model: model.agentModel || model.id,
+    extraArgs: model.agentArgs || [],
     askUserTimeoutSec: Number(env.CONNECTOR_ASKUSER_TIMEOUT || 300),
   });
   // A task owns the whole cycle: start automation, run, put it down again.

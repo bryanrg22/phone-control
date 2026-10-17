@@ -29,31 +29,53 @@ export const MODELS = {
   'claude-fable-5':         { provider: 'anthropic', label: 'Claude Fable 5',    aliases: ['fable 5'] },
   'gemini-3.6-flash':       { provider: 'gemini',    label: 'Gemini 3.6 Flash',  aliases: ['gemini', 'flash', 'gemini flash'] },
   'gemini-3.1-pro-preview': { provider: 'gemini',    label: 'Gemini 3.1 Pro',    aliases: ['gemini pro'] },
+  // Hybrids (agent/decision/escalate.mjs): a decision model chooses each step,
+  // and GPT-6 Luna, with the screenshot and the full tools, takes over when the
+  // choice is a conclusion, typing, unsure or stuck, keeping control until it
+  // hands back (--escalation-mode sticky). "Jev" and "Decisions" mean these, not
+  // the decision models alone, which passed 2 and 3 of iOSWorld's 27 single-app
+  // tasks. Simulator only so far: Decisions 24 of 27, Jev 20 (trailblaze-004
+  // excluded), against 20 for Luna alone, at the same cost per task
+  // (evals/baselines/phone-agent/2026-10-16_dbc720b_hybrid-sticky_single-app).
+  // agentModel is what the agent is given as --model; keys, every provider
+  // whose key the run needs.
+  'hybrid-decisions':       { provider: 'hybrid', label: 'Decisions hybrid', aliases: ['decisions', 'decision', 'decisions hybrid', 'decisions api', 'openai decisions'],
+                              agentModel: 'openai-decisions:gpt-6-luna+openai:gpt-6-luna', agentArgs: ['--escalation-mode', 'sticky'], keys: ['openai'] },
+  'hybrid-jev':             { provider: 'hybrid', label: 'Jev hybrid',       aliases: ['jev', 'jev hybrid', 'typesafe', 'typesafe jev'],
+                              agentModel: 'typesafe:jev-latest+openai:gpt-6-luna', agentArgs: ['--escalation-mode', 'sticky'], keys: ['openai', 'typesafe'] },
 };
 
 export const FALLBACK_DEFAULT_MODEL = 'gpt-6-luna';
 
-export const PROVIDER_KEY_ENV = { openai: 'OPENAI_API_KEY', anthropic: 'ANTHROPIC_API_KEY', gemini: 'GEMINI_API_KEY' };
+export const PROVIDER_KEY_ENV = { openai: 'OPENAI_API_KEY', anthropic: 'ANTHROPIC_API_KEY', gemini: 'GEMINI_API_KEY', typesafe: 'TYPESAFE_API_KEY' };
 
 const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9.]+/g, ' ').trim();
 
 /**
  * Accepts an exact id ("gpt-6-luna") or how a person says it ("Luna", "GPT 6
- * Luna", "sonnet"). Returns { id, provider, label } or null. A bare family name
- * resolves to its newest member, which is what someone saying "Luna" means.
+ * Luna", "sonnet"). Returns { id, provider, label, agentModel, agentArgs, keys }
+ * or null: agentModel is the agent's --model (the id, except for a hybrid),
+ * agentArgs any further agent flags, keys every provider whose key it needs.
+ * A bare family name resolves to its newest member, which is what someone
+ * saying "Luna" means.
  */
 export function resolveModel(input) {
   const want = norm(input);
   if (!want) return null;
   for (const [id, m] of Object.entries(MODELS)) {
     if (norm(id) === want || norm(m.label) === want || m.aliases.some((a) => norm(a) === want)) {
-      return { id, provider: m.provider, label: m.label };
+      return { id, provider: m.provider, label: m.label, agentModel: m.agentModel || id, agentArgs: m.agentArgs || [], keys: m.keys || [m.provider] };
     }
   }
   return null;
 }
 
 export const modelChoices = () => Object.entries(MODELS).map(([id, m]) => `${m.label} (${id})`).join(', ');
+
+/** The first provider a resolved model needs whose key is not set, or null. */
+export function missingProviderKey(model, hasKey) {
+  return (model.keys || [model.provider]).find((p) => !hasKey(p)) || null;
+}
 
 /** Is the key for this provider present? Decided before anything touches the phone. */
 export function providerKeyPresent(provider, env = process.env) {
