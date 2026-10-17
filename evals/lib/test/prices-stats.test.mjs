@@ -21,6 +21,8 @@ ok('OpenAI: no cache writes; cached input at the cached rate', () => {
 });
 ok('no tokens cost nothing; an unpriced model has no cost rather than a wrong one', () => {
   assert.equal(costOf('gpt-6-astra', {}), 0);
+  // Jev lists no cache rate; a record's zero cached tokens must not turn the cost into NaN (it did: 0 * undefined).
+  close(costOf('jev-latest', { input_tokens: 34086, output_tokens: 3916, cache_read_input_tokens: 0, cache_write_input_tokens: 0, reasoning_output_tokens: 0 }), 34086 * 0.042 / 1e6);
   assert.equal(costOf('some-new-model', { input_tokens: 5 }), null);
 });
 ok('every model evaluated has a price', () => {

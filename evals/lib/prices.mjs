@@ -39,5 +39,7 @@ export function costOf(model, u) {
   const read = u.cache_read_input_tokens || 0;
   const write = u.cache_write_input_tokens || 0;
   const fresh = Math.max(0, (u.input_tokens || 0) - read - write);
-  return (fresh * p.input + read * p.cache_read + write * (p.cache_write ?? p.input) + (u.output_tokens || 0) * p.output) / 1e6;
+  // A model with no cache rate (the decision models) charges cached and
+  // cache-written tokens at the input rate: a missing rate must not make NaN.
+  return (fresh * p.input + read * (p.cache_read ?? p.input) + write * (p.cache_write ?? p.input) + (u.output_tokens || 0) * (p.output ?? 0)) / 1e6;
 }
