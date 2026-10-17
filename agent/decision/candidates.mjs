@@ -19,7 +19,14 @@
 //                 A single-line field that already has text is REPLACED, by
 //                 position (replaceTextAt: skytrip-002 typed "ATL" into
 //                 "ATLSFOSFO", and its two fields share the label "Airport");
-//                 a text view (a note, a document) is appended to.
+//                 a text view (a note, a document), or a field whose text has
+//                 several lines, is APPENDED to (appendTextAt: the caret is put
+//                 at the end, and the phrase goes on a new line, or after a
+//                 space). iOS reports a SwiftUI multi-line TextField as a text
+//                 field, and replaceTextAt's triple tap selects one paragraph:
+//                 cloudslides-002's agenda lost "Research gaps" to "safety"
+//                 (2026-10-17). No replace is offered there: it would not do
+//                 what it says.
 //   search_<n>_<k> phrase n into search field k, then Return: the submit closes
 //                 the keyboard, which covered the result rows (cinephile-001,
 //                 megamart-001 tapped a row's title text under it, to no effect)
@@ -124,12 +131,16 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
       const targets = /^\d/.test(p) ? [...fields, ...wheels].slice(0, MAX_TYPING_TARGETS) : fields;
       targets.forEach((f, k) => {
         const hasText = / = "/.test(f.desc);
+        const lines = hasText && /\n/.test(f.value || '');
         if (f.kind === 'picker wheel') {
           out.push({ value: `type_${i}_${k}`, description: `Set ${sliceDesc(f.desc, 60)} by tapping it and typing "${p}"`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
-        } else if (hasText && f.kind !== 'text view') {
+        } else if (hasText && (lines || f.kind === 'text view')) {
+          const sep = lines ? (/\n$/.test(f.value) ? '' : '\n') : (/\s$/.test(f.value || '') ? '' : ' ');
+          out.push({ value: `type_${i}_${k}`, description: `Add "${p}" at the end of ${sliceDesc(f.desc, 60)}, ${lines ? 'on a new line' : 'after its current text'}`, actions: [{ tool: 'appendTextAt', args: { x: f.x, y: f.y, text: `${sep}${p}` } }] });
+        } else if (hasText) {
           out.push({ value: `type_${i}_${k}`, description: `Replace the text in ${sliceDesc(f.desc, 60)} with "${p}"`, actions: [{ tool: 'replaceTextAt', args: { x: f.x, y: f.y, value: p } }] });
         } else {
-          out.push({ value: `type_${i}_${k}`, description: `Type "${p}" into ${sliceDesc(f.desc, 60)}${hasText ? ' (after its current text)' : ''}`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
+          out.push({ value: `type_${i}_${k}`, description: `Type "${p}" into ${sliceDesc(f.desc, 60)}`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
         }
         if (isSearchField(f)) {
           const put = hasText ? [{ tool: 'replaceTextAt', args: { x: f.x, y: f.y, value: p } }] : [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }];

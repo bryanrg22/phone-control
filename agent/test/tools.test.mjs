@@ -15,7 +15,7 @@ function mock({ hierarchy = tree(), keyboard = [false] } = {}) {
   const calls = [];
   const kb = [...keyboard];
   const device = {
-    hierarchy: async () => hierarchy,
+    hierarchy: async () => (typeof hierarchy === 'function' ? hierarchy(calls) : hierarchy),   // a function: the screen after the calls so far
     keyboardVisible: async () => (kb.length > 1 ? kb.shift() : kb[0]),
     emptySpotAboveKeyboard: async () => ({ x: 8, y: 300 }),
     launchApp: async (b) => calls.push(['launchApp', b]),
@@ -126,6 +126,38 @@ for (const [name, kb, hidden] of [
   const { run, calls } = mock({ hierarchy: tree(node('Message', { type: 49 }), node('Send', { x: 350, y: 800, w: 30, h: 30 })) });
   const r = await run('typeAndSubmit', { elementText: 'Message', text: 'hi', submitKey: 'send' });
   check('typeAndSubmit taps the Send button it found and names it', !r.error && r.text.includes('"Send"') && calls.at(-1)[0] === 'tap' && calls.at(-1)[1] === 365);
+}
+
+console.log('appending to a field of several lines (the decision mode):');
+{
+  // cloudslides-002's agenda field, 157x62 pt at (122, 244): centre (50%, 31.5%).
+  const AGENDA = 'Threat models\nResearch gaps\nWhy benchmarks matter';
+  const screenAfter = (calls) => tree(
+    node('', { type: 49, value: 'Agenda', x: 122, y: 195, w: 157, h: 29 }),
+    node('', { type: 49, value: calls.some((c) => c[0] === 'type') ? `${AGENDA}\nsafety` : AGENDA, x: 122, y: 244, w: 157, h: 62 }),
+  );
+  const { run, calls, state } = mock({ hierarchy: screenAfter });
+  const r = await run('appendTextAt', { x: 50, y: 31.5, text: '\nsafety' });
+  check('taps the field\'s bottom-right corner, just inside (where iOS puts the caret at the end), then types', calls.length === 2 && calls[0][0] === 'tap' && calls[0][1] === 273 && calls[0][2] === 300 && calls[1][0] === 'type' && calls[1][1] === '\nsafety' && state.keyboardUp, JSON.stringify(calls));
+  check('reads the field back, and says it now ends with the text (as CloudSlides read on the simulator, 2026-10-17)', !r.error && r.changesScreen && r.text.includes('at its end') && r.text.includes('now ends with it: "Threat models\\nResearch gaps\\nWhy benchmarks matter\\nsafety"'), r.text);
+}
+{
+  // The point is inside the field but off-centre (the keyboard moved it a little): the field is found by containment.
+  const { run, calls } = mock({ hierarchy: tree(node('', { type: 52, value: 'Standup notes', x: 16, y: 200, w: 370, h: 300 })) });
+  const r = await run('appendTextAt', { x: 30, y: 30, text: ' Gym' });
+  check('a text view: its own corner, found by containment; and when the text is not there it says so', calls[0][1] === 380 && calls[0][2] === 494 && r.text.includes('No field\'s text ends with it'), `${JSON.stringify(calls)} ${r.text}`);
+}
+{
+  // A field inside a larger editable container: the smallest that holds the point.
+  const { run, calls } = mock({ hierarchy: tree(node('', { type: 52, value: 'outer', x: 0, y: 100, w: 402, h: 600, children: [] }), node('', { type: 49, value: 'a\nb', x: 50, y: 300, w: 200, h: 40 })) });
+  await run('appendTextAt', { x: 37.3, y: 36.6, text: '\nc' });
+  check('the smallest field that holds the point is the one appended to', calls[0][1] === 244 && calls[0][2] === 334, JSON.stringify(calls));
+}
+{
+  const { run, calls } = mock({ hierarchy: tree(node('Save', { x: 300, y: 70, w: 80, h: 40 })) });
+  const r = await run('appendTextAt', { x: 50, y: 50, text: 'x' });
+  check('no field at the point: taps the point itself, and says it could not find the end', calls[0][0] === 'tap' && calls[0][1] === 201 && calls[0][2] === 437 && r.text.includes('no field was found'), `${JSON.stringify(calls)} ${r.text}`);
+  check('pixels instead of percent are refused, and nothing is typed', (await run('appendTextAt', { x: 300, y: 600, text: 'x' })).error && calls.length === 2);
 }
 
 console.log('the user, and the end:');

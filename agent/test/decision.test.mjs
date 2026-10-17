@@ -76,7 +76,7 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   const empty = candidateActions({ elements: [field('text field "Label" (empty)')], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
   check('an empty field: tap it, then type', empty.description === 'Type "Gym" into text field "Label" (empty)' && empty.actions.map((a) => a.tool).join() === 'tap,inputText', JSON.stringify(empty));
   const view = candidateActions({ elements: [field('text view "Body" = "Standup notes"', 'text view', 'Body')], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
-  check('a text view with text is appended to, not replaced', view.description === 'Type "Gym" into text view "Body" = "Standup notes" (after its current text)' && view.actions.map((a) => a.tool).join() === 'tap,inputText', JSON.stringify(view));
+  check('a text view with text is appended to at its end, after a space, not replaced', view.description === 'Add "Gym" at the end of text view "Body" = "Standup notes", after its current text' && view.actions.length === 1 && view.actions[0].tool === 'appendTextAt' && view.actions[0].args.text === ' Gym' && view.actions[0].args.x === 50, JSON.stringify(view));
   const nameless = candidateActions({ elements: [field('text field = "Work"', 'text field', null)], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
   check('a field with text but no name is still replaced, since replacing is by position', nameless.actions[0].tool === 'replaceTextAt');
   const search = candidateActions({ elements: [field('search field "Search MegaMart" (empty)', 'search field', 'Search MegaMart')], task: "Search for 'PS5 Controller' on MegaMart", apps: ['MegaMart'] });
@@ -96,6 +96,38 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   });
   const searches = slides.filter((x) => x.value.startsWith('search_')).map((x) => x.value);
   check('"Research" in a field\'s text or name is not "search": only the real search field gets a search option', searches.join() === 'search_0_0', searches.join());
+  // The same screen as listElements reads it (cloudslides-002 step 10, run
+  // 2026-10-17_869132f_decisions_fix-check): the slide body is a multi-line
+  // SwiftUI TextField, which iOS reports as a text field.
+  const AGENDA = 'Threat models\nResearch gaps\nWhy benchmarks matter';
+  const slide = listElements(JSON.stringify(tree(
+    el('', { type: 49, value: 'Agenda', x: 122, y: 195, w: 157, h: 29 }),
+    el('', { type: 49, value: AGENDA, x: 122, y: 244, w: 157, h: 62 }),
+  )), W, H);
+  const body = slide.find((e) => e.value === AGENDA);
+  const onSlide = candidateActions({ elements: slide, task: "Open the '[Draft] Autonomous Agents' presentation in CloudSlides and edit slide 2 to add a bullet about 'safety' to the agenda list.", apps: ['CloudSlides'], keyboardUp: false });
+  const safety = phrasesOf("Open the '[Draft] Autonomous Agents' presentation in CloudSlides and edit slide 2 to add a bullet about 'safety' to the agenda list.", { apps: ['CloudSlides'] }).indexOf('safety');
+  const add = onSlide.find((x) => x.value === `type_${safety}_1`);
+  check('a text field of several lines is appended to, on a new line, at its end (cloudslides-002)', body && body.kind === 'text field' && add && add.description.startsWith('Add "safety" at the end of text field = "Threat models') && add.description.endsWith(', on a new line') && add.actions.length === 1 && add.actions[0].tool === 'appendTextAt' && add.actions[0].args.text === '\nsafety' && add.actions[0].args.x === body.x && add.actions[0].args.y === body.y, JSON.stringify(add));
+  const atBody = (x) => x.actions.some((a) => a.args.x === body.x && a.args.y === body.y);
+  check('and no option replaces its text: a triple tap selects one paragraph only', !onSlide.some((x) => atBody(x) && x.actions.some((a) => a.tool === 'replaceTextAt')), onSlide.filter(atBody).map((x) => x.description).join('\n'));
+  const title = onSlide.find((x) => x.value === `type_${safety}_0`);
+  check('the one-line title beside it is still replaced', title && title.actions[0].tool === 'replaceTextAt' && title.actions[0].args.value === 'safety', JSON.stringify(title));
+  const endsInLine = candidateActions({ elements: [{ ...field('text field = "Milk\nEggs"', 'text field', null), value: 'Milk\nEggs\n' }], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
+  check('text that already ends in a new line gets no second one', endsInLine.actions[0].tool === 'appendTextAt' && endsInLine.actions[0].args.text === 'Gym', JSON.stringify(endsInLine));
+  const emptyLines = candidateActions({ elements: [{ ...field('text field "Body" (empty)', 'text field', 'Body'), value: '' }], task: TASK, apps: APPS }).find((x) => x.value === 'type_0_0');
+  check('an empty field is typed into as before, whatever its kind', emptyLines.actions.map((a) => a.tool).join() === 'tap,inputText');
+  // skytrip-002 (2026-10-16): two one-line fields share the placeholder "Airport".
+  const airports = listElements(JSON.stringify(tree(
+    { ...el('', { type: 49, value: 'ATL', x: 80, y: 223, w: 258, h: 22 }), placeholderValue: 'Airport' },
+    { ...el('', { type: 49, value: 'LAX', x: 80, y: 280, w: 258, h: 22 }), placeholderValue: 'Airport' },
+  )), W, H);
+  const trip = 'Search for flights from SFO to JFK for the next few days on SkyTrip and compare prices.';
+  const tripPhrases = phrasesOf(trip, { apps: ['SkyTrip'] });
+  const tc = candidateActions({ elements: airports, task: trip, apps: ['SkyTrip'], currentApp: 'SkyTrip' });
+  const sfo = tc.find((x) => x.value === `type_${tripPhrases.indexOf('SFO')}_0`);
+  const jfk = tc.find((x) => x.value === `type_${tripPhrases.indexOf('JFK')}_1`);
+  check('skytrip-002 unchanged: each one-line "Airport" field is replaced, by its own position', sfo && jfk && sfo.description === 'Replace the text in text field "Airport" = "ATL" with "SFO"' && sfo.actions[0].tool === 'replaceTextAt' && sfo.actions[0].args.y === airports[0].y && jfk.description === 'Replace the text in text field "Airport" = "LAX" with "JFK"' && jfk.actions[0].tool === 'replaceTextAt' && jfk.actions[0].args.y === airports[1].y && !tc.some((x) => x.actions.some((a) => a.tool === 'appendTextAt')), `${JSON.stringify(sfo)} ${JSON.stringify(jfk)}`);
   check('isSearchField: by kind, or by the word in the name only', isSearchField({ kind: 'search field', name: null }) && isSearchField({ kind: 'text field', name: 'Search…' }) && !isSearchField({ kind: 'text field', name: 'Researcher' }) && !isSearchField({ kind: 'text field', name: null, desc: 'text field = "search the web"' }));
 }
 {

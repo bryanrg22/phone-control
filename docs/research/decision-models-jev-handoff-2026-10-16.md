@@ -448,4 +448,91 @@ run_info says dirty only for the `node_modules` symlink):
   agenda still lost "Research gaps": the field is multi-line but iOS reports it
   as a *text field*, so `type_1_1` was "Replace the text in ... with safety", and
   `replaceTextAt`'s triple tap selected one paragraph. A separate defect, open:
-  a multi-line text field should be appended to, as a text view is.
+  a multi-line text field should be appended to, as a text view is (fixed in
+  the next section).
+
+## A field of several lines is appended to, not replaced (2026-10-17)
+
+**The defect.** `candidates.mjs` offered `type_<n>_<k>` as "Replace the text in
+<field> with X" (`replaceTextAt`: focus, triple tap, type) for every *text
+field* with text, and appended only to a *text view*. CloudSlides' slide body
+is a multi-line SwiftUI field that iOS reports as a text field (value "Threat
+models\nResearch gaps\nWhy benchmarks matter"); on iOS a triple tap selects one
+paragraph, so "Research gaps" became "safety" (869132f re-run, step 10). The
+text view path was not right either: it tapped the field's centre, and a tap
+puts the caret where it lands, so the phrase went into the middle of the text,
+with no space before it.
+
+**What the established tools do.** No tool has a "caret to end" primitive.
+Appium's WebDriverAgent types into a field by tapping its hit point (the
+centre) if it has no keyboard focus, then typing (`XCUIElement+FBTyping.m`,
+`fb_prepareForTextInputWithSnapshot`), so it has the same middle-of-text
+behaviour. To *clear*, it does not trust a triple tap: it sends the HID Clear
+key, then backspaces × the value's length, re-reads the value after each try,
+and triple-taps only as the last retry. The W3C WebDriver spec likewise moves
+the insertion point only by pointer actions. The usual XCUITest workaround is
+to tap near the field's far edge (a normalized offset of 0.9-0.99) so the caret
+lands at the end, then check the field's value. That is what is done here.
+
+**The fix.**
+- `candidates.mjs`: a field with text whose value has a newline, or any text
+  view with text, gets `type_<n>_<k>` = "Add X at the end of <field>, on a new
+  line" (or "after its current text" for a one-line text view), as one action,
+  `appendTextAt`. The phrase is prefixed with "\n" (no prefix if the text
+  already ends in a newline), or with a space for a one-line text view (before,
+  "Standup notes" + "Gym" gave "Standup notesGym"). A one-line field with text
+  is still replaced, by position (skytrip-002's two "Airport" fields).
+- **No replace option is offered beside the append.** On a multi-line field
+  `replaceTextAt` selects one paragraph, so an option saying "Replace the text"
+  would do something else. A real replace there would need WDA's method (Clear
+  key, or backspaces × length, then re-read); not built. No current task needs
+  it.
+- `tools.mjs`: `appendTextAt({ x, y, text })`, hidden like `replaceTextAt` (the
+  LLM's tool list and hash are unchanged). It finds the field again by position
+  in a fresh element list (the smallest editable element holding the point,
+  since the keyboard can move it), taps 6 pt inside its bottom-right corner (on
+  or below the last line, where iOS puts the caret at the end), types, then
+  reads the fields back and says whether one now ends with the text. If no
+  field is found at the point, it taps the point and says so.
+
+**Tests.** `decision.test.mjs`: the CloudSlides screen built through
+`listElements` (the agenda field is appended to with "\nsafety", and no option
+at its position uses `replaceTextAt`; the one-line title beside it is still
+replaced); text that already ends in a newline; an empty field still tap + type;
+a one-line text view appended to after a space; skytrip-002's two "Airport"
+fields (placeholder, not label, as the app reports them) each replaced at their
+own position. The four new-behaviour checks fail on the old `candidates.mjs`
+and pass on the new; skytrip and the title pass on both. `tools.test.mjs`: the
+corner tap (273, 300 for the 157x62 agenda field), the read-back message, a
+text view found by containment off-centre, the smallest of nested fields, no
+field at the point, and percent bounds. `npm test` green.
+
+**Re-run on the simulator** (decision mode, `openai-decisions:gpt-6-luna`, run
+`2026-10-17_13c3372+append_decisions_cloudslides-002`, a clean checkout of
+13c3372 with only the four changed files on top, same runner process as the
+869132f re-run): judged fail, 4/7 as before, but the edit is now right.
+- Step 9: `type_1_1` "Add "safety" at the end of text field = "Threat models…",
+  on a new line", chosen with the field *not* focused and the keyboard down.
+  `appendTextAt` → "The field now ends with it: "Threat models\nResearch
+  gaps\nWhy benchmarks matter\nsafety"". The element list showed that same
+  value at every step from 9 to the end (16). iOS did not capitalise the new
+  line. The case where the field is already focused was not tried live.
+- After that the model could not leave edit mode: `hide_keyboard` ×4 (the
+  keyboard stays up), "List" ×2 and Return ×2 (none changed the value), then
+  the no-progress stop. The ✓ that ends editing is listed as `"Selected"` (26x24
+  at 2.9%, 11%), so nothing tells the model it means Done.
+- The judge failed "add a bullet" as "existing agenda content appears
+  altered/overwritten". It was not: the slide's text box scrolls, so the final
+  screenshot shows only "Why benchmarks matter / safety", while the thumbnail
+  and the field's value keep all four lines. "Confirm saved" and "report the
+  agenda" failed as expected (no ✓ tap; a decision model writes no answer).
+  CloudSlides saves nothing under its app-state folder, in this run or the
+  869132f run, so the value can only be read from the element list.
+
+**Still open, not fixed here:** (1) the ✓ labelled "Selected" (an app
+accessibility label; the harness could only guess it); (2) the LLM mode's
+`replaceText` uses the same triple tap, so it would cut one paragraph of a
+multi-line field too; (3) `search_` on a field with text still uses
+`replaceTextAt` (no multi-line search field seen); (4) a multi-line field whose
+text is longer than its frame: the corner tap reaches the end of the last
+*visible* line, not of the text.

@@ -10,7 +10,7 @@
 //   settle         wait for an iOS animation before observing (navigation)
 //   done / failed  the model concluded: { summary } / { reason }
 
-import { formatElements, capElements, findElement } from './elements.mjs';
+import { formatElements, capElements, findElement, listElements } from './elements.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -177,6 +177,41 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
       if (!(x >= 0 && x <= 100 && y >= 0 && y <= 100)) return { error: true, text: `ERROR: coordinates must be percentages 0-100 (got ${x}, ${y}).` };
       await selectAllAndType(...pt(x, y), value);
       return { text: `Replaced the text of the field at (${x}%, ${y}%) → "${value}" (selected all + typed).`, changesScreen: true };
+    },
+
+    // Not in toolDefinitions: the decision mode's append, for a field of
+    // several lines (a note, a slide's bullets). A tap puts the caret where it
+    // lands, so a tap at the centre types into the middle; the field's
+    // bottom-right corner, just inside, is on or below its last line, where
+    // iOS puts the caret at the end. The field is found again by position in a
+    // fresh element list, as the keyboard may have moved it. Its value is read
+    // back afterwards, as WebDriverAgent reads a field back after clearing it.
+    async appendTextAt({ x, y, text }) {
+      if (!(x >= 0 && x <= 100 && y >= 0 && y <= 100)) return { error: true, text: `ERROR: coordinates must be percentages 0-100 (got ${x}, ${y}).` };
+      const s = screen();
+      const [px, py] = pt(x, y);
+      const frameOf = (e) => ({ X: (e.x / 100) * s.widthPoints - e.w / 2, Y: (e.y / 100) * s.heightPoints - e.h / 2, W: e.w, H: e.h });
+      const holds = (f) => px >= f.X - 1 && px <= f.X + f.W + 1 && py >= f.Y - 1 && py <= f.Y + f.H + 1;
+      const fields = listElements(await device.hierarchy(), s.widthPoints, s.heightPoints).filter((e) => e.editable && e.x !== null && e.w > 0 && e.h > 0);
+      const field = fields.map((e) => ({ e, f: frameOf(e) })).filter(({ f }) => holds(f)).sort((a, b) => a.f.W * a.f.H - b.f.W * b.f.H)[0];
+      let where;
+      if (field) {
+        const { f } = field;
+        const inset = (n) => Math.min(6, n / 4);
+        await device.tap(Math.round(f.X + f.W - inset(f.W)), Math.round(f.Y + f.H - inset(f.H)));
+        where = 'at its end';
+      } else {
+        await device.tap(px, py);
+        where = 'at the given point (no field was found there to find its end)';
+      }
+      await sleep(250);
+      await device.type(String(text ?? ''));
+      state.keyboardUp = true;
+      await sleep(300);
+      const typed = String(text ?? '').trim().toLowerCase();
+      const after = listElements(await device.hierarchy().catch(() => ''), s.widthPoints, s.heightPoints).filter((e) => e.editable && e.value);
+      const ends = typed && after.find((e) => e.value.trimEnd().toLowerCase().endsWith(typed));
+      return { text: `Typed ${JSON.stringify(String(text ?? ''))} into the field at (${x}%, ${y}%), ${where}. ${ends ? `The field now ends with it: ${JSON.stringify(ends.value.slice(-80))}.` : 'No field\'s text ends with it now: check where it went.'}`, changesScreen: true };
     },
 
     async pressKey({ key }) {
