@@ -54,6 +54,7 @@ import { createToolApi } from './tool-api.mjs';
 import { createMcpHandler, servedTools } from './mcp.mjs';
 import { startAgentProcess, agentLogLine } from './agent-runner.mjs';
 import { createSupervisorClient, parseDeviceOverrides } from './preflight.mjs';
+import { createKeepWarm } from './keep-warm.mjs';
 import { createVersionInfo, toolsFingerprint } from './version.mjs';
 import { createTaskRunner } from './task-runner.mjs';
 import { createPrefs } from './prefs.mjs';
@@ -592,6 +593,19 @@ export function buildProductionApp(env = process.env) {
       ...(env.CONNECTOR_ABANDON_SECONDS ? { abandonMs: Number(env.CONNECTOR_ABANDON_SECONDS) * 1000 } : {}),
     },
   });
+  // Keep each phone's tunnel and disk image ready between tasks (keep-warm.mjs),
+  // so a task after hours of idle starts like one minutes after the last.
+  // Never starts the runner. CONNECTOR_KEEPWARM_SECONDS=0 turns it off.
+  const keepWarmSeconds = Number(env.CONNECTOR_KEEPWARM_SECONDS ?? 600);
+  if (env.CONNECTOR_ALLOW_ARM !== '0' && keepWarmSeconds > 0) {
+    createKeepWarm({
+      enrolled: devices.enrolled,
+      busy: (uid) => !!store.activeFor(uid),
+      keepWarm: supervisor.keepWarm,
+      log,
+      intervalMs: keepWarmSeconds * 1000,
+    }).start();
+  }
   api = createToolApi({
     store, devices, log, versionInfo, prefs,
     hasProviderKey: (provider) => providerKeyPresent(provider, env),

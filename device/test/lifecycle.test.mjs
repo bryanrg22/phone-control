@@ -248,6 +248,123 @@ await scenario('tunnel helper SIGKILLed (orphan interface) → next arm rebuilds
   assert.equal(after.runnerHealthy, true);
 });
 
+// ─── keep-warm (--tunnel-only) and the startup shortcuts ─────────────────────
+
+const keepWarm = (phone) => h.sup(['--tunnel-only', '--address', phone.ip, '--udid', phone.udid], { extraEnv: { MOUNT_TIMEOUT_SECONDS: '20' } });
+
+await scenario('keep-warm after a ghost: rebuilds the tunnel on Wi-Fi and never starts the runner', async () => {
+  await armOk(A);
+  await suspend(A);
+  const [ghost] = await h.tunnelPids(A);
+  await A.setVpn(false);
+  await sleep(h.graceMs + 800);
+  await A.setVpn(true);                          // phone back on Wi-Fi, tunnel dead
+  assert.equal((await h.status(A)).tunnelState, 'stale', 'model check: the tunnel should be a ghost');
+  const starts = A.counters.runnerStarts;
+  const r = await keepWarm(A);
+  assert.equal(r.code, 0, `keep-warm failed: ${r.stderr.split('\n').slice(-4).join(' | ')}`);
+  assert.equal(A.counters.runnerStarts, starts, 'keep-warm started the runner (the banner would show)');
+  assert.equal(A.runner, null);
+  assert.equal(h.alive(ghost), false, 'the ghost helper was not reaped');
+  const s = await h.status(A);
+  assert.equal(s.tunnelState, 'live');
+  assert.equal(s.runnerHealthy, false);
+  // The next task reattaches and trusts the disk image keep-warm just saw.
+  const a = await armOk(A, 'arm after keep-warm');
+  assert.match(a.stderr, /reattach path, no rebuild/);
+  assert.match(a.stderr, /testing service seen on this tunnel \d+ s ago — not asking again/);
+});
+
+await scenario('keep-warm remounts a dropped disk image while unlocked, without starting the runner', async () => {
+  await armOk(A);
+  await suspend(A);
+  A.unmountDdi();
+  const mounts = A.counters.mounts;
+  const starts = A.counters.runnerStarts;
+  const r = await keepWarm(A);
+  assert.equal(r.code, 0, `keep-warm failed: ${r.stderr.split('\n').slice(-4).join(' | ')}`);
+  assert.equal(A.counters.mounts - mounts, 1, 'the disk image was not mounted');
+  assert.equal(A.counters.runnerStarts, starts, 'keep-warm started the runner');
+  assert.equal(A.ddiMounted, true);
+});
+
+await scenario('keep-warm on a locked phone: the mount is refused, nothing is started, it gives up quickly', async () => {
+  await armOk(A);
+  await suspend(A);
+  A.unmountDdi();
+  A.lock();
+  const refused = A.counters.mountsRefused;
+  const t0 = Date.now();
+  const r = await keepWarm(A);
+  assert.notEqual(r.code, 0);
+  assert.equal(A.counters.mountsRefused - refused, 1, 'the mount was not attempted');
+  assert.equal(A.runner, null);
+  assert.ok(Date.now() - t0 < 30000, `took ${Date.now() - t0} ms`);
+  await A.unlock();
+  assert.equal((await keepWarm(A)).code, 0, 'keep-warm did not recover once the phone was unlocked');
+  assert.equal(A.ddiMounted, true);
+});
+
+await scenario('keep-warm with a ghost while on cellular: refused, leaves no helper, starts nothing', async () => {
+  await armOk(A);
+  await suspend(A);
+  await A.setWifi(false);
+  await A.setVpn(false);
+  await sleep(h.graceMs + 800);
+  await A.setVpn(true);
+  const r = await keepWarm(A);
+  assert.notEqual(r.code, 0);
+  assert.match(r.stderr, /Wi-Fi/);
+  assert.equal((await h.tunnelPids(A)).length, 0, 'the ghost was not reaped');
+  assert.equal(A.runner, null);
+});
+
+await scenario('a warm tunnel on cellular is kept: a short probe that gets no answer is checked again before anything is torn down', async () => {
+  await armOk(A);
+  await suspend(A);
+  await A.setWifi(false);                        // roamed; the warm tunnel still routes
+  const hellos = A.counters.hellos;
+  const [helper] = await h.tunnelPids(A);
+  const a = await h.sup(['--once', '--address', A.ip, '--udid', A.udid], { extraEnv: { SIM_SHORT_PROBE_MISSES: '1' } });
+  assert.equal(a.code, 0, `arm on cellular failed: ${a.stderr.split('\n').slice(-4).join(' | ')}`);
+  assert.match(a.stderr, /phone is on cellular, where it could not be rebuilt — checking again/);
+  assert.match(a.stderr, /adopted live tunnel/);
+  assert.equal(A.counters.hellos, hellos, 'a new tunnel was attempted although the warm one routes');
+  assert.equal(h.alive(helper), true, 'the working tunnel was torn down');
+});
+
+await scenario('on Wi-Fi a short probe that gets no answer is the verdict: the tunnel is rebuilt without a second wait', async () => {
+  await armOk(A);
+  await suspend(A);
+  const hellos = A.counters.hellos;
+  const a = await h.sup(['--once', '--address', A.ip, '--udid', A.udid], { extraEnv: { SIM_SHORT_PROBE_MISSES: '1' } });
+  assert.equal(a.code, 0, a.stderr.split('\n').slice(-3).join(' | '));
+  assert.doesNotMatch(a.stderr, /checking again/);
+  assert.equal(A.counters.hellos - hellos, 1, 'the tunnel was not rebuilt');
+  assert.match(a.stderr, /orphaned helper gone after \d+ ms/);
+});
+
+await scenario('a trusted disk image that iOS dropped anyway: the arm notices, mounts it and starts', async () => {
+  await armOk(A);
+  await suspend(A);                              // tunnel live, disk image seen moments ago
+  A.unmountDdi();                                // dropped while the tunnel lived on
+  const mounts = A.counters.mounts;
+  const a = await armOk(A, 'arm with a stale trust');
+  assert.match(a.stderr, /not asking again/);
+  assert.match(a.stderr, /could not find the testing service/);
+  assert.match(a.stderr, /gone after all — checking and mounting it/);
+  assert.equal(A.counters.mounts - mounts, 1, 'the disk image was not mounted');
+  assert.equal((await h.status(A)).runnerHealthy, true);
+});
+
+await scenario('DDI_TRUST_SECONDS=0: the disk image is checked on every arm, as before', async () => {
+  await armOk(A);
+  await suspend(A);
+  const a = await h.sup(['--once', '--address', A.ip, '--udid', A.udid], { extraEnv: { DDI_TRUST_SECONDS: '0' } });
+  assert.equal(a.code, 0, a.stderr.split('\n').slice(-3).join(' | '));
+  assert.doesNotMatch(a.stderr, /not asking again/);
+});
+
 // ─── reboot / lock ───────────────────────────────────────────────────────────
 
 await scenario('restart: unreachable until the first unlock, then needs an unlocked phone to mount, then arms', async () => {

@@ -120,9 +120,10 @@ export function parseDeviceOverrides(text) {
  * Every command is the bundled supervisor with fixed flags plus the phone's
  * address and UDID from the registry — nothing a caller sends reaches a shell.
  */
-export function createSupervisorClient({ supervisorPath, env = process.env, node = process.execPath, log = () => {}, spawnFn = spawn, execFn = execFileP, logDir = null }) {
+export function createSupervisorClient({ supervisorPath, env = process.env, node = process.execPath, log = () => {}, spawnFn = spawn, execFn = execFileP, logDir = null, killGroup = (pid, sig) => process.kill(-pid, sig) }) {
   if (!supervisorPath) throw new Error('createSupervisorClient requires supervisorPath');
   const inFlight = new Map();   // address → child, so two questions cannot start two bring-ups
+  const warming = new Map();    // address → keep-warm child (tunnel and disk image only, never the runner)
 
   const ids = ({ address, udid }) => ['--address', address, ...(udid ? ['--udid', udid] : [])];
 
@@ -138,6 +139,10 @@ export function createSupervisorClient({ supervisorPath, env = process.env, node
 
   function startArm({ address, udid, slot }) {
     if (inFlight.has(address)) return { started: false, alreadyRunning: true };
+    // A task outranks the keep-warm job. Stop it, with any Python it started,
+    // and let the bring-up redo whatever it had not finished: a tunnel it left
+    // half-built is reaped and rebuilt, a mount it cut short is retried.
+    stopWarm(address);
     // Keep the supervisor's own account of the bring-up. It narrates every
     // decision on stderr (adopted a warm tunnel / found a ghost / rebuilt /
     // waited on the phone); thrown away, a slow or surprising start cannot be
@@ -177,6 +182,46 @@ export function createSupervisorClient({ supervisorPath, env = process.env, node
     return true;
   }
 
+  function stopWarm(address) {
+    const w = warming.get(address);
+    if (!w) return;
+    warming.delete(address);
+    try { killGroup(w.pid, 'SIGTERM'); } catch { try { w.kill('SIGTERM'); } catch { /* already gone */ } }
+    log(`preflight: keep-warm for ${address} stopped for a task`);
+  }
+
+  /**
+   * Keep a phone ready without touching its screen: rebuild a dead tunnel (on
+   * Wi-Fi) and mount the developer disk image if iOS dropped it (phone
+   * unlocked). Never starts the runner, so no banner. Resolves to
+   * { ran, code, ms, lines } once the supervisor exits; { ran: false } when a
+   * bring-up or another keep-warm for this phone is already running.
+   */
+  function keepWarm({ address, udid }, { mountTimeoutSeconds = 60 } = {}) {
+    if (inFlight.has(address) || warming.has(address)) return Promise.resolve({ ran: false });
+    const t0 = Date.now();
+    const child = spawnFn(node, [supervisorPath, '--tunnel-only', ...ids({ address, udid })], {
+      env: { ...env, MOUNT_TIMEOUT_SECONDS: String(mountTimeoutSeconds) },
+      stdio: ['ignore', 'ignore', 'pipe'],
+      detached: true,               // its own process group, so a task can stop it with its Python children
+    });
+    warming.set(address, child);
+    let text = '';
+    child.stderr?.on('data', (d) => { text += d; });
+    return new Promise((resolve) => {
+      const finish = (code) => {
+        if (warming.get(address) === child) warming.delete(address);
+        const lines = text.split('\n').filter(Boolean);
+        if (logDir && lines.length) {
+          try { mkdirSync(logDir, { recursive: true }); appendFileSync(join(logDir, 'keepwarm.log'), `\n=== ${new Date(t0).toISOString()} keep-warm for ${address} (exit ${code}) ===\n${lines.join('\n')}\n`); } catch { /* best effort */ }
+        }
+        resolve({ ran: true, code, ms: Date.now() - t0, lines });
+      };
+      child.once('exit', (code) => finish(code));
+      child.once('error', () => finish(null));
+    });
+  }
+
   /** Put automation down: the runner stops, the banner clears, the tunnel stays warm. */
   async function suspend({ address, udid }) {
     const { stdout } = await execFn(node, [supervisorPath, '--suspend', ...ids({ address, udid })], { env, timeout: 45000, maxBuffer: 4 * 1024 * 1024 });
@@ -207,5 +252,5 @@ export function createSupervisorClient({ supervisorPath, env = process.env, node
     } catch { return null; }
   }
 
-  return { inspect, startArm, cancelArm, suspend, screenState, prepareScreen, launchApp, _inFlight: inFlight };
+  return { inspect, startArm, cancelArm, keepWarm, suspend, screenState, prepareScreen, launchApp, _inFlight: inFlight, _warming: warming };
 }

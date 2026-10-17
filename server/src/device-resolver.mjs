@@ -60,6 +60,12 @@ export function createDeviceResolver({
     };
   }
 
+  /** Every approved phone with an address, as resolve() sees it (the keep-warm job's list). */
+  function enrolled() {
+    const db = loadRegistry(registryPath);
+    return (db.devices || []).map((d) => ({ uid: d.uid, ...resolve(d.uid) })).filter((d) => d.state === 'enrolled');
+  }
+
   /**
    * Registry + live probe. Returns a shape the tool layer can hand almost
    * verbatim to the model, including the sentence to say to the user.
@@ -155,5 +161,5 @@ export function createDeviceResolver({
     return { ready: false, state: d.state, ...where, message: d.message };
   }
 
-  return { resolve, status, runnerPort };
+  return { resolve, status, enrolled, runnerPort };
 }

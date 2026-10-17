@@ -56,6 +56,8 @@ const server = spawn(process.execPath, [join(REPO, 'server', 'src', 'server.mjs'
     CONNECTOR_ALLOW_URL_TOKENS: '1',
     CONNECTOR_STORE: paths.storePath,
     CONNECTOR_DEVICES: paths.devicesPath,
+    // Keep-warm would build tunnels on its own schedule mid-test; it has its own tests (server/test/keep-warm.test.mjs, device lifecycle).
+    CONNECTOR_KEEPWARM_SECONDS: '0',
     PHONE_CONTROL_STATE_DIR: join(dir, 'var'),
   },
   stdio: ['ignore', 'pipe', 'pipe'],

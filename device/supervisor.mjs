@@ -76,6 +76,27 @@ const ANCHOR_PATTERN = `ios[^ ]* runtest.*--udid=${UDID}`;
 const TUNNEL_PATTERN = `${escapeRegex(TUNNEL_PY)} ${UDID}`;
 const RUNNER_PORT = Number(process.env.RUNNER_PORT || '22087');
 const RSD_LISTEN_PORT = Number(process.env.RSD_LISTEN_PORT || '49152'); // answers only on Wi-Fi
+// How long a tunnel gets to answer before it is called dead. A live one
+// answered in 65–101 ms over a Tailscale relay (DERP; ping 90–116 ms; measured
+// 2026-10-17). It was 3 s, paid twice by every cold start (--status, then
+// --once), which made a dead tunnel cost 6 s just to notice.
+const TUNNEL_PROBE_MS = Math.max(200, Number(process.env.TUNNEL_PROBE_MS) || 1500);
+// Off Wi-Fi a tunnel called dead cannot be rebuilt, so a short probe that got
+// no answer is checked again with the old long wait before anything is torn down.
+const TUNNEL_CONFIRM_MS = 4000;
+// Test seam (lifecycle tests only): on loopback a tunnel answers in ~1 ms, so
+// the short probe never misses there; this makes it miss, to exercise the check below.
+const SHORT_PROBE_MISSES = process.env.SIM_SHORT_PROBE_MISSES === '1';
+const shortProbe = () => (SHORT_PROBE_MISSES ? Promise.resolve(false) : tunnelLive(TUNNEL_PROBE_MS));
+// The developer disk image, once seen mounted on a tunnel, is trusted on that
+// same live tunnel for this long without asking the phone again (a Python
+// call, ~3.3 s). Only a restart was seen to unmount it while a tunnel lived on,
+// and a restart also kills the tunnel. If the session then reports the testing
+// service missing, it is checked and mounted after all. 0 = always check.
+const DDI_TRUST_SECONDS = Math.max(0, Number(process.env.DDI_TRUST_SECONDS ?? 900));
+// Mounting downloads and signs the image (15–17 s measured). The keep-warm job
+// passes a shorter limit so a phone that cannot answer does not hold it for long.
+const MOUNT_TIMEOUT_SECONDS = Math.max(10, Number(process.env.MOUNT_TIMEOUT_SECONDS) || 180);
 // MUST be Python 3.13+: the tunnel is TLS-PSK and only 3.13+ ships
 // ssl.set_psk_client_callback. On 3.12 the fallback fails against OpenSSL 3.0
 // AFTER "handshake completed" — i.e. it looks like a trust failure.
@@ -173,8 +194,12 @@ const probeRunner = () => (phoneIP ? httpOk(`http://${phoneIP}:${RUNNER_PORT}/de
  * tunnelLive() for whether it routes.
  */
 async function tunnelUp() {
-  if (!rsdAddress) return false;
-  const client = rsdAddress.replace(/::1$/, '::2');
+  return rsdAddress ? ifaceHas(rsdAddress) : false;
+}
+
+/** Is the client side of the tunnel to this RSD address configured on an interface? */
+async function ifaceHas(rsd) {
+  const client = rsd.replace(/::1$/, '::2');
   try {
     const { stdout } = await execFileP('ip', ['-6', 'addr'], { timeout: 5000 });
     return stdout.includes(client);
@@ -189,11 +214,18 @@ async function tunnelUp() {
  */
 const tunnelLive = (ms = 4000) => (rsdAddress && rsdPort ? tcpOpen(rsdAddress, rsdPort, ms) : Promise.resolve(false));
 
+// When the testing service was last seen in this tunnel's service map (ISO), or null.
+let ddiVerifiedAt = null;
+
 function saveEndpoint(kind) {
   if (!rsdAddress || !rsdPort) return;
+  // Keep an earlier verification only if it was made over this same tunnel.
+  const prev = readEndpoint();
+  const verified = ddiVerifiedAt || (prev?.rsdAddress === rsdAddress && String(prev?.rsdPort) === String(rsdPort) ? prev.ddiVerifiedAt ?? null : null);
   try {
     writeFileSync(ENDPOINT_FILE, JSON.stringify({
       rsdAddress, rsdPort: String(rsdPort), at: new Date().toISOString(), kind: kind || null,
+      ddiVerifiedAt: verified,
       // Stamped so any reader can verify WHOSE tunnel this records.
       address: ADDRESS || null, udid: UDID,
     }));
@@ -225,6 +257,22 @@ function readEndpoint() {
 // "there is no tunnel at all" (down) — the app words those differently and the
 // user's next action differs.
 let ghostInterfacePresent = false;
+// The RSD address of the ghost refused above, so a reap can wait for its interface to go.
+let ghostRsd = '';
+// True once THIS process proved the adopted tunnel live; ensureTunnel need not probe it again.
+let adoptedLive = false;
+
+/**
+ * A short probe got no answer. On Wi-Fi that is the verdict (a dead tunnel is
+ * rebuilt in ~3 s); off Wi-Fi a tunnel cannot be rebuilt, so look again with
+ * the long wait before calling it dead.
+ */
+async function confirmLiveOffWifi() {
+  lastNet = await phoneNet();
+  if (lastNet === 'wifi') return false;
+  err(`no answer from the tunnel within ${TUNNEL_PROBE_MS} ms and the phone is ${lastNet === 'cellular' ? 'on cellular' : 'not answering'}, where it could not be rebuilt — checking again for ${TUNNEL_CONFIRM_MS} ms`);
+  return tunnelLive(TUNNEL_CONFIRM_MS);
+}
 
 async function discoverLiveTunnel() {
   if (rsdAddress) return;
@@ -233,11 +281,13 @@ async function discoverLiveTunnel() {
   const prevA = rsdAddress, prevP = rsdPort;
   rsdAddress = saved.rsdAddress; rsdPort = String(saved.rsdPort);
   const ifacePresent = await tunnelUp();
-  if (ifacePresent && await tunnelLive(3000)) {
+  if (ifacePresent && (await shortProbe() || await confirmLiveOffWifi())) {
     err(`adopted live tunnel RSD ${rsdAddress}:${rsdPort}`);
+    adoptedLive = true;
     return;
   }
   ghostInterfacePresent = ifacePresent;
+  ghostRsd = ifacePresent ? rsdAddress : '';
   err(`NOT adopting ${rsdAddress}:${rsdPort} — ${ifacePresent ? 'interface up but does NOT route (ghost)' : 'interface missing'}`);
   rsdAddress = prevA; rsdPort = prevP;
 }
@@ -348,7 +398,7 @@ let lastNet = null;
 
 async function ensureTunnel() {
   await discoverLiveTunnel();
-  if (rsdAddress && await tunnelLive(3000)) {
+  if (rsdAddress && (adoptedLive || await shortProbe() || await confirmLiveOffWifi())) {
     err(`tunnel already live (RSD ${rsdAddress}:${rsdPort}) — reattach path, no rebuild`);
     return 'warm';
   }
@@ -358,7 +408,12 @@ async function ensureTunnel() {
   if (orphans.length) {
     err(`reaping ${orphans.length} orphaned tunnel helper(s) for ${UDID} before rebuild`);
     try { await execFileP('pkill', ['-f', TUNNEL_PATTERN], { timeout: 5000 }); } catch { /* none */ }
-    await sleep(2);
+    // Wait until the helper is gone and has taken its interface down, rather
+    // than a fixed 2 s: two overlapping fd…::1 subnets make the next dial fail.
+    // Never longer than the old 2 s.
+    const t0 = Date.now();
+    while (Date.now() - t0 < 2000 && ((await tunnelHelperPids()).length || (ghostRsd && await ifaceHas(ghostRsd)))) await sleep(0.1);
+    err(`orphaned helper gone after ${Date.now() - t0} ms`);
   }
   rsdAddress = ''; rsdPort = '';
   // A tunnel can only be BORN through the Wi-Fi-gated front door. Ask before
@@ -387,18 +442,20 @@ async function ensureTestManagerd() {
     const { stdout } = await execFileP(pmd3[0], pmd3[1], { timeout: 45000, maxBuffer: 8 * 1024 * 1024 });
     map = stdout;
   } catch (e) { err(`rsd-info failed: ${e.message}`); return false; }
-  if (map.includes('com.apple.dt.testmanagerd.remote')) return true;
+  if (map.includes('com.apple.dt.testmanagerd.remote')) { ddiVerifiedAt = new Date().toISOString(); return true; }
 
   err('testmanagerd ABSENT (DDI not mounted) — attempting auto-mount (phone must be UNLOCKED) …');
   progress('mounting');
   try {
     await execFileP(TUNNEL_PYTHON,
       ['-m', 'pymobiledevice3', 'mounter', 'auto-mount', '--rsd', rsdAddress, String(rsdPort)],
-      { timeout: 180000, maxBuffer: 8 * 1024 * 1024 });
+      { timeout: MOUNT_TIMEOUT_SECONDS * 1000, maxBuffer: 8 * 1024 * 1024 });
   } catch (e) { err(`auto-mount failed: ${String(e.stderr || e.message).split('\n').slice(-2).join(' | ')}`); }
   try {
     const { stdout } = await execFileP(pmd3[0], pmd3[1], { timeout: 45000, maxBuffer: 8 * 1024 * 1024 });
-    return stdout.includes('com.apple.dt.testmanagerd.remote');
+    const mounted = stdout.includes('com.apple.dt.testmanagerd.remote');
+    if (mounted) ddiVerifiedAt = new Date().toISOString();
+    return mounted;
   } catch { return false; }
 }
 
@@ -414,8 +471,16 @@ const RUNTEST_ATTEMPT_SECONDS = Math.max(4, Number(process.env.RUNTEST_ATTEMPT_S
 // idle — so past ~10 s the honest reading is "locked or asking for the passcode".
 const WAITING_ON_PHONE_AFTER_SECONDS = Math.max(1, Number(process.env.WAITING_ON_PHONE_AFTER_SECONDS) || 10);
 let sawWaitingOnPhone = false;
+// Set when go-ios could not find the testing service (the disk image is not mounted).
+let servicesMissing = false;
 
-async function ensureSession() {
+/**
+ * @param {object} [o]
+ * @param {boolean} [o.stopOnMissingServices]  the disk image was trusted, not
+ *   checked: if go-ios cannot find the testing service, stop at once so the
+ *   caller can check and mount, instead of retrying attempts that cannot work.
+ */
+async function ensureSession({ stopOnMissingServices = false } = {}) {
   if (await probeRunner()) { err('runner already healthy'); return true; }
   if (!rsdAddress || !rsdPort) { err('no RSD endpoint — cannot launch'); return false; }
   if (!BUNDLE) { err('RUNNER_BUNDLE is not set — it must be the bundle id the XCUITest runner was signed with (see deploy/example.env)'); return false; }
@@ -472,6 +537,14 @@ async function ensureSession() {
         // 2026-10-12 08:45 UTC). Same meaning as "authorised, then silence".
         let text = '';
         try { text = readFileSync(logPath, 'utf8'); } catch { /* nothing written */ }
+        // Port 0 is the signature: without the disk image go-ios resolves the
+        // testing service to :0. A dead tunnel also fails "can't assign
+        // requested address", but on a real port, so that alone is not enough.
+        if (/port :0|\]:0: /.test(text)) {
+          servicesMissing = true;
+          err('go-ios could not find the testing service (the developer disk image is not mounted)');
+          if (stopOnMissingServices) { try { process.kill(-child.pid, 'SIGKILL'); } catch { /* gone */ } return false; }
+        }
         if (/cannot initiate a IDE session|Timed out waiting for response/.test(text)) {
           sawWaitingOnPhone = true;
           err('the phone did not answer the session request — it is probably locked or asleep');
@@ -709,7 +782,15 @@ async function modeOnce({ tunnelOnly = false } = {}) {
     return 43;
   }
   progress('services');
-  if (!await ensureTestManagerd()) {
+  // On a live tunnel, a recent sighting of the testing service is enough (see
+  // DDI_TRUST_SECONDS). Never for --tunnel-only: the keep-warm job is what
+  // keeps that sighting fresh.
+  const saved = readEndpoint();
+  const seenAgo = saved?.ddiVerifiedAt && saved.rsdAddress === rsdAddress ? (Date.now() - Date.parse(saved.ddiVerifiedAt)) / 1000 : Infinity;
+  const trusted = !tunnelOnly && kind === 'warm' && seenAgo < DDI_TRUST_SECONDS;
+  if (trusted) {
+    err(`testing service seen on this tunnel ${Math.round(seenAgo)} s ago — not asking again`);
+  } else if (!await ensureTestManagerd()) {
     err('testmanagerd absent and auto-mount did not fix it — unlock the phone and retry (a reboot unmounts the DDI)');
     progress('failed', { reason: 'locked' });
     return 43;
@@ -724,7 +805,20 @@ async function modeOnce({ tunnelOnly = false } = {}) {
     progress('tunnel-only');
     return 0;
   }
-  if (!await ensureSession()) {
+  let armed = await ensureSession({ stopOnMissingServices: trusted });
+  if (!armed && trusted && servicesMissing) {
+    err('the trusted disk image is gone after all — checking and mounting it');
+    progress('services');
+    if (!await ensureTestManagerd()) {
+      err('testmanagerd absent and auto-mount did not fix it — unlock the phone and retry (a reboot unmounts the DDI)');
+      progress('failed', { reason: 'locked' });
+      return 43;
+    }
+    saveEndpoint('warm-reattach');
+    servicesMissing = false;
+    armed = await ensureSession();
+  }
+  if (!armed) {
     progress('failed', { reason: sawWaitingOnPhone ? 'waiting-on-phone' : 'session-failed' });
     return 43;
   }
