@@ -52,6 +52,8 @@ const post = (p, body) => fetch(base + p, { method: 'POST', headers: { 'content-
 const info = await fetch(base + '/deviceInfo').catch((e) => ({ ok: false, statusText: e.message }));
 if (!info.ok) { emit('infra', { detail: 'the runner did not answer: ' + info.statusText }); process.exit(43); }
 emit('step', { step: 1, total: Number(flag('--max-steps')), elapsed: '0.1' });
+console.error('--- Step 1/' + flag('--max-steps') + ' ---');
+console.error('[model] open_settings: Open the Settings app (p=1, confidence 1)');
 emit('action', { tool: 'openApp', args: { appName: 'Settings' } });
 await post('/launchApp', { bundleId: 'com.apple.Preferences' });
 if (/slowly/.test(task)) await new Promise((r) => setTimeout(r, 120000));
@@ -205,6 +207,10 @@ try {
     const done = await untilFinal(started.run_id);
     assert.equal(done.status, 'completed', JSON.stringify(done));
     assert.match(done.summary, /Opened Settings\. model=gpt-6-luna provider=openai/);
+    // The agent's log reaches the server's log, line by line, under the run's id (run_mvcvrrv701 had none).
+    assert.ok(serverOutput.includes(`run ${started.run_id} | --- Step 1/25 ---`), 'the agent\'s step line is missing from the server log');
+    assert.ok(serverOutput.includes(`run ${started.run_id} | [model] open_settings: Open the Settings app (p=1, confidence 1)`), 'the agent\'s decision line is missing from the server log');
+    assert.ok(!serverOutput.includes(`run ${started.run_id} | @agent-event`), 'an event line was logged as text');
     assert.equal(A.counters.runnerStarts, 1, 'automation was not started exactly once');
     await waitFor(nothingRunning, 'automation to be put down after the task', 20000);
     assert.equal(A.foregroundApp, 'com.anthropic.claude', 'the assistant\'s app was not brought back to the front');
