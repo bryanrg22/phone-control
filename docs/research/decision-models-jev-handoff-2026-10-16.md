@@ -299,3 +299,62 @@ models and cost nothing to the LLM mode; and Jev 1.14 with the screenshot
 (`TypeSafe-Danger-Zone-Images`) is the only way to test whether the picture
 closes the gap the tree leaves, at a price the docs call not production-ready.
 
+
+## The hybrid: a decision model driving, an LLM taking the steps it cannot (2026-10-16/17)
+
+Prior art, researched before building: Browser Use's jev-ultrafast (Jev picks an
+operation and an element; a small separate LLM writes only TYPE_TEXT; a demo,
+no benchmark) and JEV-as-a-Judge (arXiv 2609.26550: accept when confident,
+escalate when unsure; confidence catches an unsure model, not a confidently
+wrong one). Nothing published on mobile or on an accessibility tree.
+
+**The hybrid kept** (`--provider hybrid`, `agent/decision/escalate.mjs`): the
+decision model chooses; GPT-6 Luna, with the screenshot and the full tool set,
+takes a step when the choice is done/blocked (it verifies and writes the
+answer), "write into field F", below p 0.5 (fixed before any run), stuck for
+three steps, or the final step. With `--escalation-mode sticky` Luna keeps
+control after it takes over, with no decision calls, until it calls `handBack`,
+concludes, or has taken five steps in a row.
+
+The 27 single-app tasks, one trial each (baselines under
+`evals/baselines/phone-agent/2026-10-16_487f174_hybrid_single-app/` and
+`…/2026-10-16_dbc720b_hybrid-sticky_single-app/`):
+
+| agent | passed | model time / task | wall time / task | cost / task |
+| --- | --- | --- | --- | --- |
+| Decisions API alone | 3 | 17.7 s | 45 s | $0.0049 |
+| Jev alone | 2 | 2.2 s | 25 s | $0.0025 |
+| GPT-6 Luna alone | 21 | 41.9 s | 67 s | $0.0081 |
+| hybrid, step mode, Decisions API | 21 | 31.1 s | 54 s | $0.0099 |
+| **hybrid, sticky, Decisions API** | **25** | 35.7 s | 58 s | $0.0081 |
+| hybrid, sticky, Jev | 21 | 36.1 s | 59 s | $0.0081 |
+
+Step mode was faster than Luna alone but cost more: 232 of its 408 decision
+calls were handed to Luna anyway, and the decision model, confidently wrong,
+undid Luna's plan (weather-004, cinephile-001). Sticky mode cut decision calls
+to 166 and passed both. Jev as the chooser saved $0.021 on its calls and cost
+$0.022 more in Luna steps. Luna called `handBack` three times in 54 tasks; the
+cap returns control. The low-confidence threshold is about right: when the
+decision model was unsure, Luna did something else 67–83% of the time.
+
+Measured, not yet tried: a decision request is 31% element list and 55%
+choices, and every tap choice already names its element, so dropping the list
+would cut each decision call by about a third; and every task's first decision
+was "open the app" at p≈1, which the harness could do without asking.
+
+**The writer-only hybrid, set aside** (commit 75c3f2c, reverted on this branch
+in a5127cb except its harmless `listElements` value field): the decision model
+picks every step, and an LLM with no tools is called only to compose text for a
+"write into field F" option or the answer when `done` is chosen. It costs less
+per LLM call (no tools, a short prompt) but cannot help with the judgment
+failures, which were 13–14 of the 24 decision-only failures and where the kept
+hybrid gains most. Its 27-task run with both choosers,
+`2026-10-16_75c3f2c_writer-hybrids_single-app`, was in progress from a separate
+checkout at 75c3f2c when this was written; check out that commit to reproduce it.
+
+**Disk:** the XCTest runner kept every screenshot and snapshot as a test
+attachment inside the simulator (testmanagerd's Attachments, 24 GB), because
+its single test never "succeeds" and the lifetime was deleteOnSuccess.
+`evals/phone-agent/start-runner.sh` now sets keepNever (3fe4a7b); a runner
+started before that keeps filling the disk at about 60 MB a minute while it
+serves an eval.

@@ -30,6 +30,22 @@ export const DECISION_PROVIDERS = ['openai-decisions', 'typesafe'];
 export const DECISION_APIS = { 'openai-decisions': OPENAI_DECISIONS_API, typesafe: TYPESAFE_API };
 export const isDecisionProvider = (provider) => DECISION_PROVIDERS.includes(provider);
 
+// The hybrid mode: a decision model chooses, an LLM takes the steps it cannot
+// (decision/escalate.mjs). Named as one --model: "<chooser>:<model>+<llm>:<model>".
+export const HYBRID_PROVIDER = 'hybrid';
+/** @returns {{ chooser: { provider: string, model: string }, llm: { provider: string, model: string } }} */
+export function parseHybridModel(spec) {
+  const [a, b, ...rest] = String(spec || '').split('+');
+  if (!a || !b || rest.length) throw new Error(`a hybrid model is "<decision provider>:<model>+<llm provider>:<model>" (got "${spec}")`);
+  const part = (s, allowed, what) => {
+    const [provider, ...m] = s.split(':');
+    const model = m.join(':');
+    if (!allowed.includes(provider) || !model) throw new Error(`the ${what} of a hybrid model is one of ${allowed.join(', ')} with a model, as "provider:model" (got "${s}")`);
+    return { provider, model };
+  };
+  return { chooser: part(a, DECISION_PROVIDERS, 'chooser'), llm: part(b, LLM_PROVIDERS, 'LLM') };
+}
+
 export function createModel({ provider, model, apiKey, temperature = null, log = () => {} }) {
   if (provider === 'anthropic') return createAnthropic({ model, apiKey, temperature, log });
   if (provider === 'openai') return createOpenAI({ model, apiKey, temperature, log });

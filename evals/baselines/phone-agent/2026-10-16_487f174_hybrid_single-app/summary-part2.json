@@ -1,0 +1,76 @@
+[
+  {
+    "provider": "hybrid",
+    "model": "openai-decisions:gpt-6-luna+openai:gpt-6-luna",
+    "trials": 1,
+    "runs": 14,
+    "judged": 14,
+    "test_errors": 0,
+    "pass_rate": 0.8571428571428571,
+    "pass_ci95": {
+      "low": 0.600580922361363,
+      "high": 0.9599069262620787
+    },
+    "pass_hat_k": null,
+    "by_category": {
+      "single_app": {
+        "n": 14,
+        "pass_rate": 0.8571428571428571,
+        "avg_steps": 16.2
+      }
+    },
+    "rubric_score": 0.966,
+    "avg_steps": 16.2,
+    "avg_agent_seconds": 53.3,
+    "avg_model_seconds": 29.9,
+    "ended": {
+      "completed": 12,
+      "failed": 1,
+      "no_progress": 1
+    },
+    "tool_calls": 234,
+    "tool_error_rate": 0.004,
+    "ask_user_calls": 0,
+    "llm_steps": 118,
+    "llm_step_share": 0.343,
+    "tokens": {
+      "input": 2218208,
+      "cache_read": 936468,
+      "output": 19372,
+      "reasoning": 15571
+    },
+    "cost_usd": 0.15,
+    "cost_per_task_usd": 0.011,
+    "served_models": [
+      "gpt-6-luna"
+    ],
+    "calibration": [
+      {
+        "bucket": "done p 0–0.5",
+        "n": 2,
+        "pass_rate": 1
+      },
+      {
+        "bucket": "done p 0.5–0.8",
+        "n": 3,
+        "pass_rate": 1
+      },
+      {
+        "bucket": "done p 0.8–0.95",
+        "n": 0,
+        "pass_rate": null
+      },
+      {
+        "bucket": "done p 0.95–1",
+        "n": 2,
+        "pass_rate": 0.5
+      },
+      {
+        "bucket": "did not end with done",
+        "n": 7,
+        "pass_rate": 0.8571428571428571
+      }
+    ],
+    "avg_decision_probability": 0.622
+  }
+]

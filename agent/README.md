@@ -29,7 +29,8 @@ One **step** is one model request. The model may call several tools in one step;
 | `prompt.mjs` | The system prompt |
 | `stuck.mjs` | Repeated actions (nudges) and no progress (stop) |
 | `providers/` | One file per model provider: request shape, response shape, retries. `openai-decisions.mjs` and `typesafe.mjs` are decision models (below) |
-| `decision/` | The decision mode: the candidate actions, the question, its own loop |
+| `decision/` | The decision mode: the candidate actions, the question, its own loop; `escalate.mjs` is the hybrid's handoff policy |
+| `execute.mjs` | One step's tool calls, run in order (shared by the LLM loop and the hybrid's LLM steps) |
 | `protocol.mjs` | What the server reads: one JSON event per line, and the answer file for questions |
 | `record.mjs` | The full record of a run (see below) |
 | `models.mjs` | Default model per provider |
@@ -44,6 +45,10 @@ observe ──► enumerate candidates ──► one choice question ──► r
 ```
 
 The harness lists every action it could take (tap each on-screen element, type each phrase lifted from the task, Return, scroll, Home, open an app the task names, `done`, `blocked`) and the model picks one; the state it sees is the task, the actions so far, and the element list, as text (the Decisions API) or as an object (Jev). No screenshot is sent. `done` ends the run as `taskComplete` with a fixed summary, so a task that asks for information cannot be answered: a weakness to measure, not a bug. The record has the same spans as the LLM mode, with the answer's probabilities under `eval.decision`, so the evals judge and report both modes alike. Keys: `OPENAI_API_KEY`, `TYPESAFE_API_KEY`. Background and plan: `docs/research/decision-models-jev-handoff-2026-10-16.md`.
+
+### The hybrid mode
+
+`--provider hybrid --model openai-decisions:gpt-6-luna+openai:gpt-6-luna` keeps the decision model in charge and hands a step to the LLM only when `decision/escalate.mjs` says so: the decision model chose `done` or `blocked` (the LLM verifies on the screen and writes the real summary or answer), it chose "write into field F" (text the task does not supply), its best option fell below `--escalation-threshold` (0.5, fixed before a run), the screen has not changed for three of its steps, or it is the final step. The LLM gets the screenshot, the element list, its own running conversation and a handoff note with the decision model's steps; its tool calls run through `execute.mjs` exactly as in the LLM loop. With `--escalation-mode sticky` the LLM keeps control after it takes a step, with no decision call, until it calls `handBack` (a tool offered only in this mode), concludes, or has taken five steps in a row. Each model call is recorded and priced by its own model, and the eval report shows the LLM's share of steps. Prior art: Browser Use's jev-ultrafast (a small LLM writes TYPE_TEXT only) and JEV-as-a-Judge (arXiv 2609.26550: accept when confident, escalate when unsure).
 
 ## What the server sees
 
