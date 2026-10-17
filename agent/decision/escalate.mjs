@@ -19,6 +19,15 @@
 export const DEFAULT_THRESHOLD = 0.5;
 export const STUCK_STEPS = 3;
 
+// Escalation modes. "step" (the first hybrid, 487f174): the LLM takes one step,
+// then the decision model chooses again. "sticky": once the LLM takes a step it
+// keeps control, with no decision call, until it calls handBack or concludes, or
+// for at most STICKY_MAX steps in a row. Made after the step mode's 27-task run:
+// the decision model confidently undid the LLM's plan (weather-004,
+// cinephile-001), and 232 of its 500 calls were handed to the LLM anyway.
+export const ESCALATION_MODES = ['step', 'sticky'];
+export const STICKY_MAX = 5;
+
 /**
  * @param {object} o
  * @param {{ value: string }} o.chosen          the chosen candidate
@@ -45,8 +54,12 @@ const fmt = (p) => (typeof p === 'number' ? (Math.round(p * 100) / 100).toString
  * @param {Array<{ n: number, description: string, changed: boolean|null, result?: string|null }>} o.since   decision steps since the LLM's last step
  * @param {{ reason: string, detail: string }} o.why
  * @param {boolean} o.first   the LLM's first step of the run
+ * @param {boolean} [o.sticky] sticky mode: the LLM keeps control and may hand back
  */
-export function handoffMessage({ since, why, first }) {
+export function handoffMessage({ since, why, first, sticky = false }) {
+  if (why.reason === 'sticky') {
+    return `[Control] You still have control (${why.detail}). Continue the task, or call handBack when what remains is simple taps or scrolls on listed elements.`;
+  }
   const lines = since.map((h) => `  ${h.n}. ${h.description}${h.result ? ` → ${h.result}` : ''}${h.changed === false ? ' (the screen did not change)' : ''}`);
   const ask = {
     conclusion: 'Check the screen. If the task is done, call taskComplete with a summary that includes any information the task asked for, read from the screen. If it is not done, continue with the tools. If it cannot be done, call taskFailed.',
@@ -59,5 +72,6 @@ export function handoffMessage({ since, why, first }) {
     first ? '[Handoff] A fast decision model has been operating the phone for this task; it chooses among on-screen actions but cannot write text or answers. You take over for this step.' : '[Handoff] The decision model took the steps below since your last one.',
     lines.length ? `Its steps:\n${lines.join('\n')}` : 'It has taken no steps since.',
     `This step is yours because ${why.detail}. ${ask}`,
+    ...(sticky && why.reason !== 'final' ? ['You keep control after this step until you conclude or call handBack. Call handBack when the remaining steps are simple taps or scrolls on listed elements, so the faster decision model can take them.'] : []),
   ].join('\n\n');
 }

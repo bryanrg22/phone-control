@@ -15,7 +15,7 @@
  * @param {object} o.recorder      record.mjs
  * @param {object} [o.stuck]       stuck.mjs createStuckDetector(), when the loop keeps one
  * @param {object} o.protocol      protocol.mjs
- * @returns {Promise<{ done: Array<{ name: string, args: object }>, concluded: object|null, changes: boolean, settle: boolean, deviceFailed: boolean }>}
+ * @returns {Promise<{ done: Array<{ name: string, args: object }>, concluded: object|null, changes: boolean, settle: boolean, deviceFailed: boolean, handBack: boolean }>}
  */
 export async function executeToolCalls({ calls, step, runTool, context, recorder, stuck = null, protocol }) {
   const { emit, log } = protocol;
@@ -24,6 +24,7 @@ export async function executeToolCalls({ calls, step, runTool, context, recorder
   let changes = false;
   let settle = false;
   let deviceFailed = false;
+  let handBack = false;
   const done = [];
   for (const tc of calls) {
     const name = tc.function.name;
@@ -59,8 +60,9 @@ export async function executeToolCalls({ calls, step, runTool, context, recorder
     done.push({ name, args });
     changes = changes || !!r.changesScreen;
     settle = settle || !!r.settle;
+    handBack = handBack || !!r.handBack;
     if (r.done || r.failed) { concluded = r; stopRest = 'the task was already concluded in this step'; }
     else if (r.error) stopRest = 'an earlier action in this step failed, so the screen may not be what you expected';
   }
-  return { done, concluded, changes, settle, deviceFailed };
+  return { done, concluded, changes, settle, deviceFailed, handBack };
 }

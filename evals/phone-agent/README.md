@@ -45,7 +45,7 @@ node evals/phone-agent/run.mjs --udid <UDID> --models … --tasks single_app --t
 node evals/phone-agent/run.mjs --judge-only evals/results/phone-agent/<run>                       # re-score
 ```
 
-`--models openai-decisions:gpt-6-luna,typesafe:jev-latest,hybrid:openai-decisions:gpt-6-luna+openai:gpt-6-luna` runs the agent's decision mode and its hybrid (`agent/README.md`): a decision model picks among the actions the harness enumerates, instead of an LLM conversing with the tools. The report then adds a calibration table (pass rate by the probability the model put on "done").
+`--models openai-decisions:gpt-6-luna,typesafe:jev-latest,hybrid:openai-decisions:gpt-6-luna+openai:gpt-6-luna` runs the agent's decision mode and its hybrid (`--escalation-mode sticky` for the hybrid that keeps the LLM in control until it hands back) (`agent/README.md`): a decision model picks among the actions the harness enumerates, instead of an LLM conversing with the tools. The report then adds a calibration table (pass rate by the probability the model put on "done").
 
 `--iosworld <dir>` if the checkout is not at `~/dev/GitHub/iOSWorld`; `--judge-model` to judge with another model (the paper's numbers use the default). **Every run costs money**: the model under test, the judge, and the apps' own replies.
 

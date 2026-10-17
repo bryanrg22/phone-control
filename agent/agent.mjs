@@ -23,6 +23,7 @@ import { createRecorder } from './record.mjs';
 import { runLoop } from './loop.mjs';
 import { runDecisionLoop } from './decision/loop.mjs';
 import { INSTRUCTIONS as DECISION_INSTRUCTIONS } from './decision/question.mjs';
+import { STICKY_MAX } from './decision/escalate.mjs';
 import { releaseOf, commitOf } from '../server/src/version.mjs';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -69,7 +70,8 @@ const model = hybrid
     : createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, log });
 const llmModel = hybrid ? createModel({ provider: hybrid.llm.provider, model: hybrid.llm.model, apiKey: hybridKeys.llm, log }) : null;
 const nativeSearch = llmSpec?.provider !== 'gemini';
-const toolDefs = toolDefinitions({ apps, braveSearch: !nativeSearch });
+const sticky = !!hybrid && cfg.escalationMode === 'sticky';
+const toolDefs = toolDefinitions({ apps, braveSearch: !nativeSearch, handBack: sticky });
 const llmSystem = llmSpec ? systemPrompt({ apps: Object.keys(apps), searchTool: nativeSearch ? 'web_search' : 'webSearch' }) : null;
 const system = decision && !hybrid ? DECISION_INSTRUCTIONS : llmSystem;
 const context = createContext({ system });
@@ -87,7 +89,7 @@ const recorder = createRecorder({
       mode: hybrid ? 'hybrid' : (decision ? 'decision' : 'llm'), max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768,
       // The decision APIs are previews whose formats may change: what was used is recorded.
       ...(decision ? { decision: { ...model.api, screenshot_sent: false, instructions_sha256: sha(DECISION_INSTRUCTIONS) } } : {}),
-      ...(hybrid ? { hybrid: { chooser: hybrid.chooser, llm: hybrid.llm, escalation_threshold: cfg.escalationThreshold, escalation: 'conclusion, free_text, low_confidence (below the threshold), stuck (3 unchanged screens), final' } } : {}),
+      ...(hybrid ? { hybrid: { chooser: hybrid.chooser, llm: hybrid.llm, escalation_threshold: cfg.escalationThreshold, escalation_mode: cfg.escalationMode, ...(sticky ? { sticky_max: STICKY_MAX } : {}), escalation: 'conclusion, free_text, low_confidence (below the threshold), stuck (3 unchanged screens), final' } } : {}),
     },
     prompt_sha256: system ? sha(system) : null, tools_sha256: sha(JSON.stringify(toolDefs)),
     device: { address: device.address, simulator: cfg.simulator, screen: screenInfo, apps: Object.keys(apps).length, apps_source: appsSource },
@@ -135,7 +137,7 @@ const progress = createProgressMonitor({ abortAfter: cfg.noProgressAbort });
 const outcome = decision
   ? await runDecisionLoop({
     task: cfg.task, maxSteps: cfg.maxSteps, decider: model, device, runTool, apps: Object.keys(apps), protocol, recorder, progress, state, autoAllowNotifications,
-    llm: hybrid ? { model: llmModel, context, toolDefs, threshold: cfg.escalationThreshold } : null,
+    llm: hybrid ? { model: llmModel, context, toolDefs, threshold: cfg.escalationThreshold, sticky } : null,
   })
   : await runLoop({
     task: cfg.task, maxSteps: cfg.maxSteps, model, device, runTool, toolDefs, context, protocol, recorder, state,

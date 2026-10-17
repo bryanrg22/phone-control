@@ -8,7 +8,7 @@ import { readFileSync, mkdtempSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { escalationReason, handoffMessage, DEFAULT_THRESHOLD, STUCK_STEPS } from '../decision/escalate.mjs';
+import { escalationReason, handoffMessage, DEFAULT_THRESHOLD, STUCK_STEPS, STICKY_MAX, ESCALATION_MODES } from '../decision/escalate.mjs';
 import { candidateActions } from '../decision/candidates.mjs';
 import { runDecisionLoop } from '../decision/loop.mjs';
 import { parseHybridModel, HYBRID_PROVIDER } from '../providers/index.mjs';
@@ -78,7 +78,7 @@ console.log('the hybrid model spec:');
 
 // ── the loop, in process: a scripted chooser and a scripted LLM, a fake phone ──
 const toolCall = (name, args, id = `call_${Math.random().toString(36).slice(2, 8)}`) => ({ id, type: 'function', function: { name, arguments: JSON.stringify(args) } });
-async function hybridRun({ chooser, llm, screen, maxSteps = 10, threshold = 0.5, abortAfter = 8, traceDir = null }) {
+async function hybridRun({ chooser, llm, screen, maxSteps = 10, threshold = 0.5, abortAfter = 8, traceDir = null, sticky = false }) {
   const runner = await startFakeRunner({ screen });
   const device = createDevice({ host: '127.0.0.1', port: runner.port, knownApps: ['com.apple.mobiletimer'] });
   const state = { keyboardUp: false, screen: () => SCREEN };
@@ -112,7 +112,7 @@ async function hybridRun({ chooser, llm, screen, maxSteps = 10, threshold = 0.5,
   const recorder = createRecorder({ dir: traceDir, manifest: { task: 't', provider: 'hybrid', model: 'chooser+writer' } });
   const outcome = await runDecisionLoop({
     task: TASK, maxSteps, decider, device, runTool, apps: Object.keys(apps), protocol, recorder, progress: createProgressMonitor({ abortAfter }), state, autoAllowNotifications: async () => {},
-    llm: { model, context: createContext({ system: 'You are an agent.' }), toolDefs: toolDefinitions({ apps }), threshold },
+    llm: { model, context: createContext({ system: 'You are an agent.' }), toolDefs: toolDefinitions({ apps, handBack: sticky }), threshold, sticky },
   });
   recorder.finish(outcome);
   await runner.close();
@@ -191,6 +191,57 @@ console.log('the hybrid loop:');
   check('a non-recoverable LLM error ends the run as errored', outcome.status === 'errored');
 }
 
+console.log('sticky escalation:');
+{
+  check('two modes, step the default', ESCALATION_MODES.join() === 'step,sticky' && parseAgentArgs(['t', '--simulator', 'x', '--provider', 'hybrid']).config.escalationMode === 'step');
+  check('--escalation-mode sticky is read; anything else is an error', parseAgentArgs(['t', '--simulator', 'x', '--provider', 'hybrid', '--escalation-mode', 'sticky']).config.escalationMode === 'sticky' && /escalation-mode/.test(parseAgentArgs(['t', '--simulator', 'x', '--provider', 'hybrid', '--escalation-mode', 'always']).error?.message || ''));
+  const plain = toolDefinitions({ apps: { Clock: 'x' } });
+  const withBack = toolDefinitions({ apps: { Clock: 'x' }, handBack: true });
+  check('handBack is offered only in sticky mode: the LLM mode\'s tool list is unchanged', !plain.some((t) => t.name === 'handBack') && withBack.at(-1).name === 'handBack' && JSON.stringify(withBack.slice(0, -1)) === JSON.stringify(plain));
+  const first = handoffMessage({ since: [], why: { reason: 'low_confidence', detail: 'p=0.2' }, first: true, sticky: true });
+  check('a sticky handoff tells the LLM it keeps control and how to hand back', /You keep control after this step until you conclude or call handBack/.test(first));
+  check('a step-mode handoff does not', !/handBack/.test(handoffMessage({ since: [], why: { reason: 'low_confidence', detail: 'p=0.2' }, first: true })));
+  check('the continuation note is one line', /^\[Control\] You still have control \(step 2 of at most 5 in a row\)\./.test(handoffMessage({ since: [], why: { reason: 'sticky', detail: 'step 2 of at most 5 in a row' }, first: false, sticky: true })));
+}
+{
+  // After one low-confidence handoff, the LLM keeps control: no decision calls until it hands back.
+  const { outcome, asked, llmCalls } = await hybridRun({
+    sticky: true,
+    chooser: [['open_clock', 0.99], (c) => [c.find((x) => x.description.startsWith('Tap "Add"')).value, 0.2], ['done', 0.95]],
+    llm: [
+      { role: 'assistant', content: null, tool_calls: [toolCall('tapText', { text: 'Add' })] },
+      { role: 'assistant', content: null, tool_calls: [toolCall('tapText', { text: 'Save' })] },
+      { role: 'assistant', content: null, tool_calls: [toolCall('handBack', { reason: 'only Save is left' })] },
+      { role: 'assistant', content: null, tool_calls: [toolCall('taskComplete', { summary: 'Alarm set.' })] },
+    ],
+    screen: alarmScreen,
+  });
+  check('the LLM took three steps in a row with no decision call between them', asked.length === 3 && llmCalls.length === 4 && outcome.status === 'completed', `asked=${asked.length} llm=${llmCalls.length} ${outcome.status}`);
+  check('after handBack the decision model chose again (its "done" went to the LLM to conclude)', /chose "done"/.test(llmCalls[3].messages.filter((m) => m.role === 'user').at(-1).content));
+  check('the continuation steps carried the one-line control note', llmCalls[1].messages.filter((m) => m.role === 'user').some((m) => typeof m.content === 'string' && m.content.startsWith('[Control] You still have control (step 2')));
+  check('an unchanged screen is not sent again as an image', llmCalls[1].messages.filter((m) => m.role === 'user').some((m) => m.content === '(The screen has not changed since your last step.)') && llmCalls[1].messages.filter((m) => Array.isArray(m.content)).length === 1, JSON.stringify(llmCalls[1].messages.map((m) => (typeof m.content === 'string' ? m.content.slice(0, 50) : '[image+text]'))));
+  check('the decision model\'s state lists the LLM\'s steps and the hand-back', asked[2].state.object.actions_so_far.some((l) => /LLM: handBack\(only Save is left\)/.test(l)), JSON.stringify(asked[2].state.object.actions_so_far));
+}
+{
+  // An LLM that never hands back gets control back after STICKY_MAX steps.
+  const { asked, llmCalls } = await hybridRun({
+    sticky: true, abortAfter: 0, maxSteps: 12,
+    chooser: [['scroll_down', 0.2], ['blocked', 0.9]],
+    llm: [{ role: 'assistant', content: null, tool_calls: [toolCall('scroll', {})] }, { role: 'assistant', content: null, tool_calls: [toolCall('scroll', {})] }, { role: 'assistant', content: null, tool_calls: [toolCall('scroll', {})] }, { role: 'assistant', content: null, tool_calls: [toolCall('scroll', {})] }, { role: 'assistant', content: null, tool_calls: [toolCall('scroll', {})] }, { role: 'assistant', content: null, tool_calls: [toolCall('taskFailed', { reason: 'blocked' })] }],
+    screen: () => tree(el('Home')),
+  });
+  check(`control returns to the decision model after ${STICKY_MAX} LLM steps`, asked.length === 2 && llmCalls.length === STICKY_MAX + 1, `asked=${asked.length} llm=${llmCalls.length}`);
+}
+{
+  // Step mode is unchanged: the decision model chooses after every LLM step.
+  const { asked, llmCalls } = await hybridRun({
+    chooser: [['scroll_down', 0.2], ['scroll_down', 0.2], ['done', 0.9]],
+    llm: [{ role: 'assistant', content: null, tool_calls: [toolCall('scroll', {})] }, { role: 'assistant', content: null, tool_calls: [toolCall('scroll', {})] }, { role: 'assistant', content: null, tool_calls: [toolCall('taskComplete', { summary: 'ok' })] }],
+    screen: () => tree(el('Home')), abortAfter: 0,
+  });
+  check('step mode still asks the decision model before every step', asked.length === 3 && llmCalls.length === 3, `asked=${asked.length} llm=${llmCalls.length}`);
+}
+
 console.log('the report:');
 {
   const rec = (extra) => ({ task: 'a', category: 'single_app', status: 'ok', steps: 5, model_calls: 5, agent_seconds: 20, model_seconds: 5, input_tokens: 100, output_tokens: 10, tool_calls: 5, tool_errors: 0, ask_user_calls: 0, cost_usd: 0.01, ended: 'completed', served_models: ['m'], ...extra });
@@ -247,6 +298,39 @@ console.log('the agent process with --provider hybrid:');
   check('the manifest says hybrid, names both halves and the threshold', manifest?.settings.mode === 'hybrid' && manifest.settings.hybrid.chooser.provider === 'openai-decisions' && manifest.settings.hybrid.llm.model === 'gpt-6-luna' && manifest.settings.hybrid.escalation_threshold === 0.5 && manifest.provider === 'hybrid', JSON.stringify(manifest?.settings));
   const u = usageOf(trace);
   check('the trace prices each call by its own model: 2 × 700 input at $0.10/M plus the LLM call', u.llm_steps === 1 && Math.abs(u.cost_usd - ((2 * 700 * 0.1 + 3000 * 0.1 + 30 * 0.5) / 1e6)) < 1e-9 && u.by_model['openai-decisions:gpt-6-luna'].calls === 2 && u.by_model['openai:gpt-6-luna'].calls === 1, JSON.stringify(u));
+  rmSync(tmp, { recursive: true, force: true });
+  await new Promise((r) => api.close(r)); await runner.close();
+}
+console.log('the agent process with --escalation-mode sticky:');
+{
+  const runner = await startFakeRunner({ screen: alarmScreen });
+  const requests = [];
+  const api = createServer((req, res) => {
+    let b = ''; req.on('data', (c) => { b += c; });
+    req.on('end', () => {
+      const body = JSON.parse(b || '{}');
+      requests.push({ path: req.url, body });
+      res.writeHead(200, { 'content-type': 'application/json' });
+      if (req.url === '/v1/decisions') {
+        const choices = body.questions[0].choices.map((c) => c.value);
+        res.end(JSON.stringify({ id: 'dec', model: 'gpt-6-luna', answers: [{ type: 'choice', name: 'next_action', choice: 'done', probabilities: choices.map((v) => ({ value: v, probability: v === 'done' ? 0.9 : 0 })), confidence: 0.9 }], usage: { input_tokens: 700, output_tokens: 0 } }));
+      } else {
+        res.end(JSON.stringify({ id: 'resp', model: 'gpt-6-luna', status: 'completed', output: [{ type: 'function_call', call_id: 'c1', name: 'taskComplete', arguments: JSON.stringify({ summary: 'ok' }) }], usage: { input_tokens: 3000, output_tokens: 30 } }));
+      }
+    });
+  });
+  await new Promise((r) => api.listen(0, '127.0.0.1', r));
+  const tmp = mkdtempSync(join(tmpdir(), 'hybrid-agent-'));
+  const traceDir = join(tmp, 'trace');
+  const code = await new Promise((resolve) => {
+    const child = spawn(process.execPath, [join(HERE, '..', 'agent.mjs'), TASK, '--provider', 'hybrid', '--escalation-mode', 'sticky', '--driver-host', '127.0.0.1', '--driver-port', String(runner.port), '--max-steps', '8', '--trace-dir', traceDir], { env: { PATH: `${dirname(process.execPath)}:/usr/bin:/bin`, HOME: tmp, TMPDIR: tmp, PHONE_CONTROL_STATE_DIR: tmp, OPENAI_API_KEY: 'sk-test', OPENAI_BASE_URL: `http://127.0.0.1:${api.address().port}/v1` } });
+    child.stdout.resume(); child.stderr.resume();
+    child.on('close', resolve);
+  });
+  const manifest = existsSync(join(traceDir, 'manifest.json')) ? JSON.parse(readFileSync(join(traceDir, 'manifest.json'), 'utf8')) : null;
+  const llmReq = requests.find((r) => r.path === '/v1/responses');
+  check('exits 0; the manifest records sticky mode and its cap', code === 0 && manifest?.settings.hybrid.escalation_mode === 'sticky' && manifest.settings.hybrid.sticky_max === STICKY_MAX, JSON.stringify(manifest?.settings.hybrid));
+  check('the LLM request offers handBack', llmReq?.body.tools.some((t) => t.name === 'handBack'), JSON.stringify(llmReq?.body.tools.map((t) => t.name)));
   rmSync(tmp, { recursive: true, force: true });
   await new Promise((r) => api.close(r)); await runner.close();
 }

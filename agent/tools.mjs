@@ -15,7 +15,16 @@ import { formatElements, capElements, findElement } from './elements.mjs';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const num = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, ...(description ? { description } : {}) });
 
-export function toolDefinitions({ apps, braveSearch = false }) {
+// handBack exists only in the sticky hybrid mode (agent/decision/escalate.mjs):
+// the LLM gives control back to the decision model. The LLM mode never sees it,
+// so its tool list and hash are unchanged.
+const HAND_BACK = { name: 'handBack', description: 'Give control back to the fast decision model. Call this when the remaining steps are simple taps or scrolls on elements already listed on screen, and nothing needs writing or judging; the decision model then takes them, and hands back to you if it is unsure.', parameters: { type: 'object', properties: { reason: { type: 'string', description: 'What is left for the decision model to do' } }, required: ['reason'] } };
+
+export function toolDefinitions({ apps, braveSearch = false, handBack = false }) {
+  return [...baseTools({ apps, braveSearch }), ...(handBack ? [HAND_BACK] : [])];
+}
+
+function baseTools({ apps, braveSearch }) {
   return [
     { name: 'openApp', description: `Open an app by name. Available: ${Object.keys(apps).join(', ')}`, parameters: { type: 'object', properties: { appName: { type: 'string', description: 'App name' } }, required: ['appName'] } },
     { name: 'takeScreenshot', description: 'Capture the current screen. NOTE: screenshots are auto-captured after action tools (tap, type, etc.) so you usually do NOT need to call this separately. Only use for initial observation or to verify final task completion.', parameters: { type: 'object', properties: {} } },
@@ -254,6 +263,7 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
 
     async taskComplete({ summary }) { return { text: String(summary ?? ''), done: { summary: String(summary ?? '') } }; },
     async taskFailed({ reason }) { return { text: String(reason ?? ''), failed: { reason: String(reason ?? '') } }; },
+    async handBack({ reason }) { return { text: `Control returned to the decision model${reason ? `: ${reason}` : ''}.`, handBack: true }; },
   };
 
   /** Run one tool call. Throws only when the device itself failed (the loop counts those). */

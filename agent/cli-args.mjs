@@ -8,13 +8,14 @@
 
 import { defaultModelFor, supportsTemperature } from './models.mjs';
 import { LLM_PROVIDERS, DECISION_PROVIDERS, HYBRID_PROVIDER, parseHybridModel } from './providers/index.mjs';
+import { ESCALATION_MODES } from './decision/escalate.mjs';
 
 export const VALUE_FLAGS = new Set([
   '--provider', '--model', '--temperature',
   '--driver-host', '--driver-port', '--simulator',
   '--max-steps', '--askuser-timeout', '--no-progress-abort',
   '--trace-dir', '--run-id',
-  '--escalation-threshold',
+  '--escalation-threshold', '--escalation-mode',
 ]);
 export const BOOLEAN_FLAGS = new Set(['--help']);
 const PROVIDERS = [...LLM_PROVIDERS, ...DECISION_PROVIDERS, HYBRID_PROVIDER];
@@ -75,6 +76,9 @@ export function parseAgentArgs(argv) {
     escalationThreshold = t;
   }
 
+  const escalationMode = flags['--escalation-mode'] || 'step';
+  if (!ESCALATION_MODES.includes(escalationMode)) return fail(`--escalation-mode must be one of ${ESCALATION_MODES.join(', ')} (got "${escalationMode}").`);
+
   const simulator = flags['--simulator'] || null;
   const driverHost = flags['--driver-host'] || (simulator ? '127.0.0.1' : null);
   if (!driverHost) return fail('--driver-host is required: the address of the phone\'s runner (or pass --simulator <udid>).');
@@ -82,7 +86,7 @@ export function parseAgentArgs(argv) {
   return {
     help: false, error: null,
     config: {
-      task, provider, model, temperature, escalationThreshold,
+      task, provider, model, temperature, escalationThreshold, escalationMode,
       driverHost, driverPort, simulator,
       maxSteps, askUserTimeoutSec, noProgressAbort,
       traceDir: flags['--trace-dir'] || null,
@@ -106,6 +110,8 @@ Model:
                          "<decision provider>:<model>+<llm provider>:<model>"
   --temperature T        0-2; only for models that accept it
   --escalation-threshold P   hybrid: a decision below this probability goes to the LLM (default 0.5)
+  --escalation-mode M    hybrid: step (the LLM takes one step at a time; default) or sticky (it keeps
+                         control until it calls handBack or concludes, at most 5 steps in a row)
 
 Device:
   --driver-host H        the phone's runner address (required for a phone)

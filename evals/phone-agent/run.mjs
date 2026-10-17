@@ -72,6 +72,8 @@ const models = (opt('models', '') || '').split(',').filter(Boolean).map((m) => {
 // Resolved here: the judge runs with iOSWorld's checkout as its working directory,
 // so a relative path would point inside it (2026-10-16).
 const judgeOnly = opt('judge-only', null) ? resolve(opt('judge-only', null)) : null;
+// Hybrid models only: how the decision model hands steps to the LLM (agent --escalation-mode).
+const escalationMode = opt('escalation-mode', null);
 
 const run = (cmd, args, o = {}) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...o }).trim();
 const git = (dir, ...a) => { try { return run('git', ['-C', dir, ...a]); } catch { return null; } };
@@ -142,7 +144,8 @@ async function runTask({ task, index, model, taskDir }) {
     '--provider', model.provider, '--model', model.model,
     '--simulator', udid, '--driver-port', driverPort,
     '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', '1',
-    '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`];
+    '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`,
+    ...(model.provider === 'hybrid' && escalationMode ? ['--escalation-mode', escalationMode] : [])];
   record.agent_args = args.slice(1).map((a) => (a === task.goal ? '<goal>' : a));
   const agentStart = Date.now();
   const log = createWriteStream(join(taskDir, 'agent.log'));
@@ -237,7 +240,7 @@ const runInfo = {
   iosworld: { commit: git(IOSWORLD, 'rev-parse', 'HEAD'), dirty: (git(IOSWORLD, 'status', '--porcelain', '--untracked-files=no') || '').length > 0, tasks_sha256: createHash('sha256').update(readFileSync(TASKS_FILE)).digest('hex').slice(0, 16) },
   device: { udid, name: simInfo?.name ?? null, runtime: simInfo?.runtime ?? null, xcode: run('xcodebuild', ['-version']).split('\n')[0] },
   judge: { script: 'iOSWorld scripts/judge_trajectories.py', provider: 'openai', model: judgeModel },
-  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', reasoning: 'provider default', no_progress_abort: 8 },
+  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', reasoning: 'provider default', no_progress_abort: 8, ...(escalationMode ? { escalation_mode: escalationMode } : {}) },
   // Decision models (agent/decision/): both APIs are previews whose formats may change, so what was used is recorded.
   ...(models.some((m) => DECISION_APIS[m.provider]) ? { decision_apis: Object.fromEntries(models.filter((m) => DECISION_APIS[m.provider]).map((m) => [m.provider, { ...DECISION_APIS[m.provider], screenshot_sent: false }])) } : {}),
   models, trials, tasks: tasks.map((t) => t.name), cells: cells.map(({ model, trial, dir }) => ({ model, trial, dir })),

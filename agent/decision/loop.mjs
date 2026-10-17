@@ -19,7 +19,9 @@
 // stuck screen, the final step. It sees the screenshot, the element list and a
 // handoff note with the decision model's steps, keeps its own conversation
 // across its steps, and runs its tool calls exactly as the LLM loop does
-// (execute.mjs). The decision model takes the next step after it.
+// (execute.mjs). In step mode the decision model takes the next step after it;
+// in sticky mode the LLM keeps control until it calls handBack, concludes, or
+// has taken STICKY_MAX steps in a row (escalate.mjs).
 //
 // The record (record.mjs) gets the same spans as the LLM mode: a chat span per
 // model request (a decision step's messages are the instruction and the state,
@@ -38,7 +40,7 @@ import { historyLine } from '../context.mjs';
 import { taskMessage, FINAL_STEP } from '../prompt.mjs';
 import { candidateActions } from './candidates.mjs';
 import { decisionState, INSTRUCTIONS } from './question.mjs';
-import { escalationReason, handoffMessage, DEFAULT_THRESHOLD } from './escalate.mjs';
+import { escalationReason, handoffMessage, DEFAULT_THRESHOLD, STICKY_MAX } from './escalate.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const DEVICE_ERRORS_TO_GIVE_UP = 4;
@@ -59,14 +61,19 @@ const round3 = (x) => (typeof x === 'number' ? Math.round(x * 1000) / 1000 : x);
  * @param {object} o.state          { keyboardUp, screen } shared with the tools
  * @param {(step: number) => Promise<void>} o.autoAllowNotifications
  * @param {string} [o.instructions]
- * @param {{ model: object, context: object, toolDefs: object[], threshold?: number }|null} [o.llm]
- *        hybrid mode: the LLM (createModel()), its conversation (createContext()), its tools, the escalation threshold
+ * @param {{ model: object, context: object, toolDefs: object[], threshold?: number, sticky?: boolean }|null} [o.llm]
+ *        hybrid mode: the LLM (createModel()), its conversation (createContext()), its tools, the escalation
+ *        threshold, and whether it keeps control after a step (sticky: until handBack, a conclusion, or STICKY_MAX steps)
  * @returns {Promise<{ status: string, summary?: string, reason?: string, steps: number }>}
  */
 export async function runDecisionLoop({ task, maxSteps, decider, device, runTool, apps, protocol, recorder, progress, state, autoAllowNotifications, instructions = INSTRUCTIONS, llm = null }) {
   const { emit, log } = protocol;
   const t0 = Date.now();
   const threshold = llm?.threshold ?? DEFAULT_THRESHOLD;
+  const sticky = !!llm?.sticky;
+  let llmOwns = false;       // sticky: the LLM has control
+  let llmRun = 0;            // sticky: its consecutive steps
+  let llmLastSignature = null;
   let screen = { widthPoints: 402, heightPoints: 874 };
   state.screen = () => screen;
   let seen = null;   // the latest screen: { elements (structured), lines (capped), signature, currentApp, keyboardUp, image, mime }
@@ -123,10 +130,15 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     const { model, context, toolDefs } = llm;
     const first = llmSteps === 0;
     const since = history.slice(sinceLlm);
-    const text = `${first ? taskMessage(task, '').replace(/\s+$/, '') : 'Here is the current screen.'}${describeScreen(seen.lines, { keyboardUp: seen.keyboardUp })}`;
-    if (seen.image) context.screen({ image: seen.image, mime: seen.mime, text });
-    else context.say(text);
-    context.say(handoffMessage({ since, why, first }));
+    const unchangedForLlm = !first && why.reason === 'sticky' && seen.signature === llmLastSignature;
+    if (unchangedForLlm) context.say('(The screen has not changed since your last step.)');
+    else {
+      const text = `${first ? taskMessage(task, '').replace(/\s+$/, '') : 'Here is the current screen.'}${describeScreen(seen.lines, { keyboardUp: seen.keyboardUp })}`;
+      if (seen.image) context.screen({ image: seen.image, mime: seen.mime, text });
+      else context.say(text);
+    }
+    llmLastSignature = seen.signature;
+    context.say(handoffMessage({ since, why, first, sticky }));
     if (final) context.say(FINAL_STEP);
     emit('thinking');
     const start = Date.now();
@@ -146,11 +158,18 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     const calls = msg.tool_calls || [];
     sinceLlm = history.length + 1;
     if (!calls.length) {
+      if (sticky) { llmRun += 1; llmOwns = llmRun < STICKY_MAX; if (!llmOwns) llmRun = 0; }
       context.assistant(msg.content ? msg : { ...msg, content: '(no response)' });
       return afterActions({ step, entry: { n: step, description: `LLM: no action${msg.content ? ` ("${msg.content.slice(0, 80)}")` : ''}`, changed: null, result: null, llm: true }, concluded: null, deviceFailed: false, changes: false, settle: false, lastResult: null });
     }
     context.assistant(msg);
-    const { done, concluded, changes, settle, deviceFailed } = await executeToolCalls({ calls, step, runTool, context, recorder, protocol });
+    const { done, concluded, changes, settle, deviceFailed, handBack } = await executeToolCalls({ calls, step, runTool, context, recorder, protocol });
+    if (sticky) {
+      llmRun += 1;
+      if (handBack) { llmOwns = false; llmRun = 0; log('[hybrid] ← the LLM handed control back'); }
+      else if (llmRun >= STICKY_MAX) { llmOwns = false; llmRun = 0; log(`[hybrid] ← control returns to the decision model after ${STICKY_MAX} LLM steps`); }
+      else llmOwns = true;
+    }
     const entry = { n: step, description: `LLM: ${historyLine(step, done).replace(/^Step \d+: /, '')}`, changed: null, result: null, llm: true };
     return afterActions({ step, entry, concluded, deviceFailed, changes, settle, lastResult: null });
   }
@@ -165,6 +184,15 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
       const why = escalationReason({ chosen: { value: '' }, probability: null, unchangedStreak: 0, final: true, threshold });
       log(`[hybrid] → LLM: ${why.detail}`);
       const out = await llmStep({ step, why, final: true });
+      if (out && out !== 'lost') return out;
+      continue;
+    }
+
+    // Sticky: the LLM has control, so no decision call this step.
+    if (llm && sticky && llmOwns) {
+      const why = { reason: 'sticky', detail: `step ${llmRun + 1} of at most ${STICKY_MAX} in a row` };
+      log(`[hybrid] LLM keeps control (${why.detail})`);
+      const out = await llmStep({ step, why, final: false });
       if (out && out !== 'lost') return out;
       continue;
     }
