@@ -68,6 +68,8 @@ export function buildReport(models) {
       ended,
       tool_calls: sum('tool_calls'), tool_error_rate: sum('tool_calls') ? round(sum('tool_errors') / sum('tool_calls'), 3) : null,
       ask_user_calls: sum('ask_user_calls'),
+      // Hybrid runs: how many steps the LLM took, of all model steps.
+      ...(all.some((r) => typeof r.llm_steps === 'number' && r.llm_steps > 0) ? { llm_steps: sum('llm_steps'), llm_step_share: sum('model_calls') ? round(sum('llm_steps') / sum('model_calls'), 3) : null } : {}),
       tokens: { input: sum('input_tokens'), cache_read: sum('cache_read_input_tokens'), output: sum('output_tokens'), reasoning: sum('reasoning_output_tokens') },
       cost_usd: round(sum('cost_usd'), 2), cost_per_task_usd: all.length ? round(sum('cost_usd') / all.length, 3) : null,
       served_models: [...new Set(all.flatMap((r) => r.served_models || []))],
@@ -106,9 +108,9 @@ export function reportMarkdown(rows, { judgeModel, maxSteps, pricesAsOf }) {
     '| --- | --- | --- | --- | --- | --- | --- | --- |',
     ...rows.map((r) => `| ${r.provider}:${r.model} | ${r.avg_steps ?? '–'} | ${r.avg_agent_seconds ?? '–'} | ${r.avg_model_seconds ?? '–'} | ${r.tokens.input.toLocaleString()} (${r.tokens.cache_read.toLocaleString()}) | ${r.tokens.output.toLocaleString()} (${r.tokens.reasoning.toLocaleString()}) | $${(r.cost_usd ?? 0).toFixed(2)} | $${(r.cost_per_task_usd ?? 0).toFixed(3)} |`),
     '', '## How runs ended, and behaviour', '',
-    '| model | endings | tool error rate | questions to the user | served by |',
-    '| --- | --- | --- | --- | --- |',
-    ...rows.map((r) => `| ${r.provider}:${r.model} | ${endingText(r.ended) || '–'} | ${pct(r.tool_error_rate)} of ${r.tool_calls} | ${r.ask_user_calls} | ${r.served_models.join(', ') || '–'} |`),
+    '| model | endings | tool error rate | questions to the user | steps by the LLM (hybrid) | served by |',
+    '| --- | --- | --- | --- | --- | --- |',
+    ...rows.map((r) => `| ${r.provider}:${r.model} | ${endingText(r.ended) || '–'} | ${pct(r.tool_error_rate)} of ${r.tool_calls} | ${r.ask_user_calls} | ${typeof r.llm_steps === 'number' ? `${pct(r.llm_step_share)} (${r.llm_steps})` : '–'} | ${r.served_models.join(', ') || '–'} |`),
     '',
     ...(rows.some((r) => r.calibration) ? [
       '## Confidence calibration (decision models)', '',

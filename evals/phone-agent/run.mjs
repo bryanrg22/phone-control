@@ -166,7 +166,9 @@ async function runTask({ task, index, model, taskDir }) {
   // How the run ended, as the agent recorded it: completed, failed, step_budget,
   // no_progress (its own stop, a product feature kept as the server runs it)…
   Object.assign(record, usageOf(trace), { ended: manifest?.outcome?.status ?? outcome.ended, agent: manifest?.agent ?? null, prompt_sha256: manifest?.prompt_sha256 ?? null, tools_sha256: manifest?.tools_sha256 ?? null });
-  record.cost_usd = costOf(model.model, record);
+  // The trace prices each call by its own model (a hybrid run has two); the
+  // run's model is the fallback for a trace without prices.
+  if (record.cost_usd === null || record.cost_usd === undefined) record.cost_usd = costOf(model.model, record);
   writeFileSync(join(taskDir, 'trajectory.json'), JSON.stringify(toTrajectory(traceDir, existsSync(finalShot) ? finalShot : null), null, 2));
 
   // Exit 42: the model API failed for good; 43: the device connection died; a

@@ -23,6 +23,9 @@
 //   search_<n>_<k> phrase n into search field k, then Return: the submit closes
 //                 the keyboard, which covered the result rows (cinephile-001,
 //                 megamart-001 tapped a row's title text under it, to no effect)
+//   write_<k>     (hybrid mode only) "write into field k the text the task calls
+//                 for": no tool call; the loop hands the step to the LLM, which
+//                 writes the text (decision/escalate.mjs)
 //   press_return  when the keyboard is open (submits a field, closes most keyboards)
 //   hide_keyboard when the keyboard is open (to reach what it covers)
 //   scroll_down, scroll_up, home
@@ -87,9 +90,10 @@ export function phrasesOf(task, { apps = [] } = {}) {
  * @param {string|null} [o.currentApp]  the app on screen, if known
  * @param {boolean} [o.keyboardUp]
  * @param {boolean} [o.final]           the last step of the budget: conclude only
+ * @param {boolean} [o.writer]          an LLM can write text (hybrid mode): offer write_<k>
  * @returns {Array<{ value: string, description: string, actions: Array<{ tool: string, args: object }> }>}
  */
-export function candidateActions({ elements, task, apps = [], currentApp = null, keyboardUp = false, final = false }) {
+export function candidateActions({ elements, task, apps = [], currentApp = null, keyboardUp = false, final = false, writer = false }) {
   const conclude = [
     { value: 'done', description: 'The task is complete: the current screen shows it done. Choose this only then.', actions: [{ tool: 'taskComplete', args: { summary: DONE_SUMMARY } }] },
     { value: 'blocked', description: 'The task cannot be completed on this device (the app, item or setting does not exist). Choose this only then.', actions: [{ tool: 'taskFailed', args: { reason: BLOCKED_REASON } }] },
@@ -125,6 +129,11 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
           out.push({ value: `search_${i}_${k}`, description: `Search for "${p}": ${hasText ? 'replace the text in' : 'type it into'} ${sliceDesc(f.desc, 60)} and press Return`, actions: [...put, { tool: 'pressKey', args: { key: 'enter' } }] });
         }
       });
+    });
+  }
+  if (writer) {
+    fields.forEach((f, k) => {
+      out.push({ value: `write_${k}`, description: `Write into ${sliceDesc(f.desc, 60)} the text the task calls for but does not give (a language model writes it)`, actions: [] });
     });
   }
   const one = (tool, args) => [{ tool, args }];

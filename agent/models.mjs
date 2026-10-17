@@ -11,6 +11,7 @@ export const DEFAULT_MODELS = {
   // Decision models (agent/decision/): a choice among the actions on screen, not a conversation.
   'openai-decisions': 'gpt-6-luna',   // the only model of the Decisions API (public beta); a real call answered on 2026-10-16
   typesafe: 'jev-latest',             // = jev-1.13.0 (stable, text); jev-preview = 1.14.0 adds images and box
+  hybrid: 'openai-decisions:gpt-6-luna+openai:gpt-6-luna',   // the chooser and the LLM it escalates to (agent/decision/escalate.mjs)
 };
 
 export function defaultModelFor(provider) {

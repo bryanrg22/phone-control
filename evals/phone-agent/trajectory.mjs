@@ -20,6 +20,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { costOf } from '../lib/prices.mjs';
 
 export function readTrace(traceDir) {
   const f = join(traceDir, 'trace.jsonl');
@@ -92,8 +93,31 @@ export function usageOf(trace) {
     reasoning_output_tokens: sum('gen_ai.usage.reasoning.output_tokens'),
     model_seconds: Math.round(chats.reduce((a, r) => a + (r.eval.latency_ms || 0), 0) / 100) / 10,
     served_models: [...new Set(chats.map((r) => r.attributes['gen_ai.response.model']).filter(Boolean))],
+    ...costByCall(chats),
     ...decisionStats(chats),
   };
+}
+
+/**
+ * Cost from each model call's own model and tokens, so a hybrid run (a
+ * decision model and an LLM, each priced apart) adds up; null when any call's
+ * model has no listed price. With it, the calls per provider:model.
+ */
+function costByCall(chats) {
+  const by = {};
+  let cost = 0;
+  let priced = true;
+  for (const r of chats) {
+    const a = r.attributes;
+    const key = `${a['gen_ai.provider.name']}:${a['gen_ai.request.model']}`;
+    const u = { input_tokens: a['gen_ai.usage.input_tokens'] || 0, output_tokens: a['gen_ai.usage.output_tokens'] || 0, cache_read_input_tokens: a['gen_ai.usage.cache_read.input_tokens'] || 0, cache_write_input_tokens: a['gen_ai.usage.cache_write.input_tokens'] || 0 };
+    const c = costOf(a['gen_ai.request.model'], u);
+    if (c === null) priced = false; else cost += c;
+    const b = (by[key] ||= { calls: 0, input_tokens: 0, output_tokens: 0, cost_usd: 0, seconds: 0 });
+    b.calls += 1; b.input_tokens += u.input_tokens; b.output_tokens += u.output_tokens; b.cost_usd += c || 0; b.seconds += (r.eval?.latency_ms || 0) / 1000;
+  }
+  for (const b of Object.values(by)) { b.cost_usd = Math.round(b.cost_usd * 1e6) / 1e6; b.seconds = Math.round(b.seconds * 10) / 10; }
+  return { cost_usd: chats.length && priced ? Math.round(cost * 1e6) / 1e6 : null, by_model: by, llm_steps: chats.filter((r) => r.eval?.escalation).length };
 }
 
 /**

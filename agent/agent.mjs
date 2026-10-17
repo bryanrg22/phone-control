@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { parseAgentArgs, helpText } from './cli-args.mjs';
 import { createProtocol } from './protocol.mjs';
 import { createDevice, installedApps } from './device.mjs';
-import { createModel, createDecider, isDecisionProvider, KEY_ENV } from './providers/index.mjs';
+import { createModel, createDecider, isDecisionProvider, parseHybridModel, HYBRID_PROVIDER, KEY_ENV } from './providers/index.mjs';
 import { toolDefinitions, createToolRunner } from './tools.mjs';
 import { systemPrompt } from './prompt.mjs';
 import { createContext } from './context.mjs';
@@ -36,8 +36,15 @@ const cfg = parsed.config;
 
 const protocol = createProtocol({ askUserTimeoutSec: cfg.askUserTimeoutSec });
 const { emit, log } = protocol;
-const apiKey = process.env[KEY_ENV[cfg.provider]];
-if (!apiKey) { log(`ERROR: set ${KEY_ENV[cfg.provider]} for --provider ${cfg.provider}`); process.exit(1); }
+// Hybrid: a decision model (the chooser) and an LLM, each with its own key.
+const hybrid = cfg.provider === HYBRID_PROVIDER ? parseHybridModel(cfg.model) : null;
+const keyFor = (provider) => {
+  const key = process.env[KEY_ENV[provider]];
+  if (!key) { log(`ERROR: set ${KEY_ENV[provider]} for --provider ${cfg.provider}`); process.exit(1); }
+  return key;
+};
+const apiKey = hybrid ? null : keyFor(cfg.provider);
+const hybridKeys = hybrid ? { chooser: keyFor(hybrid.chooser.provider), llm: keyFor(hybrid.llm.provider) } : null;
 
 // ─── the phone ───
 const { apps, source: appsSource } = await installedApps({ simulatorUdid: cfg.simulator });
@@ -50,15 +57,21 @@ try { screenInfo = await device.info(); } catch (e) {
 log(`[setup] runner ${device.address} · screen ${screenInfo.widthPoints}x${screenInfo.heightPoints} pt · ${Object.keys(apps).length} apps (${appsSource})`);
 
 // ─── the model, the tools, the prompt ───
-// Two modes: an LLM converses with the tools (loop.mjs); a decision model
-// picks one of the actions the harness enumerates from the screen (decision/).
-const decision = isDecisionProvider(cfg.provider);
-const model = decision
-  ? createDecider({ provider: cfg.provider, model: cfg.model, apiKey, log })
-  : createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, log });
-const nativeSearch = cfg.provider !== 'gemini';
+// Three modes: an LLM converses with the tools (loop.mjs); a decision model
+// picks one of the actions the harness enumerates from the screen (decision/);
+// hybrid: the decision model picks, and hands some steps to an LLM (decision/escalate.mjs).
+const decision = isDecisionProvider(cfg.provider) || !!hybrid;
+const llmSpec = hybrid ? hybrid.llm : (decision ? null : { provider: cfg.provider, model: cfg.model });
+const model = hybrid
+  ? createDecider({ provider: hybrid.chooser.provider, model: hybrid.chooser.model, apiKey: hybridKeys.chooser, log })
+  : decision
+    ? createDecider({ provider: cfg.provider, model: cfg.model, apiKey, log })
+    : createModel({ provider: cfg.provider, model: cfg.model, apiKey, temperature: cfg.temperature, log });
+const llmModel = hybrid ? createModel({ provider: hybrid.llm.provider, model: hybrid.llm.model, apiKey: hybridKeys.llm, log }) : null;
+const nativeSearch = llmSpec?.provider !== 'gemini';
 const toolDefs = toolDefinitions({ apps, braveSearch: !nativeSearch });
-const system = decision ? DECISION_INSTRUCTIONS : systemPrompt({ apps: Object.keys(apps), searchTool: nativeSearch ? 'web_search' : 'webSearch' });
+const llmSystem = llmSpec ? systemPrompt({ apps: Object.keys(apps), searchTool: nativeSearch ? 'web_search' : 'webSearch' }) : null;
+const system = decision && !hybrid ? DECISION_INSTRUCTIONS : llmSystem;
 const context = createContext({ system });
 const state = { keyboardUp: false, screen: () => screenInfo };
 const runTool = createToolRunner({ device, apps, screen: () => state.screen(), protocol, state });
@@ -71,11 +84,12 @@ const recorder = createRecorder({
     task: cfg.task, run_id: cfg.runId, provider: cfg.provider, model: cfg.model,
     agent: { release: releaseOf(REPO), commit: commit.commit, dirty: commit.dirty },
     settings: {
-      mode: decision ? 'decision' : 'llm', max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768,
+      mode: hybrid ? 'hybrid' : (decision ? 'decision' : 'llm'), max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: 'provider default', image_width: 768,
       // The decision APIs are previews whose formats may change: what was used is recorded.
-      ...(decision ? { decision: { ...model.api, screenshot_sent: false } } : {}),
+      ...(decision ? { decision: { ...model.api, screenshot_sent: false, instructions_sha256: sha(DECISION_INSTRUCTIONS) } } : {}),
+      ...(hybrid ? { hybrid: { chooser: hybrid.chooser, llm: hybrid.llm, escalation_threshold: cfg.escalationThreshold, escalation: 'conclusion, free_text, low_confidence (below the threshold), stuck (3 unchanged screens), final' } } : {}),
     },
-    prompt_sha256: sha(system), tools_sha256: sha(JSON.stringify(toolDefs)),
+    prompt_sha256: system ? sha(system) : null, tools_sha256: sha(JSON.stringify(toolDefs)),
     device: { address: device.address, simulator: cfg.simulator, screen: screenInfo, apps: Object.keys(apps).length, apps_source: appsSource },
     node: process.version,
   },
@@ -119,7 +133,10 @@ for (const sig of ['SIGTERM', 'SIGINT']) process.on(sig, () => { finish({ status
 
 const progress = createProgressMonitor({ abortAfter: cfg.noProgressAbort });
 const outcome = decision
-  ? await runDecisionLoop({ task: cfg.task, maxSteps: cfg.maxSteps, decider: model, device, runTool, apps: Object.keys(apps), protocol, recorder, progress, state, autoAllowNotifications })
+  ? await runDecisionLoop({
+    task: cfg.task, maxSteps: cfg.maxSteps, decider: model, device, runTool, apps: Object.keys(apps), protocol, recorder, progress, state, autoAllowNotifications,
+    llm: hybrid ? { model: llmModel, context, toolDefs, threshold: cfg.escalationThreshold } : null,
+  })
   : await runLoop({
     task: cfg.task, maxSteps: cfg.maxSteps, model, device, runTool, toolDefs, context, protocol, recorder, state,
     stuck: createStuckDetector(), progress, autoAllowNotifications,

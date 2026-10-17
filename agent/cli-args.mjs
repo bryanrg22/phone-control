@@ -7,16 +7,17 @@
 // error (exit 2), so a typo cannot silently change a run.
 
 import { defaultModelFor, supportsTemperature } from './models.mjs';
-import { LLM_PROVIDERS, DECISION_PROVIDERS } from './providers/index.mjs';
+import { LLM_PROVIDERS, DECISION_PROVIDERS, HYBRID_PROVIDER, parseHybridModel } from './providers/index.mjs';
 
 export const VALUE_FLAGS = new Set([
   '--provider', '--model', '--temperature',
   '--driver-host', '--driver-port', '--simulator',
   '--max-steps', '--askuser-timeout', '--no-progress-abort',
   '--trace-dir', '--run-id',
+  '--escalation-threshold',
 ]);
 export const BOOLEAN_FLAGS = new Set(['--help']);
-const PROVIDERS = [...LLM_PROVIDERS, ...DECISION_PROVIDERS];
+const PROVIDERS = [...LLM_PROVIDERS, ...DECISION_PROVIDERS, HYBRID_PROVIDER];
 
 export function parseAgentArgs(argv) {
   const flags = {};
@@ -40,6 +41,7 @@ export function parseAgentArgs(argv) {
   const provider = flags['--provider'] || 'anthropic';
   if (!PROVIDERS.includes(provider)) return fail(`--provider must be one of ${PROVIDERS.join(', ')} (got "${provider}").`);
   const model = flags['--model'] || defaultModelFor(provider);
+  if (provider === HYBRID_PROVIDER) { try { parseHybridModel(model); } catch (e) { return fail(e.message); } }
 
   const int = (name, dflt, min, max) => {
     const raw = flags[name];
@@ -61,9 +63,16 @@ export function parseAgentArgs(argv) {
   if (flags['--temperature'] !== undefined) {
     const t = Number(flags['--temperature']);
     if (!Number.isFinite(t) || t < 0 || t > 2) return fail(`--temperature must be a number from 0 to 2 (got "${flags['--temperature']}").`);
-    if (DECISION_PROVIDERS.includes(provider)) return fail(`--provider ${provider} is a decision model: it takes no --temperature.`);
+    if (DECISION_PROVIDERS.includes(provider) || provider === HYBRID_PROVIDER) return fail(`--provider ${provider} takes no --temperature.`);
     if (!supportsTemperature(provider, model, t)) return fail(`${model} does not accept --temperature (reasoning models use their default).`);
     temperature = t;
+  }
+
+  let escalationThreshold = 0.5;
+  if (flags['--escalation-threshold'] !== undefined) {
+    const t = Number(flags['--escalation-threshold']);
+    if (!Number.isFinite(t) || t < 0 || t > 1) return fail(`--escalation-threshold must be a number from 0 to 1 (got "${flags['--escalation-threshold']}").`);
+    escalationThreshold = t;
   }
 
   const simulator = flags['--simulator'] || null;
@@ -73,7 +82,7 @@ export function parseAgentArgs(argv) {
   return {
     help: false, error: null,
     config: {
-      task, provider, model, temperature,
+      task, provider, model, temperature, escalationThreshold,
       driverHost, driverPort, simulator,
       maxSteps, askUserTimeoutSec, noProgressAbort,
       traceDir: flags['--trace-dir'] || null,
@@ -90,10 +99,13 @@ export function helpText() {
 Operates an iPhone through the XCTest runner on it until the task is done.
 
 Model:
-  --provider P           anthropic | openai | gemini (default: anthropic), or a decision model:
-                         openai-decisions (the Decisions API) | typesafe (Jev); see agent/decision/
-  --model M              model ID (default: the provider's default in models.mjs)
+  --provider P           anthropic | openai | gemini (default: anthropic); a decision model:
+                         openai-decisions (the Decisions API) | typesafe (Jev); or hybrid, a decision
+                         model that hands some steps to an LLM; see agent/decision/
+  --model M              model ID (default: the provider's default in models.mjs); for hybrid,
+                         "<decision provider>:<model>+<llm provider>:<model>"
   --temperature T        0-2; only for models that accept it
+  --escalation-threshold P   hybrid: a decision below this probability goes to the LLM (default 0.5)
 
 Device:
   --driver-host H        the phone's runner address (required for a phone)
