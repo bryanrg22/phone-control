@@ -61,6 +61,8 @@ export function createDevice({ host, port, knownApps = [] }) {
     async pressButton(button) { await call('POST', '/pressButton', { button }); },
     // swipeV2 applies the orientation mapping that /touch and /drag apply; v1 does not.
     async swipe(sx, sy, ex, ey, duration = 0.3) { await call('POST', '/swipeV2', { startX: sx, startY: sy, endX: ex, endY: ey, duration }); },
+    /** Two screenshots taken back to back are identical: nothing moves (Maestro's isScreenStatic). */
+    async screenStatic() { return (await (await call('GET', '/isScreenStatic')).json()).isScreenStatic === true; },
     async drag(sx, sy, ex, ey, holdDuration = 0.5, dragDuration = 1.0) { await call('POST', '/drag', { startX: sx, startY: sy, endX: ex, endY: ey, holdDuration, dragDuration }); },
 
     /**

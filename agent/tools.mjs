@@ -13,6 +13,27 @@
 import { formatElements, capElements, findElement } from './elements.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// A scroll leaves the list decelerating long after the gesture. On TrailBlaze's
+// feed the runner's swipe returns at ~670 ms and the list moves for ~2 s more
+// (a "Like" from 86% to 60%; still 13% off at the loop's 350 ms settle). The
+// screen was read mid-flight, and the next tap went to where the button had
+// been, or stopped the scroll instead of pressing anything (trailblaze-004's
+// first Like never registered, every run; measured 2026-10-17). So scroll and
+// swipe return only once the screen is still, as Maestro does after every
+// swipe: poll the runner's /isScreenStatic, up to Maestro's 3000 ms. The first
+// still answer ends it (~2.7 s after the swipe began, the moment the element
+// tree stops changing). Waiting for a second one waits out the scroll bar's
+// fade, which moves nothing, into the cap; and a deceleration's last 300 ms,
+// where one answer could be fooled, move a row by 3 pt at most.
+export const STATIC_TIMEOUT_MS = 3000;
+async function untilStatic(device) {
+  if (typeof device.screenStatic !== 'function') return;
+  const end = Date.now() + STATIC_TIMEOUT_MS;
+  while (Date.now() < end) {
+    try { if (await device.screenStatic()) return; } catch { return; }
+  }
+}
 const num = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, ...(description ? { description } : {}) });
 
 // handBack exists only in the sticky hybrid mode (agent/decision/escalate.mjs):
@@ -171,11 +192,13 @@ export function createToolRunner({ device, apps, screen, protocol, state }) {
       const s = screen();
       const midX = Math.round(s.widthPoints / 2);
       await device.swipe(midX, Math.round(s.heightPoints * 0.7), midX, Math.round(s.heightPoints * 0.3));
+      await untilStatic(device);
       return { text: 'Scrolled down', changesScreen: true, settle: true };
     },
 
     async swipe({ startX, startY, endX, endY }) {
       await device.swipe(...pt(startX, startY), ...pt(endX, endY));
+      await untilStatic(device);
       return { text: 'Swiped', changesScreen: true, settle: true };
     },
 

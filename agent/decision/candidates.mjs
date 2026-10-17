@@ -47,6 +47,13 @@ export const BLOCKED_REASON = 'The decision model judged the task impossible to 
 
 const sliceDesc = (s, n = 90) => (s.length > n ? `${s.slice(0, n)}…` : s);
 
+// A search field: one iOS calls so, or a field whose own name (label or
+// placeholder, never its text) has the word Search: CloudSlides' "Search in
+// Slides" is a plain text field. Matching the description matched the text
+// too, and a slide's agenda ("Threat models / Research gaps / ...") got
+// "Search for X" options that replaced it (cloudslides-002, 2026-10-16).
+export const isSearchField = (f) => f.kind === 'search field' || /\bsearch\b/i.test(f.name || '');
+
 /**
  * Phrases a task implies typing: quoted strings, times, amounts (digits only:
  * a "$" cannot be typed on a number pad), emails, street addresses, capitalised
@@ -124,7 +131,7 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
         } else {
           out.push({ value: `type_${i}_${k}`, description: `Type "${p}" into ${sliceDesc(f.desc, 60)}${hasText ? ' (after its current text)' : ''}`, actions: [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }] });
         }
-        if (f.kind === 'search field' || /search/i.test(f.desc)) {
+        if (isSearchField(f)) {
           const put = hasText ? [{ tool: 'replaceTextAt', args: { x: f.x, y: f.y, value: p } }] : [{ tool: 'tap', args: { x: f.x, y: f.y, description: f.desc } }, { tool: 'inputText', args: { text: p } }];
           out.push({ value: `search_${i}_${k}`, description: `Search for "${p}": ${hasText ? 'replace the text in' : 'type it into'} ${sliceDesc(f.desc, 60)} and press Return`, actions: [...put, { tool: 'pressKey', args: { key: 'enter' } }] });
         }

@@ -71,6 +71,36 @@ console.log('touching the phone:');
   check('an unknown key is refused', (await run('pressKey', { key: 'f5' })).error);
 }
 
+{
+  // A scroll returns only once the list has stopped (trailblaze-004, 2026-10-17).
+  const withStatic = (answers) => {
+    const seq = [...answers];
+    let reads = 0;
+    const order = [];
+    const device = {
+      swipe: async () => order.push('swipe'),
+      screenStatic: async () => { reads++; order.push('static?'); const a = seq.length ? seq.shift() : true; if (a instanceof Error) throw a; return a; },
+    };
+    const run = createToolRunner({ device, apps: {}, screen: () => ({ widthPoints: 402, heightPoints: 874 }), protocol: {}, state: { keyboardUp: false } });
+    return { run, order, reads: () => reads };
+  };
+  const moving = withStatic([false, false, false, true]);
+  const r = await moving.run('scroll', {});
+  check('scroll polls the screen after the swipe until it is still', moving.order.join() === 'swipe,static?,static?,static?,static?' && r.text === 'Scrolled down' && r.settle, moving.order.join());
+  const sw = withStatic([false, true]);
+  await sw.run('swipe', { startX: 50, startY: 30, endX: 50, endY: 70 });
+  check('swipe waits too', sw.reads() === 2);
+  const broken = withStatic([new Error('runner /isScreenStatic failed (404)')]);
+  const b = await broken.run('scroll', {});
+  check('a runner without the route: the scroll still succeeds, after one try', !b.error && broken.reads() === 1);
+  const t0 = Date.now();
+  // Slow each answer so the cap, not the list, ends the wait.
+  const slow = createToolRunner({ device: { swipe: async () => {}, screenStatic: async () => { await new Promise((res) => setTimeout(res, 100)); return false; } }, apps: {}, screen: () => ({ widthPoints: 402, heightPoints: 874 }), protocol: {}, state: {} });
+  const s = await slow('scroll', {});
+  const took = Date.now() - t0;
+  check('a screen that never stops (a video): the wait ends at the cap, ~3 s, and the scroll succeeds', !s.error && took >= 2900 && took < 3400, `${took} ms`);
+}
+
 console.log('telling the truth:');
 for (const [name, kb, hidden] of [
   ['Return closes it', [false], true],

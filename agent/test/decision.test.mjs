@@ -11,7 +11,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { listElements } from '../elements.mjs';
-import { candidateActions, phrasesOf, DONE_SUMMARY, MAX_TAP_CANDIDATES } from '../decision/candidates.mjs';
+import { candidateActions, isSearchField, phrasesOf, DONE_SUMMARY, MAX_TAP_CANDIDATES } from '../decision/candidates.mjs';
 import { decisionState, INSTRUCTIONS } from '../decision/question.mjs';
 import { runDecisionLoop } from '../decision/loop.mjs';
 import { buildDecisionsRequest, parseDecisionsAnswer, createOpenAIDecisions } from '../providers/openai-decisions.mjs';
@@ -84,6 +84,19 @@ console.log('candidate actions on the real Add Alarm sheet (keyboard up):');
   check('a search field also gets "search for X": type, then Return', s0 && s0.description === 'Search for "PS5 Controller": type it into search field "Search MegaMart" (empty) and press Return' && s0.actions.map((a) => a.tool).join() === 'tap,inputText,pressKey' && s0.actions[2].args.key === 'enter', JSON.stringify(s0));
   const s1 = candidateActions({ elements: [field('text field "Search any movies or person" = "The"', 'text field', 'Search any movies or person')], task: "Search for 'The Godfather' in Cinephile", apps: ['Cinephile'] }).find((x) => x.value === 'search_0_0');
   check('a field whose name says Search counts, and with text it replaces, then Return', s1 && s1.actions.map((a) => a.tool).join() === 'replaceTextAt,pressKey', JSON.stringify(s1));
+  // cloudslides-002 (2026-10-16): the agenda field's TEXT has "Research gaps"; the
+  // real search field is a plain text field named "Search in Slides".
+  const slides = candidateActions({
+    elements: [
+      field('text field "Search in Slides" (empty)', 'text field', 'Search in Slides'),
+      field('text field = "Threat models\nResearch gaps\nWhy benchmarks matter"', 'text field', null),
+      field('text field "Research notes" (empty)', 'text field', 'Research notes'),
+    ],
+    task: "Edit slide 2 to add a bullet about 'safety' to the agenda list", apps: ['CloudSlides'],
+  });
+  const searches = slides.filter((x) => x.value.startsWith('search_')).map((x) => x.value);
+  check('"Research" in a field\'s text or name is not "search": only the real search field gets a search option', searches.join() === 'search_0_0', searches.join());
+  check('isSearchField: by kind, or by the word in the name only', isSearchField({ kind: 'search field', name: null }) && isSearchField({ kind: 'text field', name: 'Search…' }) && !isSearchField({ kind: 'text field', name: 'Researcher' }) && !isSearchField({ kind: 'text field', name: null, desc: 'text field = "search the web"' }));
 }
 {
   // The keyboard covers the bottom of the screen: keys from 70%, a predictions row from 62%.
