@@ -4,7 +4,10 @@
 //   → { model: 'jev-1.13.0', answers: { <id>: { type: 'choice', choice, probabilities: { <option>: p }, confidence } }, usage: { input_tokens, output_tokens } }
 //
 // Shapes from docs.typesafe.ai (quickstart, primitives/choice, models), read
-// on 2026-10-16. NOT yet checked with a real call: TYPESAFE_API_KEY was empty.
+// on 2026-10-16, and verified with real calls the same day (Add Alarm fixture,
+// 24 options: 200 in ~200 ms, every field above present; no top-level id, the
+// request id is the x-typesafe-request-id response header; usage reports
+// output_tokens too, though only input is priced).
 // state may be a string or an object (an object here: the task, the history,
 // the elements as a list). A choice takes up to 255 options; a request 64k
 // tokens (262k with TypeSafe-Danger-Zone-Long-Context: true, slower and less
@@ -17,7 +20,7 @@ const base = () => (process.env.TYPESAFE_BASE_URL || 'https://api.typesafe.ai').
 export const QUESTION_ID = 'next_action';
 export const MAX_OPTIONS = 255;
 
-export const API_INFO = { api: 'TypeSafe System One (Jev)', endpoint: 'POST /v1/systemone', status: 'request format may change (docs, 2026-10-16); not yet verified with a real call', question: 'choice', input: 'structured state (object)', headers: [] };
+export const API_INFO = { api: 'TypeSafe System One (Jev)', endpoint: 'POST /v1/systemone', status: 'request format may change (docs, 2026-10-16); verified with real calls on 2026-10-16 (jev-1.13.0)', question: 'choice', input: 'structured state (object)', headers: [] };
 
 /** @param {{ model: string, instructions: string, stateObject: object, candidates: Array<{ value: string, description: string }> }} o */
 export function buildJevRequest({ model, instructions, stateObject, candidates }) {
@@ -57,7 +60,7 @@ export function createTypeSafe({ model, apiKey, log }) {
       const u = r.json.usage || {};
       return {
         ...parseJevAnswer(r.json, candidates),
-        responseId: r.json.id ?? null,
+        responseId: r.json.id ?? r.headers?.get?.('x-typesafe-request-id') ?? null,
         responseModel: r.json.model ?? null,
         usage: { input_tokens: u.input_tokens || 0, output_tokens: u.output_tokens || 0, cache_read_input_tokens: 0, cache_write_input_tokens: null, reasoning_output_tokens: null },
         raw: { url, request: body, response: r.json, status: r.status, attempts: r.attempts },

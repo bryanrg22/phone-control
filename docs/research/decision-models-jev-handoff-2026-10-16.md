@@ -93,8 +93,8 @@ grows, so trim the list to on-screen interactive elements).
 ## Open before any run
 
 - `TYPESAFE_API_KEY` in `~/dev/GitHub/ios-agent_automation/.env` was present
-  but **empty** on 2026-10-16 (the silent prompt lost the paste); re-add it
-  from the clipboard (`printf 'TYPESAFE_API_KEY=%s\n' "$(pbpaste)"`).
+  but **empty** for most of 2026-10-16 (the silent prompt lost the paste); it
+  was re-added by hand in the evening and the live call below went through.
 - Which Jev version: 1.13 (stable) for text-only choices, 1.14 (preview) if
   Box or images are used; say which in every result.
 - Whether to feed the screenshot at all: start text-only (the element list),
@@ -111,8 +111,18 @@ options): 315 ms cold then 101–157 ms; `usage` = input tokens only, cached 0;
 the answer carries a probability for every option. Rate-limit headers: 10,000
 requests/min, 10M tokens/min.
 
-**Jev: not yet called.** `TYPESAFE_API_KEY` is still empty; the request shape is
-from the docs and checked only against a fake server.
+**Jev, verified live** (2026-10-16, after the key was re-added; three calls on
+the Add Alarm fixture, 24 options, request 4.3 kB): 200 in 225 ms cold, then
+207 and 196 ms; `model` = `jev-1.13.0`; `usage` = `{ input_tokens: 2440,
+output_tokens: 238 }` (only input is priced: 2440 × $0.042/M ≈ $0.0001 a
+step); the answer carries a probability for every option, summing to ~1, plus
+`confidence` (0.61, 0.58, 0.51 across the three calls: the same input gives a
+slightly different distribution each time). The response has no top-level
+`id`; the request id is the `x-typesafe-request-id` header, which the provider
+now records as `responseId`. Every field `parseJevAnswer` reads was present;
+no other change was needed. On this screen (keyboard up, label typed) Jev
+chose "Tap picker wheel = 38 minutes" at p=0.63/0.60/0.53, with "Press Return"
+second at 0.21, "Save" at 0.05.
 
 **clock-001, Decisions API (`gpt-6-luna`), three runs while the candidate set was
 being corrected** (each run on a committed tree; folders under `evals/results/phone-agent/`):
