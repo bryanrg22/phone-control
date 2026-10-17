@@ -28,6 +28,7 @@ tasks**, the subset that stays inside one app.
 | Judge | iOSWorld's own script, `scripts/judge_trajectories.py`, unchanged, with `gpt-5.4-mini` |
 | Pass | The judge finds **every** rubric criterion met |
 | Trials | 1 per agent per task |
+| Model settings | Provider-default reasoning effort; web search offered to the LLM. These runs predate the current protocol in `evals/phone-agent/run.mjs`, which sets effort `high` and no web search, so new runs are compared with each other, not with these |
 | iOSWorld version | commit `c59287b`, tasks file sha256 `42c0b5558fde0e71` |
 
 Each run keeps everything needed to check it: every screenshot, every model
@@ -51,6 +52,26 @@ who chooses.
 
 The 0.5 threshold and the 3-step and 5-step limits were fixed before any run
 and not tuned on these tasks.
+
+## How the comparison was controlled
+
+The point of every comparison below is that **the only thing that differs
+between two rows is who chooses each step**. Everything else was held fixed:
+
+| Held fixed | How |
+| --- | --- |
+| The tasks | The same 27 iOSWorld tasks for every agent, from one pinned copy of the benchmark (commit and task-file hash above) |
+| The starting state | One simulator; before **every** task, every app is reset and reseeded and the phone returns to the home screen, so no task inherits another's data |
+| The harness | Screen reading (the screenshot and the element list), the actions, the 50-step budget and the stop rules are the same for every agent. The decision models are offered the same options in every run; a hybrid adds only its hand-off (a "write into this field" option and the rules for when the LLM takes over) |
+| The judge | iOSWorld's own judging script, unmodified, with the same model for every run; it sees the same kind of record for every agent (the screens and the final answer) |
+| The rules | The hand-off threshold and limits were set before the first run and never tuned on these tasks. A finished task counts as it finished: tasks interrupted by the machine (a full disk, a power loss) were run afterwards on the same code, and none was re-run to improve its result |
+| The accounting | Tokens come from each API's own usage report on every call, priced at the provider's list price; time is measured by the harness around each call and each task |
+| The record | Every run stores its commit (with a clean working tree), the benchmark's version, the simulator and Xcode versions and every setting, in `run_info.json` beside its results |
+
+**Not controlled, and said so:** a model can answer differently on the same
+screen, which is why one trial is not enough (see [How sure we are](#how-sure-we-are));
+the decision APIs are previews whose models can change behind the same name;
+runs happened at different times of day against live APIs.
 
 ## Results
 
@@ -208,8 +229,10 @@ all 133 tasks would cover multi-app work too.
   differently.
 - **The code has moved since.** The runs used commits `4888b67` (Luna,
   decision models), `487f174` (step hybrid), `dbc720b` (sticky) and `75c3f2c`
-  (writer). The decision harness is identical across them; the LLM loop was
-  refactored in `487f174` with its tools unchanged. Three harness fixes found
+  (writer). Screen reading is unchanged across them, and so are the decision
+  models' options apart from each hybrid's hand-off; the LLM loop was
+  refactored in `487f174` to share its action code with the hybrid, its tools
+  and prompt unchanged. Three harness fixes found
   by reading these runs (a tap right after a scroll, a field wrongly treated as
   a search box, appending to multi-line fields) came after, so the current code
   should do at least as well; that is not yet measured.
