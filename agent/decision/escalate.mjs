@@ -52,8 +52,10 @@ export function escalationReason({ chosen, probability, unchangedStreak, final, 
   return null;
 }
 
-// The askUser rules of the system prompt, applied to the control at hand.
-export const CONFIRM_ASK = 'It cannot be undone. First check on the screen that it is what the task asks (the amount, the recipient, the items, the address) and that it has not already been done. A payment, a purchase or a deletion needs the user\'s confirmation: unless the user has already confirmed it in this task, call askUser with a Yes/No question that says exactly what will happen, and do not tap it in the same step. Tap it only if the user confirms. If the user declines or nobody answers, do not tap it: call taskFailed, saying what is ready and that the user\'s confirmation was required.';
+// The askUser rules of the system prompt, applied to the control at hand. No
+// "unless the user already confirmed it" escape: GPT-6 Luna read the task as
+// that confirmation (loop.mjs safetyLine, measured by replay, 2026-10-17).
+export const CONFIRM_ASK = 'It cannot be undone. First check on the screen that it is what the task asks (the amount, the recipient, the items, the address) and that it has not already been done. The task saying to do it is not the user\'s confirmation: a payment, a purchase or a deletion needs it from askUser. Unless the user has answered yes to an askUser question about it in this task, call askUser with a Yes/No question that says exactly what will happen, and do not tap it in the same step. Tap it only if the user confirms. If the user declines or nobody answers, do not tap it: call taskFailed, saying what is ready and that the user\'s confirmation was required.';
 export const VERIFY_ASK = 'It cannot be undone. Check on the screen that it is what the task asks (the recipient and the text, or the details) and that it has not already been done. If it is right, tap it: the user\'s command is the confirmation for this. If not, correct it first, or conclude if it was already done.';
 
 const fmt = (p) => (typeof p === 'number' ? (Math.round(p * 100) / 100).toString() : '?');

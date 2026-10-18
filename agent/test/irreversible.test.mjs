@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { commitOfLabel, commitOfElement, commitOfCall, elementAt, normaliseLabel, isConsent } from '../decision/irreversible.mjs';
 import { candidateActions } from '../decision/candidates.mjs';
 import { escalationReason, handoffMessage, CONFIRM_ASK, VERIFY_ASK } from '../decision/escalate.mjs';
-import { runDecisionLoop, answerOf } from '../decision/loop.mjs';
+import { runDecisionLoop, answerOf, safetyLine } from '../decision/loop.mjs';
 import { createDevice } from '../device.mjs';
 import { createToolRunner, toolDefinitions } from '../tools.mjs';
 import { createProgressMonitor } from '../stuck.mjs';
@@ -192,6 +192,8 @@ async function run({ chooser, llm = null, answer = null, sticky = false, maxStep
   return { outcome, runner, logs, questions, llmCalls, toolCalls };
 }
 const isSend = (c) => c.commit?.label === 'Send now';
+const sendTaps = (runner) => runner.callsTo('/touch').filter((c) => Math.abs(c.body.x - SEND_NOW[0]) < 3 && Math.abs(c.body.y - SEND_NOW[1]) < 3).length;
+const userText = (calls) => JSON.stringify(calls.map((m) => m.filter((x) => x.role === 'user')));
 
 console.log('hybrid: the decision model picks "Send now":');
 {
@@ -229,6 +231,49 @@ console.log('hybrid: the decision model picks "Send now":');
   check('the answer to a disambiguation does not unlock the payment', !tappedSendNow(r.runner) && r.logs.some((l) => /held tapText on "Send now"/.test(l)));
 }
 
+console.log('no repeat without a new yes; one yes for one flow:');
+{
+  const ask = (q = 'Send $50 to Maya Patel via Zelle?') => toolCall('askUser', { question: q, options: ['Yes, send $50', 'No, cancel'] });
+  const r = await run({ chooser: [[isSend, 0.87]], answer: 'Yes, send $50', maxSteps: 8, llm: [say(ask(), toolCall('tapText', { text: 'Send now' })), say(toolCall('tapText', { text: 'Send now' })), say(ask('Send another $50?'), toolCall('tapText', { text: 'Send now' })), say(toolCall('taskComplete', { summary: 'sent twice' }))] });
+  check('the second "Send now" after one yes is held, saying it was already tapped', sendTaps(r.runner) === 2 && r.logs.some((l) => /held tapText on "Send now": it would send money, and it was already tapped at step 1/.test(l)), `${sendTaps(r.runner)} taps; ${r.logs.filter((l) => /held/.test(l)).join(' | ')}`);
+  check('the LLM is told to check whether it is already done', /already tapped at step 1 in this task[\s\S]*Check on the screen whether it is already done/.test(JSON.stringify(r.llmCalls[2])));
+  check('a new yes allows it once more', sendTaps(r.runner) === 2 && r.outcome.status === 'completed');
+}
+{
+  const cart = () => tree(el('Place Order', { x: 20, y: 700, w: 360, h: 48 }), el('Confirm & Place Order', { x: 20, y: 460, w: 360, h: 48 }));
+  const r = await run({ chooser: [[(c) => c.commit?.label === 'Place Order', 0.9]], screen: cart, task: 'Order a chicken bowl from Chipotle on QuickBite and confirm the order was placed.', answer: 'Yes, place the order', llm: [say(toolCall('askUser', { question: 'Place the $20.70 order?', options: ['Yes, place the order', 'No, cancel'] }), toolCall('tapText', { text: 'Place Order' }), toolCall('tapText', { text: 'Confirm & Place Order' })), say(toolCall('taskComplete', { summary: 'ordered' }))] });
+  check('"Place Order" then "Confirm & Place Order" go on under one yes', !r.logs.some((l) => /held/.test(l)) && r.toolCalls.filter((t) => t.name === 'tapText' && !t.error).length === 2, r.logs.filter((l) => /held|tapText/.test(l)).join(' | '));
+}
+{
+  let n = 0;
+  const r = await run({ chooser: [[isSend, 0.87]], answer: () => (n++ === 0 ? 'Yes, send $50' : 'No, cancel'), llm: [say(toolCall('askUser', { question: 'Send $50?', options: ['Yes, send $50', 'No, cancel'] })), say(toolCall('askUser', { question: 'Really send $50?', options: ['Yes, send $50', 'No, cancel'] }), toolCall('tapText', { text: 'Send now' })), say(toolCall('taskFailed', { reason: 'declined' }))] });
+  check('a later "No" withdraws an earlier yes', !tappedSendNow(r.runner) && r.logs.some((l) => /held tapText on "Send now"/.test(l)));
+}
+
+console.log('the safety line:');
+{
+  const line = safetyLine([{ label: 'Send now', what: 'send money' }]);
+  check('it says the task is not the confirmation, with no "unless already confirmed" escape (the wording Luna read as permission)', /The task saying to do it is not the user's confirmation/.test(line) && !/already confirmed/.test(line) && /unless the user has answered yes to an askUser question about it/.test(line));
+  check('it is the wording measured by replay (10 of 10 asked)', line === '[Safety] On this screen, "Send now" would send money, which cannot be undone. The task saying to do it is not the user\'s confirmation: a payment, a purchase or a deletion needs it from askUser. Call askUser before tapping it, unless the user has answered yes to an askUser question about it in this task.', line);
+  const r = await run({ sticky: true, chooser: [[(c) => /Close/.test(c.description), 0.3]], answer: 'Yes, send $50', llm: [say(toolCall('tap', { x: 50, y: 41.2 })), say(toolCall('askUser', { question: 'Send $50?', options: ['Yes, send $50', 'No, cancel'] })), say(toolCall('taskFailed', { reason: 'x' }))] });
+  const u = r.llmCalls.map((c) => JSON.stringify(c.at(-1)) + JSON.stringify(c.at(-2)));
+  check('shown with the screen while "Send now" is on it and no yes stands', /\[Safety\] On this screen, \\"Send now\\" would send money/.test(u[0]) && /\[Safety\]/.test(u[1]), u[0].slice(0, 300));
+  check('not after the user said yes', !/\[Safety\]/.test(u[2]), u[2]);
+  const plain = await run({ chooser: [[(c) => /Close/.test(c.description), 0.3]], screen: () => tree(el('Close', { x: 20, y: 90, w: 60, h: 30 }), el('Save', { x: 300, y: 90, w: 60, h: 30 })), llm: [say(toolCall('taskFailed', { reason: 'x' }))] });
+  check('not on a screen with nothing irreversible', !/\[Safety\]/.test(userText(plain.llmCalls)));
+}
+
+console.log('sticky: no hand-back in the middle of a payment:');
+{
+  const shots = Array.from({ length: 7 }, () => say(toolCall('takeScreenshot', {})));
+  const r = await run({ sticky: true, maxSteps: 14, chooser: [[(c) => /Close/.test(c.description), 0.3], ['done', 0.9]], answer: 'Yes, send $50', llm: [say(toolCall('askUser', { question: 'Send $50?', options: ['Yes, send $50', 'No, cancel'] }), toolCall('tapText', { text: 'Send now' })), ...shots, say(toolCall('taskComplete', { summary: 'sent' }))] });
+  check('after paying, the LLM keeps control past 5 steps (up to 10) and concludes itself', r.llmCalls.length === 9 && r.outcome.status === 'completed' && r.logs.some((l) => /extended while a payment/.test(l)) && !r.logs.some((l) => /control returns to the decision model/.test(l)), `${r.llmCalls.length} LLM calls; ${r.logs.filter((l) => /hybrid/.test(l)).join(' | ')}`);
+  const r2 = await run({ sticky: true, maxSteps: 14, chooser: [[(c) => /Close/.test(c.description), 0.3], [(c) => /Close/.test(c.description), 0.9], ['done', 0.9]], llm: [...Array.from({ length: 12 }, () => say(toolCall('takeScreenshot', {})))] });
+  check('regression: with nothing irreversible going on, control returns after 5', r2.logs.some((l) => /control returns to the decision model after 5 LLM steps/.test(l)), r2.logs.filter((l) => /hybrid/.test(l)).join(' | '));
+  const r3 = await run({ sticky: true, maxSteps: 20, chooser: [[(c) => /Close/.test(c.description), 0.3], ['done', 0.9]], answer: 'Yes, send $50', llm: [say(toolCall('askUser', { question: 'Send $50?', options: ['Yes, send $50', 'No, cancel'] })), ...Array.from({ length: 14 }, () => say(toolCall('takeScreenshot', {})))] });
+  check('the extension is bounded: at most 10 in a row', r3.logs.some((l) => /control returns to the decision model after 10 LLM steps/.test(l)), r3.logs.filter((l) => /hybrid/.test(l)).join(' | '));
+}
+
 console.log('decision-only: the decision model picks "Send now":');
 {
   const r = await run({ chooser: [[isSend, 0.87]] });
@@ -244,6 +289,16 @@ console.log('decision-only: the decision model picks "Send now":');
   const chat = () => tree(el('Send', { x: 340, y: 780, w: 44, h: 44 }), el('Maya', { x: 150, y: 80, w: 100, h: 30 }));
   const r = await run({ chooser: [[(c) => c.commit?.label === 'Send', 0.9], ['done', 0.9]], task: 'Text Maya "see you at 7"', screen: chat });
   check('a send goes ahead without a question, as the LLM\'s rule has it', r.questions.length === 0 && r.runner.callsTo('/touch').length === 1 && r.outcome.status === 'completed');
+}
+
+{
+  const r = await run({ chooser: [[isSend, 0.87], [isSend, 0.87], ['done', 0.9]], answer: (q) => q.options[0] });
+  check('decision-only: a second "Send now" is asked about again, saying it was already tapped', r.questions.length === 2 && !/already tapped/.test(r.questions[0].question) && /It was already tapped at step 1\./.test(r.questions[1].question) && sendTaps(r.runner) === 2, JSON.stringify(r.questions.map((q) => q.question)));
+}
+{
+  // Hybrid: the decision model picks "Send now" again after the LLM paid; the handoff names the earlier tap.
+  const r = await run({ chooser: [[isSend, 0.87], [isSend, 0.9]], answer: 'Yes, send $50', llm: [say(toolCall('askUser', { question: 'Send $50?', options: ['Yes, send $50', 'No, cancel'] }), toolCall('tapText', { text: 'Send now' })), say(toolCall('taskComplete', { summary: 'sent once' }))] });
+  check('hybrid: the decision model choosing it again is handed over with "already tapped at step 1"', r.logs.some((l) => /→ LLM: the decision model chose to tap "Send now".*; "Send now" was already tapped at step 1 in this task/.test(l)) && sendTaps(r.runner) === 1, r.logs.filter((l) => /→ LLM/.test(l)).join(' | '));
 }
 
 console.log(`\n${fail === 0 ? '✅ ALL PASS' : '❌ FAILURES'}: ${pass} passed · ${fail} failed`);
