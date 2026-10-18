@@ -6,7 +6,9 @@
 // meaning, and the model only picks one. Pure: no I/O.
 //
 // On every screen:
-//   tap_<n>       one per on-screen element with a position (keyboard keys left out:
+//   tap_<n>       one per on-screen element with a position; one that commits
+//                 something (pays, orders, deletes, sends: irreversible.mjs)
+//                 carries `commit`, which the model never sees (keyboard keys left out:
 //                 typing is its own action, and 29 key options would drown the rest;
 //                 elements under an open keyboard left out too: the element list
 //                 does not know what the keyboard covers, and a tap there presses
@@ -45,6 +47,8 @@
 // Values are stable identifiers (tap_3); descriptions carry what the element
 // is and where, since the model never sees anything else about the option.
 // Each option is a list of tool calls (`actions`), run in order by the loop.
+
+import { commitOfElement } from './irreversible.mjs';
 
 export const MAX_TAP_CANDIDATES = 120;   // Jev takes 255 options per choice; the rest of the list is reachable by scrolling
 export const MAX_PHRASES = 12;
@@ -105,7 +109,7 @@ export function phrasesOf(task, { apps = [] } = {}) {
  * @param {boolean} [o.keyboardUp]
  * @param {boolean} [o.final]           the last step of the budget: conclude only
  * @param {boolean} [o.writer]          an LLM can write text (hybrid mode): offer write_<k>
- * @returns {Array<{ value: string, description: string, actions: Array<{ tool: string, args: object }> }>}
+ * @returns {Array<{ value: string, description: string, actions: Array<{ tool: string, args: object }>, commit?: { policy: 'confirm'|'verify', what: string, label: string } }>}
  */
 export function candidateActions({ elements, task, apps = [], currentApp = null, keyboardUp = false, final = false, writer = false }) {
   const conclude = [
@@ -122,7 +126,8 @@ export function candidateActions({ elements, task, apps = [], currentApp = null,
   const reachable = (e) => e.x !== null && e.kind !== 'key' && (coverTop === null || e.y < coverTop);
   const tappable = elements.filter(reachable);
   tappable.slice(0, MAX_TAP_CANDIDATES).forEach((e, i) => {
-    out.push({ value: `tap_${i}`, description: `Tap ${sliceDesc(e.desc)} (${e.kind} at ${e.x}%, ${e.y}%)`, actions: [{ tool: 'tap', args: { x: e.x, y: e.y, description: e.desc } }] });
+    const commit = commitOfElement(e, { task });
+    out.push({ value: `tap_${i}`, description: `Tap ${sliceDesc(e.desc)} (${e.kind} at ${e.x}%, ${e.y}%)`, actions: [{ tool: 'tap', args: { x: e.x, y: e.y, description: e.desc } }], ...(commit ? { commit: { ...commit, label: e.name || e.text } } : {}) });
   });
   const fields = tappable.filter((e) => e.editable).slice(0, MAX_TYPING_TARGETS);
   const wheels = tappable.filter((e) => e.kind === 'picker wheel').slice(0, MAX_TYPING_TARGETS);

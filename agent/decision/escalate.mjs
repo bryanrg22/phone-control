@@ -1,7 +1,7 @@
 // escalate.mjs — when the hybrid mode hands a step from the decision model to the LLM.
 //
 // The decision model is fast and cheap but writes nothing and holds no plan.
-// The LLM takes a step in four cases, each a fact the loop can see, so the
+// The LLM takes a step in these cases, each a fact the loop can see, so the
 // policy is explicit and testable (the pattern of JEV-as-a-Judge, arXiv
 // 2609.26550: accept when confident, escalate when unsure; the threshold is
 // fixed before a run, never tuned on it):
@@ -10,6 +10,11 @@
 //                   on the screen and writes the real summary or answer
 //   free_text       it chose "write into field F": the text is not in the task,
 //                   so the LLM writes it (jev-ultrafast's TYPE_TEXT helper)
+//   irreversible    it chose a control that commits something (irreversible.mjs):
+//                   pay, order, delete, send, post. The LLM checks the screen
+//                   against the task and, for money or a deletion, asks the user
+//                   first, as it does alone; whatever the probability (mybank-003
+//                   paid $50 at p 0.87 without asking, 2026-10-16)
 //   low_confidence  its best option fell below the threshold
 //   stuck           the screen has not changed for STUCK_STEPS of its steps
 //   final           the last step of the budget: the LLM must conclude
@@ -30,21 +35,26 @@ export const STICKY_MAX = 5;
 
 /**
  * @param {object} o
- * @param {{ value: string }} o.chosen          the chosen candidate
+ * @param {{ value: string, description?: string, commit?: object }} o.chosen   the chosen candidate
  * @param {number|null} o.probability          the probability on it
  * @param {number} o.unchangedStreak           consecutive decision steps that changed nothing
  * @param {boolean} o.final                    the last step of the budget
  * @param {number} [o.threshold]
- * @returns {{ reason: string, detail: string }|null}
+ * @returns {{ reason: string, detail: string, commit?: object }|null}
  */
 export function escalationReason({ chosen, probability, unchangedStreak, final, threshold = DEFAULT_THRESHOLD }) {
   if (final) return { reason: 'final', detail: 'the last step of the budget: conclude now' };
   if (chosen.value === 'done' || chosen.value === 'blocked') return { reason: 'conclusion', detail: `the decision model chose "${chosen.value}" (p=${fmt(probability)})` };
   if (chosen.value.startsWith('write_')) return { reason: 'free_text', detail: `the decision model chose: ${chosen.description}` };
+  if (chosen.commit) return { reason: 'irreversible', detail: `the decision model chose to tap "${chosen.commit.label}", which would ${chosen.commit.what} (p=${fmt(probability)})`, commit: chosen.commit };
   if (typeof probability === 'number' && probability < threshold) return { reason: 'low_confidence', detail: `the decision model's best option, "${chosen.description}", had p=${fmt(probability)} (below ${threshold})` };
   if (unchangedStreak >= STUCK_STEPS) return { reason: 'stuck', detail: `the screen has not changed for ${unchangedStreak} steps` };
   return null;
 }
+
+// The askUser rules of the system prompt, applied to the control at hand.
+export const CONFIRM_ASK = 'It cannot be undone. First check on the screen that it is what the task asks (the amount, the recipient, the items, the address) and that it has not already been done. A payment, a purchase or a deletion needs the user\'s confirmation: unless the user has already confirmed it in this task, call askUser with a Yes/No question that says exactly what will happen, and do not tap it in the same step. Tap it only if the user confirms. If the user declines or nobody answers, do not tap it: call taskFailed, saying what is ready and that the user\'s confirmation was required.';
+export const VERIFY_ASK = 'It cannot be undone. Check on the screen that it is what the task asks (the recipient and the text, or the details) and that it has not already been done. If it is right, tap it: the user\'s command is the confirmation for this. If not, correct it first, or conclude if it was already done.';
 
 const fmt = (p) => (typeof p === 'number' ? (Math.round(p * 100) / 100).toString() : '?');
 
@@ -67,6 +77,7 @@ export function handoffMessage({ since, why, first, sticky = false }) {
     low_confidence: 'Take the next action or actions toward the task.',
     stuck: 'Take a different approach: read the screen, then act.',
     final: 'This is the final step: call taskComplete only if the task is verifiably done on this screen, otherwise taskFailed.',
+    irreversible: why.commit?.policy === 'confirm' ? CONFIRM_ASK : VERIFY_ASK,
   }[why.reason];
   return [
     first ? '[Handoff] A fast decision model has been operating the phone for this task; it chooses among on-screen actions but cannot write text or answers. You take over for this step.' : '[Handoff] The decision model took the steps below since your last one.',

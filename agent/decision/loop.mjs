@@ -23,6 +23,17 @@
 // in sticky mode the LLM keeps control until it calls handBack, concludes, or
 // has taken STICKY_MAX steps in a row (escalate.mjs).
 //
+// Irreversible actions (irreversible.mjs). Hybrid: a decision-model choice that
+// pays, orders, deletes or sends is the LLM's step (escalate.mjs), and an LLM
+// tap that pays, orders or deletes is held, not run, until the user has agreed
+// to an askUser question in this task: GPT-6 Luna holding control in the sticky
+// hybrid tapped "Send now" on mybank-003 without asking in 3 of 3 runs, where
+// alone it asked in 3 of 3 (2026-10-16/17), so the rule is the harness's, not
+// left to the prompt. Decision-only (no LLM, no way to word a question): the
+// harness asks the user a fixed Yes/No question before each such tap, and an
+// answer other than yes ends the run as failed, untapped; a send or a post goes
+// ahead, as the LLM's rule has it ("the user's command IS the confirmation").
+//
 // The record (record.mjs) gets the same spans as the LLM mode: a chat span per
 // model request (a decision step's messages are the instruction and the state,
 // its "tools" the candidates, the answer's probabilities under eval.decision;
@@ -41,10 +52,20 @@ import { taskMessage, FINAL_STEP } from '../prompt.mjs';
 import { candidateActions } from './candidates.mjs';
 import { decisionState, INSTRUCTIONS } from './question.mjs';
 import { escalationReason, handoffMessage, DEFAULT_THRESHOLD, STICKY_MAX } from './escalate.mjs';
+import { commitOfCall, isConsent } from './irreversible.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const DEVICE_ERRORS_TO_GIVE_UP = 4;
 const SETTLE_MS = 350;
+/** The user's answer in an askUser result, or null when nobody answered. */
+export const answerOf = (text) => { const m = /^User (?:chose|typed): "([\s\S]*)"$/.exec(String(text ?? '')); return m ? m[1] : null; };
+
+/** The result an LLM gets for a held tap. */
+export const heldText = (hit) => `Not run: "${hit.label}" would ${hit.what}, which cannot be undone, and the user has not confirmed it in this task. Call askUser first with a Yes/No question that says exactly what will happen (the amount and recipient, or the items, or what is deleted). Tap it only after the user confirms; if the user declines or nobody answers, do not tap it: call taskFailed, saying what is ready and that the user's confirmation was required.`;
+
+/** The question decision-only mode asks before a tap that pays, orders or deletes. */
+export const confirmQuestion = (commit, task) => ({ question: `The next step would tap "${commit.label}", which would ${commit.what}. It cannot be undone. The task: "${task}". Go ahead?`, options: [`Yes, tap "${commit.label}"`, 'No, stop here'] });
+
 const round3 = (x) => (typeof x === 'number' ? Math.round(x * 1000) / 1000 : x);
 
 /**
@@ -74,6 +95,7 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
   let llmOwns = false;       // sticky: the LLM has control
   let llmRun = 0;            // sticky: its consecutive steps
   let llmLastSignature = null;
+  let consent = false;       // hybrid: the user said yes to the LLM's latest askUser question
   let screen = { widthPoints: 402, heightPoints: 874 };
   state.screen = () => screen;
   let seen = null;   // the latest screen: { elements (structured), lines (capped), signature, currentApp, keyboardUp, image, mime }
@@ -163,7 +185,7 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
       return afterActions({ step, entry: { n: step, description: `LLM: no action${msg.content ? ` ("${msg.content.slice(0, 80)}")` : ''}`, changed: null, result: null, llm: true }, concluded: null, deviceFailed: false, changes: false, settle: false, lastResult: null });
     }
     context.assistant(msg);
-    const { done, concluded, changes, settle, deviceFailed, handBack } = await executeToolCalls({ calls, step, runTool, context, recorder, protocol });
+    const { done, concluded, changes, settle, deviceFailed, handBack } = await executeToolCalls({ calls, step, runTool: guardedRunTool, context, recorder, protocol });
     if (sticky) {
       llmRun += 1;
       if (handBack) { llmOwns = false; llmRun = 0; log('[hybrid] ← the LLM handed control back'); }
@@ -172,6 +194,19 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     }
     const entry = { n: step, description: `LLM: ${historyLine(step, done).replace(/^Step \d+: /, '')}`, changed: null, result: null, llm: true };
     return afterActions({ step, entry, concluded, deviceFailed, changes, settle, lastResult: null });
+  }
+
+  /** The LLM's tools, with a tap that pays, orders or deletes held until the user has agreed. */
+  async function guardedRunTool(name, args) {
+    const hit = commitOfCall(name, args, { elements: seen.elements, screen, task });
+    if (hit?.policy === 'confirm' && !consent) {
+      log(`[hybrid] held ${name} on "${hit.label}": it would ${hit.what}, and the user has not confirmed`);
+      recorder.note(`A ${name} on "${hit.label}" (it would ${hit.what}) was held: the user had not confirmed.`);
+      return { error: true, text: heldText(hit) };
+    }
+    const r = await runTool(name, args);
+    if (name === 'askUser') consent = isConsent(answerOf(r.text));
+    return r;
   }
 
   for (let step = 1; step <= maxSteps; step++) {
@@ -220,8 +255,15 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     const chosen = candidates.find((c) => c.value === answer.choice);
     const callId = (k) => `choice_${step}_${k}`;
     const why = llm ? escalationReason({ chosen, probability: answer.probability, unchangedStreak: unchangedStreak(), final: false, threshold }) : null;
+    // ── decision-only: a tap that pays, orders or deletes is asked about first ──
+    let actions = chosen.actions;
+    if (!llm && chosen.commit?.policy === 'confirm') {
+      const { question, options } = confirmQuestion(chosen.commit, task);
+      actions = [{ tool: 'askUser', args: { question, options }, gate: chosen.commit }, ...chosen.actions];
+    }
+
     const result = {
-      message: { role: 'assistant', content: `${answer.choice}: ${chosen.description} (p=${round3(answer.probability)}, confidence ${round3(answer.confidence)})${why ? ` → handed to the LLM: ${why.reason}` : ''}`, tool_calls: why ? [] : chosen.actions.map((a, k) => ({ id: callId(k), type: 'function', function: { name: a.tool, arguments: JSON.stringify(a.args) } })) },
+      message: { role: 'assistant', content: `${answer.choice}: ${chosen.description} (p=${round3(answer.probability)}, confidence ${round3(answer.confidence)})${why ? ` → handed to the LLM: ${why.reason}` : ''}`, tool_calls: why ? [] : actions.map((a, k) => ({ id: callId(k), type: 'function', function: { name: a.tool, arguments: JSON.stringify(a.args) } })) },
       finishReasons: ['choice'], responseId: answer.responseId, responseModel: answer.responseModel, usage: answer.usage, raw: answer.raw,
     };
     const ranked = Object.entries(answer.probabilities).sort((a, b) => b[1] - a[1]);
@@ -246,8 +288,8 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
     let settle = false;
     let lastResult = null;
     let failed = false;
-    for (let k = 0; k < chosen.actions.length; k++) {
-      const { tool: name, args } = chosen.actions[k];
+    for (let k = 0; k < actions.length; k++) {
+      const { tool: name, args, gate } = actions[k];
       emit('action', { tool: name, args });
       log(`[tool] ${name}(${JSON.stringify(args)})`);
       const tStart = Date.now();
@@ -264,15 +306,26 @@ export async function runDecisionLoop({ task, maxSteps, decider, device, runTool
       settle = settle || !!r.settle;
       lastResult = String(r.text ?? '').split('\n')[0].slice(0, 120);
       if (r.done || r.failed) { concluded = r; break; }
+      if (gate && !isConsent(answerOf(r.text))) {
+        // Not confirmed: the tap is not made, and the run ends here, as the LLM ends it without an answer.
+        for (let j = k + 1; j < actions.length; j++) recorder.toolCall({ step, id: callId(j), name: actions[j].tool, args: actions[j].args, start: Date.now(), end: Date.now(), result: 'Not run: the user did not confirm.', skipped: true });
+        const reason = `Stopped before tapping "${gate.label}": it would ${gate.what}, which cannot be undone, and the user did not confirm.`;
+        emit('action', { tool: 'taskFailed', args: { reason } });
+        log(`[tool] taskFailed(${JSON.stringify({ reason })})`);
+        const t1 = Date.now();
+        concluded = await runTool('taskFailed', { reason });
+        recorder.toolCall({ step, id: callId(actions.length), name: 'taskFailed', args: { reason }, start: t1, end: Date.now(), result: concluded.text });
+        break;
+      }
       if (r.error) {
         failed = true;
-        for (let j = k + 1; j < chosen.actions.length; j++) {
-          const rest = chosen.actions[j];
+        for (let j = k + 1; j < actions.length; j++) {
+          const rest = actions[j];
           recorder.toolCall({ step, id: callId(j), name: rest.tool, args: rest.args, start: Date.now(), end: Date.now(), result: 'Not run: an earlier action in this step failed.', skipped: true });
         }
         break;
       }
-      if (k < chosen.actions.length - 1) await sleep(SETTLE_MS);   // a tapped field takes focus before typing
+      if (k < actions.length - 1 && !gate) await sleep(SETTLE_MS);   // a tapped field takes focus before typing
     }
     const out = await afterActions({ step, entry: { n: step, description: chosen.description, changed: null, result: failed ? lastResult : null }, concluded, deviceFailed, changes, settle, lastResult });
     if (out) return out;
