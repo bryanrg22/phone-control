@@ -124,6 +124,11 @@ export function commitOfCall(name, args, { elements = [], screen, task = '' }) {
 export function isConsent(answer) {
   if (answer === null || answer === undefined) return false;
   const a = String(answer).trim();
-  if (/^(?:no|nope|cancel|don'?t|do not|stop|never|not now|decline|deny|abort)\b/i.test(a)) return false;
+  if (isRefusal(a)) return false;
   return /^(?:yes|yeah|yep|y|ok|okay|sure|confirm(?:ed)?|approve[d]?|go ahead|proceed|do it|please do|send|pay|place|buy|book|request|order|delete)\b/i.test(a);
+}
+
+/** "No, cancel", "Don't place it", "Cancel". */
+export function isRefusal(answer) {
+  return /^(?:no|nope|cancel|don'?t|do not|stop|never|not now|decline|deny|abort)\b/i.test(String(answer ?? '').trim());
 }
