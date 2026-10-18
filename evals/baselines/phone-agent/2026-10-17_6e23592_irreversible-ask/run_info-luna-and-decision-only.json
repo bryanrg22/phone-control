@@ -1,0 +1,96 @@
+{
+  "harness_version": "0.1.0",
+  "run": "2026-10-17_6e23592_irreversible-ask_luna-and-decision-only",
+  "started": "2026-10-18T03:54:32.173Z",
+  "protocol": {
+    "max_steps": 50,
+    "time_limit": "none",
+    "start": "home screen, every app reset and reseeded",
+    "judge_default": "gpt-5.4-mini"
+  },
+  "phone_control": {
+    "release": "0.2.0",
+    "commit": "6e23592946681a86a240cfba6efb970c07c9756e",
+    "dirty": false
+  },
+  "iosworld": {
+    "commit": "c59287b6ec9a9d0d7269613ad873f6aa9db0f42c",
+    "dirty": false,
+    "tasks_sha256": "42c0b5558fde0e71",
+    "scripts_sha256": {
+      "scripts/judge_trajectories.py": "5ae8a8c129230526",
+      "scripts/llm_action_generator.py": "c7526c9195f75a29",
+      "phone-control evals/phone-agent/iosworld_reset.py": "4ec794de2dec6b84"
+    }
+  },
+  "device": {
+    "udid": "DF68C5E8-9704-4D31-A0CA-8DC9B32BA001",
+    "name": "iOSWorld iPhone 17 Pro",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
+    "xcode": "Xcode 26.4"
+  },
+  "judge": {
+    "script": "iOSWorld scripts/judge_trajectories.py",
+    "provider": "openai",
+    "model": "gpt-5.4-mini"
+  },
+  "agent": {
+    "entry": "agent/agent.mjs",
+    "device": "simulator through the runner",
+    "ask_user": "a Yes/No confirmation is answered with its yes option, through the answer file (--auto-confirm, evals/phone-agent/safety.mjs); any other question unanswered (5 s timeout)",
+    "auto_confirm": true,
+    "web_search": false,
+    "reasoning": "high",
+    "no_progress_abort": 8,
+    "observation": "768 px wide JPEG + element list (≤150), newest screen only in context",
+    "final_step": "forced taskComplete/taskFailed at the budget"
+  },
+  "decision_apis": {
+    "openai-decisions": {
+      "api": "OpenAI Decisions API",
+      "endpoint": "POST /v1/decisions",
+      "status": "public beta (2026-10-16)",
+      "question": "choice",
+      "input": "text",
+      "headers": [],
+      "screenshot_sent": false
+    }
+  },
+  "models": [
+    {
+      "provider": "openai",
+      "model": "gpt-6-luna"
+    },
+    {
+      "provider": "openai-decisions",
+      "model": "gpt-6-luna"
+    }
+  ],
+  "trials": 1,
+  "tasks": [
+    "cityride-001",
+    "mybank-003",
+    "quickbite-001",
+    "splitpay-001"
+  ],
+  "cells": [
+    {
+      "model": {
+        "provider": "openai",
+        "model": "gpt-6-luna"
+      },
+      "trial": 1,
+      "dir": "openai_gpt-6-luna/trial-1"
+    },
+    {
+      "model": {
+        "provider": "openai-decisions",
+        "model": "gpt-6-luna"
+      },
+      "trial": 1,
+      "dir": "openai-decisions_gpt-6-luna/trial-1"
+    }
+  ],
+  "node": "v23.9.0",
+  "finished": "2026-10-18T04:09:38.281Z"
+}
