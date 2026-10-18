@@ -1,0 +1,57 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Team Standup Notes in Work opened at step 3 (Yesterday/Today/Blockers content visible); LLM placed the cursor after '- Design review at 2pm' (step 4) and typed a new line '- Completed a bug fix today' (step 5). After Done (step 7) the screenshot shows the new bullet under Today with every original line intact and nothing duplicated; the answer matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "Search 'Brooklyn Half' (step 3) listed Elena Brooks' 'I signed up for the Brooklyn half. Please tell me you're doing it too.' (the asking-about-my-registration message, seed ViewController.swift:2163); that thread was opened (step 4). The step-6 inputText landed nowhere (screen unchanged, field still empty); step 8 filled the field once and Send (step 9) posted exactly one 'I'm registered! What's the race day meetup plan?' with a sent check, and Elena's reply about meeting at the start line an hour early shows at step 10, matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "not counted",
+  "evidence": "The only article opened was the Troy Trojans vs. Louisiana highlights story (step 3). 'Dodgers shuffle batting order ahead of weekend series' is a 'Lineup Note' feed alert in the Alerts section; the tap on it at step 9 changed nothing (steps 7-9 have the same screenshot), so it was never opened or read. Under the ruling, an alert is not an article, even though the MLB scoreboard did show 'No games scheduled' for Oct 17 (step 11).",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "The composer shows Maya Patel, $32.50 and note 'dinner split' (step 20). The Confirm Payment sheet (step 22) shows Pay Maya Patel $32.50, dinner split, Funding: SplitPay balance. The step 23-24 taps hit the sheet's header and did nothing; 'Pay $32.50' was tapped once at step 25 ('Paid Maya Patel' toast). The feed at step 27 shows exactly one 'Jordan Avery paid Maya Patel, 1m, dinner split' row (the seed has only a $42 dinner-split *request* from Maya, no such payment), so one payment was sent.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "Trips (step 2) lists the upcoming 'Clifftop retreat on Catalina', Oct 23 - Oct 26, Catalina Island, CA. Its listing page (step 3 screenshot) shows 5 Beds, 3 Baths and '$327 per night', which match the answer exactly.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The Tartine Manufactory page (step 4 screenshot) shows score 9.1 and '$$$ | Bakery, American'. In Save to List, Want to Try was unselected at step 5 and selected after the tap at step 6 (Mission Crawl was already selected in the seed and was left alone). Reopening the sheet at step 10 shows Want to Try still checked, and the answer matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "The DM list (step 2 screenshot) shows bold/unread Lena Ortiz, Imani Brooks, Devon Hart and Blair Morgan. Saved state shows their unread messages at 2026-02-12 15:00 (Lena), 10:00, 07:00 and 02:00; Riley Shah's later 23:00 message is read (unreadCount 0), so Lena's is the most recent unread DM. The reply 'Thanks for sharing the report—great progress on the metrics!' appears once in teamchatsim_state.json in dm Lena Ortiz (00:36:03Z) and is visible in the thread at step 7.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "holds",
+  "evidence": "Event Info (step 26) shows Ali Wong, Thu, Oct 29 · 1:07 PM, Great American Music Hall, 859 O'Farrell St, San Francisco · Capacity 600, Listings 28, Lowest price $101. The agent scrolled through the listings to the $333 GA listing (step 17; the highest of the 27 distinct listing prices seen, $116-$333). So the answer's $101-$333 matches the known listing range, and its date and venue facts match.",
+  "checker_verdict": "holds",
+  "review": "Reviewed: $101 is the app's own 'Lowest price' in Event Info and $333 the top listing (scrolled to at step 17); the range uses the app's figures and covers every listing."
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "false pass",
+  "evidence": "Ava Torres's 'Twin Peaks Sunrise Repeats' run was already liked in the seed (orange thumb, 31, step 2 screenshot). The first Like tap unliked it (30, step 3) and the second re-liked it (31, step 4; the screenshot is byte-identical to step 2). Net, no kudos was given, yet the answer claims kudos to Ava Torres.",
+  "checker_verdict": "false pass"
+ }
+]

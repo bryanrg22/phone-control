@@ -1,0 +1,56 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Step 3 screenshot shows Team Standup Notes (Work folder) with Today: 3 bullets. After return + inputText (steps 6-7) and Done (step 9), the step 9 screenshot shows '- Completed bug fix today' as a 4th Today bullet, with every Yesterday/Today/Blockers line still there and nothing duplicated.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "The step 5 search shows Elena Brooks: 'I signed up for the Brooklyn half. Please tell me you're doing it too.' The step 8 enter did not send (text still in the field); the single Send at step 9 gives the step 10 screen with exactly one 'I'm registered too! What's the race day meetup plan?' under Fri, Oct 16, followed by Elena's reply about meeting at the start line an hour early, which matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "holds",
+  "evidence": "The first Top Stories article was opened at step 3 (NBA, 'James, Embiid play 76ers' preseason finale, but 'still working on our rhythm'', published Oct 16, 2026). The Scores tab at step 6 has NBA selected for OCT 16, 2026 and shows 'No games scheduled / NO GAMES FOR THIS DATE', matching the answer's headline, 76ers and 'no game today'.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "not counted",
+  "evidence": "The payment was sent three times. Each of the confirm sheets at steps 12/14, 28 and 40 ('Pay $32.50', Maya Patel, dinner split, SplitPay balance) was confirmed by a tap on Pay $32.50 (steps 16, 29, 41), and each was followed by a 'Paid Maya Patel' toast. The feed had no Jordan->Maya payment at step 1, one 'Jordan Avery paid Maya Patel, 1m, dinner split' at step 18, and two such entries at steps 30, 42 and 46 (a third likely below the fold). So $32.50 went to Maya at least twice, not once.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "The Trips tab (step 2) shows 'Clifftop retreat on Catalina', Oct 22 - Oct 25, Catalina Island, CA. Its detail page (step 3 screenshot) shows 5 Beds, 3 Baths and $327 per night, all as in the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The Tartine Manufactory detail page (steps 5/9) shows 9.1 and '$$$ | Bakery, American'. In the Save to List sheet, Want to Try is unchecked at step 6 (only Mission Crawl is checked, as seeded) and checked at step 7, then Done at step 8. Mission Crawl is unchanged.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "In the step 2 DM list, Lena Ortiz is the topmost bold (unread) DM; Riley Shah and Nora Bennett above her are not bold. In saved state, Lena's incoming message (2026-02-12T15:00) is later than the other unread DMs' (Imani 10:00, Devon 07:00, Blair 02:00). The reply 'Thanks for sharing the report, Lena! ...' appears exactly once in teamchatsim_state.json in dm Lena Ortiz, sent at step 8.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "false pass",
+  "evidence": "The date (Wed, Oct 28, 7:13pm) and venue (Great American Music Hall, Info sheet step 7) are correct, but the reported 'price range $116-$168' is only the spread of the four section-map labels at step 6 (Front $116, Side $145, Center $167, GA $168). In EventDetailView.swift each label is that section's cheapest listing (primaryListing = sortedListings[0]), with 7 listings per section ('7 rows'). Reproducing seed event 3027 (makeListings, seed 3027, 28 listings, 95...280) matches every price on screen ($116 Front row 24, $120 Front row 7, $145, $167, $168) and gives listings up to $333 incl. fees, so the stated top of the range is untrue; the agent never scrolled the listings.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "false pass",
+  "evidence": "The kudos went to Jordan Avery's 'Presidio Tempo Before Work' run (count 18 in the seed -> 19, orange at step 7 after Like taps at steps 4, 6 and 7). Jordan Avery is athlete_001 with isCurrentUser: true in TrailBlaze SeedData.swift, so this is the user's own activity, not a friend's, and the answer names the user as 'the friend'.",
+  "checker_verdict": "false pass"
+ }
+]

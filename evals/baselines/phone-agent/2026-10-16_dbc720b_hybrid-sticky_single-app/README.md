@@ -1,5 +1,7 @@
 # 2026-10-16, sticky escalation: the hybrid with the Decisions API and with Jev
 
+> **Checked by hand on 2026-10-17** ([hand-check.md](hand-check.md)): of the Decisions hybrid's 25 judged passes, 20 hold up; of the Jev hybrid's 21, 15. This is trial 1 of three; the three-trial results, where the Decisions hybrid and Luna are not significantly different, are in [../2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app](../2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app/README.md). The counts below are the judge's.
+
 iOSWorld's 27 single-app tasks, judge gpt-5.4-mini (iOSWorld's script,
 unchanged), one trial each, commit dbc720b. Both runs use `--escalation-mode
 sticky`: once GPT-6 Luna takes a step it keeps control, with no decision call,

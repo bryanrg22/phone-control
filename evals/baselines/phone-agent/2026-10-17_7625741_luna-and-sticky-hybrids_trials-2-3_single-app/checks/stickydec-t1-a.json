@@ -1,0 +1,86 @@
+[
+ {
+  "task": "caltrack-001",
+  "verdict": "false pass",
+  "evidence": "Add Food was tapped three times (steps 6, 8, 10): saved state has three new Oatmeal breakfast entries today (meal_entry_175, 176, 177) on top of the seeded meal_entry_001. The run then ended no_progress with agent_answer null, so the requested calories and macros were never reported; the judge credited the 150 cal / P 5g C 27g F 3g it read off the food card.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather detail shows an unfilled 'Wishlist' button at step 7 and 'In wishlist' after the tap at steps 8-9 (screenshot confirms). 1972 and 87% (23,770 ratings) in the answer match the detail screen.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cityride-001",
+  "verdict": "holds",
+  "evidence": "Pickup is Home (seed: 410 Brannan St) and destination Oracle Park at step 8. 'Request CityRideX · $9.80' was tapped once at step 9, and the Trip Status screen shows Requesting, Home to Oracle Park, CityRideX, $9.80, ETA 14 min, matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "The seed has no 6:45 alarm (step 2). Pickers read 6 / 45 / AM at step 8, the label was Gym, and after Save at step 10 there is one '6:45, Gym' alarm, on. Re-opening it at step 11 shows 6:45 AM Gym, and saving again at step 12 left a single alarm.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan was opened from the 'launch plan' search. After leaving edit mode (step 9), the document shows every original paragraph intact plus one new final line, 'Q2 planning: Align launch milestones, owners, and resources for the second quarter.', with nothing duplicated.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "All Hands Storyline is the newest file: the list is sorted by date modified and the seed has it updated 2026-03-05T07:10Z, shown as 3/4/26 (step 2); it was unstarred in the seed. After Add star (step 5) the row shows a star (screenshot confirmed). Caveat: starring bumped its modified date to 10/16/26, and that post-star date is what the answer reports; the original date was 3/4/26.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudsheets-003",
+  "verdict": "holds",
+  "evidence": "Ava's Status cell (D2) read Confirmed at step 6. The value field was retyped to 'Pending' (step 10; an intermediate 'Confirmed.  Pending' was replaced before commit), and after leaving edit mode at step 13 row 2 shows Pending; other rows are unchanged. The answer names Ava.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "holds",
+  "evidence": "Slide 2's seeded agenda (Threat models / Research gaps / Why benchmarks matter; matches SeedDataFactory) keeps all three items. After leaving edit mode at steps 24-25, the slide shows a fourth bullet, Safety (screenshot confirmed). A stray list bullet on the 'Agenda' title (step 20) was toggled back off at step 21, and the answer's agenda matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch went 0 to 1 at step 7, and results dropped from 35 to 10 with Harborline on the map (its seed tags include outdoorSeating). Review Booking at step 12 shows Harborline Seafood, Fri Oct 16, 10:30 PM, 2 guests, and step 13 shows 'Reservation Confirmed', Fri Oct 16 • 10:30 PM, code RSV2007, matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "holds",
+  "evidence": "The cart badge went 7 to 8 after the Organic Hass Avocados add (Natural Foods Market item, step 10) and 8 to 9 after the Wild Caught Sockeye Salmon add (step 12): one add each on the seeded 1+1. The Natural Foods Market cart at step 14 shows 2 salmon ($29.98), 2 avocados ($11.98) and 'Go to checkout, $85.56', matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "Aiden Cross (Platform Engineer at HashiCorp, from the 'Platform Engineer' search) was messaged once at step 8: 'Hi Aiden, I admire your experience as a Platform Engineer at HashiCorp and would like to connect.' His reply is visible at step 9, and the answer names him.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-004",
+  "verdict": "holds",
+  "evidence": "The InMail (step 3) gives a team of 8 and $250-400K + equity. One reply with 4 questions was sent (step 5), the job was saved (Save to Saved, step 14), and Follow changed to Following (steps 17-18; it was 'Follow' before); both states persist at step 23. Caveat: the answer's 'Los Gatos with a flexible work arrangement' comes from Rachel's reply, while the posting says 'Los Gatos, CA (On-site)'; the city matches and the comp and team size match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "not counted",
+  "evidence": "The Transactions filter was applied (step 2), then two QuickBite receipts were archived. The first was 'Your Chipotle order receipt' (swiped at step 3, Archive tapped at step 4, unread count 8 to 7); the second was 'Your QuickBite order receipt' (Sushi Ran, opened at step 7, archived at step 8). The task asked for one, and the answer mentions only one.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "'Add to cart' on 'DualSense Wireless Controller for PlayStation 5' ($69.99) was tapped once at step 5. The screenshot shows an 'Added to cart' toast and the cart badge going from 19 (step 4) to 20; name and price match the answer.",
+  "checker_verdict": "holds"
+ }
+]

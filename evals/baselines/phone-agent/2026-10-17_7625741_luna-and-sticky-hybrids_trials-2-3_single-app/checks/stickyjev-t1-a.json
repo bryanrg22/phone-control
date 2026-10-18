@@ -1,0 +1,75 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather detail page shows an outlined 'Wishlist' button at step 10. After the Wishlist tap at step 11 it is the filled red 'In wishlist' (screenshot), and no other list was touched. The answer's 1972 and 87% (23,770 ratings) match the step 10-12 screens.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cityride-001",
+  "verdict": "holds",
+  "evidence": "Pickup was set to the 'Home, 410 Brannan St' suggestion (step 6), destination to Oracle Park (step 4), and CityRideX $9.80 was requested once (step 7). The Trip Status screenshot shows 'Requesting, Home to Oracle Park', Ride CityRideX, Price $9.80, ETA 14 min, matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "At step 19 the Add Alarm picker shows 6 / 45 / AM with label 'Gym' (screenshot). After Save (step 20) the list has a new enabled 6:45 'Gym' alarm sorted above 7:00, and the four seeded alarms keep their times and toggle states.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan was opened and edited at the end of its text. After Done (step 11) the read view's text is the full original document with one new last line, '- Q2 planning: align launch milestones, owners, and timeline.', and nothing is duplicated or lost. The step 7 'Add' tap changed nothing (the screenshots before and after are the same).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "The star itself is right: at step 2 All Hands Storyline is first by Date modified (seed updated 2026-03-05T07:10Z, newer than Q3 Planning Brief's 03-04T18:10Z) and unstarred, and after 'Add star' (step 4) it shows the star. But the answer's date, 10/16/26, is the timestamp the agent's own star tap wrote (the row changed from 'Modified 3/4/26' at step 2 to 'Modified 10/16/26' at step 4). The modification date that made it the newest file, 3/4/26, is never reported.",
+  "checker_verdict": "not counted",
+  "review": "Reviewed: CloudDrive's toggleStar() sets updatedAt = now, so the app shows today as the modified date after the star; the answer matches the app. The newest file was starred."
+ },
+ {
+  "task": "cloudsheets-003",
+  "verdict": "holds",
+  "evidence": "D2 (row 2 = Ava, Ops) held 'Confirmed' at steps 6-7. The stray 'Confirmed.  Pending' typed at step 8 was replaced at step 9, and after commit (step 10) the grid shows D2 = Pending with D3/D4 unchanged (screenshot). The answer names Ava, which is that row's volunteer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "false pass",
+  "evidence": "The agenda items are right at the end: Threat models, Research gaps, Why benchmarks matter, Safety (a garbled step-10 replace was undone with select-all and retype at steps 16-17). But the 'List' formatting tap at step 18 turned the slide-2 title 'Agenda' into '• Agenda' (the text field value at steps 18-19), and it was saved that way: the final screenshot at step 20 shows '• Agenda', against plain 'Agenda' at step 5.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch went from 0 to 1 at step 7, and the San Francisco results dropped from 35 to 10 restaurants (step 8). Harborline Seafood has the outdoorSeating tag in the seed. Review Booking (step 18) showed Sat, Oct 17, 7:00 PM, 2 guests, and one Confirm Reservation led to 'Reservation Confirmed, Harborline Seafood, Sat, Oct 17 • 7:00 PM, Code RSV2007' (step 19), matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "false pass",
+  "evidence": "At step 10 the agent's tapText('Add') hit the + on the Blueberry Scones card ((41.5%, 13.2%), above the $5.99 Blueberry Scones listing), and the cart count went from 7 to 8 items. The avocado add (8 to 9, step 11) and the salmon add (9 to 10, step 13) then landed. The seeded Natural Foods cart has no scones, so an unrequested item was added, and the reported $92.40 total includes it.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "The search 'Platform Engineer' lists Aiden Cross, 'Platform Engineer at HashiCorp' (step 4), and his profile was opened at step 5. After Send (step 9) the thread holds exactly one outgoing message, 'I admire your experience and would like to connect.', followed by his auto-reply (step 10 screenshot), matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "not counted",
+  "evidence": "The Transactions filter is applied (step 2), and Archive (not Delete) was used. But two QuickBite receipts were archived where the task asked for one: 'Your Chipotle order receipt' at step 4 (it leaves the list and unread goes 8 to 7) and 'Your Shake Shack order receipt' at step 10 (swiped at step 9, gone at step 10). The answer reports only one.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "The cart badge is 19 at step 6. One 'Add to cart' tap on the DualSense Wireless Controller for PlayStation 5 card (step 7, at 673 pt, which is that card's button) shows 'Added to cart' and the badge 20 (screenshots at steps 7-8), so it was added once. The name and $69.99 match the result card.",
+  "checker_verdict": "holds"
+ }
+]

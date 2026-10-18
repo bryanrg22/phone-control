@@ -1,0 +1,68 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "false pass",
+  "evidence": "The agent never tapped Wishlist. Steps 3-13 only searched and tapped the result, and on the detail page (steps 13-14 screenshot) the Wishlist button is still outlined, not filled. The saved app-state/cinephile/userData has wishlist [438631, 666277, 496243] with no 238 (The Godfather is only in seenlist), so the answer's 'Added The Godfather to your Wishlist' is untrue. The year 1972 and 87% are right.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "The Add Alarm form at step 26 (screenshot) shows 6 : 45 AM with label 'Gym'. The first 'Gym' typed at step 7 did not land (field still empty), so the label is not doubled. After Save at step 27, the list shows a new enabled '6:45 Gym' alarm above 7:00, and the four seeded alarms are unchanged.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan was opened from the 'launch plan' search (step 4). The line 'Q2 planning: Align launch milestones, owners, and success metrics.' was typed at the end (step 7). After leaving edit mode (step 8), the element list shows all the original Priorities and Meeting Notes text intact and the new line appended at the end, with nothing duplicated.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "All Hands Storyline is the newest file in Product Strategy: details at step 4 say Mar 4, 2026 11:10 PM, the seed has updated 2026-03-05T07:10Z vs Q3 Planning Brief 2026-03-04T18:10Z, and the list sorted by date puts it first. It was unstarred (Starred: No at step 4). After 'Add star' at step 7 it shows the Favorite star. The answer's date 10/17/26 matches step 7, because toggleStar() sets updatedAt to today (the ruling).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudsheets-003",
+  "verdict": "holds",
+  "evidence": "Cell D2 (Ava's row: A2 Ava, C2 Ops) held 'Confirmed' at steps 6-7. A first replace left 'Confirmed.  Pending' in the edit field (step 8), but this was fixed to 'Pending' at step 9 before committing. After the commit at step 11 the grid and screenshot show D2 = Pending, with D3 Confirmed and D4 Pending unchanged. The answer names Ava.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "holds",
+  "evidence": "The seed body of slide 2 is 'Threat models\\nResearch gaps\\nWhy benchmarks matter'. A replace at step 11 garbled the body, but at steps 15-16 the agent selected all and retyped the three original items plus 'Safety'. Out of edit mode (step 18, screenshot), the title is still 'Agenda' (no bullet added to the title) and the bullets are Threat models, Research gaps, Why benchmarks matter, Safety, which matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch went from 0 to 1 at step 6, and Harborline Seafood (20 Marina Blvd, San Francisco; the seed tags include .outdoorSeating) appears in the filtered results at step 7. Review Booking at step 10 shows Sat, Oct 17 / 7:30 PM / 2 guests. Step 11 shows Reservation Confirmed, Sat, Oct 17 • 7:30 PM, code RSV2007, booked once. The answer's date, time and party size match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "holds",
+  "evidence": "Tapping Add on Organic Hass Avocados (Natural Foods Market) at step 11 took the cart from 7 to 8 items, and tapping Add on Wild Caught Sockeye Salmon at step 13 took it from 8 to 9. No Blueberry Scones or other item was added. The Natural Foods Market cart at step 14 shows salmon qty 2 at $29.98 and avocados qty 2 at $11.98 (seed 1 each + one add), and 'Go to checkout, $85.56' matches the reported total.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "The 'Platform Engineer' search led to Aiden Cross, Platform Engineer at HashiCorp (step 4). The message was typed at step 7, sent once with Send at step 8 (a single bubble 'I admire your experience and would like to connect.' marked Seen), and Aiden replied at step 9. The answer names Aiden Cross.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "not counted",
+  "evidence": "The Transactions filter was applied (step 2), and the QuickBite 'Your Chipotle order receipt' was archived at step 4 (gone from the list, unread count 8 to 7). The agent then opened and archived a second QuickBite receipt ('Your QuickBite order receipt', Sushi Ran) at steps 5-6, which is also gone at step 6. Two receipts were archived where one was asked, so the archive is doubled (the ruling), and the answer mentions only one.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "Searched 'PS5 Controller'. The step 4 screenshot shows DualSense Wireless Controller for PlayStation 5 at $69.99 with the cart badge at 19. After one 'Add to cart' tap at step 5, the screenshot shows the 'Added to cart' banner and the badge at 20, and no further add was made. The name and price in the answer match.",
+  "checker_verdict": "holds"
+ }
+]

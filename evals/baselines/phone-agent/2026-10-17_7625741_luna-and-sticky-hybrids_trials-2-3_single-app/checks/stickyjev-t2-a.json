@@ -1,0 +1,62 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather detail page (step 9) shows an outlined 'Wishlist' button; one Wishlist tap at step 10 turns it into a filled 'In wishlist' (screenshot). The answer's 1972 and 86% match the detail screen at steps 9-11 (the search card said 87%, but the answer uses the detail page's figure).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cityride-001",
+  "verdict": "holds",
+  "evidence": "Pickup is 'Home' (410 Brannan St in the CityRide seed), Oracle Park was chosen as the destination (step 5), and 'Request CityRideX · $9.80' was tapped once (step 6). Trip Status shows Requesting, Home to Oracle Park, CityRideX, $9.80, ETA 14 min (screenshot step 6), which matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan opened (step 5). The Q2 line was typed at the end of the text (step 9) and edit mode was left (step 11). The viewer text at steps 11-12 holds every original line unchanged plus 'Q2 planning: align launch milestones, owners, and success metrics.' The only side effect is a trailing space after 'afternoon', which is whitespace only.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "All Hands Storyline is the newest file in Product Strategy (Details: Mar 4, 2026 11:10 PM, against Q3 Planning Brief's 10:10 AM, steps 5 and 8; seed 2026-03-05T07:10Z). It was 'Starred: No' (step 5) and 'Add star' was chosen at step 11. After that the list shows the star and 'Modified 10/17/26' (toggleStar updates updatedAt). The answer gives both 3/4/26 (before) and 10/17/26 (after), and both match the screens.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudsheets-003",
+  "verdict": "holds",
+  "evidence": "Cell D2 (row 2 = Ava) read 'Confirmed' (step 6). It was set to 'Pending' and committed (steps 9-10), and after leaving edit mode the grid shows Ops/Pending, Product Lead/Confirmed, QA Lead/Pending, with the other cells unchanged (screenshot step 11). The answer names Ava and Pending.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "false pass",
+  "evidence": "'safety' was appended as a fourth bullet with all three existing items kept (step 9). But the 'List' tap at step 10 turned the slide title 'Agenda' into '• Agenda', and it stays that way after leaving edit mode (element list and screenshot, steps 11-12). The title is damaged and was never toggled back.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch went from 0 to 1 (steps 7-8). Harborline Seafood (San Francisco; seed tags include outdoorSeating) was opened from the filtered map (step 10). 'Confirm Reservation' was tapped once and shows 'Reservation Confirmed', Harborline Seafood, Sat, Oct 17 • 7:30 PM, with 2 guests on the review screen (steps 13-14). The answer matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "not counted",
+  "evidence": "Salmon was added twice. The Add tap at step 12 took the cart from 8 to 9 items, and a second tapText('Add') on the same salmon card at step 13 took it to 10. The cart shows Wild Caught Sockeye Salmon qty 3 over the seeded 1 (step 14). The avocado add (7 to 8, qty 2) and the $102.68 total are correct, but the salmon was doubled.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "lockedin-004",
+  "verdict": "holds",
+  "evidence": "One reply with three questions (team structure/leadership, CI/CD tooling tech, 6-12 month outcomes) was sent at step 8 and appears once in the thread when reopened (step 25). The Netflix job shows 'Saved' (steps 17 and 36). The button read 'Follow' before the tap and 'Following' after (steps 19-20 and the final screenshot, step 36). The answer's $250K-$400K, Los Gatos CA on-site and team of 8 match the job card and Rachel's InMail.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "The cart badge read 19 before the add (screenshots steps 3 and 7). One 'Add to cart' tap on the DualSense Wireless Controller for PlayStation 5 card shows the 'Added to cart' banner, and the badge goes to 20 (screenshot step 8). Nothing else was added. The answer's name and $69.99 match the card.",
+  "checker_verdict": "holds"
+ }
+]

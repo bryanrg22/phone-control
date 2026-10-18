@@ -1,0 +1,68 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Team Standup Notes in Work opened at step 3 (Today: 3 bullets, Blockers: 2). After the insert and Done (step 6, out of edit mode), the screenshot shows '- Completed bug fix' as a new 4th Today bullet; every other line is unchanged and nothing is duplicated.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "The 'Brooklyn Half' search (step 4) shows Elena Brooks: 'I signed up for the Brooklyn half. Please tell me you're doing it too.' That is the only thread where someone asks about the user's registration (in the seed, Priya's thread has the user already registered). One reply bubble, 'I'm registered! What's the plan for meeting up on race day?', appears under Sat, Oct 17 at 2:21 PM in Elena's thread (step 6); it was sent once.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "holds",
+  "evidence": "The first Top Stories item, 'Eagles QB Jalen Hurts on IR due to blood clot, expected to be out indefinitely', was opened in the Story view (step 3; the article is about the Eagles). Scores, then NFL for OCT 17, 2026, shows 'NFL • No games scheduled' (step 6). The headline, the team and 'no game today' in the answer match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "holds",
+  "evidence": "One-way SFO to JFK on Oct 18, 2026 (Main Cabin chip set on the form, step 18) returns 7 flights. All 7 were scrolled through (steps 29-30): $1,189, $789, $559, $539, $369, $349, $259. The low-to-high and high-to-low sorts confirm the min is $259 (10:30 PM-3:38 AM) and the max is $1,189 (6:00 PM-11:08 PM, 5h 8m, nonstop), exactly as answered.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "The Confirm Payment sheet (step 13) shows Pay Maya Patel, $32.50, 'dinner split', Funding: SplitPay balance. 'Pay $32.50' was tapped once (step 15; the step 14 tapText failed and did nothing), and 'Paid Maya Patel' appears in the element list. In final.png the feed has exactly one new 'Jordan Avery paid Maya Patel, 1m, dinner split' row above the seeded Arnav row (none at step 1), so there was no double payment.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "Trips shows the Catalina Island reservation 'Clifftop retreat on Catalina', Oct 23-Oct 26 (step 2). Its detail page (step 3 screenshot) shows $327 per night, 5 Beds and 3 Baths, which matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The Tartine Manufactory page shows 9.1 and '$$$ | Bakery, American' (step 6). In Save to List, Want to Try was unchecked (only Mission Crawl was checked, step 7); after the tap it is checked (step 8 screenshot), Mission Crawl is untouched, and Done was tapped (step 9).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "The DM list shows Lena Ortiz in bold (unread). In the seed, the last two messages of the first four DMs are unread, and Lena's unread 'quarterly support metrics report' (Feb 12, 15:00Z, shown as 7:00 AM) is the newest of them (Devon 07:00Z, Imani 10:00Z, Blair 02:00Z). teamchatsim_state.json holds exactly one new Jordan message, msg_305, 'That's great news—thanks for the update! I'll keep an eye on the deflection rate.', at 2026-10-17T21:35:29Z; step 7 shows it at Oct 17, 2:35 PM, as the answer says.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "not counted",
+  "evidence": "The date (Thu, Oct 29, 10:06 AM) and venue (Great American Music Hall, 859 O'Farrell St) are right (steps 5-7). For price, the answer honestly says 'starting at $101' (Event Info, step 7) and that the visible tiles show $116-$168. It never opened the 28 listings, so it gives no true top price (the seed runs up to $333), and the asked price range is left unanswered.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "holds",
+  "evidence": "Miles Chen's 'Zwift Race - Crit City' Indoor Ride showed 17 kudos with a grey icon (step 3). After the tap it shows 18 with an orange icon (step 4 screenshot). The seed has this activity at kudos 17, currentUserKudo false, sourceType .friend, and Miles Chen has isCurrentUser false, so this is real kudos on a friend's activity that was not already liked.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "weather-004",
+  "verdict": "holds",
+  "evidence": "Today is Saturday (the row after 'Today' is 'Sun'), so this weekend is Today plus Sun. San Francisco shows Today 84° and Sun 67° (steps 2/9); Dallas shows Today 68° and Sun 72° (steps 14-15). These are exactly the answer's figures, and SF being warmer overall is defensible (84 vs 68 on Saturday, average 75.5 vs 70). The judge's reasons quote next weekend's rows (SF 63/65, Dallas 88/85) and call the answer wrong, but the answer matches this weekend.",
+  "checker_verdict": "holds"
+ }
+]

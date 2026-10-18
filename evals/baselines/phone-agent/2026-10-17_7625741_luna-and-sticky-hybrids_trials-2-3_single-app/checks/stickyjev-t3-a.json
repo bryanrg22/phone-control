@@ -1,0 +1,50 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather's detail page (step 14) shows 1972 and 86% with a \"Wishlist\" button; the Wishlist tap at step 15 turns it into \"In wishlist\" (screenshot), and the saved userData wishlist now holds 238 (The Godfather), which the seed (MoviesState.swift: Dune, Past Lives, Parasite) did not. The app's AddToWishlist reducer also removes the film from the seeded seenlist by design, so that is not agent damage; the answer's 1972 and 86% match the detail screen.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "The Add Alarm picker reads 6 / 45 / AM with label \"Gym\" (step 10 screenshot); after Save (step 11) the list shows one new 6:45 \"Gym\" alarm, switched on, above the seeded 7:00. The four seeded alarms are unchanged and the answer matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan opened (step 5); the line \"Q2 planning: confirm priorities, owners, and timeline for the next quarter.\" was typed at the end (step 8). After leaving edit mode (step 10) the document's text shows every original line (Priorities, March 5 2026, Meeting Notes) intact, followed by the new note once.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "With the list sorted newest first (step 2), All Hands Storyline is at the top. Its details show Last modified Mar 4 2026 11:10 PM and Starred: No (step 4); the seed agrees (updated 2026-03-05T07:10Z, newer than Q3 Planning Brief's 03-04T18:10Z; starred: false). After Add star (step 7) the row shows the star and \"Modified 10/17/26\" because toggleStar() sets updatedAt; the answer gives that date, which matches the app.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "holds",
+  "evidence": "In the Natural Foods Market results, the + on Organic Hass Avocados took the cart from 7 to 8 items (step 9), and the + on Wild Caught Sockeye Salmon took it from 8 to 9 (step 11). The cart (step 12) shows salmon 2 for $29.98, avocados 2 for $11.98 and checkout at $85.56. The saved whole_foods cart holds just the 6 seeded products, with no stray item, and the answer's figures match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "Searching \"Platform Engineer\" found Aiden Cross, Platform Engineer at HashiCorp (step 5). In the Message thread, a single bubble \"I admire your experience and would like to connect.\" appears as sent (step 7/8 screenshot), followed by Aiden's reply, and the answer names Aiden Cross.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-004",
+  "verdict": "not counted",
+  "evidence": "The actions are real: one reply with 3+ questions was sent to Rachel (step 5, Seen), the job went from Save to Saved (steps 16-17), and Follow turned to Following (steps 18-19); 8 engineers and $250-400K match Rachel's InMail (step 3). But the answer gives no location city. The job detail says Los Gatos, CA (On-site) (steps 16-22), while the answer gives only \"primarily remote\" from Rachel's app-generated reply (step 23). The judge credited a \"Los Gatos, CA on-site\" that the answer never states, so an asked detail (location) is unanswered.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "not counted",
+  "evidence": "Transactions was filtered (step 2). At step 4 the agent swiped the QuickBite Chipotle receipt, and at step 5 it tapped the swipe Archive button (screenshot), which removed that receipt (8 to 7 unread). It then opened a second QuickBite receipt (Sushi Ran, step 8) and archived it too (step 9). Two QuickBite receipts were archived where the task asked for one, so the result is doubled.",
+  "checker_verdict": "not counted"
+ }
+]

@@ -1,0 +1,69 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "The bullet '- Completed a bug fix today' was added under Blockers and is shown after Done (step 14). But the existing bullet was damaged: at steps 6-8 the cursor sat inside 'backend| team' and the agent pressed return and then delete, and at step 9 it typed ' '. That left 'Need API docs from backend  team' with a double space, visible in the step 9 and step 14 screenshots (the line ends at x≈568 against 559 at step 6). The defect is one character, but it changes an existing line.",
+  "checker_verdict": "false pass",
+  "review": "Reviewed: the only change to existing text is a doubled space in 'backend  team' (final screen); no word lost or changed. The new bullet is saved."
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "Searching 'Brooklyn Half' (step 3) found Elena Brooks's 'I signed up for the Brooklyn half. Please tell me you're doing it too.' (seed ViewController.swift:2163), which asks about the user's registration. 'I'm registered! What's the plan for meeting up on race day?' was sent once: the field held it at step 9, and one green bubble appears at steps 10-11. Step 6's inputText went nowhere, because the field was still empty at step 7. The answer names Elena Brooks, and her auto-reply about meeting at 7 AM matches step 11.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "not counted",
+  "evidence": "The reported headline 'Dodgers shuffle batting order ahead of weekend series.' is a Home-feed Alert (seed SeedData.swift:217, AlertMessage alert_005 'Lineup Note'), not an article. Tapping it at step 4 opened nothing. The only article the agent opened was the 'Denver Nuggets vs. Los Angeles Lakers: Game Highlights' top story (step 6), and it never checked those teams. Its stated facts are true (the alert text, and 'MLB • No games scheduled' for Oct 16, 2026 at step 9), but it did not read a headline article and report on that article's team.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "holds",
+  "evidence": "The search was SFO→JFK, one-way, Oct 17, 2026 (step 15 shows '7 flights'). Scrolling (steps 16-36) showed all 7 results in the element lists, priced $259 to $1,189. The cheapest is $259 at 10:30 PM–3:38 AM (DL1362) and the dearest $1,189 at 6:00 PM–11:08 PM (DL1357), both nonstop, as the answer says. Only one departure date was searched.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "The Confirm Payment sheet (steps 18-21) shows Pay Maya Patel @Maya-Patel, $32.50, 'dinner split', Funding 'SplitPay balance'. After Pay $32.50 was tapped, step 23 shows 'Paid Maya Patel'. The step 24 tap on 'Pay' landed on the home screen and opened no second confirm sheet. Steps 24-25 show exactly one new feed entry, 'Jordan Avery paid Maya Patel, 1m, dinner split'.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "On Trips (step 2), 'Clifftop retreat on Catalina' (Oct 22–25, Catalina Island) is the stay listing; the other Catalina item is a photo-session experience. Its detail page (step 3) shows the name, '$327 per night', 5 Beds and 3 Baths, all matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The Tartine Manufactory page (step 4) shows a score of 9.1 and '$$$ | Bakery, American'. In the Save to List sheet, Want to Try was unchecked at step 5 (only Mission Crawl, from the seed, was checked). After the tap it is checked, and it is still checked when the sheet is reopened at step 10. The answer's score and cuisine match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "In the seed (SeedDataFactory isUnreadDMMessage), DMs 0-3 (Blair, Devon, Imani, Lena) have their last two messages unread. Lena Ortiz's 'quarterly support metrics…' at 2026-02-12T15:00Z is the newest unread message from another person, and it is bold in the DM list at step 2. app-state teamchatsim_state.json holds exactly one new Jordan Avery reply in dm Lena Ortiz (05:38:31Z), matching the text in the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "false pass",
+  "evidence": "The answer's low price of '$98' is wrong. The green '98' badge on the search result (step 7) is the event's top Deal Score (SearchView.swift:456, DealScoreView(score: topScore)), not a price. Across steps 8-28 the element lists show all 28 listings for the Oct 28 Great American Music Hall show (seed count: 28), and the lowest price including fees is $116 (Front Row 24, also on the step 8 map). The date, venue and $333 maximum are correct.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "false pass",
+  "evidence": "Kudos went to Jordan Avery's 'Presidio Tempo Before Work' run (18 → 19 and orange at step 5). Jordan Avery is the current user (seed SeedData.swift athlete_001 isCurrentUser: true; also activity_snapshot.json), not a friend. No friend's activity received kudos.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "weather-004",
+  "verdict": "holds",
+  "evidence": "Today is Fri Oct 16, so the next rows, Sat and Sun, are the weekend. San Francisco's 10-day forecast (step 4, page 1) shows Sat high 82°, Sun 67°. Dallas's (step 7, the page titled Dallas at step 6) shows Sat 69°, Sun 72°. These match the answer, and SF is warmer on average (74.5 against 70.5). Dallas was already saved: it had a checkmark at step 2, so Done changed nothing.",
+  "checker_verdict": "holds"
+ }
+]

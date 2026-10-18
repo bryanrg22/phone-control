@@ -1,0 +1,68 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather (1972, 87%, Mar 14, 1972 result) opened at step 7 with a plain 'Wishlist' button; after the Wishlist tap at step 8 the button reads 'In wishlist' (filled red) and the answer's 1972 / 87% match the detail screen. The seeded Seen state was cleared at the same time (Seen -> Seenlist outline), but that is the app's own AddToWishlist reducer (wishlist and seenlist are mutually exclusive), not a stray tap.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "Add Alarm picker shows 6 : 45 AM with label 'Gym' at step 12 (screenshot); after Save at step 13 the list shows a new '6:45 Gym' row, toggle on, sorted above 7:00, with the four seeded alarms unchanged and only one new alarm.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan opened at step 4 (Priorities + Meeting Notes); the line 'Q2 planning: align launch milestones, owners, and dependencies.' was typed at the end (step 9), and after the checkmark exits edit mode at step 10 the read view's text shows every original line intact plus the new line at the end, once.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "Product Strategy holds three files; Details show All Hands Storyline last modified Mar 4, 2026 11:10 PM (step 4/10), Q3 Planning Brief Mar 4 10:10 AM and already starred (step 7), Board Prep 3/1/26, so All Hands is the newest; it was unstarred (Starred: No, 'Add star' in menu, step 12) and shows a star after 'Add star' at step 13. The answer's October 17, 2026 is the date the app shows after the star (toggleStar sets updatedAt to now), which per the ruling matches the app.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudsheets-003",
+  "verdict": "holds",
+  "evidence": "D2 (Ava's Status) held 'Confirmed' at step 9; after replaceText and the commit tick, the grid shows D2 = Pending at step 12 (screenshot) with D3 Confirmed and D4 Pending unchanged. The step-7 tap only selected B4 (Mia, 'Check-in') without editing it, and the answer names Ava, the row-2 volunteer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "holds",
+  "evidence": "Slide 2 started as title 'Agenda' and body 'Threat models / Research gaps / Why benchmarks matter' (step 5). Mid-run the title became '• Agenda' (step 9) and the body was duplicated by failed replaceText calls, but by step 37 the title was retyped to 'Agenda' and the body replaced cleanly; after exiting edit mode (steps 42-43) the slide shows 'Agenda' with bullets Threat models, Research gaps, Why benchmarks matter, Safety, matching the answer. The body is now formatted as a bulleted list (it was plain lines), which fits 'add a bullet'; no text was lost or duplicated.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch was turned on (step 7, value 1) and the San Francisco results dropped from 35 to 10 restaurants, with Harborline Seafood among them (step 8). The Review Booking screen shows Harborline Seafood, Sat Oct 17, 7:30 PM, 2 guests (step 12), and step 13 shows 'Reservation Confirmed', Sat, Oct 17 • 7:30 PM, Code RSV2007, matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "holds",
+  "evidence": "The Natural Foods Market cart count goes 7 -> 8 after the Organic Hass Avocados add (step 15) and 8 -> 9 after the Wild Caught Sockeye Salmon add (step 25), with no other adds (no stray Blueberry Scones). The cart at step 26 shows salmon x2 $29.98 and avocados x2 $11.98 (seeded 1 each + one add) and 'Go to checkout, $85.56', matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "The Platform Engineer search shows Aiden Cross, Platform Engineer at HashiCorp (step 3). His profile's Message button opened the thread (step 5), and 'I admire your experience and would like to connect.' appears sent once, marked Seen, at step 8, with Aiden's reply at step 9; the answer names Aiden Cross.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "holds",
+  "evidence": "The Transactions pill was selected (header 'Transactions • 8 unread', step 2). A swipe on the QuickBite 'Your Chipotle order receipt' row revealed Archive and Delete (step 3 screenshot), and the tap at x=69% hit Archive, not Delete. At step 4 the Chipotle receipt is gone from the list and the other QuickBite receipts remain, so only one email was archived.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "The 'ps5 controller' results show DualSense Wireless Controller for PlayStation 5 at $69.99 (step 4, cart badge 19). Its own 'Add to cart' was tapped at step 5, and the screenshot shows an 'Added to cart' banner with the cart badge now 20 (one add); the answer's name and $69.99 match.",
+  "checker_verdict": "holds"
+ }
+]

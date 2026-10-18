@@ -1,0 +1,69 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Team Standup Notes (back button 'Work') showed Today: 3 items at step 4; after return + inputText at steps 6-7 and Done at step 9, the screenshot shows '- Bug fix completed today' as a 4th Today bullet with every Yesterday/Today/Blockers line unchanged, out of edit mode.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "Search at step 4 listed Elena Brooks' 'I signed up for the Brooklyn half. Please tell me you're doing it too.'; the thread opened at step 5 (opened by the hideKeyboard empty-area tap) matches the seeded Elena Brooks DM (training plan pdf, 'Let's do it. I'm sore from venue setup'). Exactly one 'I'm registered! What's the race day meetup plan?' bubble sent at step 6, and Elena's reply about meeting an hour early (step 7) matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "holds",
+  "evidence": "The top story 'Northern Iowa Panthers vs. Youngstown State Penguins: Full Highlights' was opened in Story view (steps 4 and 14, published Oct 17, 2026). Scores > NCAAF for Oct 17, 2026 (step 17) shows '3 games': ORE-OSU, PSU-TEX, UGA-BAMA, with neither team, so 'no game today' matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "false pass",
+  "evidence": "The results header says '7 flights', sorted by Lowest Price, but the agent saw only 6 (step 15: $259, $349, $369, $539, $559, $789) and never scrolled to the 7th. Seed SeedDataFactory.swift OW307 (6:00 PM, SkyTrip One, $1,189) is the 7th SFO-JFK one-way result; the seeded repo returns all route matches moved to the search date, so the true most expensive is $1,189, not the reported $789.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "Confirm sheet (step 18 screenshot) shows Pay Maya Patel $32.50, 'dinner split', Funding: SplitPay balance. The step 18-20 taps at y=61.8% hit the sheet header and did nothing; one Pay $32.50 tap at step 22 led to a 'Paid Maya Patel' toast. The feed before shows no 'dinner split' row (only 'concert merch' 3d); after (step 23) exactly one 'Jordan Avery paid Maya Patel, 1m, dinner split'.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "Trips (step 2) shows Clifftop retreat on Catalina, Oct 23 - Oct 26, Catalina Island, CA. The listing page (step 3 screenshot) shows $327 per night, 5 Beds, 3 Baths, all matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "Detail page (step 6) shows 9.1 and '$$$ | Bakery, American'. In the Save to List sheet, Want to Try was unselected at step 7 and selected at step 8 (the seeded Mission Crawl check was left alone). Reopened at step 11, the screenshot still shows the Want to Try checkmark.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "Seed rule isUnreadDMMessage (dmIndex < 4) makes only Blair, Devon, Imani and Lena unread; Lena's seeded last message (Feb 12 15:00Z) is the newest of those (Nora/Riley are newer but read). The reply was sent once at step 6 and saved as msg_305 in teamchatsim_state.json, right after Lena's msg_268 ('response time down 40%').",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "false pass",
+  "evidence": "The answer gives '$116 to $168' (the four section tiles at step 8) as the price range, although the agent opened Event Info at step 10, which shows 'Lowest price, $101' and 28 listings, and saw a $120 listing at step 8. Per the ruling, the tile range given as the price range is a false pass; date (Thu Oct 29, 2:07 PM) and venue (Great American Music Hall, 859 O'Farrell St) are correct.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "false pass",
+  "evidence": "The kudos tap at step 4 (18 -> 19) was on 'Presidio Tempo Before Work', which is activity_001 by athlete_001 = currentUserAthleteId (sourceType .personal) in SeedData.swift: the user Jordan Avery's own run, not a friend's. The answer calls Jordan Avery the friend.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "weather-004",
+  "verdict": "not counted",
+  "evidence": "Today is Saturday Oct 17, so the weekend is the 'Today' and 'Sun' rows. SF (step 24) shows Today high 58°, Sun 67°; Dallas (step 21 screenshot, page title Dallas at step 14) shows Today 46°, Sun 72°, all matching the answer (the judge wrongly cited next weekend's rows). Caveat: 'Dallas warmer overall' rests on the higher max (72 vs 67, as the answer says), although SF is warmer Saturday and on average.",
+  "checker_verdict": "holds",
+  "review": "Reviewed: the highs are right (SF 58/67, Dallas 46/72), but the asked comparison is wrong: San Francisco is warmer on average (62.5 vs 59) and on Saturday; 'Dallas warmer overall' rests only on Sunday's higher maximum."
+ }
+]

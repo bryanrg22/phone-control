@@ -1,0 +1,63 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Step 3 shows the original note (Yesterday 3 items, Today 3 items, Blockers 2 items); after typing and Done (step 7, keyboard gone) the note shows '- Completed a bug fix today' as a new 4th Today bullet with every existing line intact, nothing duplicated. The answer matches step 7.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "Search (step 3) found Elena Brooks: 'I signed up for the Brooklyn half. Please tell me you're doing it too.' That is the thread asking whether the user registered (Priya's Brooklyn thread holds only a link the user already answered 'Registered!' to, per the seed). The step-6 typing went nowhere (composer empty at step 8); the step-9 text was sent once, and step 10 shows a single new bubble 'I'm registered! What's the race day meetup plan?' (Fri Oct 16, 2:59 PM).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "holds",
+  "evidence": "The step-9 story is the top EPL headline 'Nicol slams Carrick for 'ridiculous' comments in press conference'. Its text names no team, but the photo shows Carrick in a Manchester United kit with the club crest, so Manchester United is defensible. The EPL scoreboard for Oct 16, 2026 (step 11) shows 'EPL • 2 games', ARS-CHE and LIV-MCI only, so 'no game today' matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "holds",
+  "evidence": "SFO→JFK searches ran for Oct 17, 18 and 19 (date chips in the step 16/24/31 screenshots). Each returned the same '7 flights', all 7 scrolled through ($259, $349, $369, $539, $559, $789, $1,189; steps 17-18, 25-26, 32-33). Min $259 at 10:30 PM-3:38 AM and max $1,189 at 6:00 PM-11:08 PM match the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "The step-18 Confirm Payment sheet shows Pay Maya Patel @Maya-Patel, $32.50, 'dinner split', Funding: SplitPay balance. 'Pay $32.50' was tapped at step 20 ('Paid Maya Patel' toast). The step-22 tap landed on the home feed (no new confirm sheet), and the feed (step 22-23 element list) has exactly one new 'Jordan Avery paid Maya Patel, 1m, dinner split', so there was no double payment.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "Trips (step 2) lists 'Clifftop retreat on Catalina', Oct 22-25, Catalina Island, CA. Its detail page (step 3 screenshot) shows 8 Guests, 5 Beds, 3 Baths and '$327 per night', all matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The detail page (step 6) shows a 9.1 score and '$$$ | Bakery, American'. In the Save to List sheet, Want to Try was unchecked with only Mission Crawl checked (step 7). After the tap, Want to Try is checked and Mission Crawl is kept (step 8), and Done closed the sheet (step 9). The answer matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "The Unread filter (step 4) lists Lena Ortiz, Imani Brooks, Devon Hart and Blair Morgan. In app-state, Lena's unread message (Feb 12 15:00) is newer than the others' last messages (Imani 11:00, Devon 07:00, Blair 03:00). The reply was sent once, shown in the thread at step 6 and saved once in teamchatsim_state.json (2026-10-16T22:16:45Z). It references the 'response time down 40%' message.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "not counted",
+  "evidence": "Date (Wed Oct 28) and venue (Great American Music Hall) are right (steps 6-8), but the answer's price range '$116 to $168' is just the four section-tile minimums (Front $116, Side $145, Center $167, GA $168; step 6). Event Info shows 28 listings and a lowest price of $101 (step 8), and the agent never scrolled the listings to find the top. Rebuilding the seeded listings (SeedData.makeListings, seed 3027, 95...280) reproduces every on-screen price exactly ($116/$120/$145/$167/$168, lowest $101, 28 listings) and puts the top at $280 before fees ($333 with fees), so the reported range is wrong.",
+  "checker_verdict": "false pass",
+  "review": "Reviewed: the answer is honest (the four section tiles' $116-$168, and Event Info's lowest $101), but the price range of the 28 listings (to $333 with fees) was never established."
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "false pass",
+  "evidence": "Ava Torres's run was already liked in the seed: orange thumb, 31 (steps 2-3; the step-3 tap changed nothing). The step-4 'Like' tap turned it to a grey outline thumb with 30 (step 4/5 screenshot), which is an unlike. No kudos was given, though the answer claims it.",
+  "checker_verdict": "false pass"
+ }
+]

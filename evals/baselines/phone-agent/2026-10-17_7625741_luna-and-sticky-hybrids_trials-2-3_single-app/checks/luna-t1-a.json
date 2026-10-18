@@ -1,0 +1,69 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather detail page shows an outlined 'Wishlist' button at step 7 and a filled 'In wishlist' after the Wishlist tap at step 8 (screenshot at step 9). The answer's 1972 and 87% (23,765 ratings) match that screen. The Seen button changing to 'Seenlist' is the app's own AddToWishlist reducer, which removes the movie from the seeded seenlist; that is not agent damage.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cityride-001",
+  "verdict": "holds",
+  "evidence": "At step 5 Pickup = 'Home' (seed: Home is 410 Brannan St) and Where to = Oracle Park, and 'Request CityRideX · $9.80' was tapped once. The step 6 Trip Status shows 'Requesting', 'Home to Oracle Park', Ride CityRideX, $9.80 and ETA 14 min, which match the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "The step 15 picker shows 6 / 45 / AM with Label 'Gym'. After Save (step 16) the list has one new '6:45, Gym' alarm, toggle on, sorted before 7:00 (so AM). The four seeded alarms are unchanged.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Step 6 shows the original Mobile Launch Plan text. After typing and leaving edit mode (step 10), the read view at steps 12-13 shows all original paragraphs intact, with 'Q2 Planning Note: Align launch milestones, owners, and resources for the quarter.' appended once at the end. This matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "The right file was starred. All Hands Storyline was the newest by its details (last modified Mar 4, 2026 11:10 PM vs Q3 Planning Brief at 10:10 AM, steps 4 and 8), its menu offered 'Add star' (unstarred, step 10), and a star shows at step 11. But the reported date, 'October 16, 2026', is the timestamp the star tap itself wrote: toggleStar() sets updatedAt = Date() in WorkspaceStore.swift. The file's last-modified date when found was Mar 4, 2026, so the answer presents the agent's own edit time as the file's date.",
+  "checker_verdict": "not counted",
+  "review": "Reviewed: CloudDrive's toggleStar() sets updatedAt = now (WorkspaceStore.swift:585), so after the star the app itself shows today as the modified date; the answer matches the app. The file starred was the newest by the dates before the star."
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "false pass",
+  "evidence": "The agenda body ends correct at step 20 (Threat models / Research gaps / Why benchmarks matter / Safety), after several replaceText calls had duplicated the text (steps 11-13). But at step 22 the agent tapped 'List' with the title selected, and the slide title text changed from 'Agenda' to '• Agenda' (title field value '• Agenda'; toggleBullets() rewrites the title string). It is still shown in the final screen at step 24, so existing slide content was altered.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch went 0 to 1 at step 7, and the San Francisco results show 10 restaurants including Harborline Seafood (step 8). Confirm Reservation was tapped once (step 18: 'Reservation Confirmed', Harborline Seafood, Fri, Oct 16 • 7:30 PM, RSV2007). Upcoming shows a single Harborline booking with 2 guests (steps 20-21), which matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "The search shows Aiden Cross, 'Platform Engineer at HashiCorp' (step 3). In his thread, 'I admire your experience and would like to connect.' was sent once and shows as a sent bubble with 'Seen' at step 8, with his auto-reply at step 9. The answer's recipient and title match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-004",
+  "verdict": "holds",
+  "evidence": "Rachel's InMail (step 3) gives a team of 8 and $250-400K + equity, and the reply with 3 numbered questions shows as sent at step 6. The job detail showed 'Save' at step 13 and 'Saved' at step 14. Netflix showed 'Follow' at step 20 and 'Following' after the tap at step 21 (screenshot). Los Gatos, CA (On-site) and $250K-$400K/yr appear on the job page, so the answer's details all match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "not counted",
+  "evidence": "The Transactions filter was applied (step 2), but two different QuickBite receipts were archived. At step 4 the swipe-Archive removed 'Your Chipotle order receipt' (QuickBite, Yesterday; unread count 8 to 7). Step 7 then archived 'Your QuickBite order receipt' (Sushi Ran). The task asked for one receipt, and the answer mentions only the second.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "The search results show DualSense Wireless Controller for PlayStation 5 by Sony at $69.99 (step 5, cart badge 19, also 19 at step 1). One 'Add to cart' tap on that card gives an 'Added to cart' toast and cart badge 20 (step 6 screenshot). Name and price match the answer.",
+  "checker_verdict": "holds"
+ }
+]

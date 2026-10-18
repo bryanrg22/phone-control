@@ -1,0 +1,62 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Team Standup Notes (Work folder) opened at step 3 with Today: API migration / unit tests / Design review at 2pm; after Return + typing and Done (steps 5-7) the step-7 screenshot shows '- Completed bug fix today' added under Today, with every existing line (Yesterday, Today, Blockers) intact and nothing duplicated, out of edit mode.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "Search for 'Brooklyn Half' (step 3) listed Elena Brooks's 'I signed up for the Brooklyn half. Please tell me you're doing it too.'; the hideKeyboard tap at step 4 opened that Elena Brooks thread (screenshot), and step 6's screenshot shows exactly one new outgoing message 'I'm registered! What's the race day meetup plan?' under Sat, Oct 17 (step 5's Enter did not send; only the step-6 Send did). Seed confirms Elena is the one asking (Priya's thread has the user saying 'Registered!' unprompted).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "holds",
+  "evidence": "The first Top Stories item was opened and read at step 6 (Story sheet: NBA, 'Knicks waive Bruce Brown, keep James Wiseman ahead of opener', published Oct 17, 2026); the Scores tab at step 8 shows OCT 17, 2026, NBA selected, 'NBA • No games scheduled' / 'NO GAMES FOR THIS DATE', matching the answer (the scoreboard is live-API data, so the screen is the authority).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "holds",
+  "evidence": "One-way SFO->JFK for Oct 18 (step 17 screenshot) returned 7 flights; step 18's scroll of the Lowest-Price sort shows $259 DL1362 10:30 PM-3:38 AM first, then $349-$789, and the Highest-Price sort (step 21) shows $1,189 DL1357 6:00 PM-11:08 PM first. Oct 19 and Oct 20 (Oct 20 visible at step 33) gave the same min/max, so the answer's flights, times and prices match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "Step 17's Confirm Payment sheet shows Pay Maya Patel @Maya-Patel, $32.50, 'dinner split', Funding: SplitPay balance; it was confirmed once at step 19 ('Paid Maya Patel' in the element list). final.png shows a single new 'Jordan Avery paid Maya Patel, 1m, dinner split' row above the seeded 1d 'Maya Patel paid Jordan Avery' row, so no double payment.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "The Trips tab (step 2) lists 'Clifftop retreat on Catalina', Oct 23-Oct 26, Catalina Island, CA as the upcoming stay (the other Catalina item is a one-day photo session). The listing at step 3 (screenshot) shows 8 Guests, 5 Beds, 3 Baths and '$327 per night', matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The Tartine Manufactory page (step 8) shows score 9.1 and '$$$ | Bakery, American'. In Save to List, Want to Try was unchecked at step 9 and is checked at step 10 (screenshot); seeded Mission Crawl stays checked, nothing else changed, and Done closed the sheet at step 11.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "In the seed (SeedDataFactory isUnreadDMMessage: dmIndex<4, last two messages) Blair, Devon, Imani and Lena have unread DMs, and Lena Ortiz's 'quarterly support metrics report' (2026-02-12T15:00) is the latest unread one; the bold names on the step-2 screenshot agree. The saved state has exactly one new message from Jordan in dm_lena_ortiz (msg_305) with the reply's exact text, followed by Lena's automated response.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "false pass",
+  "evidence": "The agent read only the event page's four section tiles ($168 GA, $116 Front, $167 Center, $145 Side; steps 6-7) and answered with '$116-$168' as the price range. Under the ruling that is not the true range (lowest listing $101, seeded listings up to $333 with fees). Date (Thu Oct 29) and venue are right.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "holds",
+  "evidence": "Miles Chen's Indoor Ride 'Zwift Race - Crit City' (seed activity_020: sourceType .friend, kudos 17, currentUserKudo false) shows a grey thumb and 17 at step 3. After the step-4 tap it shows an orange thumb and 18 (screenshot), a real kudos to a friend's activity that was not already liked; the name and activity type in the answer match.",
+  "checker_verdict": "holds"
+ }
+]

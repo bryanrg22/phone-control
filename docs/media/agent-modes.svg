@@ -42,8 +42,8 @@
 <text x="60" y="242" class="s" font-size="15" text-anchor="start" >Writes the next action</text>
 <text x="60" y="264" class="s" font-size="15" text-anchor="start" >itself: tap("Save")</text>
 <rect class="gray" x="60" y="330" width="96" height="34" rx="17"/>
-<text x="108" y="353" class="chipT" font-size="16" text-anchor="middle" >20 / 27</text>
-<text x="168" y="352" class="s" font-size="13" text-anchor="start" >iOSWorld tasks</text>
+<text x="108" y="353" class="chipT" font-size="16" text-anchor="middle" >69%</text>
+<text x="168" y="352" class="s" font-size="13" text-anchor="start" >of iOSWorld tasks</text>
 <rect class="blue blueS zone" x="340" y="96" width="280" height="290" rx="14"/>
 <text x="360" y="128" class="h" font-size="18" text-anchor="start" >Decision model</text>
 <text x="360" y="150" class="s" font-size="13" text-anchor="start" >Jev · OpenAI Decisions API</text>
@@ -53,18 +53,18 @@
 <text x="360" y="264" class="s" font-size="15" text-anchor="start" >Picks one, with a</text>
 <text x="360" y="286" class="s" font-size="15" text-anchor="start" >probability for each</text>
 <rect class="blue" x="360" y="330" width="96" height="34" rx="17"/>
-<text x="408" y="353" class="chipT" font-size="16" text-anchor="middle" >2 / 27</text>
-<text x="468" y="352" class="s" font-size="13" text-anchor="start" >iOSWorld tasks</text>
+<text x="408" y="353" class="chipT" font-size="16" text-anchor="middle" >0%</text>
+<text x="468" y="352" class="s" font-size="13" text-anchor="start" >of iOSWorld tasks</text>
 <rect class="purple purpleS zone" x="640" y="96" width="280" height="290" rx="14"/>
 <text x="660" y="128" class="h" font-size="18" text-anchor="start" >Hybrid, sticky</text>
 <text x="660" y="150" class="s" font-size="13" text-anchor="start" >decision model + LLM</text>
 <text x="660" y="186" class="s" font-size="15" text-anchor="start" >The decision model</text>
-<text x="660" y="208" class="s" font-size="15" text-anchor="start" >picks most steps</text>
+<text x="660" y="208" class="s" font-size="15" text-anchor="start" >takes the clear steps</text>
 <text x="660" y="242" class="s" font-size="15" text-anchor="start" >Unsure, typing, done</text>
 <text x="660" y="264" class="s" font-size="15" text-anchor="start" >or stuck: the LLM takes</text>
 <text x="660" y="286" class="s" font-size="15" text-anchor="start" >over until it hands back</text>
 <rect class="purple" x="660" y="330" width="96" height="34" rx="17"/>
-<text x="708" y="353" class="chipT" font-size="16" text-anchor="middle" >24 / 27</text>
-<text x="768" y="352" class="s" font-size="13" text-anchor="start" >iOSWorld tasks</text>
-<text x="40" y="412" class="s" font-size="12" text-anchor="start" >Real passes on iOSWorld’s 27 single-app tasks, simulator, one trial: LLM = GPT-6 Luna, decision model = Decisions API, hybrid = both.</text>
+<text x="708" y="353" class="chipT" font-size="16" text-anchor="middle" >65%</text>
+<text x="768" y="352" class="s" font-size="13" text-anchor="start" >of iOSWorld tasks</text>
+<text x="40" y="412" class="s" font-size="12" text-anchor="start" >Hand-checked passes on iOSWorld’s 27 single-app tasks. LLM = GPT-6 Luna, hybrid = both: 3 trials. Decisions API: 1.</text>
 </svg>

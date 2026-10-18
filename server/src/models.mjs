@@ -33,10 +33,12 @@ export const MODELS = {
   // and GPT-6 Luna, with the screenshot and the full tools, takes over when the
   // choice is a conclusion, typing, unsure or stuck, keeping control until it
   // hands back (--escalation-mode sticky). "Jev" and "Decisions" mean these, not
-  // the decision models alone, which passed 2 and 3 of iOSWorld's 27 single-app
-  // tasks. Simulator only so far: Decisions 24 of 27, Jev 20 (trailblaze-004
-  // excluded), against 20 for Luna alone, at the same cost per task
-  // (evals/baselines/phone-agent/2026-10-16_dbc720b_hybrid-sticky_single-app).
+  // the decision models alone, none of whose iOSWorld passes held up when checked
+  // by hand. Simulator only so far, three trials of the 27 single-app tasks, passes
+  // checked by hand: Decisions 65%, Jev 54%, against 69% for Luna alone (Decisions
+  // vs Luna not significant), 10-17% cheaper and a fifth faster; both paid a $50
+  // transfer at least twice without asking (docs/results.md,
+  // evals/baselines/phone-agent/2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app).
   // agentModel is what the agent is given as --model; keys, every provider
   // whose key the run needs.
   'hybrid-decisions':       { provider: 'hybrid', label: 'Decisions hybrid', aliases: ['decisions', 'decision', 'decisions hybrid', 'decisions api', 'openai decisions'],

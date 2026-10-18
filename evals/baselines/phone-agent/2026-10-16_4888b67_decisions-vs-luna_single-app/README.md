@@ -1,5 +1,7 @@
 # 2026-10-16, the 27 single-app tasks: a decision model beside an LLM, one commit
 
+> **Checked by hand on 2026-10-17** ([hand-check.md](hand-check.md)): of Luna's 21 judged passes, 17 hold up; of the Decisions API's 3, none (it writes no answer). This is trial 1 of Luna's three; the three-trial results are in [../2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app](../2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app/README.md). The counts below are the judge's.
+
 The phone agent on iOSWorld's 27 single-app tasks, commit `4888b67`, judge
 gpt-5.4-mini (iOSWorld's script, unchanged), one trial each. Two agents, the same
 model under both: **GPT-6 Luna through OpenAI's Decisions API** (the decision

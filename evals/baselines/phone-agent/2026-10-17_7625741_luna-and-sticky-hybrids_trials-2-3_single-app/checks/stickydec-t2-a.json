@@ -1,0 +1,68 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather's detail page (step 12) shows the button \"Wishlist\", not yet added (seed wishlist is Dune, Past Lives and Parasite only); after the tap at step 13 it reads \"In wishlist\" (screenshots, steps 13 and 14), and the page shows 1972 and 87%, matching the answer. The Seen button turning off is the app's own rule (AddToWishlist removes the film from the seenlist in MoviesReducer.swift), not a wrong tap.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "The Add Alarm picker shows 6 / 45 / AM with label \"Gym\" (step 11 screenshot); after Save (step 12) the list shows a new 6:45 \"Gym\" alarm, toggle on, sorted before 7:00 AM. There is exactly one new alarm and the four seeded alarms are unchanged.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan was opened from the 'launch plan' search (step 4), and the Q2 note was appended once at the end (step 8). After leaving edit mode (step 9), the full text still has every original line (Priorities, March 5 meeting notes), with \"Q2 planning: align priorities, milestones, and owners for the quarter.\" added after them, nothing duplicated or overwritten.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "Product Strategy, sorted by Date modified, newest first (step 2), lists All Hands Storyline first: the seed has it updated 2026-03-05T07:10Z, newer than Q3 Planning Brief (03-04 18:10Z), both shown as 3/4/26. It was unstarred (no Favorite icon) at step 2 and starred after Add star at step 5. The answer's 10/17/26 is the date the app shows after the star (toggleStar sets updatedAt = now), as the ruling allows.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudsheets-003",
+  "verdict": "holds",
+  "evidence": "Ava's row (row 2) had Status \"Confirmed\" in D2 (steps 6–7). An intermediate \"Confirmed.  Pending\" in the edit field was replaced by \"Pending\" before commit (step 9), and after the commit at step 10 the grid shows D2 = Pending (screenshot); no other cells changed. The answer (Ava, Pending) matches.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "false pass",
+  "evidence": "The agenda body ends as Threat models / Research gaps / Why benchmarks matter / Safety, but the List tap at step 21 turned the slide title \"Agenda\" into \"• Agenda\". It stays that way after editing ends (step 22 element list and screenshot), so the slide's title was damaged.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch was turned on and applied (step 7), cutting the San Francisco map from about 35 pins to \"10 restaurants nearby\", Harborline Seafood among them. Harborline (20 Marina Blvd, San Francisco) was booked once for 7:30 PM, Sat Oct 17, 2 guests, and step 12 shows \"Reservation Confirmed\", code RSV2007. The answer matches (Oct 17, 2026 is a Saturday).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "holds",
+  "evidence": "The saved state shows the Natural Foods Market cart with salmon x2 and avocados x2 (seeded at 1 each, so one add each) and kale, kombucha, eggs and almond butter unchanged; no Blueberry Scones or other stray item. The cart screen (steps 20–21) shows $29.98 / $11.98 and the Go to checkout total of $85.56, matching the answer. The salmon line's substitution changed from a specific replacement to Best match because the app's addToCart resets it on every add.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "Searching \"Platform Engineer\" lists Aiden Cross, Platform Engineer at HashiCorp (step 3). One message, \"Hi Aiden, I admire your experience as a Platform Engineer at HashiCorp and would like to connect.\", appears once in his thread after Send (step 8 screenshot), matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "holds",
+  "evidence": "The Transactions filter was selected (step 2), and the unread QuickBite \"Your Chipotle order receipt\" row was swiped to show Archive/Delete (step 3 screenshot), then Archive was tapped (step 4). That row is gone, unread drops 8 -> 7, and the other QuickBite receipts (Sushi Ran, Shake Shack, Sugarfish) are still listed, so only one was archived and the answer is accurate.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "not counted",
+  "evidence": "Add to cart on the DualSense Wireless Controller ($69.99) was tapped twice: step 5, cart badge 19 -> 20 with an \"Added to cart\" toast, and again at step 7, badge 20 -> 21 (screenshots, steps 4, 5 and 7). Two controllers were added where one was asked, and the answer's \"Added one\" understates it.",
+  "checker_verdict": "not counted"
+ }
+]

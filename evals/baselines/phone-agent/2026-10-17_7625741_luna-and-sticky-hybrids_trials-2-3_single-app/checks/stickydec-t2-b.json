@@ -1,0 +1,68 @@
+[
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Team Standup Notes in Work opened at step 3 (Yesterday/Today/Blockers intact); the LLM placed the cursor after 'Design review at 2pm', pressed return and typed '- Completed and verified a bug fix today' (steps 4-6). After Done (step 9) the screenshot shows the new bullet at the end of Today with every original line unchanged and nothing duplicated.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickbite-001",
+  "verdict": "holds",
+  "evidence": "Chicken Bowl added once from Chipotle Mexican Grill (step 8); an accidental tap opened the Steak Bowl detail page (step 10) but the agent went Back without adding it, and the cart at step 13 holds only 1 Chicken Bowl ($11.75), delivered to 410 Brannan St, Unit 12B. The confirmation switch was turned on and Confirm & Place Order tapped (steps 16-17); the tracking screen shows 'Order confirmed', ETA 18 min, 1 item, drop-off 410 Brannan St, Unit 12B, which matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "The 'Brooklyn Half' search (step 6) lists Elena Brooks: 'I signed up for the Brooklyn half. Please tell me you're doing it too.' This is the asking thread; in Priya's thread the user had already said 'Registered!' (seed ViewController.swift:3297). The reply 'I'm registered! What's the race day meetup plan?' was typed (step 8), sent once (step 9 shows a single 4:25 PM bubble under Sat, Oct 17), and the answer correctly names Elena Brooks.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "holds",
+  "evidence": "The agent opened the Texas Tech headline as a full Story view (step 5: 'Williams, Roberts ignite No. 10 Texas Tech in 53-25 win over Arizona State', published Oct 17, 2026), then went to the Scores tab (steps 7-9) and searched Texas Tech (step 13), which shows 'ASU @ TTU, Oct 17, 2026 • Final'. The headline, team, and 'yes, a game today (Final)' in the answer all match those screens.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "false pass",
+  "evidence": "The agent never answered: agent_answer is null and agent.log ends with '[outcome] no_progress: the screen went back and forth between 2 states for 8 steps' at step 44, while it was re-opening the date picker. The judge took the cheapest ($259, 10:30 PM) and most expensive ($1,189, 6:00 PM) fares from screenshots itself, but the comparison the task asks for was never reported.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "Maya Patel, $32.50 and the note 'dinner split' were entered (steps 8-15). The Confirm Payment sheet (steps 17-19 screenshot) shows Pay Maya Patel $32.50, dinner split, Funding: SplitPay balance; the repeated 'Pay' taps at steps 18-19 left that sheet unchanged, and the single 'Pay $32.50' tap at step 21 sent it ('Paid Maya Patel' toast). The feed at step 22 shows exactly one new 'Jordan Avery paid Maya Patel, 1m, dinner split' row, followed directly by the older 1d row, so there is no second payment.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "The Trips tab (step 2) shows the upcoming 'Clifftop retreat on Catalina', Catalina Island, CA, Oct 23 - Oct 26; its listing page (step 3 screenshot) shows 5 Beds, 3 Baths and $327 per night. All four facts in the answer match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The Tartine Manufactory page (step 4) shows a 9.1 score and '$$$ | Bakery, American'. In the Save to List sheet, Want to Try was unchecked (only the seeded Mission Crawl checked, step 5); after the tap it is checked (step 6 screenshot), Mission Crawl is untouched, and Done was tapped. The answer's 9.1 and Bakery/American match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "In the seed (SeedDataFactory isUnreadDMMessage: dmIndex < 4, last 2 messages), the unread DMs are Blair, Devon, Imani and Lena; Lena's unread messages (Feb 12 14:00/15:00) are the newest, and the step 2 screenshot shows Lena Ortiz bold at the top of the unread rows. app-state teamchatsim_state.json has exactly one new Jordan Avery message in dm_lena_ortiz at 2026-10-17T23:39:29Z ('That's great progress—thanks for the update! Improving the deflection rate will be a big win.'), which matches the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "not counted",
+  "evidence": "The date (Thu, Oct 29, 12:10 PM) and venue (Great American Music Hall, 859 O'Farrell St, San Francisco) match the Event Info at steps 9-11; the answer's 'CA 94109' is not on screen. For price it gives only 'start at $101' (Event Info lowest) and 'the seat-map section prices shown range from $116 to $168' (the section tiles at step 8). That is honest, but no true top price is given, so the asked price range stays unanswered.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "false pass",
+  "evidence": "Ava Torres's 'Twin Peaks Sunrise Repeats' run was already liked in the seed (31, orange thumb, step 2). The first tap unliked it (30, grey outline, step 3 screenshot) and the second re-liked it (31, step 4 shows the same screenshot hash as step 2), so no new kudos was given. The answer's 'Gave kudos to Ava Torres's Run' describes no change.",
+  "checker_verdict": "false pass"
+ }
+]

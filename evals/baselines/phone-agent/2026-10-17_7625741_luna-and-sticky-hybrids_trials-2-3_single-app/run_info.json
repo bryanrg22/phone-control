@@ -1,0 +1,135 @@
+{
+  "harness_version": "0.1.0",
+  "run": "2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app",
+  "started": "2026-10-17T20:38:06.838Z",
+  "protocol": {
+    "max_steps": 50,
+    "time_limit": "none",
+    "start": "home screen, every app reset and reseeded",
+    "judge_default": "gpt-5.4-mini"
+  },
+  "phone_control": {
+    "release": "0.2.0",
+    "commit": "7625741017ccef379d2d3eb680a0491ed4bd9745",
+    "dirty": false
+  },
+  "iosworld": {
+    "commit": "c59287b6ec9a9d0d7269613ad873f6aa9db0f42c",
+    "dirty": false,
+    "tasks_sha256": "42c0b5558fde0e71"
+  },
+  "device": {
+    "udid": "DF68C5E8-9704-4D31-A0CA-8DC9B32BA001",
+    "name": "iOSWorld iPhone 17 Pro",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
+    "xcode": "Xcode 26.4"
+  },
+  "judge": {
+    "script": "iOSWorld scripts/judge_trajectories.py",
+    "provider": "openai",
+    "model": "gpt-5.4-mini"
+  },
+  "agent": {
+    "entry": "agent/agent.mjs",
+    "device": "simulator through the runner",
+    "ask_user": "unanswered (1 s timeout)",
+    "reasoning": "provider default",
+    "no_progress_abort": 8,
+    "escalation_mode": "sticky"
+  },
+  "models": [
+    {
+      "provider": "openai",
+      "model": "gpt-6-luna"
+    },
+    {
+      "provider": "hybrid",
+      "model": "openai-decisions:gpt-6-luna+openai:gpt-6-luna"
+    },
+    {
+      "provider": "hybrid",
+      "model": "typesafe:jev-latest+openai:gpt-6-luna"
+    }
+  ],
+  "trials": 2,
+  "tasks": [
+    "caltrack-001",
+    "cinephile-001",
+    "cityride-001",
+    "clock-001",
+    "clouddocs-004",
+    "clouddrive-001",
+    "cloudsheets-003",
+    "cloudslides-002",
+    "dinespot-001",
+    "freshcart-001",
+    "lockedin-003",
+    "lockedin-004",
+    "mail-002",
+    "megamart-001",
+    "mybank-003",
+    "notes-001",
+    "quickbite-001",
+    "quickchat-003",
+    "scorezone-003",
+    "skytrip-002",
+    "splitpay-001",
+    "stayfinder-001",
+    "tasterank-001",
+    "teamchat-003",
+    "ticketbox-004",
+    "trailblaze-004",
+    "weather-004"
+  ],
+  "cells": [
+    {
+      "model": {
+        "provider": "openai",
+        "model": "gpt-6-luna"
+      },
+      "trial": 1,
+      "dir": "openai_gpt-6-luna/trial-1"
+    },
+    {
+      "model": {
+        "provider": "openai",
+        "model": "gpt-6-luna"
+      },
+      "trial": 2,
+      "dir": "openai_gpt-6-luna/trial-2"
+    },
+    {
+      "model": {
+        "provider": "hybrid",
+        "model": "openai-decisions:gpt-6-luna+openai:gpt-6-luna"
+      },
+      "trial": 1,
+      "dir": "hybrid_openai-decisions-gpt-6-luna-openai-gpt-6-luna/trial-1"
+    },
+    {
+      "model": {
+        "provider": "hybrid",
+        "model": "openai-decisions:gpt-6-luna+openai:gpt-6-luna"
+      },
+      "trial": 2,
+      "dir": "hybrid_openai-decisions-gpt-6-luna-openai-gpt-6-luna/trial-2"
+    },
+    {
+      "model": {
+        "provider": "hybrid",
+        "model": "typesafe:jev-latest+openai:gpt-6-luna"
+      },
+      "trial": 1,
+      "dir": "hybrid_typesafe-jev-latest-openai-gpt-6-luna/trial-1"
+    },
+    {
+      "model": {
+        "provider": "hybrid",
+        "model": "typesafe:jev-latest+openai:gpt-6-luna"
+      },
+      "trial": 2,
+      "dir": "hybrid_typesafe-jev-latest-openai-gpt-6-luna/trial-2"
+    }
+  ],
+  "node": "v23.9.0"
+}

@@ -1,0 +1,68 @@
+[
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "Search results at step 4 show DualSense Wireless Controller for PlayStation 5 at $69.99 with the cart badge at 19; the step 5 tapText hit that card's own Add to cart (293,673 pt = 72.8%,77%) and the screenshot shows 'Added to cart' with the badge at 20. Jev proposed a second Add to cart at step 7, but Luna took over and only finished, so the add happened once; name and price in the answer match the screen.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "notes-001",
+  "verdict": "false pass",
+  "evidence": "The step 5 tap put the cursor inside the last bullet, and the step 6 return split '- Need API docs from backend team' into '- Need API docs from backend' and ' team' (step 6 screenshot). That broken line is still in the saved note after Done at step 10, above the new '- Fixed a bug fix completed today.' bullet, so existing content was damaged.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "quickbite-001",
+  "verdict": "holds",
+  "evidence": "Chicken Bowl was added twice (Luna at step 7, Jev at step 8; the cart at step 12 shows 2, $23.50), but step 13 cut it to 1 ($11.75) before checkout. The step 15 MyBank checkout shows a $11.75 subtotal ($20.70 total) to 410 Brannan St, Unit 12B; step 17 shows 'Order confirmed', ETA 34 min, 1 item, matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "The 'Brooklyn Half' search at step 3 returned Elena Brooks's 'I signed up for the Brooklyn half. Please tell me you're doing it too.', the only thread asking whether the user is registered (seed ViewController.swift:2163). The step 6 screenshot shows 'I'm registered! What's the plan for meeting up on race day?' sent once (the enter at step 5 left it in the field; Send at step 6 posted it), and the answer names Elena Brooks.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "holds",
+  "evidence": "The agent opened the top story at step 3 (Story view with body text: the Philadelphia Flyers beat the Ottawa Senators 3-1). The NHL scoreboard for OCT 17, 2026 at step 7 shows 'No games scheduled'; the headline, team and 'no game today' in the answer all match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "false pass",
+  "evidence": "The results say '7 flights' sorted by Lowest Price, but after the one scroll at step 20 only 6 cards are on screen ($259, $349, $369, $539, $559, $789), and the agent never scrolled to the 7th. Since the list is ascending, the 7th costs at least $789; the seed (SeedDataFactory.swift, OW307 SFO-JFK one-way, SkyTrip One, 6:00 PM, $1189) shows it is $1,189. The answer's 'most expensive is $789' is wrong. The results also mix flights from three different days, not just Oct 18 as the answer says.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "Trips at step 2 shows the upcoming Catalina Island trip 'Clifftop retreat on Catalina' (Oct 23 - Oct 26); its listing at step 3 (screenshot) shows 5 Beds, 3 Baths, $327 per night, all matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "holds",
+  "evidence": "The Tartine Manufactory page at step 5 shows 9.1 and '$$$ | Bakery, American'. In Save to List, Want to Try was unchecked at step 6 (only Mission Crawl, from the seed, was checked) and checked at step 7 (screenshot), with Mission Crawl unchanged, then Done; the score and cuisine in the answer match.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "By the seed's unread rule (dmIndex < 4, last 2 messages), the unread DMs were Blair (last at 03:00), Devon (07:00), Imani (11:00) and Lena Ortiz (15:00 on 2026-02-12), so Lena's is the most recent unread. app-state teamchatsim_state.json shows exactly one new message from Jordan in dm_lena_ortiz ('Thanks, Lena! Great progress on response time...'), followed by the app's auto-reply from Lena.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "false pass",
+  "evidence": "The step 7 event page shows only the four section tiles ($168 GA, $116 Front, $167 Center, $145 Side), and the answer gives '$116 to $168' as the price range. Per the ruling, those are each section's cheapest listing; the true range runs from $101 up to about $333. The date (Thu, Oct 29, 3:18pm) and venue are right.",
+  "checker_verdict": "false pass"
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "holds",
+  "evidence": "Miles Chen's Indoor Ride 'Zwift Race - Crit City' shows 17 with a grey hand at step 3 and 18 with an orange hand after the step 4 tap (screenshots). In the seed (activity_020, athlete_003) it is a friend's activity with currentUserKudo false, so this is a new kudos; the name and activity type in the answer match.",
+  "checker_verdict": "holds"
+ }
+]

@@ -1,0 +1,2042 @@
+{
+ "tasks": [
+  "caltrack-001",
+  "cinephile-001",
+  "cityride-001",
+  "clock-001",
+  "clouddocs-004",
+  "clouddrive-001",
+  "cloudsheets-003",
+  "cloudslides-002",
+  "dinespot-001",
+  "freshcart-001",
+  "lockedin-003",
+  "lockedin-004",
+  "mail-002",
+  "megamart-001",
+  "mybank-003",
+  "notes-001",
+  "quickbite-001",
+  "quickchat-003",
+  "scorezone-003",
+  "skytrip-002",
+  "splitpay-001",
+  "stayfinder-001",
+  "tasterank-001",
+  "teamchat-003",
+  "ticketbox-004",
+  "trailblaze-004",
+  "weather-004"
+ ],
+ "agents": {
+  "luna": {
+   "trials": 3,
+   "judged_per_trial": [
+    21,
+    22,
+    20
+   ],
+   "real_per_trial": [
+    17,
+    21,
+    18
+   ],
+   "mean_pass_rate": 0.691358024691358,
+   "mean_ci95_task_bootstrap": [
+    0.5432098765432098,
+    0.8271604938271605
+   ],
+   "mean_ci95_wilson_all_trials": [
+    0.5840174207223435,
+    0.7813693706630146
+   ],
+   "pass_hat_k": 15,
+   "pass_hat_k_ci95": [
+    0.37312719479576884,
+    0.7241440232992717
+   ],
+   "pass_at_k": 23,
+   "per_task": {
+    "caltrack-001": 0,
+    "cinephile-001": 3,
+    "cityride-001": 2,
+    "clock-001": 3,
+    "clouddocs-004": 3,
+    "clouddrive-001": 3,
+    "cloudsheets-003": 1,
+    "cloudslides-002": 2,
+    "dinespot-001": 3,
+    "freshcart-001": 1,
+    "lockedin-003": 3,
+    "lockedin-004": 1,
+    "mail-002": 1,
+    "megamart-001": 3,
+    "mybank-003": 0,
+    "notes-001": 3,
+    "quickbite-001": 0,
+    "quickchat-003": 3,
+    "scorezone-003": 3,
+    "skytrip-002": 3,
+    "splitpay-001": 3,
+    "stayfinder-001": 3,
+    "tasterank-001": 3,
+    "teamchat-003": 3,
+    "ticketbox-004": 0,
+    "trailblaze-004": 2,
+    "weather-004": 1
+   },
+   "per_trial": [
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     }
+    },
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     }
+    },
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     }
+    }
+   ]
+  },
+  "sticky-dec": {
+   "trials": 3,
+   "judged_per_trial": [
+    25,
+    22,
+    20
+   ],
+   "real_per_trial": [
+    20,
+    17,
+    16
+   ],
+   "mean_pass_rate": 0.654320987654321,
+   "mean_ci95_task_bootstrap": [
+    0.5061728395061729,
+    0.7901234567901234
+   ],
+   "mean_ci95_wilson_all_trials": [
+    0.5458917196718802,
+    0.7487750475743764
+   ],
+   "pass_hat_k": 13,
+   "pass_hat_k_ci95": [
+    0.3074295064970908,
+    0.6601467541378958
+   ],
+   "pass_at_k": 24,
+   "per_task": {
+    "caltrack-001": 0,
+    "cinephile-001": 2,
+    "cityride-001": 1,
+    "clock-001": 3,
+    "clouddocs-004": 3,
+    "clouddrive-001": 3,
+    "cloudsheets-003": 3,
+    "cloudslides-002": 2,
+    "dinespot-001": 3,
+    "freshcart-001": 3,
+    "lockedin-003": 3,
+    "lockedin-004": 1,
+    "mail-002": 1,
+    "megamart-001": 2,
+    "mybank-003": 0,
+    "notes-001": 3,
+    "quickbite-001": 1,
+    "quickchat-003": 3,
+    "scorezone-003": 1,
+    "skytrip-002": 1,
+    "splitpay-001": 3,
+    "stayfinder-001": 3,
+    "tasterank-001": 3,
+    "teamchat-003": 3,
+    "ticketbox-004": 1,
+    "trailblaze-004": 0,
+    "weather-004": 1
+   },
+   "per_trial": [
+    {
+     "caltrack-001": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     }
+    },
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     }
+    },
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     }
+    }
+   ]
+  },
+  "sticky-jev": {
+   "trials": 3,
+   "judged_per_trial": [
+    21,
+    21,
+    19
+   ],
+   "real_per_trial": [
+    15,
+    15,
+    14
+   ],
+   "mean_pass_rate": 0.5432098765432098,
+   "mean_ci95_task_bootstrap": [
+    0.3950617283950617,
+    0.691358024691358
+   ],
+   "mean_ci95_wilson_all_trials": [
+    0.43523822983845284,
+    0.6472684649904988
+   ],
+   "pass_hat_k": 9,
+   "pass_hat_k_ci95": [
+    0.1864305444359335,
+    0.5217558012789452
+   ],
+   "pass_at_k": 20,
+   "per_task": {
+    "caltrack-001": 0,
+    "cinephile-001": 3,
+    "cityride-001": 2,
+    "clock-001": 2,
+    "clouddocs-004": 3,
+    "clouddrive-001": 3,
+    "cloudsheets-003": 2,
+    "cloudslides-002": 0,
+    "dinespot-001": 2,
+    "freshcart-001": 1,
+    "lockedin-003": 2,
+    "lockedin-004": 1,
+    "mail-002": 0,
+    "megamart-001": 3,
+    "mybank-003": 0,
+    "notes-001": 2,
+    "quickbite-001": 1,
+    "quickchat-003": 3,
+    "scorezone-003": 3,
+    "skytrip-002": 0,
+    "splitpay-001": 1,
+    "stayfinder-001": 3,
+    "tasterank-001": 3,
+    "teamchat-003": 3,
+    "ticketbox-004": 0,
+    "trailblaze-004": 1,
+    "weather-004": 0
+   },
+   "per_trial": [
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     }
+    },
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     }
+    },
+    {
+     "caltrack-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cinephile-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cityride-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "clock-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddocs-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "clouddrive-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "cloudsheets-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "cloudslides-002": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "dinespot-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "freshcart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "lockedin-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "mail-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "not counted",
+      "status": "ok"
+     },
+     "megamart-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "mybank-003": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "notes-001": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "quickbite-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "quickchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "scorezone-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "skytrip-002": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "splitpay-001": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     },
+     "stayfinder-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "tasterank-001": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "teamchat-003": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "ticketbox-004": {
+      "judged": true,
+      "real": false,
+      "verdict": "false pass",
+      "status": "ok"
+     },
+     "trailblaze-004": {
+      "judged": true,
+      "real": true,
+      "verdict": "holds",
+      "status": "ok"
+     },
+     "weather-004": {
+      "judged": false,
+      "real": false,
+      "verdict": null,
+      "status": "ok"
+     }
+    }
+   ]
+  }
+ },
+ "pairs": [
+  {
+   "a": "luna",
+   "b": "sticky-dec",
+   "pairs": 81,
+   "only_a": 11,
+   "only_b": 8,
+   "only_a_list": [
+    [
+     "scorezone-003",
+     1
+    ],
+    [
+     "cloudslides-002",
+     2
+    ],
+    [
+     "megamart-001",
+     2
+    ],
+    [
+     "skytrip-002",
+     2
+    ],
+    [
+     "trailblaze-004",
+     2
+    ],
+    [
+     "weather-004",
+     2
+    ],
+    [
+     "cinephile-001",
+     3
+    ],
+    [
+     "cityride-001",
+     3
+    ],
+    [
+     "scorezone-003",
+     3
+    ],
+    [
+     "skytrip-002",
+     3
+    ],
+    [
+     "trailblaze-004",
+     3
+    ]
+   ],
+   "only_b_list": [
+    [
+     "cloudsheets-003",
+     1
+    ],
+    [
+     "cloudslides-002",
+     1
+    ],
+    [
+     "freshcart-001",
+     1
+    ],
+    [
+     "weather-004",
+     1
+    ],
+    [
+     "quickbite-001",
+     2
+    ],
+    [
+     "cloudsheets-003",
+     3
+    ],
+    [
+     "freshcart-001",
+     3
+    ],
+    [
+     "ticketbox-004",
+     3
+    ]
+   ],
+   "mcnemar_p": 0.6476058959960938,
+   "tasks_a_more": [
+    "cinephile-001",
+    "cityride-001",
+    "megamart-001",
+    "scorezone-003",
+    "skytrip-002",
+    "trailblaze-004"
+   ],
+   "tasks_b_more": [
+    "cloudsheets-003",
+    "freshcart-001",
+    "quickbite-001",
+    "ticketbox-004"
+   ],
+   "sign_test_p": 0.75390625
+  },
+  {
+   "a": "luna",
+   "b": "sticky-jev",
+   "pairs": 81,
+   "only_a": 17,
+   "only_b": 5,
+   "only_a_list": [
+    [
+     "lockedin-004",
+     1
+    ],
+    [
+     "skytrip-002",
+     1
+    ],
+    [
+     "splitpay-001",
+     1
+    ],
+    [
+     "clock-001",
+     2
+    ],
+    [
+     "cloudslides-002",
+     2
+    ],
+    [
+     "freshcart-001",
+     2
+    ],
+    [
+     "lockedin-003",
+     2
+    ],
+    [
+     "mail-002",
+     2
+    ],
+    [
+     "skytrip-002",
+     2
+    ],
+    [
+     "trailblaze-004",
+     2
+    ],
+    [
+     "weather-004",
+     2
+    ],
+    [
+     "cityride-001",
+     3
+    ],
+    [
+     "cloudslides-002",
+     3
+    ],
+    [
+     "dinespot-001",
+     3
+    ],
+    [
+     "notes-001",
+     3
+    ],
+    [
+     "skytrip-002",
+     3
+    ],
+    [
+     "splitpay-001",
+     3
+    ]
+   ],
+   "only_b_list": [
+    [
+     "cloudsheets-003",
+     1
+    ],
+    [
+     "cityride-001",
+     2
+    ],
+    [
+     "lockedin-004",
+     2
+    ],
+    [
+     "freshcart-001",
+     3
+    ],
+    [
+     "quickbite-001",
+     3
+    ]
+   ],
+   "mcnemar_p": 0.01690053939819336,
+   "tasks_a_more": [
+    "clock-001",
+    "cloudslides-002",
+    "dinespot-001",
+    "lockedin-003",
+    "mail-002",
+    "notes-001",
+    "skytrip-002",
+    "splitpay-001",
+    "trailblaze-004",
+    "weather-004"
+   ],
+   "tasks_b_more": [
+    "cloudsheets-003",
+    "quickbite-001"
+   ],
+   "sign_test_p": 0.03857421875
+  },
+  {
+   "a": "sticky-dec",
+   "b": "sticky-jev",
+   "pairs": 81,
+   "only_a": 17,
+   "only_b": 8,
+   "only_a_list": [
+    [
+     "cloudslides-002",
+     1
+    ],
+    [
+     "freshcart-001",
+     1
+    ],
+    [
+     "lockedin-004",
+     1
+    ],
+    [
+     "skytrip-002",
+     1
+    ],
+    [
+     "splitpay-001",
+     1
+    ],
+    [
+     "weather-004",
+     1
+    ],
+    [
+     "clock-001",
+     2
+    ],
+    [
+     "freshcart-001",
+     2
+    ],
+    [
+     "lockedin-003",
+     2
+    ],
+    [
+     "mail-002",
+     2
+    ],
+    [
+     "quickbite-001",
+     2
+    ],
+    [
+     "cloudsheets-003",
+     3
+    ],
+    [
+     "cloudslides-002",
+     3
+    ],
+    [
+     "dinespot-001",
+     3
+    ],
+    [
+     "notes-001",
+     3
+    ],
+    [
+     "splitpay-001",
+     3
+    ],
+    [
+     "ticketbox-004",
+     3
+    ]
+   ],
+   "only_b_list": [
+    [
+     "scorezone-003",
+     1
+    ],
+    [
+     "cityride-001",
+     2
+    ],
+    [
+     "lockedin-004",
+     2
+    ],
+    [
+     "megamart-001",
+     2
+    ],
+    [
+     "cinephile-001",
+     3
+    ],
+    [
+     "quickbite-001",
+     3
+    ],
+    [
+     "scorezone-003",
+     3
+    ],
+    [
+     "trailblaze-004",
+     3
+    ]
+   ],
+   "mcnemar_p": 0.10775214433670044,
+   "tasks_a_more": [
+    "clock-001",
+    "cloudsheets-003",
+    "cloudslides-002",
+    "dinespot-001",
+    "freshcart-001",
+    "lockedin-003",
+    "mail-002",
+    "notes-001",
+    "skytrip-002",
+    "splitpay-001",
+    "ticketbox-004",
+    "weather-004"
+   ],
+   "tasks_b_more": [
+    "cinephile-001",
+    "cityride-001",
+    "megamart-001",
+    "scorezone-003",
+    "trailblaze-004"
+   ],
+   "sign_test_p": 0.143463134765625
+  }
+ ]
+}

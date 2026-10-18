@@ -1,0 +1,62 @@
+[
+ {
+  "task": "cinephile-001",
+  "verdict": "holds",
+  "evidence": "The Godfather detail page (step 6) showed an unfilled 'Wishlist' button. After the Wishlist tap it reads 'In wishlist', filled red (step 7 screenshot). The answer's 1972 and 87% match the detail page.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cityride-001",
+  "verdict": "holds",
+  "evidence": "Pickup was set to 'Home, 410 Brannan St' (step 4), the destination to Oracle Park (step 6), and 'Request CityRideX · $9.80' was tapped once (step 7). Trip Status (step 7 screenshot) shows Driver assigned, Home to Oracle Park, Ride CityRideX, Price $9.80, ETA 14 min, all matching the answer.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "Before Save, the Add Alarm screen shows 6 / 45 / AM on the picker and Label 'Gym' (step 28 screenshot). After Save (step 29), the list has one new '6:45 Gym' alarm, switched on (green), sorted above the 7:00 alarm; the four seeded alarms are unchanged.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "Mobile Launch Plan was opened from the 'launch plan' search (step 6). The line 'Q2 planning: align launch milestones, owners, and dependencies.' was typed on a new line after 'Friday afternoon' (step 11 screenshot). After the checkmark (step 12, view mode), the document text is the full original with that one line appended; nothing was overwritten or duplicated.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "Product Strategy holds three files. All Hands Storyline is newest: seed updated 2026-03-05T07:10Z, shown as 'Mar 4, 2026 at 11:10 PM' in Details at step 4, against Q3 Planning Brief at 03-04T18:10Z and Board Prep at 3/1. It was 'Starred: No' at step 4, 'Add star' was tapped at step 7, and the star then shows on it. The answer's 10/17/26 is the date the app shows after the star, because toggleStar sets updatedAt to now (per the ruling).",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "holds",
+  "evidence": "At step 14 the body reads '• Threat models / • Research gaps / • Why benchmarks matter / Safety'. Two List taps doubled the bullets (steps 16 and 18), and each was undone (steps 17 and 19). A '• ' was then typed before Safety (step 21). After leaving edit mode (step 22 screenshot), slide 2 shows the title 'Agenda' unchanged and four bullets: the three originals plus Safety, matching the answer. Note: the body text now stores literal '• ' prefixes, which render the same as the seeded bullets.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "holds",
+  "evidence": "The Outdoor Seating switch went from 0 to 1 (step 8), and Harborline Seafood (seed tags include .outdoorSeating) was opened from the filtered San Francisco results. Review Booking (step 12) shows Sat, Oct 17, 7:30 PM, 2 guests. Confirm gave 'Reservation Confirmed … Sat, Oct 17 • 7:30 PM, Code: RSV2007' (step 13). The answer matches; Oct 17, 2026 is indeed a Saturday.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "The search 'Platform Engineer' (step 3) found Aiden Cross, Platform Engineer at HashiCorp. His profile was opened and Message tapped (steps 4–5), and 'I admire your experience and would like to connect.' was typed and sent once. It appears once in the thread, marked Seen (step 9). The answer names Aiden Cross correctly.",
+  "checker_verdict": "holds"
+ },
+ {
+  "task": "mail-002",
+  "verdict": "not counted",
+  "evidence": "Under the Transactions filter, the first swipe-Archive (steps 3–4) removed the QuickBite 'Your Chipotle order receipt', and unread went from 8 to 7. The agent then swiped and archived a second QuickBite receipt, 'Your QuickBite order receipt' from Sushi Ran (steps 5–6; Archive button visible in the step 5 screenshot), and it is gone at step 6. Two receipts archived where the task asked for one is doubled, per the ruling.",
+  "checker_verdict": "not counted"
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "The 'PS5 Controller' search shows DualSense Wireless Controller for PlayStation 5 by Sony at $69.99 (step 4). The 'Add to cart' tap landed on that product's button at (72.8%, 77%). The step 5 screenshot shows the 'Added to cart' banner and the cart badge going from 19 to 20. The answer's name and price match.",
+  "checker_verdict": "holds"
+ }
+]

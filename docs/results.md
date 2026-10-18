@@ -5,11 +5,13 @@ costs, how long it takes, and how sure we are. Every number here comes from a
 recorded run in [`evals/baselines/phone-agent/`](../evals/baselines/phone-agent/);
 none are estimates.
 
-**In one line:** the sticky hybrid (OpenAI's Decisions API choosing, GPT-6 Luna
-taking over the hard steps) passed **24 of 27** tasks, against **20** for GPT-6
-Luna alone, at the **same cost per task** and **13% less time**. That is the
-best result so far, from one trial; it is not yet a statistically proven
-difference (see [How sure we are](#how-sure-we-are)).
+**In one line:** over three trials, with every judged pass checked by hand,
+GPT-6 Luna alone completed the task in **69%** of its runs on the 27 tasks and
+the sticky hybrid (OpenAI's Decisions API choosing, Luna taking over the hard
+steps) in **65%**: not a significant difference. The hybrid is about a fifth faster and 10% cheaper a
+task, but it paid a $50 transfer twice in every run of the payment task, so
+it is not yet safe to spend money. The one-trial result published before this
+(24 of 27 against 20) did not hold up (see [How sure we are](#how-sure-we-are)).
 
 ## The benchmark
 
@@ -26,9 +28,9 @@ tasks**, the subset that stays inside one app.
 | Step budget | 50 steps, no time limit; a run also stops after 8 steps with no screen change |
 | Questions to the user | Left unanswered (1 s timeout), so a task cannot be passed by asking |
 | Judge | iOSWorld's own script, `scripts/judge_trajectories.py`, unchanged, with `gpt-5.4-mini` |
-| Pass | The judge finds **every** rubric criterion met |
-| Trials | 1 per agent per task |
-| Model settings | Provider-default reasoning effort; web search offered to the LLM. These runs predate the current protocol in `evals/phone-agent/run.mjs`, which sets effort `high` and no web search, so new runs are compared with each other, not with these |
+| Pass | The judge finds **every** rubric criterion met **and** the pass holds up when checked by hand (see [Are the tests themselves right?](#are-the-tests-themselves-right)) |
+| Trials | 3 for Luna alone and both sticky hybrids; 1 for the other agents |
+| Model settings | Provider-default reasoning effort; web search offered to the LLM, in every trial. These runs predate the current protocol in `evals/phone-agent/run.mjs`, which sets effort `high` and no web search, so new runs are compared with each other, not with these |
 | iOSWorld version | commit `c59287b`, tasks file sha256 `42c0b5558fde0e71` |
 
 Each run keeps everything needed to check it: every screenshot, every model
@@ -62,48 +64,78 @@ between two rows is who chooses each step**. Everything else was held fixed:
 | --- | --- |
 | The tasks | The same 27 iOSWorld tasks for every agent, from one pinned copy of the benchmark (commit and task-file hash above) |
 | The starting state | One simulator; before **every** task, every app is reset and reseeded and the phone returns to the home screen, so no task inherits another's data |
-| The harness | Screen reading (the screenshot and the element list), the actions, the 50-step budget and the stop rules are the same for every agent. The decision models are offered the same options in every run; a hybrid adds only its hand-off (a "write into this field" option and the rules for when the LLM takes over) |
+| The harness | Screen reading (the screenshot and the element list), the actions, the 50-step budget and the stop rules are the same for every agent within a trial. The decision models are offered the same options in every run; a hybrid adds only its hand-off (a "write into this field" option and the rules for when the LLM takes over) |
 | The judge | iOSWorld's own judging script, unmodified, with the same model for every run; it sees the same kind of record for every agent (the screens and the final answer) |
+| The hand check | Every judged pass of the three agents run three times was checked against the screens, the saved app data and the seed, by one written bar, with the borderline cases ruled the same way for every agent ([the bar and the rulings](../evals/baselines/phone-agent/2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app/README.md#how-each-pass-was-checked)) |
 | The rules | The hand-off threshold and limits were set before the first run and never tuned on these tasks. A finished task counts as it finished: tasks interrupted by the machine (a full disk, a power loss) were run afterwards on the same code, and none was re-run to improve its result |
 | The accounting | Tokens come from each API's own usage report on every call, priced at the provider's list price; time is measured by the harness around each call and each task |
 | The record | Every run stores its commit (with a clean working tree), the benchmark's version, the simulator and Xcode versions and every setting, in `run_info.json` beside its results |
 
 **Not controlled, and said so:** a model can answer differently on the same
-screen, which is why one trial is not enough (see [How sure we are](#how-sure-we-are));
-the decision APIs are previews whose models can change behind the same name;
-runs happened at different times of day against live APIs.
+screen, which is why there are three trials; the decision APIs are previews
+whose models can change behind the same name; runs happened at different times
+of day against live APIs, and some app content (the weather forecast, a sports
+scoreboard) is live; trials 2 and 3 ran on a harness with three fixes that
+trial 1 did not have (see [Other limits](#how-sure-we-are)).
 
 ## Results
 
-iOSWorld's 27 single-app tasks, one trial each.
+### The three leading agents, three trials
 
-| Agent | Passes | 95% interval | Steps / task | Model time / task | Wall time / task | Cost / task | Cost per pass |
-| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Sticky hybrid, Decisions** | **24** | 72–96% | 14.3 | 35.7 s | **58 s** | $0.0081 | **$0.0091** |
-| Luna alone | 20 | 55–87% | 14.1 | 41.9 s | 67 s | $0.0081 | $0.0109 |
-| Sticky hybrid, Jev | 20 | 55–87% | 15.2 | 36.1 s | 59 s | $0.0081 | $0.0109 |
-| Step hybrid, Decisions | 20 | 55–87% | 15.1 | 31.1 s | 54 s | $0.0099 | $0.0133 |
-| Writer hybrid, Decisions | 7 | 13–45% | 17.1 | 9.6 s | 47 s | $0.0052 | $0.0201 |
-| Writer hybrid, Jev | 5 | 8–37% | 13.8 | 7.3 s | 40 s | $0.0029 | $0.0157 |
-| Decisions alone | 2 | 2–23% | 15.4 | 17.7 s | 45 s | $0.0049 | $0.0660 |
-| Jev alone | 2 | 2–23% | 15.4 | 2.2 s | 25 s | $0.0025 | $0.0332 |
+iOSWorld's 27 single-app tasks, three trials each (81 runs per agent).
 
-- **Passes** are the judge's passes with known false ones removed (next section).
-- **95% interval** is the Wilson score interval for the pass rate: with 27
-  tasks it is about ±15 points.
+| Agent | Real passes, trial 1 / 2 / 3 | Mean pass rate (95% interval) | pass^3 (95% interval) | Judged passes | Steps / task | Model time / task | Wall time / task | Cost / task | Cost per real pass |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Luna alone** | 17 / 21 / 18 | **69%** (54–83%) | **15** of 27 (37–72%) | 63 | 13.6 | 41.5 s | 65 s | $0.0083 | $0.0120 |
+| Sticky hybrid, Decisions | 20 / 17 / 16 | 65% (51–79%) | 13 of 27 (31–66%) | 67 | 13.8 | **30.4 s** | **53 s** | $0.0075 | **$0.0115** |
+| Sticky hybrid, Jev | 15 / 15 / 14 | 54% (40–69%) | 9 of 27 (19–52%) | 61 | 13.9 | 30.9 s | 53 s | **$0.0069** | $0.0127 |
+
+- **Real passes** are the judge's passes that hold up when checked by hand
+  (next section). 38 of these agents' 191 judged passes (20%) did not.
+- **Mean pass rate** is real passes over the 81 runs. Its 95% interval
+  resamples tasks, each with its three runs (10,000 resamples), because the
+  runs of one task are not independent of each other.
+- **pass^3** is the tasks passed in all three trials: what someone relying on
+  the agent gets every time ([τ-bench](https://arxiv.org/abs/2406.12045)'s
+  pass^k). Wilson interval over 27 tasks.
 - **Model time** is time spent waiting on model APIs; **wall time** is the whole
-  task, including the phone's own time to act and settle.
+  task, including the phone's own time to act and settle. Both are means over
+  the 81 runs.
 - **Cost** is each call's recorded tokens at the provider's list price
-  (cached input at the cached rate). **Cost per pass** is total cost divided by
-  passes: what one completed task costs.
+  (cached input at the cached rate). **Cost per real pass** is total cost
+  divided by real passes: what one completed task costs.
+
+### Every agent
+
+The other agents ran once. Their passes are hand-checked too, except where
+the table says not.
+
+| Agent | Trials | Judged passes | Real passes | 95% interval | Steps / task | Model time / task | Wall time / task | Cost / task |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Luna alone | 3 | 63 of 81 | **56 of 81** (69%) | 54–83% | 13.6 | 41.5 s | 65 s | $0.0083 |
+| Sticky hybrid, Decisions | 3 | 67 of 81 | 53 of 81 (65%) | 51–79% | 13.8 | 30.4 s | 53 s | $0.0075 |
+| Sticky hybrid, Jev | 3 | 61 of 81 | 44 of 81 (54%) | 40–69% | 13.9 | 30.9 s | 53 s | $0.0069 |
+| Step hybrid, Decisions | 1 | 21 of 27 | 20 or fewer: only trailblaze-004 checked | – | 15.1 | 31.1 s | 54 s | $0.0099 |
+| Writer hybrid, Decisions | 1 | 10 of 27 | 7 of 27 | 13–45% | 17.1 | 9.6 s | 47 s | $0.0052 |
+| Writer hybrid, Jev | 1 | 8 of 27 | 5 of 27 | 8–37% | 13.8 | 7.3 s | 40 s | $0.0029 |
+| Decisions alone | 1 | 3 of 27 | 0 of 27 | 0–12% | 15.4 | 17.7 s | 45 s | $0.0049 |
+| Jev alone | 1 | 2 of 27 | 0 of 27 | 0–12% | 15.4 | 2.2 s | 25 s | $0.0025 |
+
+A decision model alone writes no answer ("The decision model judged the task
+complete on the current screen"), so on tasks that ask a question it passes
+only when the judge reads the answer off the screen itself; none of its five
+judged passes holds up. The single-trial intervals are Wilson intervals over
+27 tasks. The step hybrid's passes have not been checked by hand, apart from
+trailblaze-004; on the three agents that were, 20% of judged passes did not
+hold up.
 
 ### Tokens
 
 | Agent | Model calls / task | Input tokens / task | Of which cached | Output tokens / task |
 | --- | :---: | :---: | :---: | :---: |
-| Sticky hybrid, Decisions | 16.8 | 157,615 | 60% | 1,569 |
-| Luna alone | 14.1 | 174,808 | 65% | 1,675 |
-| Sticky hybrid, Jev | 18.0 | 179,212 | 58% | 4,686 |
+| Luna alone (3 trials) | 13.6 | 172,488 | 63% | 1,808 |
+| Sticky hybrid, Decisions (3 trials) | 16.2 | 149,925 | 61% | 1,536 |
+| Sticky hybrid, Jev (3 trials) | 16.5 | 158,452 | 60% | 4,264 |
 | Step hybrid, Decisions | 23.7 | 153,137 | 45% | 1,519 |
 | Writer hybrid, Decisions | 18.5 | 50,211 | 0% | 404 |
 | Writer hybrid, Jev | 15.1 | 58,466 | 0% | 6,658 |
@@ -117,125 +149,174 @@ reports none.
 
 ### Where the money goes in a hybrid
 
-| Run (27 tasks) | Decision calls | Decision cost | Luna calls | Luna cost | Total |
+| Run (27 tasks; three-trial mean where marked) | Decision calls | Decision cost | Luna calls | Luna cost | Total |
 | --- | :---: | :---: | :---: | :---: | :---: |
-| Luna alone | – | – | 381 | $0.218 | $0.218 |
+| Luna alone (3 trials) | – | – | 367 | $0.224 | $0.224 |
 | Step hybrid, Decisions | 408 | $0.111 | 233 | $0.156 | $0.267 |
-| Sticky hybrid, Decisions | 166 | $0.047 | 288 | $0.171 | $0.218 |
-| Sticky hybrid, Jev | 169 | $0.026 | 318 | $0.193 | $0.219 |
+| Sticky hybrid, Decisions (3 trials) | 162 | $0.044 | 277 | $0.159 | $0.203 |
+| Sticky hybrid, Jev (3 trials) | 159 | $0.024 | 287 | $0.162 | $0.186 |
 
 The step hybrid was faster than Luna but cost more: 232 of its 408 decision
 calls were handed to Luna anyway, so both were paid for. Keeping Luna in
-control (sticky) cut decision calls to 166, which brought the cost back to
-Luna's. Jev's calls are cheaper, but its weaker choices sent 30 more steps to
-Luna, which cost the difference back.
+control (sticky) cut decision calls to about 160; Luna still takes about three
+in four steps, so a sticky hybrid costs a little less than Luna alone, not much less.
 
 ### Per task
 
-✓ pass · ✗ fail · ✗† judged a pass, but not a real one (see below).
-The two writer hybrids' per-task results, with each pass checked by hand, are in
-[their baseline](../evals/baselines/phone-agent/2026-10-16_75c3f2c_writer-hybrids_single-app/per-task.md).
+Each cell is trials 1, 2, 3: ✓ a pass that holds up, † judged a pass but does
+not hold up, ✗ judged a fail; real passes in brackets. The single-trial agents
+are in their baselines ([step hybrid](../evals/baselines/phone-agent/2026-10-16_487f174_hybrid_single-app/),
+[writer hybrids](../evals/baselines/phone-agent/2026-10-16_75c3f2c_writer-hybrids_single-app/per-task.md),
+[decision models alone](../evals/baselines/phone-agent/2026-10-16_c4d73d2_jev_single-app/hand-check.md)).
 
-| task | Luna | Jev | Decisions | Step hybrid | Sticky · Jev | Sticky · Decisions |
-| --- | :---: | :---: | :---: | :---: | :---: | :---: |
-| caltrack-001 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
-| cinephile-001 | ✓ | ✗ | ✗ | ✗ | ✓ | ✓ |
-| cityride-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| clock-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| clouddocs-004 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| clouddrive-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| cloudsheets-003 | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| cloudslides-002 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| dinespot-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| freshcart-001 | ✗ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| lockedin-003 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| lockedin-004 | ✓ | ✗ | ✗ | ✗ | ✗ | ✓ |
-| mail-002 | ✓ | ✗ | ✗ | ✗ | ✓ | ✓ |
-| megamart-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| mybank-003 | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| notes-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| quickbite-001 | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
-| quickchat-003 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| scorezone-003 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| skytrip-002 | ✓ | ✗ | ✗ | ✓ | ✗ | ✓ |
-| splitpay-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| stayfinder-001 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| tasterank-001 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| teamchat-003 | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ |
-| ticketbox-004 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| trailblaze-004 | ✗† | ✗ | ✗† | ✗† | ✗† | ✗† |
-| weather-004 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| task | Luna | Sticky · Decisions | Sticky · Jev |
+| --- | :---: | :---: | :---: |
+| caltrack-001 | ✗✗✗ (0) | †✗✗ (0) | ✗✗✗ (0) |
+| cinephile-001 | ✓✓✓ (3) | ✓✓† (2) | ✓✓✓ (3) |
+| cityride-001 | ✓✗✓ (2) | ✓✗✗ (1) | ✓✓✗ (2) |
+| clock-001 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✗✓ (2) |
+| clouddocs-004 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓✓ (3) |
+| clouddrive-001 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓✓ (3) |
+| cloudsheets-003 | ✗✓✗ (1) | ✓✓✓ (3) | ✓✓✗ (2) |
+| cloudslides-002 | †✓✓ (2) | ✓†✓ (2) | ††✗ (0) |
+| dinespot-001 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓✗ (2) |
+| freshcart-001 | ✗✓✗ (1) | ✓✓✓ (3) | ††✓ (1) |
+| lockedin-003 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✗✓ (2) |
+| lockedin-004 | ✓✗✗ (1) | ✓✗✗ (1) | ✗✓† (1) |
+| mail-002 | †✓† (1) | †✓† (1) | †✗† (0) |
+| megamart-001 | ✓✓✓ (3) | ✓†✓ (2) | ✓✓✓ (3) |
+| mybank-003 | ✗✗✗ (0) | ✗✗✗ (0) | ✗✗✗ (0) |
+| notes-001 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓† (2) |
+| quickbite-001 | ✗✗✗ (0) | ✗✓✗ (1) | ✗✗✓ (1) |
+| quickchat-003 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓✓ (3) |
+| scorezone-003 | ✓✓✓ (3) | †✓† (1) | ✓✓✓ (3) |
+| skytrip-002 | ✓✓✓ (3) | ✓†✗ (1) | ✗†† (0) |
+| splitpay-001 | ✓✓✓ (3) | ✓✓✓ (3) | †✓✗ (1) |
+| stayfinder-001 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓✓ (3) |
+| tasterank-001 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓✓ (3) |
+| teamchat-003 | ✓✓✓ (3) | ✓✓✓ (3) | ✓✓✓ (3) |
+| ticketbox-004 | ††† (0) | ††✓ (1) | ††† (0) |
+| trailblaze-004 | †✓✓ (2) | ††† (0) | ††✓ (1) |
+| weather-004 | ✗✓✗ (1) | ✓✗✗ (1) | ✗†✗ (0) |
+| **total** | **56** of 81 | **53** of 81 | **44** of 81 |
+
+The evidence for every mark is in the baselines' `hand-check.md` files.
 
 ## Are the tests themselves right?
 
 A benchmark score is only as good as its tasks and its judge, so both were
 checked against the recorded evidence rather than taken on trust.
 
-**"Passes" are judged passes with known false ones removed.** The judge reads
-the screens and the agent's final answer. Reading runs by hand turned up
-passes that did not happen:
+**Every judged pass of the three leading agents was checked by hand**, 191 in
+all: the actions and the screen after each one, the screenshots of the
+decisive screens, the app's saved data where it keeps any, and iOSWorld's seed
+data where a pass depended on what was there before. A pass holds only if what
+the task asked for really happened, once, to the right item, with nothing else
+damaged, and the answer is true. **38 (20%) did not hold up**, and they were
+not spread evenly: 79% of the Decisions hybrid's judged passes hold up against
+89% of Luna's, so the judge alone ranks the hybrid first and the hand check
+ranks Luna first. What the judge gets wrong, by count:
 
-- **trailblaze-004 cannot be passed honestly.** The task asks the agent to give
-  a friend's run kudos, but in iOSWorld's seed data that run is *already*
-  liked. Every judged pass, for every agent, was a tap that changed nothing, an
-  unlike, or kudos to the user's own run (read from the like count and colour
-  before and after each tap). It is counted as a fail for everyone.
-- **The writer hybrids' answers fooled the judge.** Twice, the final answer
-  described work that had not been done ("Logged 1 serving of oatmeal" with
-  nothing logged), and the judge believed it. Every judged pass of both writer
-  hybrids was checked by hand: 8 → 5 and 10 → 7.
+| What happened | Times | Where |
+| --- | :---: | --- |
+| A "price range" that is only the four visible section prices ($116–$168; the 28 listings run from $101 to $333) | 8 | ticketbox-004, every agent |
+| The same action done more than once (two receipts archived, two controllers or two salmon added, a payment sent two or three times, three meals logged and no answer) | 10 | mail-002 (6), freshcart-001, megamart-001, splitpay-001, caltrack-001 |
+| Kudos that changed nothing, undid an existing like, or went to the user's own run | 6 | trailblaze-004 |
+| Existing content damaged ("Agenda" turned into "• Agenda", a bullet split in two) | 5 | cloudslides-002, notes-001 |
+| No answer, a wrong answer, or a feed alert reported as the article read | 7 | skytrip-002 (3), scorezone-003 (2), lockedin-004, weather-004 |
+| An item never added, with the answer saying it was | 1 | cinephile-001 |
+| An item nobody asked for added to the cart | 1 | freshcart-001 |
 
-**What has and has not been checked by hand.** The writer hybrids: every pass.
-trailblaze-004: every agent. The other agents' remaining passes are the judge's,
-not yet checked one by one. That check is the first item under
-[What comes next](#what-comes-next).
+**trailblaze-004 can be passed.** Earlier passes on it were all false (the
+friend's run is already liked in the seed), and this page said no agent could
+pass it honestly. Three runs did: Luna twice and the Jev hybrid once gave kudos
+to another friend's indoor ride that was not yet liked (17 to 18).
 
-**Things the tasks do not catch.** mybank-003 asks for a payment memo that no
-agent added; cloudslides-002's slide scrolls, so the judge can read a full
-agenda as overwritten from the last screenshot. Both are noted in the
-baselines.
+**Strict calls, applied to every agent alike.** ticketbox-004 counts only if
+the answer gives the listings' real range (one run did: $101–$333); the
+section prices alone do not. Archiving a second receipt counts as doing the
+task twice. A conclusion that does not follow from the numbers given (the
+"warmer" city) does not count. Each ruling and the cells it decides are in
+[the baseline](../evals/baselines/phone-agent/2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app/README.md#how-each-pass-was-checked).
+Only passes were checked: a judged fail that was really done would still count
+as a fail, so the hand check can only lower a score.
+
+**Spending money.** mybank-003 asks to send $50 by Zelle and quickbite-001 to
+place an order. **Luna alone failed both because it asks for confirmation
+before spending money**: it asked in all three mybank-003 runs and in two of
+the three quickbite-001 runs (the third stalled), and with the benchmark leaving
+the question unanswered it sent and ordered nothing. **Both sticky hybrids
+sent the $50 without asking, and sent it at least twice in every one of their
+six runs** (three times in one), each a separate transaction in MyBank's saved
+data. In the Decisions hybrid, Luna, handed the step, sent the first payment;
+when control went back to the decision model (in the run traced step by step,
+at the 5-step sticky limit), it went through the transfer again and sent a
+second (it chose "Send now" at p = 0.87–0.88).
+In the Jev hybrid, Jev chose "Send now" twice. The judge failed all six runs for
+a missing memo, so the scores above do not show this. A fix (the hybrid asking
+before it pays) is in progress and not measured here.
+
+**mybank-003** asks for a memo that no agent added, so no agent passes it here.
 
 **The judge's reliability.** For the connector evals below, every verdict was
 graded again by a judge from another company: 648 of 648 agreed (Cohen's
-κ = 1.00). The iOSWorld judge has not been through that check here; a
-human-labelled sample is pending.
+κ = 1.00). The iOSWorld judge's verdicts on passes are now checked by hand for
+three agents; its fails have not been, and no human-labelled sample of the whole
+set exists yet.
 
 ## How sure we are
 
-**Paired comparison.** All agents ran the same 27 tasks, so the fair test
-compares them task by task (exact McNemar test), leaving out trailblaze-004:
+**Paired comparison.** The agents ran the same 27 tasks in the same three
+trials, so the fair test compares them run by run (81 pairs): the exact
+McNemar test on the runs only one of the two passed. The three runs of one task
+are related, so the same comparison is also made task by task (a sign test over
+the tasks on which one agent passed more of its runs), the more conservative
+test.
 
-| Comparison | Only the first passed | Only the second passed | p |
-| --- | --- | --- | :---: |
-| Sticky · Decisions vs Luna alone | 4: caltrack, cloudsheets, freshcart, weather | 0 | 0.125 |
-| Sticky · Decisions vs Sticky · Jev | 4: caltrack, lockedin-004, skytrip, weather | 0 | 0.125 |
-| Sticky · Decisions vs Step hybrid | 5 | 1: quickbite | 0.219 |
-| Sticky · Jev vs Luna alone | 2 | 2 | 1.000 |
+| Comparison | Runs only the first passed | Runs only the second passed | McNemar p | Tasks first ahead / second ahead | Sign test p |
+| --- | :---: | :---: | :---: | :---: | :---: |
+| Luna vs Sticky · Decisions | 11 | 8 | 0.65 | 6 / 4 | 0.75 |
+| Luna vs Sticky · Jev | 17 | 5 | **0.017** | 10 / 2 | **0.039** |
+| Sticky · Decisions vs Sticky · Jev | 17 | 8 | 0.11 | 12 / 5 | 0.14 |
 
-The sticky Decisions hybrid **passed every task Luna passed, and four more**.
-Four tasks are too few to rule out luck at the usual 5% level, so the
-honest reading is: *very likely at least as good as Luna, at the same cost and
-faster; better is promising but not proven.*
+What this says, plainly:
 
-**What a firm answer needs.** Three trials per agent on the 27 tasks (each run
-is about an hour and $0.22). If the same pattern held over three trials, 12
-tasks won and none lost, it would be clearly significant (p < 0.001). Running
-all 133 tasks would cover multi-app work too.
+- **Luna alone and the Decisions hybrid: no significant difference** in how
+  often they complete a task (p = 0.65). The one-trial claim that the hybrid
+  passed every task Luna passed and four more did not survive: over three trials
+  each agent passed runs the other failed (11 and 8), and 5 of the hybrid's 25
+  trial-1 passes were not real. What does hold: the hybrid is faster (53 s
+  against 65 s a task, a quarter less time waiting on models) and slightly
+  cheaper ($0.0075 against $0.0083 a task).
+- **Luna alone beats the Jev hybrid**: p = 0.017 run by run and 0.039 task by
+  task, each below the usual 0.05. Three comparisons were made here, though;
+  corrected for that (Holm), 0.017 just misses the 0.0167 needed. Good
+  evidence, not proof.
+- **Decisions vs Jev as the chooser in a hybrid: not significant** (p = 0.11),
+  though the Decisions hybrid is ahead on 12 tasks against 5.
+- **How large a difference these 81 runs can detect:** an interval of about
+  ±14 points on each agent's mean pass rate. Differences of a few points, like
+  Luna's 4 over the Decisions hybrid, need more tasks, not more trials: running
+  all 133 tasks would cover multi-app work too.
 
 **Other limits.**
 
 - **Simulator only.** The same harness drives a real iPhone (the product), but
   these numbers are from the simulator. Real apps can lay out their screens
   differently.
-- **The code has moved since.** The runs used commits `4888b67` (Luna,
-  decision models), `487f174` (step hybrid), `dbc720b` (sticky) and `75c3f2c`
-  (writer). Screen reading is unchanged across them, and so are the decision
-  models' options apart from each hybrid's hand-off; the LLM loop was
-  refactored in `487f174` to share its action code with the hybrid, its tools
-  and prompt unchanged. Three harness fixes found
-  by reading these runs (a tap right after a scroll, a field wrongly treated as
-  a search box, appending to multi-line fields) came after, so the current code
-  should do at least as well; that is not yet measured.
+- **Trials 2 and 3 ran on newer code.** Trial 1 used commits `4888b67` (Luna,
+  decision models) and `dbc720b` (sticky hybrids); trials 2 and 3 used
+  `7625741`, which adds three harness fixes found by reading trial 1 (a scroll
+  waits for the screen to settle, so the next tap is not swallowed; a field is a
+  search field only if its name says Search; a multi-line field is appended
+  to). Within each trial all three agents ran the same code, so the paired
+  tests compare like with like, but the three-trial means mix the two versions.
+  The agents' settings, tools and hand-off rules are the same in all three
+  trials; the system prompt differs only in its date. The other agents' single
+  runs used `487f174` (step hybrid) and `75c3f2c` (writer).
+- **The apps are not frozen.** The weather forecast and some scoreboards come
+  from live data, so weather-004 and scorezone-003 had different right answers
+  on different days.
 - **One model family per role.** Every hybrid used GPT-6 Luna as its LLM.
 
 ## Connector evals: how Claude uses the tools
@@ -259,11 +340,15 @@ Details: [`evals/baselines/connector/`](../evals/baselines/connector/2026-10-16_
 
 ## What comes next
 
-1. **Check every remaining pass by hand**, as was done for the writer hybrids.
-2. **Three trials** of the sticky hybrids and Luna, then the paired test again.
-3. **Other LLMs inside the hybrid** (GPT-6.1 Sol, Claude Sonnet 5.5), to see
-   whether the hybrid's saving holds with a stronger, costlier model.
-4. **The real phone**: the hybrids are deployed and choosable ("use Decisions",
+1. **Stop the hybrids paying twice, and make them ask before spending money**,
+   then measure mybank-003, quickbite-001 and splitpay-001 again.
+2. **Check the remaining agents' passes by hand** (the step hybrid) and a
+   sample of the judge's fails, so the hand check is not one-sided.
+3. **More tasks rather than more trials**: the 60 multi-app and 46 memory tasks,
+   which is what it would take to tell apart agents a few points apart.
+4. **Other LLMs inside the hybrid** (GPT-6.1 Sol, Claude Sonnet 5.5), to see
+   whether the hybrid's speed holds with a stronger, costlier model.
+5. **The real phone**: the hybrids are deployed and choosable ("use Decisions",
    "use Jev"), but not yet measured there.
 
 ## Reproducing a run
@@ -272,11 +357,13 @@ Details: [`evals/baselines/connector/`](../evals/baselines/connector/2026-10-16_
 evals/phone-agent/prepare-simulator.sh <iOSWorld checkout>   # once: erases a simulator, installs iOSWorld's apps and the runner
 evals/phone-agent/start-runner.sh <simulator UDID>            # leave running
 node evals/phone-agent/run.mjs --udid <udid> \
-  --models hybrid:openai-decisions:gpt-6-luna+openai:gpt-6-luna \
-  --escalation-mode sticky --tasks single_app
+  --models openai:gpt-6-luna,hybrid:openai-decisions:gpt-6-luna+openai:gpt-6-luna \
+  --escalation-mode sticky --tasks single_app --trials 3
 ```
 
 Needs `OPENAI_API_KEY` (agent and judge) and, for Jev, `TYPESAFE_API_KEY`.
-[`evals/phone-agent/README.md`](../evals/phone-agent/README.md) has the full
-procedure; each baseline folder has the run's settings (`run_info*.json`) and
-summary.
+The runs above used provider-default effort and offered web search; to repeat
+them exactly, check out `7625741`, whose `run.mjs` predates the current
+protocol. [`evals/phone-agent/README.md`](../evals/phone-agent/README.md) has
+the full procedure; each baseline folder has the run's settings
+(`run_info*.json`), its summary and its hand check.
