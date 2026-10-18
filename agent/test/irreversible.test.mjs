@@ -124,6 +124,7 @@ console.log('where a tap lands:');
 console.log('consent:');
 {
   check('"Yes, send $50" agrees; "No, cancel", "Don\'t send" and silence do not', isConsent('Yes, send $50') && isConsent('Yes') && !isConsent('No, cancel') && !isConsent("Don't send") && !isConsent('Cancel') && !isConsent(null) && !isConsent(''));
+  check('an answer to another question is no consent ("Maya Patel", to "Which Maya?")', !isConsent('Maya Patel') && !isConsent('The second one') && isConsent('Send it') && isConsent('OK'));
   check('the answer is read from askUser\'s result', answerOf('User chose: "Yes, send $50"') === 'Yes, send $50' && answerOf('No response from the user (timed out — unattended run). You are NOT authorized') === null);
 }
 
@@ -221,6 +222,11 @@ console.log('hybrid: the decision model picks "Send now":');
   const r = await run({ sticky: true, chooser: [[(c) => /Close/.test(c.description), 0.3]], llm: [say(toolCall('tap', { x: 50, y: 41.2 })), say(toolCall('tapText', { text: 'Send now' })), say(toolCall('taskFailed', { reason: 'stopped' }))] });
   check('sticky: the LLM holding control cannot pay without asking either', !tappedSendNow(r.runner) && r.logs.some((l) => /held tapText on "Send now"/.test(l)) && r.logs.some((l) => /^note: A tapText on "Send now"/.test(l)), r.logs.join('\n'));
   check('its other taps are made', r.runner.callsTo('/touch').length === 1);
+}
+
+{
+  const r = await run({ chooser: [[isSend, 0.87]], answer: (q) => (/Which/.test(q.question) ? 'Maya Patel' : null), llm: [say(toolCall('askUser', { question: 'Which Maya?', options: ['Maya Patel', 'Maya Lin'] }), toolCall('tapText', { text: 'Send now' })), say(toolCall('taskFailed', { reason: 'stopped' }))] });
+  check('the answer to a disambiguation does not unlock the payment', !tappedSendNow(r.runner) && r.logs.some((l) => /held tapText on "Send now"/.test(l)));
 }
 
 console.log('decision-only: the decision model picks "Send now":');

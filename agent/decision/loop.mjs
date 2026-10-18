@@ -25,8 +25,8 @@
 //
 // Irreversible actions (irreversible.mjs). Hybrid: a decision-model choice that
 // pays, orders, deletes or sends is the LLM's step (escalate.mjs), and an LLM
-// tap that pays, orders or deletes is held, not run, until the user has agreed
-// to an askUser question in this task: GPT-6 Luna holding control in the sticky
+// tap that pays, orders or deletes is held, not run, until the user has said yes
+// to an askUser question in this task (irreversible.mjs isConsent): GPT-6 Luna holding control in the sticky
 // hybrid tapped "Send now" on mybank-003 without asking in 3 of 3 runs, where
 // alone it asked in 3 of 3 (2026-10-16/17), so the rule is the harness's, not
 // left to the prompt. Decision-only (no LLM, no way to word a question): the
