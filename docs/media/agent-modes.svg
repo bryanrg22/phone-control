@@ -42,7 +42,7 @@
 <text x="60" y="242" class="s" font-size="15" text-anchor="start" >Writes the next action</text>
 <text x="60" y="264" class="s" font-size="15" text-anchor="start" >itself: tap("Save")</text>
 <rect class="gray" x="60" y="330" width="96" height="34" rx="17"/>
-<text x="108" y="353" class="chipT" font-size="16" text-anchor="middle" >69%</text>
+<text x="108" y="353" class="chipT" font-size="16" text-anchor="middle" >74%</text>
 <text x="168" y="352" class="s" font-size="13" text-anchor="start" >of iOSWorld tasks</text>
 <rect class="blue blueS zone" x="340" y="96" width="280" height="290" rx="14"/>
 <text x="360" y="128" class="h" font-size="18" text-anchor="start" >Decision model</text>
@@ -64,7 +64,7 @@
 <text x="660" y="264" class="s" font-size="15" text-anchor="start" >or stuck: the LLM takes</text>
 <text x="660" y="286" class="s" font-size="15" text-anchor="start" >over until it hands back</text>
 <rect class="purple" x="660" y="330" width="96" height="34" rx="17"/>
-<text x="708" y="353" class="chipT" font-size="16" text-anchor="middle" >65%</text>
+<text x="708" y="353" class="chipT" font-size="16" text-anchor="middle" >67%</text>
 <text x="768" y="352" class="s" font-size="13" text-anchor="start" >of iOSWorld tasks</text>
-<text x="40" y="412" class="s" font-size="12" text-anchor="start" >Hand-checked passes on iOSWorld’s 27 single-app tasks. LLM = GPT-6 Luna, hybrid = both: 3 trials. Decisions API: 1.</text>
+<text x="40" y="412" class="s" font-size="12" text-anchor="start" >Hand-checked runs on iOSWorld’s 27 single-app tasks. LLM = GPT-6 Luna, hybrid = both: 3 trials. Decisions API: 1.</text>
 </svg>

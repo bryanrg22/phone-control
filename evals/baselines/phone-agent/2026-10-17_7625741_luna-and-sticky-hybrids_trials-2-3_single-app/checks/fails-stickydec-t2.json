@@ -1,0 +1,38 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.5,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The run ended no_progress after looping Oatmeal -> Add Food (steps 5-12) with agent_answer null, so no calories/macros were reported; app-state shows four new Oatmeal breakfast entries today (meal_entry_175-178) on top of the seeded meal_entry_001, i.e. quadrupled. The judge's unsatisfied 'report calories/macros' criteria are right; its 'set serving size' criterion is procedure and wrong (1.0 serving is fine)."
+ },
+ {
+  "task": "cityride-001",
+  "score": 0.8571,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "Step 12 shows pickup 'Home' (the seeded place_home, 410 Brannan St; the $9.80/14 min quote is exactly the seed's home_oracle route) and destination Oracle Park with CityRideX selected; one tap on 'Request CityRideX · $9.80' (step 13) gives Trip Status 'Requesting, Home to Oracle Park', CityRideX, $9.80, ETA 14 min (steps 13-14 screenshots). The answer ($9.80, 14 min) matches; the judge's unsatisfied criterion 'Set pickup location to Home (410 Brannan St)' is wrong: Home was the pickup throughout."
+ },
+ {
+  "task": "lockedin-004",
+  "score": 0.75,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Reply with 3+ questions was sent and the job saved, but no 'Follow' was ever tapped (the agent looped on More / the company header, steps after 'Save') and the run ended no_progress with agent_answer null, so comp/location/team size, the questions, and the confirmations were never reported. The judge's unsatisfied criteria (follow, report details, report questions) are right."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.8571,
+  "verdict": "not counted",
+  "judge_right": false,
+  "evidence": "Two -$50 Zelle payments to Maya Patel were posted (2026-10-17T23:19:33Z and 23:19:42Z; checking went $15,621 -> $15,571 -> $15,521). Luna tapped Send now at step 6 ('Zelle sent.'). The decision model then reopened Send | Zelle at step 8 (p=0.96), filled the amount at steps 9-10 and chose Send now at step 11 (p=0.88), a second payment. There was no askUser. The answer reports a single sent payment. The judge's only failed criterion, the memo, is not in the goal; the payment was doubled.",
+  "payments": 2
+ },
+ {
+  "task": "weather-004",
+  "score": 0.4444,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Only San Francisco's forecast was viewed; the agent then looped between the city list and Done trying to open Dallas and ended no_progress with agent_answer null. No Dallas highs and no answer to which city is warmer; the judge is right."
+ }
+]

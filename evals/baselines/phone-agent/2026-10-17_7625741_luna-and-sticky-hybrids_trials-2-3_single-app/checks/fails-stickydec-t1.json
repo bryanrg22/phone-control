@@ -1,0 +1,17 @@
+[
+ {
+  "task": "mybank-003",
+  "score": 0.8571,
+  "verdict": "not counted",
+  "judge_right": false,
+  "evidence": "Two -$50 Zelle payments to Maya Patel were posted (state timestamps 2026-10-17T05:18:13Z and 05:18:21Z; checking went $15,621 -> $15,571 -> $15,521). Luna tapped Send now at step 6 ('Zelle sent.' toast, $15,571.00 in the step 6 screenshot). The decision model then reopened Send | Zelle at step 8 (p=0.93), typed 50 at step 9 and chose Send now at step 10 (p=0.87), sending a second payment ('Zelle sent.', $15,521.00). The answer says one payment was sent, and the agent never asked the user. The judge failed it only on the memo, which is not in the goal; the real problem is the doubled payment.",
+  "payments": 2
+ },
+ {
+  "task": "quickbite-001",
+  "score": 0.3333,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Add Chicken Bowl was tapped at steps 9 and 12, but the 'open cart' taps at steps 14 and 17 opened the Steak Bowl detail page instead of the cart; no cart, checkout or place-order screen ever appeared, and the run ended no_progress with agent_answer null. The judge's unsatisfied criteria 'Proceed to checkout and place the order' and 'Confirm the order was placed' were really missing; whether one or two Chicken Bowls were added is not settled (no cart screen) but does not change the verdict."
+ }
+]

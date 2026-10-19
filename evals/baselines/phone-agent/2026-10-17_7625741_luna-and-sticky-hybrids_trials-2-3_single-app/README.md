@@ -2,7 +2,7 @@
 
 iOSWorld's 27 single-app tasks, judge gpt-5.4-mini (iOSWorld's script,
 unchanged). This folder files trials 2 and 3 of three agents and the hand
-check of every judged pass in all three trials:
+check of every run in all three trials, the judge's passes and its fails:
 
 - **GPT-6 Luna alone** (an LLM calling tools);
 - **sticky hybrid, Decisions API + Luna** (OpenAI's Decisions API chooses each
@@ -18,16 +18,19 @@ their hand checks are `hand-check.md` in those folders.
 
 | agent | real passes, trial 1 / 2 / 3 | judged passes | mean pass rate (95% interval) | pass^3 (95% interval) | wall time / task | model time / task | cost / task | cost per real pass |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **GPT-6 Luna alone** | **17 / 21 / 18** | 21 / 22 / 20 | **69%** (54–83%) | 15 of 27 (37–72%) | 65 s | 41.5 s | $0.0083 | $0.0120 |
-| Sticky · Decisions + Luna | 20 / 17 / 16 | 25 / 22 / 20 | 65% (51–79%) | 13 of 27 (31–66%) | 53 s | 30.4 s | $0.0075 | $0.0115 |
-| Sticky · Jev + Luna | 15 / 15 / 14 | 21 / 21 / 19 | 54% (40–69%) | 9 of 27 (19–52%) | 53 s | 30.9 s | $0.0069 | $0.0127 |
+| **GPT-6 Luna alone** | **18 / 21 / 21** | 21 / 22 / 20 | **74%** (59–88%) | 16 of 27 (41–76%) | 65 s | 41.5 s | $0.0083 | $0.0112 |
+| Sticky · Decisions + Luna | 20 / 18 / 16 | 25 / 22 / 20 | 67% (53–80%) | 13 of 27 (31–66%) | 53 s | 30.4 s | $0.0075 | $0.0113 |
+| Sticky · Jev + Luna | 15 / 16 / 16 | 21 / 21 / 19 | 58% (42–74%) | 12 of 27 (28–63%) | 53 s | 30.9 s | $0.0069 | $0.0119 |
 
-- **Real passes** are the judge's passes (every rubric criterion met) that
-  hold up on the hand check below. 38 of the 191 judged passes (20%) do not.
+- **Real passes** are the runs that hold up on the hand check, whichever way
+  the judge went. 38 of the 191 judged passes (20%) do not hold up
+  ([hand-check.md](hand-check.md)); 8 of the 52 judged fails (15%) do
+  ([fails-check.md](fails-check.md)). Counting only the judged passes that
+  hold up, as this folder first did, gives 56 / 53 / 44.
 - **Mean pass rate** is real passes over all 81 runs. Its interval resamples
   tasks, each with its three trials (10,000 resamples, percentile), because the
   three runs of one task are not independent; a Wilson interval over 81 runs
-  would be narrower (58–78%, 55–75%, 44–65%) and overstate the precision.
+  would be narrower (64–82%, 56–76%, 47–68%) and overstate the precision.
 - **pass^3** is the tasks passed in all three trials (τ-bench's pass^k): what
   someone relying on the agent gets every time. Wilson interval over 27 tasks.
 - Time and cost are means over the 81 runs; cost is each call's recorded
@@ -44,22 +47,25 @@ one agent passed more of its three runs), which is the more conservative test.
 
 | comparison | runs only the first passed | runs only the second passed | McNemar p | tasks first ahead / second ahead | sign test p |
 | --- | :---: | :---: | :---: | :---: | :---: |
-| Luna vs Sticky · Decisions | 11 | 8 | 0.65 | 6 / 4 | 0.75 |
-| Luna vs Sticky · Jev | 17 | 5 | **0.017** | 10 / 2 | **0.039** |
-| Sticky · Decisions vs Sticky · Jev | 17 | 8 | 0.11 | 12 / 5 | 0.14 |
+| Luna vs Sticky · Decisions | 12 | 6 | 0.24 | 6 / 3 | 0.51 |
+| Luna vs Sticky · Jev | 16 | 3 | **0.0044** | 10 / 2 | **0.039** |
+| Sticky · Decisions vs Sticky · Jev | 15 | 8 | 0.21 | 10 / 5 | 0.30 |
 
-- **Luna and the Decisions hybrid are not distinguishable.** 11 runs against
-  8; the one-trial result (24 against 20, every task Luna passed and four more)
+- **Luna and the Decisions hybrid are not distinguishable.** 12 runs against
+  6; the one-trial result (24 against 20, every task Luna passed and four more)
   did not hold up, partly because 5 of the hybrid's 25 trial-1 passes were not
   real.
-- **Luna beats the Jev hybrid**, p = 0.017 by runs and 0.039 by tasks, each
-  below 0.05 on its own. Corrected for the three comparisons made here (Holm),
-  0.017 just misses the 0.0167 threshold, so this is good evidence, not proof.
-- **Decisions vs Jev as the chooser:** the Decisions hybrid is ahead (17 runs
+- **Luna beats the Jev hybrid**, p = 0.0044 by runs, which holds after a Holm
+  correction for the three comparisons made here (threshold 0.0167), and 0.039
+  by tasks, the more conservative test, which is below 0.05 on its own but not
+  after the correction. Good evidence; the task-level test is the weaker link.
+- **Decisions vs Jev as the chooser:** the Decisions hybrid is ahead (15 runs
   against 8) but not significantly.
+- *Before the fails were checked* (passes only), these were 11 vs 8 (p = 0.65),
+  17 vs 5 (p = 0.017) and 17 vs 8 (p = 0.11).
 - **Speed and cost:** both hybrids are faster than Luna (53 s against 65 s a
   task, about a quarter less model time) and 10–17% cheaper a task; per real
-  pass the three cost within about 10% of each other.
+  pass the three cost within about 6% of each other.
 
 ## How each pass was checked
 
@@ -164,6 +170,7 @@ alone would have reversed them.
 | --- | --- |
 | `per-task.md` | every task, every trial, all three agents |
 | `hand-check.md` | trials 2 and 3: each judged pass, the verdict and the evidence |
-| `checks/*.json` | the verdicts for all three trials (`t1`, `t2`, `t3`), with the reader's verdict and the review where it differs |
-| `stats.json` | the numbers above, from the verdicts and the runs' records |
+| `fails-check.md` | all three trials: each judged fail, the verdict and the evidence |
+| `checks/*.json` | the verdicts for all three trials (`t1`, `t2`, `t3`): judged passes in `<agent>-t<n>-{a,b}.json` (with the reader's verdict and the review where it differs), judged fails in `fails-<agent>-t<n>.json` |
+| `stats.json`, `stats.py` | the numbers above, from the verdicts and the runs' records, and the script that computes them |
 | `run_info.json`, `run_info-part2.json` | the harness's record of each run |

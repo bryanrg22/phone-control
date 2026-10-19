@@ -1,0 +1,52 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.875,
+  "verdict": "not counted",
+  "judge_right": true,
+  "evidence": "Oatmeal was added three times (Add Food at steps 6, 9 and 11; app-state has meal_entry_175, 176, 177 besides the seeded meal_entry_001), and the final Today screen (step 12) shows four Oatmeal rows and Breakfast 835 = 105+130+4x150. The answer's 150 cal / 5 g P / 27 g C / 3 g F is right for one serving, but it says it logged 1 serving when 3 were logged: tripled, so the judge's unsatisfied 'Confirm and save the food log entry' (multiple additions) is right."
+ },
+ {
+  "task": "cityride-001",
+  "score": 0.7143,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent set Home -> Oracle Park and saw CityRideX $9.80 / 14 min, then called askUser before requesting; the prompt timed out and it called taskFailed without ever tapping Request, so no ride was requested. The judge's 'Confirm the ride request' criterion is right; its pickup criterion is wrong (pickup was Home) but irrelevant."
+ },
+ {
+  "task": "lockedin-004",
+  "score": 0.75,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Reply with 3+ questions sent and the job saved, but Follow on Netflix was never tapped (the agent looped on the job's More menu / company header) and the run ended no_progress with agent_answer null, so nothing was reported. The judge's unsatisfied criteria are right."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.8571,
+  "verdict": "not counted",
+  "judge_right": false,
+  "evidence": "Two -$50 Zelle payments to Maya Patel were posted (2026-10-18T00:17:35Z and 00:17:44Z; checking went $15,621 -> $15,571 -> $15,521). Luna tapped Send now at step 6 ('Zelle sent.'). The decision model then reopened Send | Zelle at step 8 (p=0.99), filled 50 at steps 9-10 and chose Send now at step 11 (p=0.88), a second payment. There was no askUser. The answer reports one payment. The judge failed only the memo, which is not in the goal; the payment was doubled.",
+  "payments": 2
+ },
+ {
+  "task": "quickbite-001",
+  "score": 0.6667,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "A Chicken Bowl from Chipotle was put in the cart for 410 Brannan St, Unit 12B, but the agent called askUser before placing the order; the prompt timed out and it called taskFailed, saying it did not place the order. No order placed; the judge is right."
+ },
+ {
+  "task": "skytrip-002",
+  "score": 0.375,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent fought the airport fields (repeated replace/delete, swapped origin and destination), picked Oct 18, never ran a search or saw any results, and ended no_progress with agent_answer null. No cheapest/most expensive flights reported; the judge is right."
+ },
+ {
+  "task": "weather-004",
+  "score": 0.3333,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Only San Francisco's forecast was viewed; the agent looped through Add city / Manage cities / San Francisco / Done without opening Dallas and ended no_progress with agent_answer null. No Dallas highs and no comparison; the judge is right."
+ }
+]

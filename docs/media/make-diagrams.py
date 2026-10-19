@@ -90,9 +90,9 @@ svg('layers.svg',960,y+20,'The four layers that let a server drive an unplugged 
 
 # 4. Agent modes
 b=[T(40,46,'Three ways to drive the phone','h',20,'start'), T(40,72,'Each step the agent reads the screen and does one thing. What differs is who chooses.','s',14,'start')]
-cards=[('LLM','GPT · Claude · Gemini',['Gets the screenshot','and the element list','','Writes the next action','itself: tap("Save")'],'69%','gray'),
+cards=[('LLM','GPT · Claude · Gemini',['Gets the screenshot','and the element list','','Writes the next action','itself: tap("Save")'],'74%','gray'),
        ('Decision model','Jev · OpenAI Decisions API',['Gets the element list','The agent lists every','possible action','','Picks one, with a','probability for each'],'0%','blue'),
-       ('Hybrid, sticky','decision model + LLM',['The decision model','takes the clear steps','','Unsure, typing, done','or stuck: the LLM takes','over until it hands back'],'65%','purple')]
+       ('Hybrid, sticky','decision model + LLM',['The decision model','takes the clear steps','','Unsure, typing, done','or stuck: the LLM takes','over until it hands back'],'67%','purple')]
 for i,(name,who,lines,score,c) in enumerate(cards):
   x=40+300*i
   b.append(f'<rect class="{c} {c}S zone" x="{x}" y="96" width="280" height="290" rx="14"/>')
@@ -103,6 +103,6 @@ for i,(name,who,lines,score,c) in enumerate(cards):
     yy+=22 if l else 12
   b.append(f'<rect class="{c}" x="{x+20}" y="330" width="96" height="34" rx="17"/>')
   b.append(T(x+68,353,score,'chipT',16)); b.append(T(x+128,352,'of iOSWorld tasks','s',13,'start'))
-b.append(T(40,412,'Hand-checked passes on iOSWorld’s 27 single-app tasks. LLM = GPT-6 Luna, hybrid = both: 3 trials. Decisions API: 1.','s',12,'start'))
+b.append(T(40,412,'Hand-checked runs on iOSWorld’s 27 single-app tasks. LLM = GPT-6 Luna, hybrid = both: 3 trials. Decisions API: 1.','s',12,'start'))
 svg('agent-modes.svg',960,430,'Three ways the agent can drive the phone: an LLM, a decision model, or a hybrid','\n'.join(b))
 print('written')

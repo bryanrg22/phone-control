@@ -1,0 +1,45 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.875,
+  "verdict": "fail",
+  "judge_right": false,
+  "evidence": "The run ended no_progress with no answer (agent_answer null), so the calories and macros were never reported; it also saved oatmeal five times: app-state fitnesssim_state.json has meal_entry_175-179, all Oatmeal/Breakfast for 2026-10-16, on top of the seeded meal_entry_001 Oatmeal. The judge's unsatisfied criterion 'Confirm and save the food log entry' is wrong (it was saved, 5x), but the fail is right: no answer and a quintupled entry."
+ },
+ {
+  "task": "lockedin-004",
+  "score": 0.75,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Reply with 3+ questions sent and the job saved (final.png shows 'Saved'), but Follow on Netflix was never tapped (no Follow action in the transcript; the run looped on Netflix/More and ended no_progress with the job options menu open in final.png) and there is no answer (agent_answer null). The judge's unsatisfied criteria (follow, report details, report questions) are right."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.8571,
+  "verdict": "not counted",
+  "judge_right": false,
+  "evidence": "Three -$50 Zelle payments to Maya Patel were posted (2026-10-17T06:19:10Z, 06:19:30Z, 06:19:50Z; checking went $15,621 -> $15,571 -> $15,521 -> $15,471). Jev chose Send now at step 5 (p=0.93) and again at step 11 (p=0.65). After Jev's 'done' was handed to Luna at step 6, Luna took a screenshot and then re-did the flow itself (steps 7-10); after a second handoff at step 12, Luna re-did it again and tapped Send now at step 16. There was no askUser. The answer claims a single payment. The judge failed only the memo, which is not in the goal; the payment was tripled.",
+  "payments": 3
+ },
+ {
+  "task": "quickbite-001",
+  "score": 0.6667,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "No order was placed: the Orders tab at step 49 shows 'No active orders', the agent never reached checkout, and it ended with taskFailed saying it did not place the order. The judge's unsatisfied criteria (place order, confirm placed) are right."
+ },
+ {
+  "task": "skytrip-002",
+  "score": 0.5,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent set SFO -> JFK and fiddled with the Oct 17 date picker (steps 8-15) but never tapped Search; no results were shown and there is no answer (no_progress). The judge's unsatisfied criteria (search, compare, report cheapest/most expensive) are right."
+ },
+ {
+  "task": "weather-004",
+  "score": 0.1111,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent only opened and closed the Add city sheet repeatedly (steps 2-9) on the San Francisco page; it never viewed the 7-day forecast or Dallas, and gave no answer (no_progress). The judge's unsatisfied criteria are right."
+ }
+]

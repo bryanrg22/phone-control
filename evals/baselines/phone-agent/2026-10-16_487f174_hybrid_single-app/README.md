@@ -110,3 +110,16 @@ after every tap). The judge's numbers above are unchanged.
 - **Jev** (c4d73d2) was judged a fail; its tap changed nothing too.
 
 Counted strictly: the Decisions API 2 of 27, Luna LLM 20, Hybrid 20.
+
+## Note added 2026-10-18: every run checked by hand
+
+Every run of the hybrid was checked against the screens, the saved app data
+and the seed, by the bar the three-trial agents were checked by, passes and
+fails alike ([hand-check.md](hand-check.md); verdicts in `checks/`). **14 of the
+hybrid's 27 runs hold up (52%, 34–69%), not 21**: 8 of its judged passes do not
+(two answers with a wrong time or price, trailblaze-004, the "• Agenda" title,
+salmon added twice, no answer or not the one asked in three), and one judged
+fail does (caltrack-001). Luna alone's trial 1, checked the same way, has 18,
+so "the hybrid matches the LLM's pass rate" above is the judge's count and does
+not hold up (18 against 14; McNemar p = 0.29 over one trial). The hybrid also
+sent mybank-003's $50 three times without asking.

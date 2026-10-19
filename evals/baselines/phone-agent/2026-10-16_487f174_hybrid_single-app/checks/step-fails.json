@@ -1,0 +1,43 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.875,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "Oatmeal was added twice (step 4 from Recent Foods, step 9 from the 'oatmeal' search), giving three breakfast oatmeal rows (step 10). The agent then removed one (steps 17-18). The saved state has the seed's meal_entry_001 plus exactly one new oatmeal entry, meal_entry_176 (quantity 1, 150 cal, P5 C27 F3), and the other breakfast items are intact; the final screen shows Breakfast 535 = seed 385 + 150. The judge's unsatisfied criterion 'confirm and save the entry' is wrong: exactly one entry is saved and the answer's numbers match."
+ },
+ {
+  "task": "cinephile-001",
+  "score": 0.3333,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The search for 'The Godfather' showed the result (87%, Mar 14, 1972), but the movie page never opened. No Wishlist action was taken, and the run ended no_progress after 12 steps with no answer. The judge's criteria (open the result, add to Wishlist, report year and rating) were rightly unsatisfied."
+ },
+ {
+  "task": "lockedin-004",
+  "score": 0.9167,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The reply with 3 questions was sent (step 4), and the Netflix Platform Engineering Lead job went Save -> Saved (step 13). 'Follow' on Netflix was never tapped: steps 14-20 cycle between the job detail and a popup until the run ends no_progress, with no answer. The judge's unsatisfied criterion 'Follow Netflix' is right, and the missing answer also fails the question."
+ },
+ {
+  "task": "mail-002",
+  "score": 0.8,
+  "verdict": "not counted",
+  "evidence": "Transactions filter applied (step 2). Two QuickBite receipts were archived: 'Your Chipotle order receipt' (from QuickBite, step 4; gone from the list after) and 'Your QuickBite order receipt' (Sushi Ran, step 7; gone after). Archiving twice is doubled, per the ruling. The judge's unsatisfied criterion 'confirm it was archived' is wrong: both disappear from the filtered list, and the remaining QuickBite rows are other receipts (Shake Shack, Sugarfish, Pizza Hut)."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.8571,
+  "verdict": "not counted",
+  "judge_right": false,
+  "evidence": "Recipient Maya Patel, amount 50, 'Send now' was completed three times (steps 5, 10, 15), each with a 'Zelle sent.' banner; TOTAL CHECKING went $15,621.00 -> $15,571.00 -> $15,521.00 -> $15,471.00, and app-state/mybank/mybank_state.json holds 3 non-seed posted -$50 Zelle rows to Maya Patel (597 seed rows + 3) where the goal asks for one. The judge's only unsatisfied criterion (memo) is not in the goal, so the judge failed it for the wrong reason; tripled payment makes it not counted."
+ },
+ {
+  "task": "weather-004",
+  "score": 0.6667,
+  "verdict": "not counted",
+  "judge_right": true,
+  "evidence": "The app's day names put the weekend at the Sat/Sun rows after Today: SF highs Sat 81, Sun 67 (step 5 screenshot), Dallas Sat 69, Sun 72 (step 12 screenshot); the answer's four highs are correct, so the judge was wrong that they were not reported. But the run ended with taskFailed and only says SF is warmer Saturday and Dallas Sunday, never answering which city is warmer this weekend (by these highs SF: avg 74 vs 70.5), so the judge's unsatisfied 'which city will be warmer' criterion was really missing and the question is left unanswered."
+ }
+]

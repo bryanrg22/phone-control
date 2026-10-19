@@ -1,0 +1,52 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.875,
+  "verdict": "fail",
+  "judge_right": false,
+  "evidence": "Run ended no_progress with agent_answer null, so the calories and macros asked for were never given; and each of the four Oatmeal -> Add Food rounds (steps 6, 8, 10, 12) saved an entry: app-state fitnesssim_state.json holds four new Oatmeal (food_011, 150 cal) Breakfast entries meal_entry_175-178 today besides the seeded 001-010. The judge's unsatisfied criterion 'Confirm and save the food log entry' is wrong (it was saved, four times); the fail stands for no answer and a quadrupled log."
+ },
+ {
+  "task": "cloudsheets-003",
+  "score": 0.5714,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "Steps 7-10 show row 2 = Ava (A2) with Status D2 'Confirmed'; D2 selected at step 11, the stray 'Confirmed.  Pending' from step 12 was cleared and 'Pending' typed (steps 13-14), committed at step 15, and the view-mode screen at step 17 shows D2 'Pending' with D3 Confirmed and D4 Pending unchanged. The answer 'Updated Ava's assignment status to Pending' names the right volunteer and status; the judge's unsatisfied criteria (non-Pending status not located, wrong cell, answer unsupported) are wrong: it missed the Status column in C/D (step 8)."
+ },
+ {
+  "task": "freshcart-001",
+  "score": 0.875,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "On the Natural Foods Market results the avocado + at step 26 took the cart from 7 to 8 items, and the salmon + at step 28 (Wild Caught Sockeye Salmon's own + at 167,392) took it to 9; the cart at step 30 and saved cartItems (store whole_foods) show salmon x2 $29.98, avocados x2 $11.98 (seed had 1 each), the rest unchanged, checkout $85.56, all matching the answer. The add resets those items' substitution preference to Best match, which is the app's own addToCart behaviour, not agent damage. The judge's unsatisfied 'select Natural Foods Market store' is procedure; the cart is that store's."
+ },
+ {
+  "task": "lockedin-004",
+  "score": 0.75,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Reply with several questions sent (steps 5-6) and job Saved (step 14, final.png), but Netflix was never followed: steps 15-21 open the More menu and tap the logo/name without a Follow, and the run ended no_progress with agent_answer null, so no comp/location/team size, questions, or confirmations were reported. The judge's unsatisfied criteria (Follow, report details, report questions) were really missing."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.5714,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Luna opened Send with Zelle, recipient Maya Patel, typed 50 (steps 1-4), then at step 5 called askUser('Send $50 to Maya Patel via Zelle now?'), which timed out, and ended with taskFailed at step 6 without tapping Send now. The saved state has only the three seeded Maya Patel rows and checking is $15,621, so 0 payments; the judge's send/confirm criteria are right, and the memo criterion is not in the goal.",
+  "payments": 0
+ },
+ {
+  "task": "quickbite-001",
+  "score": 0.6667,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "One Chicken Bowl in the cart to 410 Brannan St, Unit 12B, total $20.70 (final.png), but at step 10 the agent stopped to askUser before placing the order, got no reply, and ended taskFailed saying the order was not placed. The judge's unsatisfied criteria (place the order, confirm it was placed) were really missing."
+ },
+ {
+  "task": "weather-004",
+  "score": 0.8889,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "The forecast rows after Today read Sun, so today is Saturday (run date 2026-10-17) and this weekend is Today plus Sun: San Francisco 84/67 (step 2 screenshot), Dallas 68/72 (step 12 screenshot), exactly the answer's figures; SF's weekend average 75.5 beats Dallas's 70, so 'San Francisco will be warmer' follows. The judge failed the conclusion because it read the following week's Sat/Sun rows (SF 65/62, Dallas 87/86), which are not this weekend."
+ }
+]

@@ -1,0 +1,59 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.5,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The run ended no_progress with agent_answer null, so the calories and macros the goal asks for were never reported. It also logged oatmeal four times: Add Food was tapped at steps 6, 8, 10 and 12, and app-state fitnesssim_state.json shows today's seed oatmeal (meal_entry_001) plus four new Oatmeal 150-cal Breakfast entries (meal_entry_175-178). The judge was right that the report criteria were missing, but wrong to say the entry was never saved: it was saved four times."
+ },
+ {
+  "task": "cityride-001",
+  "score": 0.8571,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "Step 5 (screenshot) shows pickup Home, destination Oracle Park, CityRideX selected at $9.80 and ETA 14 min. The CityRide seed's Home is 410 Brannan St (place_home), and the home_oracle route is ETA 14, $9.80, 3rd St, exactly what the trip shows. A single Request tap at step 6 gives the Trip Status 'Requesting, Home to Oracle Park, CityRideX, $9.80, ETA 14 min' (steps 6-7), and the answer matches. The judge's unsatisfied criterion 'pickup set to 410 Brannan St' is wrong: the saved Home is that address."
+ },
+ {
+  "task": "cloudsheets-003",
+  "score": 0.5714,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "Row 2 is Ava (A2, step 8), and D2 (Status) held Confirmed (step 12 screenshot; the seed has D2 'Confirmed'). The 'Confirmed.  Pending' typed at step 13 was replaced with 'Pending' at step 14 before the commit, the commit came at step 15, and step 16 (screenshot) shows D2 Pending with Undo now enabled and every other cell unchanged. The answer 'Ava ... Pending' is true. The judge's criteria (locate a non-Pending status, select the status cell, report the volunteer) were in fact all met: the C/D view at step 9 is the same rows as the A/B view, and the formula bar names D2."
+ },
+ {
+  "task": "cloudslides-002",
+  "score": 0.5714,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The run ended no_progress with agent_answer null, so 'What's the updated agenda?' was never answered. The body did end as 'Threat models / Research gaps / Why benchmarks matter / safety' with all items kept. The title was toggled to '• Agenda' by the List taps at steps 10 and 12 and undone each time (steps 11 and 13, 'Agenda' at the end), and the final screen is still in edit mode with the keyboard up. The judge was right on the missing report; its claim that the content was malformed is wrong."
+ },
+ {
+  "task": "dinespot-001",
+  "score": 0.1111,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent only opened Search and then Filters (steps 2-3), then scrolled up and down the Filters sheet (steps 4-10) until it ended no_progress. No Outdoor Seating filter was applied, Harborline Seafood was never opened, there was no reservation and no answer. The final screen is the Filters list."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.8571,
+  "verdict": "not counted",
+  "judge_right": false,
+  "evidence": "Two -$50 Zelle payments to Maya Patel were posted (2026-10-18T02:28:36Z and 02:28:53Z; checking went $15,621 -> $15,571 -> $15,521). Jev chose Send now at step 5 (p=0.94). After the step-6 'done' handoff, Luna reopened Send | Zelle and filled 50 (steps 7-10), and Jev chose Send now again at step 11 (p=0.57). There was no askUser. The answer reports one payment. The judge failed only the memo, which is not in the goal; the payment was doubled.",
+  "payments": 2
+ },
+ {
+  "task": "splitpay-001",
+  "score": 0.7143,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Steps 12-15: the Confirm Payment sheet (screenshot) shows Pay Maya Patel $32.50, 'dinner split', Funding SplitPay balance. The four 'Pay' taps landed at y=61.8%, on the hidden Pay button behind the sheet and not on the sheet's 'Pay $32.50' button (~91%), so the screen never changed. The agent then called askUser (step 16), it timed out, and it reported 'I did not send the payment'; the final screen is still the unconfirmed sheet. Nothing was sent, so the judge was right."
+ },
+ {
+  "task": "weather-004",
+  "score": 0.1111,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent opened and closed the Add city sheet four times (steps 2-9) and ended no_progress. It never viewed the 7-day forecast for either city, never opened Dallas, and gave no answer (agent_answer null)."
+ }
+]

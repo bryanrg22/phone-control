@@ -1,0 +1,38 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.625,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The run ended no_progress at step 13 with no answer, so calories and macros were never reported. After each Add Food the screen went back to the Search Food list with no confirmation (step 7 screenshot), and the agent re-added. Saved state for today (2026-10-17) holds 4 new Oatmeal breakfast entries (meal_entry_175-178): logged 4 times, not once."
+ },
+ {
+  "task": "cityride-001",
+  "score": 0.7143,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The fare and ETA ($9.80, 14 min) match the step-4 screen. But at step 5 the agent called askUser before requesting the ride, got no response, and called taskFailed with 'I did not place the ride request'. The goal's 'Request a CityRideX ride' was not done. The judge's pickup criterion is not decisive: the pickup field shows 'Home', which is what the goal names."
+ },
+ {
+  "task": "lockedin-004",
+  "score": 0.9167,
+  "verdict": "not counted",
+  "judge_right": true,
+  "evidence": "Every action was done once and verified: the reply with 4 questions was sent (step 4, 'Seen'); the job was saved (seed isSaved:false, 'Saved' at steps 14 and 16); Netflix went from Follow (step 15) to Following (step 16 screenshot). Comp $250K-$400K and Los Gatos on-site are correct. But the asked team size is left unanswered: the answer says 'not specified in the job details shown', while Rachel's InMail, which the agent read at step 3, says 'a team of 8 engineers'."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.0,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "At step 1, before even opening MyBank, Luna called askUser('Confirm sending $50 via Zelle to Maya Patel?'), got no answer (timed out), and ended with taskFailed at step 2 saying no payment was sent. The saved state has only the three seeded Maya Patel rows and checking is $15,621, so 0 payments; the judge was right (the memo criterion is not in the goal).",
+  "payments": 0
+ },
+ {
+  "task": "quickbite-001",
+  "score": 0.5,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "After 'Add Chicken Bowl' (step 6), the agent's 'open cart' taps opened the Steak Bowl detail sheet (step 8; nothing added from it) and it went back and forth until no_progress at step 13. There was no checkout, no order placed and no answer. The judge's 'Steak Bowl' reason is about that sheet, but its verdict that no order was placed is right."
+ }
+]

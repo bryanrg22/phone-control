@@ -1,0 +1,45 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.625,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "No answer (agent_answer null, no_progress), so calories and macros were never reported; the saved state also has four new Oatmeal/Breakfast entries (meal_entry_175-178) besides the seeded meal_entry_001 Oatmeal. The judge's 'report calories/macros' criteria are right; its 'Confirm and save' criterion is wrong (saved, 4x)."
+ },
+ {
+  "task": "clock-001",
+  "score": 0.5,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "final.png shows the Add Alarm sheet still open with 6:45 PM (not AM) and label Gym; Save was never tapped (steps 11-18 are repeated taps on the PM wheel) and there is no answer (no_progress). The judge's unsatisfied criteria (6:45 AM, save, confirm) are right."
+ },
+ {
+  "task": "lockedin-003",
+  "score": 0.75,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "Searched 'Platform Engineer' (step 3), opened Aiden Cross, Platform Engineer at HashiCorp (step 5), sent once 'Hi Aiden, I admire your experience as a Platform Engineer at HashiCorp and would like to connect.' (step 9 screenshot shows one sent bubble in Aiden Cross's thread); the answer names Aiden Cross, which is true. The judge's 'Report the name' failure is wrong: 'Jordan' is the user, greeted in Aiden's auto-reply ('Hi Jordan, thanks for reaching out!', final.png); 'platform engineers' vs singular is mere procedure."
+ },
+ {
+  "task": "mail-002",
+  "score": 0.8,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Transactions filter applied (step 2), but two QuickBite receipts were archived: the Chipotle one by swipe-Archive at step 5 (row gone, 8 -> 7 unread), then the Sushi Ran one opened at step 8 and archived at step 9. The answer says a 'Shake Shack' receipt was archived, which no screen shows (the step 8 email is from Sushi Ran), so the confirmation is untrue as well as doubled; the judge's criterion about the unreliable merchant is right."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.8571,
+  "verdict": "not counted",
+  "judge_right": false,
+  "evidence": "Two -$50 Zelle payments to Maya Patel were posted (2026-10-18T01:16:29Z and 01:16:46Z; checking went $15,621 -> $15,571 -> $15,521). Jev chose Send now at step 5 (p=0.95). After the step-6 'done' handoff, Luna reopened Zelle and filled 50 (steps 7-10), and Jev chose Send now again at step 11 (p=0.5). There was no askUser. Luna then searched 'Maya Patel' and answered honestly that there were two matching $50 entries and a possible duplicate. The judge failed only the memo, which is not in the goal; the payment was doubled.",
+  "payments": 2
+ },
+ {
+  "task": "quickbite-001",
+  "score": 0.6667,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "A Chicken Bowl was added to the cart (steps 9-13, possibly twice), but checkout was never reached; the run looped between Browse and Orders and ended no_progress with 'No active orders' (step 28) and no answer. The judge's unsatisfied criteria (place order, confirm) are right."
+ }
+]

@@ -1,0 +1,107 @@
+[
+ {
+  "task": "cityride-001",
+  "verdict": "holds",
+  "evidence": "Pickup Home (seed: 410 Brannan St) and destination Oracle Park set by step 4, which shows CityRideX $9.80, ETA 14 min, and 'Request CityRideX · $9.80'. One request at step 5 opened Trip Status 'Requesting, Home to Oracle Park, Ride CityRideX, Price $9.80, ETA 14 min', matching the answer."
+ },
+ {
+  "task": "clock-001",
+  "verdict": "holds",
+  "evidence": "The Add Alarm picker shows 6 / 45 / AM and the label 'Gym' at step 10. After Save (step 11) the list has one new enabled '6:45 Gym' row, sorted above 7:00, and the four seeded alarms are unchanged."
+ },
+ {
+  "task": "clouddocs-004",
+  "verdict": "holds",
+  "evidence": "'Mobile Launch Plan' was opened from the 'launch plan' search (step 4). The read-mode text after leaving edit mode (step 12) is the step-4 text, byte for byte, plus one appended line, 'Q2 planning: align launch milestones, owners, and priorities for the quarter.' Nothing was overwritten or duplicated; the screenshot shows only the top of the doc, but the step-11 screenshot shows the line typed at the end."
+ },
+ {
+  "task": "clouddrive-001",
+  "verdict": "holds",
+  "evidence": "Step 2, sorted by date modified (descending): All Hands Storyline (3/4/26, no star), Q3 Planning Brief (3/4/26, starred), Board Prep (3/1/26). The seed confirms All Hands is newest (updated 2026-03-05T07:10Z vs Q3's 2026-03-04T18:10Z) and unstarred. Add star (step 4) shows the star with 'Modified 10/16/26', because toggleStar sets updatedAt to now; per the ruling, the answer's 10/16/26 matches the app."
+ },
+ {
+  "task": "cloudsheets-003",
+  "verdict": "holds",
+  "evidence": "Ava's row (D2, Status) was 'Confirmed' at step 7. An intermediate 'Confirmed.  Pending' in the edit field (step 11) was replaced with 'Pending' (step 12) before the commit. After leaving edit mode (step 16), D2 shows Pending while D3 Confirmed and D4 Pending are unchanged; the answer names Ava and Pending correctly."
+ },
+ {
+  "task": "cloudslides-002",
+  "verdict": "false pass",
+  "evidence": "The body ends correctly as 'Threat models / Research gaps / Why benchmarks matter / Safety' (step 11, after a corrupted insert at step 7 was replaced by select-all and retyping). But the 'List' tap at step 13 turned the slide title 'Agenda' into '• Agenda', and it stays that way on the final screen (step 15 element list and screenshot): damage, per the ruling."
+ },
+ {
+  "task": "dinespot-001",
+  "verdict": "false pass",
+  "evidence": "The Outdoor Seating filter took the list from 35 to 10 restaurants, and Harborline Seafood was opened. The agent tapped the 7:30 PM slot (step 12), and the confirmation (step 13 screenshot) reads 'Reservation Confirmed, Harborline Seafood, Fri, Oct 16 • 7:30 PM, Code RSV2007'. The answer reports 7:00 PM (read from the default search chip), so the time stated is untrue."
+ },
+ {
+  "task": "freshcart-001",
+  "verdict": "not counted",
+  "evidence": "Avocados were added once (cart 7 -> 8 items, step 9), but salmon was added twice: 'Add' at step 24 (8 -> 9) and again at step 25 (9 -> 10). The cart (step 26) shows Wild Caught Sockeye Salmon x3 (seed 1 + 2) and avocados x2, total $102.68. The answer honestly reports these numbers, but the salmon order is doubled."
+ },
+ {
+  "task": "lockedin-003",
+  "verdict": "holds",
+  "evidence": "The search 'Platform Engineer' gave Aiden Cross, Platform Engineer at HashiCorp (step 3), and his profile and Message were opened (steps 4-5). One message, 'I admire your experience and would like to connect.', appears sent at 7:54 PM (step 8 screenshot), matching the answer."
+ },
+ {
+  "task": "megamart-001",
+  "verdict": "holds",
+  "evidence": "Searched 'ps5 controller'; step 3 shows DualSense Wireless Controller for PlayStation 5 at $69.99 with cart badge 19, one 'Add to cart' tap at step 4 shows the 'Added to cart' toast and badge 20 (one add). Name and price in the answer match the step 3/4 screens."
+ },
+ {
+  "task": "notes-001",
+  "verdict": "holds",
+  "evidence": "Step 3 screenshot shows the Team Standup Notes body (Yesterday 3 items, Today 3 items, Blockers 2 items); after Return + typing and Done (step 7) the note shows '- Completed a bug fix today' as a fourth Today bullet with every existing line intact, out of edit mode. Answer matches."
+ },
+ {
+  "task": "quickbite-001",
+  "verdict": "holds",
+  "evidence": "One Chicken Bowl added at step 8 (View Cart 1 / $11.75); cart at step 22 shows 1 x Chicken Bowl from Chipotle Mexican Grill, Deliver to Home 410 Brannan St, Unit 12B; the only 'Confirm & Place Order' tap (step 26, after the agent itself switched on 'I confirm this charge on my saved MyBank card' at step 25, $20.70 total on Freedom Unlimited ...2095) gives the Tracking screen 'Order confirmed', ETA 31 min, 1 item, drop-off 410 Brannan St. Placed exactly once (the step 10-21 cart/Browse loop never reached checkout); the agent did NOT ask the user before paying (no askUser; the charge-consent switch was flipped by the Decisions API at p=0.98). Answer matches."
+ },
+ {
+  "task": "quickchat-003",
+  "verdict": "holds",
+  "evidence": "Search 'Brooklyn Half' (step 7) lists Elena Brooks 'I signed up for the Brooklyn half. Please tell me you're doing it too.' (the seed's registration ask; Priya Raman's thread is the user's own 'Registered!' from 259 days ago); step 8 opens Elena's thread, step 9 shows exactly one new bubble 'I'm registered! What's the race day meetup plan?' sent 9:14 PM. Answer (Elena Brooks, reply sent) matches."
+ },
+ {
+  "task": "scorezone-003",
+  "verdict": "not counted",
+  "evidence": "'Dodgers shuffle batting order ahead of weekend series.' is the 'Lineup Note' card in the home feed's Alerts section (step 1 screenshot), not an article; the step 3 tap at y=3.6% (under the header after a scroll) only scrolled the feed further and no article ever opened before Scores (step 4). Per the scorezone-003 ruling a feed alert is not an article read; the Scores/MLB 'No games scheduled' for Oct 16 (step 5) is reported correctly."
+ },
+ {
+  "task": "skytrip-002",
+  "verdict": "false pass",
+  "evidence": "SFO to JFK one-way Oct 17 sorted by Lowest Price shows 7 flights (steps 15-16): $259 (10:30 PM-3:38 AM, DL1362 Basic Economy), $349, $369, $539, $559, $789, $1,189. The answer calls $349 (6:45 AM-12:07 PM) the cheapest, which is untrue; the max $1,189 6:00 PM-11:08 PM is right. The judge itself wrote the cheapest was $259 yet passed it."
+ },
+ {
+  "task": "splitpay-001",
+  "verdict": "holds",
+  "evidence": "Amount $32.5 and memo 'dinner split' at step 30; Pay taps at steps 31-33 only opened/kept the Confirm Payment sheet (step 33 screenshot: Pay Maya Patel $32.50, dinner split, Funding SplitPay balance); one 'Pay $32.50' tap at step 34 gives the 'Paid Maya Patel' toast. Feed for Maya Patel before (step 4): top rows 'Maya Patel paid Jordan Avery 1d coffee before standup', 'Jordan Avery paid Maya Patel 3d concert merch'; after (step 35): exactly one new 'Jordan Avery paid Maya Patel 1m dinner split' above the 1d row. Paid once; answer matches."
+ },
+ {
+  "task": "stayfinder-001",
+  "verdict": "holds",
+  "evidence": "Trips (step 2) shows the upcoming Catalina Island reservation 'Clifftop retreat on Catalina' Oct 22-Oct 25; its listing page (step 3 screenshot) shows 8 Guests, 5 Beds, 3 Baths and $327 per night, all matching the answer."
+ },
+ {
+  "task": "tasterank-001",
+  "verdict": "not counted",
+  "evidence": "The change happened: Tartine Manufactory page shows 9.1 and '$$$ | Bakery, American' (step 4), 'Want to Try' became Selected at step 6 and is still Selected when the sheet is reopened (step 13). But the run ended no_progress (screen looped for 8 steps) with agent_answer null, so the asked score and cuisine were never answered; the judge read them off the screen."
+ },
+ {
+  "task": "teamchat-003",
+  "verdict": "holds",
+  "evidence": "DMs list (step 2 screenshot) shows bold/unread Lena Ortiz, Imani Brooks, Devon Hart, Blair Morgan; by saved timestamps Lena's last message (2026-02-12T15:00, 'quarterly support metrics report') is the newest of the unread DMs (Riley Shah's 23:00 message is read, unreadCount 0). teamchatsim_state.json has exactly one new Jordan Avery reply in dm_lena_ortiz ('Thanks for the update! ... deflection results ...'), followed by an app auto-reply. Answer matches."
+ },
+ {
+  "task": "ticketbox-004",
+  "verdict": "not counted",
+  "evidence": "Date Wed Oct 28 4:58 PM and venue Great American Music Hall are right (Event Info, step 13-14). For price the answer honestly says lowest $101 (Event Info: 28 listings, lowest $101) and that the four visible section tiles are $116-$168; it gives no true top price (seeded listings run to $333), so per the ticketbox-004 ruling the price range is unanswered."
+ },
+ {
+  "task": "trailblaze-004",
+  "verdict": "false pass",
+  "evidence": "Ava Torres's run 'Twin Peaks Sunrise Repeats' shows the thumbs-up orange with 31 before the tap (step 2 screenshot) and still orange 31 after (step 3 screenshot); the feed had scrolled 7% between screens and the tap changed nothing (Ava's run is already liked in the seed). The answer claims kudos was given to Ava Torres, which did not happen."
+ }
+]

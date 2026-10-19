@@ -1,0 +1,45 @@
+[
+ {
+  "task": "caltrack-001",
+  "score": 0.625,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The run ended no_progress at step 24 with no answer (agent_answer null), so it never reported calories or macros. Saved state for today (2026-10-16) holds 9 new Oatmeal breakfast entries (meal_entry_175-183) on top of the seeded meal_entry_001, because the agent looped search -> Add Food 9 times. The judge was right that nothing was reported; it was wrong that the entry was never saved (it was saved 9 times)."
+ },
+ {
+  "task": "cloudsheets-003",
+  "score": 0.7143,
+  "verdict": "holds",
+  "judge_right": false,
+  "evidence": "Columns are Name/Shift/Lead/Status, and row 2 is Ava | Morning | Ops | Confirmed (screenshots at steps 10 and 13; seed SeedDataFactory.swift A2-D2). D2 went from Confirmed (step 14) to Pending (committed at step 18), and it still shows Pending in view mode at step 22, with D3 Confirmed and D4 Pending unchanged. The stray 'Confirmed.  Pending' at step 15 was replaced before the commit, and the step-21 tap added no sheet. The answer 'Ava ... Pending' is true. The judge's two failed criteria wrongly read 'Ops' (Ava's Lead cell, C2) as the volunteer."
+ },
+ {
+  "task": "freshcart-001",
+  "score": 0.125,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent never got into the Natural Foods Market store and added nothing. The run ended no_progress at step 19 with no answer. Saved cartItems still hold the seeded quantities (wf_salmon_401 x1, wf_avocado_402 x1), so there was no add and no total."
+ },
+ {
+  "task": "mybank-003",
+  "score": 0.5714,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "Luna filled Send with Zelle (recipient Maya Patel, Amount 50, Available $15,621.00) by step 4, then at step 5 called askUser('Confirm sending $50 via Zelle to Maya Patel now?'), which timed out unanswered, and ended with taskFailed at step 6; Send now was never tapped. mybank_state.json holds only the three seeded incoming Maya Patel Zelle rows (+45, +50, +35) and checking stays $15,621, so 0 payments; the judge's 'Send the payment'/'Confirm' criteria are right, the memo criterion is not in the goal.",
+  "payments": 0
+ },
+ {
+  "task": "quickbite-001",
+  "score": 0.6667,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "A Chicken Bowl was in the cart for 410 Brannan St ($20.70), but at step 13 the agent called askUser before placing the order, got no response, and called taskFailed saying 'I did not place the order.' The order was never placed, so 'place the order' and 'confirm placed' were really missing."
+ },
+ {
+  "task": "weather-004",
+  "score": 0.3333,
+  "verdict": "fail",
+  "judge_right": true,
+  "evidence": "The agent looked at San Francisco but went back and forth on the city list trying to open Dallas, and ended no_progress at step 9 with no answer (agent_answer null). No Dallas forecast was seen, and neither highs nor the warmer city were reported."
+ }
+]

@@ -9,7 +9,7 @@ From the Claude app, from anywhere. No Mac, no cable, no app of ours to keep ope
 [![CI](https://github.com/bryanrg22/phone-control/actions/workflows/ci.yml/badge.svg)](https://github.com/bryanrg22/phone-control/actions/workflows/ci.yml)
 ![iPhone](https://img.shields.io/badge/iPhone-iOS%2017%2B-000000?logo=apple&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=nodedotjs&logoColor=white)
-[![iOSWorld](https://img.shields.io/badge/iOSWorld-69%25_single--app,_3_trials-8250DF)](docs/results.md)
+[![iOSWorld](https://img.shields.io/badge/iOSWorld-74%25_single--app,_3_trials-8250DF)](docs/results.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 [How it works](#how-it-works) · [How the AI drives the phone](#how-the-ai-drives-the-phone) · [Results](#results) · [Set it up](#set-it-up) · [Tests](#tests)
@@ -53,7 +53,7 @@ The agent can use any app on the phone, because it operates the phone the way a 
 
 Each step, the agent reads the screen (a screenshot, plus the list of on-screen elements from iOS's accessibility tree), chooses one action, and does it. Three kinds of model can do the choosing:
 
-<p align="center"><img src="docs/media/agent-modes.svg" alt="Three ways to drive the phone. LLM (GPT, Claude, Gemini): gets the screenshot and element list and writes the next action itself; 69% of iOSWorld tasks. Decision model (Jev, OpenAI Decisions API): the agent lists every possible action and the model picks one with a probability; 0%. Hybrid, sticky: the decision model takes the clear steps and the LLM takes over when it is unsure, typing, done or stuck, until it hands back; 65%. Passes checked by hand; three trials for the LLM and the hybrid, one for the decision model." width="900"></p>
+<p align="center"><img src="docs/media/agent-modes.svg" alt="Three ways to drive the phone. LLM (GPT, Claude, Gemini): gets the screenshot and element list and writes the next action itself; 74% of iOSWorld tasks. Decision model (Jev, OpenAI Decisions API): the agent lists every possible action and the model picks one with a probability; 0%. Hybrid, sticky: the decision model takes the clear steps and the LLM takes over when it is unsure, typing, done or stuck, until it hands back; 67%. Checked by hand (every run for the LLM and the hybrid); three trials for the LLM and the hybrid, one for the decision model." width="900"></p>
 
 **An LLM** (GPT, Claude or Gemini) sees the screenshot and the element list and writes the next action as a tool call, like `tapText("Save")` or `inputText("Gym")`. It is the most capable chooser and the slowest.
 
@@ -80,17 +80,17 @@ The model that drives the phone is separate from the model you chat with, and ca
 
 ## Results
 
-Measured on [iOSWorld](https://github.com/ljang0/iOSWorld)'s 27 single-app tasks, a public benchmark of iPhone tasks run in the iOS Simulator and graded by its own judge, with every judged pass then checked by hand against the screens and the apps' saved data:
+Measured on [iOSWorld](https://github.com/ljang0/iOSWorld)'s 27 single-app tasks, a public benchmark of iPhone tasks run in the iOS Simulator and graded by its own judge, with the runs then checked by hand against the screens and the apps' saved data (for the first three agents every run, whether the judge passed it or failed it; for the decision models alone, the runs it passed):
 
 | Agent | Trials | Tasks completed (95% interval) | Every trial | Wall time / task | Cost / task | Input tokens / task | Output tokens / task |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **GPT-6 Luna alone** | 3 | **69%** (54–83%) | 15 / 27 | 65 s | $0.0083 | 172k (63% cached) | 1.8k |
-| Hybrid, sticky (Decisions + Luna) | 3 | 65% (51–79%) | 13 / 27 | **53 s** | $0.0075 | 150k (61% cached) | 1.5k |
-| Hybrid, sticky (Jev + Luna) | 3 | 54% (40–69%) | 9 / 27 | 53 s | $0.0069 | 158k (60% cached) | 4.3k |
+| **GPT-6 Luna alone** | 3 | **74%** (59–88%) | 16 / 27 | 65 s | $0.0083 | 172k (63% cached) | 1.8k |
+| Hybrid, sticky (Decisions + Luna) | 3 | 67% (53–80%) | 13 / 27 | **53 s** | $0.0075 | 150k (61% cached) | 1.5k |
+| Hybrid, sticky (Jev + Luna) | 3 | 58% (42–74%) | 12 / 27 | 53 s | $0.0069 | 158k (60% cached) | 4.3k |
 | OpenAI Decisions API alone | 1 | 0% (0–12%) | – | 45 s | $0.0049 | 49k | 0 |
 | Jev alone | 1 | 0% (0–12%) | – | 25 s | $0.0025 | 58k | 6.6k |
 
-Luna alone and the Decisions hybrid are not significantly different (paired test, p = 0.65); the hybrid is about a fifth faster and 10% cheaper a task. It is not yet safe to let it spend money: in every run of the payment task, it sent the transfer twice without asking, where Luna alone asked first. The judge's verdicts alone would have put the hybrid ahead: 20% of judged passes did not hold up when checked, more of the hybrid's than of Luna's. **[docs/results.md](docs/results.md)** has the method, every agent tried, per-task results, how the tests themselves were checked, and how sure each comparison is.
+Luna alone and the Decisions hybrid are not significantly different (paired test, p = 0.24); the hybrid is about a fifth faster and 10% cheaper a task. It is not yet safe to let it spend money: in every run of the payment task, it sent the transfer twice without asking, where Luna alone asked first. The judge's verdicts alone would have put the hybrid ahead: 20% of judged passes did not hold up when checked, more of the hybrid's than of Luna's, and 15% of judged fails were really done, more of Luna's. **[docs/results.md](docs/results.md)** has the method, every agent tried, per-task results, how the tests themselves were checked, and how sure each comparison is.
 
 ## Why each piece exists
 

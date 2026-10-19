@@ -34,8 +34,8 @@ export const MODELS = {
   // choice is a conclusion, typing, unsure or stuck, keeping control until it
   // hands back (--escalation-mode sticky). "Jev" and "Decisions" mean these, not
   // the decision models alone, none of whose iOSWorld passes held up when checked
-  // by hand. Simulator only so far, three trials of the 27 single-app tasks, passes
-  // checked by hand: Decisions 65%, Jev 54%, against 69% for Luna alone (Decisions
+  // by hand. Simulator only so far, three trials of the 27 single-app tasks, every
+  // run checked by hand: Decisions 67%, Jev 58%, against 74% for Luna alone (Decisions
   // vs Luna not significant), 10-17% cheaper and a fifth faster; both paid a $50
   // transfer at least twice without asking (docs/results.md,
   // evals/baselines/phone-agent/2026-10-17_7625741_luna-and-sticky-hybrids_trials-2-3_single-app).
