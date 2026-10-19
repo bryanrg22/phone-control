@@ -1,0 +1,168 @@
+[
+  {
+    "provider": "hybrid",
+    "model": "openai-decisions:gpt-6-luna+openai:gpt-6-luna",
+    "trials": 1,
+    "runs": 10,
+    "judged": 10,
+    "test_errors": 0,
+    "pass_rate": 0.6,
+    "pass_ci95": {
+      "low": 0.3126695474501864,
+      "high": 0.8318224187964902
+    },
+    "pass_hat_k": null,
+    "by_category": {
+      "single_app": {
+        "n": 10,
+        "pass_rate": 0.6,
+        "avg_steps": 13.7
+      }
+    },
+    "rubric_score": 0.888,
+    "avg_steps": 13.7,
+    "avg_agent_seconds": 52.5,
+    "avg_model_seconds": 32.1,
+    "ended": {
+      "completed": 8,
+      "no_progress": 2
+    },
+    "tool_calls": 145,
+    "tool_error_rate": 0.021,
+    "ask_user_calls": 3,
+    "llm_steps": 100,
+    "llm_step_share": 0.629,
+    "tokens": {
+      "input": 971084,
+      "cache_read": 459566,
+      "output": 17579,
+      "reasoning": 14488
+    },
+    "cost_usd": 0.06,
+    "cost_per_task_usd": 0.006,
+    "served_models": [
+      "gpt-6-luna"
+    ],
+    "safety": {
+      "runs": 10,
+      "runs_with_irreversible_tap": 3,
+      "asked_first": 3,
+      "irreversible_taps": 3,
+      "held_taps": 0,
+      "asked_and_did_not_commit": 0,
+      "auto_confirmed": 3,
+      "unanswered": 0
+    },
+    "calibration": [
+      {
+        "bucket": "done p 0–0.5",
+        "n": 0,
+        "pass_rate": null
+      },
+      {
+        "bucket": "done p 0.5–0.8",
+        "n": 2,
+        "pass_rate": 1
+      },
+      {
+        "bucket": "done p 0.8–0.95",
+        "n": 1,
+        "pass_rate": 1
+      },
+      {
+        "bucket": "done p 0.95–1",
+        "n": 0,
+        "pass_rate": null
+      },
+      {
+        "bucket": "did not end with done",
+        "n": 7,
+        "pass_rate": 0.42857142857142855
+      }
+    ],
+    "avg_decision_probability": 0.661
+  },
+  {
+    "provider": "hybrid",
+    "model": "typesafe:jev-latest+openai:gpt-6-luna",
+    "trials": 1,
+    "runs": 10,
+    "judged": 10,
+    "test_errors": 0,
+    "pass_rate": 0.9,
+    "pass_ci95": {
+      "low": 0.5958436145024278,
+      "high": 0.9821242504842788
+    },
+    "pass_hat_k": null,
+    "by_category": {
+      "single_app": {
+        "n": 10,
+        "pass_rate": 0.9,
+        "avg_steps": 15.4
+      }
+    },
+    "rubric_score": 0.986,
+    "avg_steps": 15.4,
+    "avg_agent_seconds": 59.2,
+    "avg_model_seconds": 37,
+    "ended": {
+      "completed": 10
+    },
+    "tool_calls": 158,
+    "tool_error_rate": 0.025,
+    "ask_user_calls": 4,
+    "llm_steps": 121,
+    "llm_step_share": 0.672,
+    "tokens": {
+      "input": 1242790,
+      "cache_read": 543537,
+      "output": 52319,
+      "reasoning": 17580
+    },
+    "cost_usd": 0.07,
+    "cost_per_task_usd": 0.007,
+    "served_models": [
+      "jev-1.13.0",
+      "gpt-6-luna"
+    ],
+    "safety": {
+      "runs": 10,
+      "runs_with_irreversible_tap": 4,
+      "asked_first": 4,
+      "irreversible_taps": 5,
+      "held_taps": 0,
+      "asked_and_did_not_commit": 0,
+      "auto_confirmed": 4,
+      "unanswered": 0
+    },
+    "calibration": [
+      {
+        "bucket": "done p 0–0.5",
+        "n": 0,
+        "pass_rate": null
+      },
+      {
+        "bucket": "done p 0.5–0.8",
+        "n": 0,
+        "pass_rate": null
+      },
+      {
+        "bucket": "done p 0.8–0.95",
+        "n": 1,
+        "pass_rate": 1
+      },
+      {
+        "bucket": "done p 0.95–1",
+        "n": 1,
+        "pass_rate": 1
+      },
+      {
+        "bucket": "did not end with done",
+        "n": 8,
+        "pass_rate": 0.875
+      }
+    ],
+    "avg_decision_probability": 0.599
+  }
+]

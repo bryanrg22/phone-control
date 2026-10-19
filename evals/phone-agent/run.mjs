@@ -46,6 +46,7 @@ import { tmpdir, homedir } from 'node:os';
 import { createHash } from 'node:crypto';
 
 import { toTrajectory, readTrace, readManifest, outcomeOf, usageOf } from './trajectory.mjs';
+import { createAutoConfirmer, safetyOf } from './safety.mjs';
 import { buildReport, reportMarkdown } from './report.mjs';
 import { costOf, PRICES_AS_OF } from '../lib/prices.mjs';
 import { DECISION_APIS } from '../../agent/providers/index.mjs';
@@ -78,6 +79,11 @@ const models = (opt('models', '') || '').split(',').filter(Boolean).map((m) => {
 const judgeOnly = opt('judge-only', null) ? resolve(opt('judge-only', null)) : null;
 // Hybrid models only: how the decision model hands steps to the LLM (agent --escalation-mode).
 const escalationMode = opt('escalation-mode', null);
+// The eval answers the agent's Yes/No confirmations with yes, as iOSWorld's own
+// harness approves its models' safety checks; other questions stay unanswered.
+// Capability is then the shipped agent's; safety is scored apart (safety.mjs).
+const autoConfirm = argv.includes('--auto-confirm');
+const ASK_TIMEOUT_S = autoConfirm ? 5 : 1;
 
 const run = (cmd, args, o = {}) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...o }).trim();
 const git = (dir, ...a) => { try { return run('git', ['-C', dir, ...a]); } catch { return null; } };
@@ -150,15 +156,21 @@ async function runTask({ task, index, model, taskDir }) {
   const args = [join(REPO, 'agent', 'agent.mjs'), task.goal,
     '--provider', model.provider, '--model', model.model,
     '--simulator', udid, '--driver-port', driverPort,
-    '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', '1', '--no-web-search', '--effort', 'high',
+    '--max-steps', String(PROTOCOL.max_steps), '--askuser-timeout', String(ASK_TIMEOUT_S), '--no-web-search', '--effort', 'high',
     '--trace-dir', traceDir, '--run-id', `${slug(model.model)}-${task.name}`,
     ...(model.provider === 'hybrid' && escalationMode ? ['--escalation-mode', escalationMode] : [])];
   record.agent_args = args.slice(1).map((a) => (a === task.goal ? '<goal>' : a));
   const agentStart = Date.now();
   const log = createWriteStream(join(taskDir, 'agent.log'));
+  // The agent's TMPDIR is its own, so the answer file it polls (agent/protocol.mjs) is this run's alone.
+  const confirmer = createAutoConfirmer({ answerFile: join(stateDir, 'agent-user-response.json') });
   const exit = await new Promise((done) => {
-    const c = spawn(process.execPath, args, { cwd: REPO, env: { ...process.env, PHONE_CONTROL_STATE_DIR: stateDir } });
+    const c = spawn(process.execPath, args, { cwd: REPO, env: { ...process.env, PHONE_CONTROL_STATE_DIR: stateDir, TMPDIR: stateDir } });
     c.stdout.pipe(log); c.stderr.pipe(log);
+    if (autoConfirm) {
+      let buf = '';
+      c.stdout.on('data', (d) => { buf += d; let i; while ((i = buf.indexOf('\n')) >= 0) { confirmer.onLine(buf.slice(0, i)); buf = buf.slice(i + 1); } });
+    }
     const hang = setTimeout(() => { c.kill('SIGTERM'); done({ code: null, hung: true }); }, hangLimitMin * 60 * 1000);
     c.on('close', (code) => { clearTimeout(hang); done({ code, hung: false }); });
   });
@@ -181,6 +193,8 @@ async function runTask({ task, index, model, taskDir }) {
   // The trace prices each call by its own model (a hybrid run has two); the
   // run's model is the fallback for a trace without prices.
   if (record.cost_usd === null || record.cost_usd === undefined) record.cost_usd = costOf(model.model, record);
+  record.safety = safetyOf(trace, task.goal, { screen: manifest?.device?.screen });
+  if (autoConfirm) { record.auto_confirmed = confirmer.answered; record.unanswered_questions = confirmer.unanswered; }
   writeFileSync(join(taskDir, 'trajectory.json'), JSON.stringify(toTrajectory(traceDir, existsSync(finalShot) ? finalShot : null), null, 2));
 
   // Exit 42: the model API failed for good; 43: the device connection died; a
@@ -252,7 +266,7 @@ const runInfo = {
   },
   device: { udid, name: simInfo?.name ?? null, runtime: simInfo?.runtime ?? null, xcode: run('xcodebuild', ['-version']).split('\n')[0] },
   judge: { script: 'iOSWorld scripts/judge_trajectories.py', provider: 'openai', model: judgeModel },
-  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: 'unanswered (1 s timeout)', web_search: false, reasoning: 'high', no_progress_abort: 8, observation: '768 px wide JPEG + element list (≤150), newest screen only in context', final_step: 'forced taskComplete/taskFailed at the budget', ...(escalationMode ? { escalation_mode: escalationMode } : {}) },
+  agent: { entry: 'agent/agent.mjs', device: 'simulator through the runner', ask_user: autoConfirm ? 'a Yes/No confirmation is answered with its yes option, through the answer file (--auto-confirm, evals/phone-agent/safety.mjs); any other question unanswered (5 s timeout)' : 'unanswered (1 s timeout)', auto_confirm: autoConfirm, web_search: false, reasoning: 'high', no_progress_abort: 8, observation: '768 px wide JPEG + element list (≤150), newest screen only in context', final_step: 'forced taskComplete/taskFailed at the budget', ...(escalationMode ? { escalation_mode: escalationMode } : {}) },
   // Decision models (agent/decision/): both APIs are previews whose formats may change, so what was used is recorded.
   ...(models.some((m) => DECISION_APIS[m.provider]) ? { decision_apis: Object.fromEntries(models.filter((m) => DECISION_APIS[m.provider]).map((m) => [m.provider, { ...DECISION_APIS[m.provider], screenshot_sent: false }])) } : {}),
   models, trials, tasks: tasks.map((t) => t.name), cells: cells.map(({ model, trial, dir }) => ({ model, trial, dir })),

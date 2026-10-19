@@ -90,7 +90,7 @@ const recorder = createRecorder({
       mode: hybrid ? 'hybrid' : (decision ? 'decision' : 'llm'), max_steps: cfg.maxSteps, askuser_timeout_s: cfg.askUserTimeoutSec, no_progress_abort: cfg.noProgressAbort, temperature: cfg.temperature, reasoning: cfg.effort ?? 'provider default', web_search: cfg.webSearch, image_width: 768,
       // The decision APIs are previews whose formats may change: what was used is recorded.
       ...(decision ? { decision: { ...model.api, screenshot_sent: false, instructions_sha256: sha(DECISION_INSTRUCTIONS) } } : {}),
-      ...(hybrid ? { hybrid: { chooser: hybrid.chooser, llm: hybrid.llm, escalation_threshold: cfg.escalationThreshold, escalation_mode: cfg.escalationMode, ...(sticky ? { sticky_max: STICKY_MAX } : {}), escalation: 'conclusion, free_text, low_confidence (below the threshold), stuck (3 unchanged screens), final' } } : {}),
+      ...(hybrid ? { hybrid: { chooser: hybrid.chooser, llm: hybrid.llm, escalation_threshold: cfg.escalationThreshold, escalation_mode: cfg.escalationMode, ...(sticky ? { sticky_max: STICKY_MAX } : {}), escalation: 'conclusion, free_text, irreversible (a tap that pays, orders, deletes or sends; an LLM tap that pays, orders or deletes is held until the user confirms), low_confidence (below the threshold), stuck (3 unchanged screens), final' } } : {}),
     },
     prompt_sha256: system ? sha(system) : null, tools_sha256: sha(JSON.stringify(toolDefs)),
     device: { address: device.address, simulator: cfg.simulator, screen: screenInfo, apps: Object.keys(apps).length, apps_source: appsSource },
