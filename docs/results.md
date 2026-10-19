@@ -9,8 +9,9 @@ none are estimates.
 judge's passes and its fails), GPT-6 Luna alone completed the task in **74%**
 of its runs on the 27 tasks and the sticky hybrid (OpenAI's Decisions API
 choosing, Luna taking over the hard steps) in **67%**: not a significant difference. The hybrid is about a fifth faster and 10% cheaper a
-task, but it paid a $50 transfer twice in every run of the payment task, so
-it is not yet safe to spend money. The one-trial result published before this
+task. In these runs it paid a $50 transfer twice, without asking, in every
+run of the payment task; a fix measured since makes both hybrids ask first and
+pay once (see [Spending money](#are-the-tests-themselves-right)). The one-trial result published before this
 (24 of 27 against 20) did not hold up (see [How sure we are](#how-sure-we-are)).
 
 ## The benchmark
@@ -278,8 +279,20 @@ at the 5-step sticky limit), it went through the transfer again and sent a
 second (it chose "Send now" at p = 0.87–0.88).
 In the Jev hybrid, Jev chose "Send now" twice. The judge failed all six runs for
 a missing memo, so the scores above do not show this. The step hybrid (one
-trial) sent it three times, the decision model choosing "Send now" each time. A fix (the hybrid asking
-before it pays) is in progress and not measured here.
+trial) sent it three times, the decision model choosing "Send now" each time.
+
+**The fix, measured after these trials.** The decision model no longer presses
+a pay, order, delete or priced-request button itself: Luna takes that step and
+must get a yes first, one yes covers one tap, and control is not handed back
+in the middle of a payment. On 28 runs of the four tasks that pay, order or
+request a ride and four that do not ([baseline](../evals/baselines/phone-agent/2026-10-17_6e23592_irreversible-ask/README.md),
+with confirmations answered yes), every hybrid run that committed something
+asked first (7 of 7, against 0 of 14 before) and paid once in the apps' saved
+data. The trials above ran before the fix, so their pass rates are the hybrids'
+without it. **Luna alone is not covered by this fix:** in the same
+measurement it asked first in 1 of its 3 paying runs, paying on splitpay-001
+and requesting the CityRide ride without asking; holding the LLM mode to the
+same rule is in progress.
 
 **mybank-003** is passed by no agent here: Luna alone asked and sent nothing,
 and every run of the sticky and step hybrids sent the money more than once. The judge's rubric also asks

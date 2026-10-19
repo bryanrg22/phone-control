@@ -90,7 +90,7 @@ Measured on [iOSWorld](https://github.com/ljang0/iOSWorld)'s 27 single-app tasks
 | OpenAI Decisions API alone | 1 | 0% (0–12%) | – | 45 s | $0.0049 | 49k | 0 |
 | Jev alone | 1 | 0% (0–12%) | – | 25 s | $0.0025 | 58k | 6.6k |
 
-Luna alone and the Decisions hybrid are not significantly different (paired test, p = 0.24); the hybrid is about a fifth faster and 10% cheaper a task. It is not yet safe to let it spend money: in every run of the payment task, it sent the transfer twice without asking, where Luna alone asked first. The judge's verdicts alone would have put the hybrid ahead: 20% of judged passes did not hold up when checked, more of the hybrid's than of Luna's, and 15% of judged fails were really done, more of Luna's. **[docs/results.md](docs/results.md)** has the method, every agent tried, per-task results, how the tests themselves were checked, and how sure each comparison is.
+Luna alone and the Decisions hybrid are not significantly different (paired test, p = 0.24); the hybrid is about a fifth faster and 10% cheaper a task. In these runs it sent the payment task's transfer twice without asking; a fix measured since makes both hybrids ask first and pay once (7 of 7 paying runs), and the same hold for Luna alone, which also paid without asking on two tasks, is in progress. The judge's verdicts alone would have put the hybrid ahead: 20% of judged passes did not hold up when checked, more of the hybrid's than of Luna's, and 15% of judged fails were really done, more of Luna's. **[docs/results.md](docs/results.md)** has the method, every agent tried, per-task results, how the tests themselves were checked, and how sure each comparison is.
 
 ## Why each piece exists
 
