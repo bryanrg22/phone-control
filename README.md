@@ -12,7 +12,7 @@ From the Claude app, from anywhere. No Mac, no cable, no app of ours to keep ope
 [![iOSWorld](https://img.shields.io/badge/iOSWorld-74%25_single--app,_3_trials-8250DF)](docs/results.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-[How it works](#how-it-works) · [How the AI drives the phone](#how-the-ai-drives-the-phone) · [Results](#results) · [Set it up](#set-it-up) · [Tests](#tests)
+[When to use it](#when-to-use-it-and-when-not-to) · [How it works](#how-it-works) · [How the AI drives the phone](#how-the-ai-drives-the-phone) · [Results](#results) · [Set it up](#set-it-up) · [Tests](#tests)
 
 </div>
 
@@ -36,6 +36,30 @@ Phone Control is a server you run yourself, for your own iPhone. You add it to C
 - *"Stop."*
 
 The agent can use any app on the phone, because it operates the phone the way a person does: it looks at the screen and touches it.
+
+## When to use it, and when not to
+
+Phone Control works the way a person does: it looks at the screen and taps, about five seconds a step. A ten-step task takes a little over a minute. That makes it the slowest way to get something done, so use it only when nothing faster can reach what you need.
+
+| You want to… | Better to use | Why |
+| --- | --- | --- |
+| ❌ Read, search or send email, check your calendar, find a file | A Claude connector (Gmail, Calendar, Drive, …) | Seconds instead of a minute, and it returns everything, not just what fits on a screen |
+| ❌ One quick action or question: text someone, set a timer, today's weather | Siri | A single step in Apple's own apps, done instantly |
+| ❌ Something on your computer, while you're at it | A desktop agent (Claude's computer use) | A bigger screen, faster, and it sees more at once |
+| ❌ Typing a password, a 2FA code or a card number | You | The agent stops and hands these to you, on purpose |
+| ✅ Several screens deep in iOS Settings | **Phone Control** | No connector reaches Settings, and Siri changes one switch at a time |
+| ✅ An app with no connector: a social app, a bank or shop app, a transit app | **Phone Control** | The app is the only way in |
+| ✅ Check something first, then act only if it is true | **Phone Control** | Siri cannot do "if" |
+| ✅ You're away from your computer, and it can only be done on a phone | **Phone Control** | It runs from the Claude app, wherever you are |
+
+Requests that fit:
+
+- *"Turn off notifications for every game on my phone."* Many screens of Settings, one app at a time.
+- *"Set up a Focus that only lets my family's calls through after 10 pm."*
+- *"My work account won't sign in to the Microsoft app; it keeps picking my personal one. Sign out of every Microsoft account on the phone and take me back to the sign-in screen."* The agent does the clicking and stops where your password goes. Claude can work out the fix in the chat first, then the phone carries it out.
+- *"Open Instagram and check my follower count. If it's over 1,000, message a friend; otherwise don't send anything."*
+
+The best everyday uses are still being found. The rule of thumb: **it has to happen on the phone, it takes more than one step, and you are not at your computer.**
 
 ## How it works
 
