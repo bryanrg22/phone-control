@@ -92,7 +92,7 @@ svg('layers.svg',960,y+20,'The four layers that let a server drive an unplugged 
 b=[T(40,46,'Three ways to drive the phone','h',20,'start'), T(40,72,'Each step the agent reads the screen and does one thing. What differs is who chooses.','s',14,'start')]
 cards=[('LLM','GPT · Claude · Gemini',['Gets the screenshot','and the element list','','Writes the next action','itself: tap("Save")'],'74%','gray'),
        ('Decision model','Jev · OpenAI Decisions API',['Gets the element list','The agent lists every','possible action','','Picks one, with a','probability for each'],'0%','blue'),
-       ('Hybrid, sticky','decision model + LLM',['The decision model','takes the clear steps','','Unsure, typing, done','or stuck: the LLM takes','over until it hands back'],'67%','purple')]
+       ('Hybrid, sticky','decision model + LLM',['The decision model','takes the clear steps','','Unsure, typing, paying,','done or stuck: the LLM','takes over, then hands back'],'67%','purple')]
 for i,(name,who,lines,score,c) in enumerate(cards):
   x=40+300*i
   b.append(f'<rect class="{c} {c}S zone" x="{x}" y="96" width="280" height="290" rx="14"/>')

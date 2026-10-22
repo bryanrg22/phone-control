@@ -57,16 +57,45 @@ Each step, the agent reads the screen (a screenshot, plus the list of on-screen 
 
 **An LLM** (GPT, Claude or Gemini) sees the screenshot and the element list and writes the next action as a tool call, like `tapText("Save")` or `inputText("Gym")`. It is the most capable chooser and the slowest.
 
-**A decision model** ([TypeSafe's Jev](https://typesafe.ai), [OpenAI's Decisions API](https://platform.openai.com)) cannot write anything. It answers a multiple-choice question with a probability for each option. So the agent turns the screen into a menu: one option per element to tap, one per phrase from the task to type into each field, plus scroll, go back, open an app, done and blocked. The model picks one and the agent carries it out. This is fast and cheap, but on its own it passes 2 of 27 tasks: it cannot write free text, and it repeats taps that do nothing.
+**A decision model** ([TypeSafe's Jev](https://typesafe.ai), [OpenAI's Decisions API](https://platform.openai.com)) is a different kind of model: it cannot write anything. You send it a question, a description of the situation and a fixed list of answers, and it returns a probability for every answer. Both are fast and cheap compared with an LLM, and here they are sent text only, no screenshot. To use one on a phone, the agent turns each screen into a multiple-choice question:
 
-**The hybrid** lets each do what it is good at. The decision model chooses, and the LLM takes over when the decision model:
+- **The situation** is the task, the actions so far (and whether each changed the screen), the app in front, and the element list.
+- **The answers** are every action the agent could take right now: tap each element, type each phrase from the task into each text field, search, scroll, go back, hide the keyboard, open an app, or say *done* or *blocked*. A screen gives a median of 41 answers (25 to 95 on most screens, measured over 166 decisions).
+- **The model picks one**, say "Tap *Alarm* (button at 39%, 94%)" with probability 0.99, and the agent carries it out.
 
-- picks *done* or *blocked* (the LLM checks the screen and writes the answer),
-- needs to type something,
-- is unsure (its best option is below 50% probability), or
-- is stuck (the screen has not changed for 3 steps).
+On its own this completes none of the 27 benchmark tasks: it cannot write text the task does not spell out, it never writes an answer to a question, and it repeats taps that change nothing.
 
-In the **sticky** version, once the LLM takes over it keeps control until it hands back with a `handBack` tool, finishes, or has taken 5 steps in a row. That stopped the two models from undoing each other's plans, and cut the decision calls by 60%.
+**The hybrid** gives each step to whichever model suits it. The decision model chooses, and GPT-6 Luna (with the screenshot and the full tool set) takes over when the decision model:
+
+| Picks or meets | Why the LLM takes over |
+| --- | --- |
+| *done* or *blocked* | To check the screen really shows it, and to write the answer |
+| "write into this field" | The text is not in the task, so something has to compose it |
+| a Pay, Place Order, Delete or priced Request button | So the LLM asks you first, **whatever the probability** (see below) |
+| a best answer below 50% probability | The decision model is unsure |
+| a screen unchanged for 3 steps | It is stuck |
+| the last step of the budget | Someone has to conclude |
+
+These are checked in that order, every step, and the thresholds were fixed before any test and never tuned on it ([`agent/decision/escalate.mjs`](agent/decision/escalate.mjs)). In the **sticky** version, once Luna takes over it keeps control until it hands back with a `handBack` tool, finishes, or has taken 5 steps in a row, and it never hands back in the middle of a payment. Say "Jev" or "Decisions" in the chat to choose which decision model does the choosing.
+
+### Is this a standard design?
+
+Partly. Sending easy work to a cheap model and escalating the rest to a stronger one is an established idea, usually called a **model cascade** or **confidence-based routing** (FrugalGPT, 2023, is the well-known example for LLMs). The hybrid follows two specific precedents:
+
+- **JEV-as-a-Judge** (arXiv 2609.26550) for the rule itself: accept a decision model's answer when it is confident, escalate when it is not.
+- **Browser Use's jev-ultrafast** demo for handing text-writing to an LLM while Jev picks the clicks.
+
+What we found no published version of, and built and measured here: a hybrid driving a **phone** from iOS's accessibility tree, the **sticky** hand-over, and hard rules for **irreversible actions** that override the confidence check.
+
+### What testing taught us
+
+Every claim below comes from runs on [iOSWorld](https://github.com/ljang0/iOSWorld), with each run checked by hand ([docs/results.md](docs/results.md)):
+
+- **Handing over one step at a time backfired.** The decision model, confident and wrong, undid Luna's plan on the next step, and 232 of its 408 calls were handed to Luna anyway, so the first hybrid cost more than Luna alone. Keeping Luna in control (sticky) fixed both, and cut the decision calls by 60%.
+- **Confidence catches an unsure model, not a confidently wrong one.** The decision model tapped *Send now* on a $50 transfer at 87% probability, without asking. That is why payment buttons go to the LLM regardless of probability.
+- **One word in a hand-off can switch off a safeguard.** Told it could pay "unless the user has already confirmed it in this task", Luna treated the task itself as consent and asked 0 times in 10. Without that phrase it asked 10 times in 10.
+- **The hybrid matched Luna, it did not beat it.** One trial, scored by the benchmark's judge alone, showed the hybrid ahead (24 against 20). Over three trials, checked by hand, it was 67% against Luna's 74%, not a significant difference, while about 20% faster and 10% cheaper per task. Jev as the chooser did worse (58%, significantly below Luna): its calls are cheaper, but its weaker choices sent more steps to Luna.
+- **The judge needed checking.** 20% of the passes it gave did not hold up, and 15% of the fails it gave were really done. The judge alone would have ranked the hybrid first.
 
 Say which one to use in the chat:
 

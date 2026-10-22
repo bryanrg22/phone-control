@@ -60,9 +60,9 @@
 <text x="660" y="150" class="s" font-size="13" text-anchor="start" >decision model + LLM</text>
 <text x="660" y="186" class="s" font-size="15" text-anchor="start" >The decision model</text>
 <text x="660" y="208" class="s" font-size="15" text-anchor="start" >takes the clear steps</text>
-<text x="660" y="242" class="s" font-size="15" text-anchor="start" >Unsure, typing, done</text>
-<text x="660" y="264" class="s" font-size="15" text-anchor="start" >or stuck: the LLM takes</text>
-<text x="660" y="286" class="s" font-size="15" text-anchor="start" >over until it hands back</text>
+<text x="660" y="242" class="s" font-size="15" text-anchor="start" >Unsure, typing, paying,</text>
+<text x="660" y="264" class="s" font-size="15" text-anchor="start" >done or stuck: the LLM</text>
+<text x="660" y="286" class="s" font-size="15" text-anchor="start" >takes over, then hands back</text>
 <rect class="purple" x="660" y="330" width="96" height="34" rx="17"/>
 <text x="708" y="353" class="chipT" font-size="16" text-anchor="middle" >67%</text>
 <text x="768" y="352" class="s" font-size="13" text-anchor="start" >of iOSWorld tasks</text>
